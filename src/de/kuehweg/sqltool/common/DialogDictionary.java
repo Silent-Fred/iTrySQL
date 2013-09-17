@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2013, Michael Kühweg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package de.kuehweg.sqltool.common;
+
+import java.util.ResourceBundle;
+
+/**
+ * Dictionary als enum zur Ausgabe internationalisierbarer Dialogtexte
+ *
+ * @author Michael Kühweg
+ */
+public enum DialogDictionary {
+
+    APPLICATION("application"),
+    ERR_LOAD_FXML("err_loadFxml"),
+    ERR_UNKNOWN_COMMAND("err_unknownCommand"),
+    ERR_CONNECTION_FAILURE("err_connectionFailure"),
+    ERR_AUTO_COMMIT_FAILURE("err_autoCommitFailure"),
+    ERR_TUTORIAL_CREATION_FAILED("err_tutorialCreationFailed"),
+    ERR_FILE_OPEN_FAILED("err_fileOpenFailed"),
+    ERR_FILE_SAVE_FAILED("err_fileSaveFailed"),
+    ERR_CONNECTION_SETTING_SAVE_FAILED("err_connectionSettingSaveFailed"),
+    ERR_SERVER_START_FAILED("err_serverStartFailed"),
+    MSG_NO_DB_CONNECTION("msg_noDbConnection"),
+    MSG_NO_STATEMENT_TO_EXECUTE("msg_noStatementToExecute"),
+    MSG_REALLY_REMOVE_CONNECTION("msg_reallyRemoveConnection"),
+    MSG_REALLY_CREATE_TUTORIAL_DATA("msg_reallyCreateTutorialData"),
+    MESSAGEBOX_INFO("label_info"),
+    MESSAGEBOX_WARNING("label_warning"),
+    MESSAGEBOX_CONFIRM("label_confirm"),
+    MESSAGEBOX_ERROR("label_error"),
+    COMMON_BUTTON_OK("label_commonButtonOK"),
+    COMMON_BUTTON_CANCEL("label_commonButtonCancel"),
+    LABEL_EXECUTING("label_executing"),
+    LABEL_EMPTY("label_empty"),
+    LABEL_RESULT_ERROR("label_resultError"),
+    LABEL_RESULT_EXECUTED("label_resultExecuted"),
+    LABEL_SEE_SYNTAX_IN_DBOUTPUT("label_seeSyntaxInDBOutput"),
+    LABEL_DEFAULT_CONNECTION("label_defaultConnection"),
+    LABEL_OPEN_SCRIPT("label_openScript"),
+    LABEL_SAVE_SCRIPT("label_saveScript"),
+    LABEL_TITLE_CONNECT("label_connectToDatabase"),
+    LABEL_CONNECT("label_connect"),
+    LABEL_REMOVE_CONNECTION("label_removeConnection"),
+    LABEL_DB_DIRECTORY_CHOOSER("label_dbDirectoryChooser"),
+    LABEL_CREATE_TUTORIAL_DATA("label_createTutorialData"),
+    TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
+    TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
+    TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),
+    TOOLTIP_COMMIT("tooltip_commit"),
+    TOOLTIP_CHECKPOINT("tooltip_checkpoint"),
+    TOOLTIP_ROLLBACK("tooltip_rollback"),
+    TOOLTIP_EXECUTE("tooltip_execute"),
+    TOOLTIP_CLEAR_OUTPUT("tooltip_clearOutput"),
+    PATTERN_EXECUTION_TIME("pattern_executionTime"),
+    PATTERN_EXECUTION_TIMESTAMP("pattern_executionTimestamp"),
+    PATTERN_ROWCOUNT("pattern_rowcount"),
+    PATTERN_MAX_ROWS("pattern_maxRows"),
+    PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),
+    PATTERN_MESSAGE_IN_MEMORY_DATABASE("pattern_messageInMemoryDatabase");
+    private final String key;
+
+    private DialogDictionary(final String key) {
+        this.key = key;
+    }
+
+    @Override
+    public String toString() {
+        return ResourceBundle.getBundle("dictionary").getString(key);
+    }
+}

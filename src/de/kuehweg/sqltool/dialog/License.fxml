@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.LicenseController">
+  <children>
+    <ImageView fitHeight="225.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <image>
+        <Image url="@images/about.png" preserveRatio="false" smooth="false" />
+      </image>
+    </ImageView>
+    <Label alignment="BOTTOM_RIGHT" prefWidth="275.0" text="%application_copyright" textAlignment="RIGHT" textFill="WHITE" AnchorPane.bottomAnchor="257.0" AnchorPane.rightAnchor="7.0">
+      <font>
+        <Font size="10.0" />
+      </font>
+    </Label>
+    <VBox id="VBox" alignment="TOP_RIGHT" layoutY="14.0" prefHeight="74.0" prefWidth="386.0" spacing="5.0" AnchorPane.rightAnchor="14.0">
+      <children>
+        <Label alignment="TOP_RIGHT" prefWidth="275.0" text="%application" textAlignment="RIGHT" textFill="WHITE">
+          <font>
+            <Font name="System Bold" size="24.0" />
+          </font>
+        </Label>
+        <Label alignment="TOP_RIGHT" contentDisplay="RIGHT" prefWidth="275.0" text="%application_subtitle" textAlignment="RIGHT" textFill="WHITE">
+          <font>
+            <Font name="System Bold" size="14.0" />
+          </font>
+        </Label>
+        <Label alignment="TOP_RIGHT" prefWidth="261.0" text="%application_version" textAlignment="RIGHT" textFill="WHITE" />
+      </children>
+    </VBox>
+    <WebView fx:id="licenseWebView" layoutY="225.0" prefHeight="242.0" prefWidth="400.0" />
+  </children>
+</AnchorPane>

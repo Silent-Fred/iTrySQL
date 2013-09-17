@@ -1,0 +1,101 @@
+/* 
+    Document   : itrysql.css
+    Created on : 22.08.2013, 17:53:38
+    Author     : michael
+    Description:
+        Styles für iTry SQL.
+*/
+
+.root {
+    -dark-warm-gray: rgb(207, 202, 196);
+    -warm-gray: rgb(227, 222, 216);
+    -mid-gray: rgb(216, 222, 227);
+    -fx-base: -mid-gray;
+    -fx-focus-color: #067db7;
+    -fx-accent: #067db7;
+    display: block;
+}
+
+.itry-statement-edit {
+    -fx-font-family: 'Bitstream Vera Sans Mono', monospaced;
+}
+
+.itry-db-output {
+    -fx-font-family: 'Bitstream Vera Sans Mono', monospaced;
+}
+
+.itry-dialog {
+    -fx-background-color: 
+        linear-gradient(to bottom, derive(-warm-gray,0%), derive(-warm-gray,100%));
+}
+
+.itry-tool-bar {
+    -fx-background-color: 
+        linear-gradient(to bottom, derive(-warm-gray,0%), derive(-warm-gray,100%));
+}
+
+.itry-tool-bar-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 16;
+    -fx-padding: 0;
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+}
+
+.itry-tool-bar-button:focused {
+    -fx-color: -fx-focused-base;
+    -fx-background-color: 
+        linear-gradient(to bottom, derive(-warm-gray,100%), derive(-warm-gray,0%));
+}
+
+.itry-tool-bar-button:hover {
+    -fx-color: -fx-hover-base;
+    -fx-background-color: 
+        linear-gradient(to bottom, derive(-warm-gray,100%), derive(-warm-gray,0%));
+}
+
+.itry-tool-bar-button:armed {
+    -fx-background-color: 
+        linear-gradient(to bottom, derive(-warm-gray,0%), derive(-warm-gray,100%));
+}
+
+.itry-tool-bar-button:default {
+}
+
+.itry-tool-bar-button:cancel {
+}
+
+.itry-tool-bar-button:disabled {
+    -fx-opacity: 0.25;
+}
+
+#permanentMessage {
+    -fx-text-fill: white;
+    -fx-padding: 4px 4px 4px 20px;
+    -fx-background-color: #34a97b;
+    -fx-opacity: 0.5;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color:
+        linear-gradient(to top, derive(-warm-gray,0%), derive(-warm-gray,100%));
+}
+
+.menu-bar {
+    -fx-border-color: -dark-warm-gray;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color:
+        linear-gradient(to top, derive(-warm-gray,60%), derive(-warm-gray,80%));
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,1) , 8, 0.0 , 0 , 0 );
+}
+
+.menu {
+    -fx-background-color: transparent;
+}
+
+.menu .label {
+    -fx-text-fill: -fx-mid-text-color;
+    -fx-stroke: -fx-text-fill;
+}
