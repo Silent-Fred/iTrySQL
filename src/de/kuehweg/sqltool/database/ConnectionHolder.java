@@ -42,7 +42,7 @@ public class ConnectionHolder {
 
     private Connection connection;
 
-    public void connect(Connection connection) {
+    private void connect(Connection connection) {
         if (this.connection != null) {
             try {
                 this.connection.close();

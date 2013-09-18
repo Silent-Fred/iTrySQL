@@ -30,8 +30,6 @@ import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.database.ResultFormatter;
 import de.kuehweg.sqltool.database.TextResultFormatter;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import java.text.MessageFormat;
-import java.util.Date;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -63,7 +61,8 @@ public class ExecutionGUIUpdater implements Runnable {
     private String sqlForHistory;
     private boolean silent;
 
-    public ExecutionGUIUpdater(final Scene sceneToUpdate, final SQLHistoryKeeper historyKeeper) {
+    public ExecutionGUIUpdater(final Scene sceneToUpdate,
+            final SQLHistoryKeeper historyKeeper) {
         this.sceneToUpdate = sceneToUpdate;
         this.historyKeeper = historyKeeper;
         startTime = System.currentTimeMillis();
@@ -82,7 +81,8 @@ public class ExecutionGUIUpdater implements Runnable {
         updateScene();
     }
 
-    public void setExecutionTimeInMilliseconds(final long executionTimeInMilliseconds) {
+    public void setExecutionTimeInMilliseconds(
+            final long executionTimeInMilliseconds) {
         this.executionTimeInMilliseconds = executionTimeInMilliseconds;
     }
 
@@ -105,11 +105,11 @@ public class ExecutionGUIUpdater implements Runnable {
     public void setSilent(final boolean silent) {
         this.silent = silent;
     }
-    
+
     public boolean isSilent() {
         return silent;
     }
-    
+
     private void updateScene() {
         if (executionTimeInMilliseconds == 0) {
             executionTimeInMilliseconds = System.currentTimeMillis() - startTime;
@@ -117,24 +117,28 @@ public class ExecutionGUIUpdater implements Runnable {
         if (intermediateUpdate) {
             ActionVisualisation.prepareSceneRunning(sceneToUpdate);
         } else {
-            ActionVisualisation.showFinished(sceneToUpdate, executionTimeInMilliseconds);
+            ActionVisualisation.showFinished(sceneToUpdate,
+                    executionTimeInMilliseconds);
         }
         if (errorThatOccurred == null) {
             historyKeeper.addExecutedSQLToHistory(sqlForHistory);
             if (resultFormatter != null) {
                 TextArea dbOutput = (TextArea) sceneToUpdate.lookup("#dbOutput");
                 if (dbOutput != null) {
-                    String currentResult = MessageFormat.format(DialogDictionary.PATTERN_EXECUTION_TIMESTAMP.toString(), new Date())
-                            + "\n\n"
-                            + new TextResultFormatter(resultFormatter).formatAsText();
-                    if (dbOutput.getText().length() + currentResult.length() < MAX_DBOUTPUT) {
+                    String currentResult = new TextResultFormatter(
+                            resultFormatter).formatAsText();
+                    if (dbOutput.getText().length() + currentResult.length()
+                            < MAX_DBOUTPUT) {
                         dbOutput.appendText(currentResult);
                     } else {
-                        int howMuchFromOld = MAX_DBOUTPUT - currentResult.length();
+                        int howMuchFromOld = MAX_DBOUTPUT - currentResult.
+                                length();
                         howMuchFromOld = howMuchFromOld < 0 ? 0 : howMuchFromOld;
-                        int startInOld = dbOutput.getText().length() - howMuchFromOld - 1;
+                        int startInOld = dbOutput.getText().length()
+                                - howMuchFromOld - 1;
                         startInOld = startInOld < 0 ? 0 : startInOld;
-                        String old = dbOutput.getText(startInOld, dbOutput.getText().length());
+                        String old = dbOutput.getText(startInOld, dbOutput.
+                                getText().length());
                         dbOutput.setText(old + currentResult);
                     }
                     dbOutput.appendText("\n");
@@ -142,7 +146,8 @@ public class ExecutionGUIUpdater implements Runnable {
                 buildTableViewFromResultFormatter();
             }
         } else {
-            ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+            ErrorMessage msg = new ErrorMessage(
+                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
                     errorThatOccurred,
                     DialogDictionary.COMMON_BUTTON_OK.toString());
             msg.askUserFeedback();
@@ -150,7 +155,8 @@ public class ExecutionGUIUpdater implements Runnable {
     }
 
     private void buildTableViewFromResultFormatter() {
-        HBox resultTableContainer = (HBox) sceneToUpdate.lookup("#resultTableContainer");
+        HBox resultTableContainer = (HBox) sceneToUpdate.lookup(
+                "#resultTableContainer");
         resultTableContainer.getChildren().clear();
         TableView<ObservableList> dynamicTableView = new TableView<>();
         int i = 0;
@@ -158,15 +164,19 @@ public class ExecutionGUIUpdater implements Runnable {
             TableColumn col = new TableColumn(head);
             col.setMinWidth(100);
             final int accessIndex = i++;
-            col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+            col.setCellValueFactory(
+                    new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                 @Override
-                public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                    return new SimpleStringProperty(param.getValue().get(accessIndex).toString());
+                public ObservableValue<String> call(
+                        CellDataFeatures<ObservableList, String> param) {
+                    return new SimpleStringProperty(param.getValue().get(
+                            accessIndex).toString());
                 }
             });
             dynamicTableView.getColumns().add(col);
         }
-        ObservableList<ObservableList> content = FXCollections.observableArrayList();
+        ObservableList<ObservableList> content = FXCollections.
+                observableArrayList();
         for (final List<String> rowFromFormatter : resultFormatter.getRows()) {
             ObservableList<String> row = FXCollections.observableArrayList();
             for (String column : rowFromFormatter) {

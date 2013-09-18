@@ -75,11 +75,16 @@ public class TextResultFormatter {
     }
 
     public String formatAsText() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(MessageFormat.format(
+                DialogDictionary.PATTERN_EXECUTION_TIMESTAMP.toString(),
+                resultFormatter.getExecutedAt(), resultFormatter.getExecutedBy()));
+        builder.append("\n\n");
+
         final int width = resultFormatter.getHeader().length;
         final int[] size = calculateColumnWidths();
 
         // Spaltenüberschriften aufbauen
-        final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < width; i++) {
             builder.append(rightPad(resultFormatter.getHeader()[i].toString(),
                     " ", size[i]));

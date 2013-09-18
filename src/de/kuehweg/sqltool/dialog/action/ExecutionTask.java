@@ -71,7 +71,7 @@ public class ExecutionTask extends Task<Void> {
                 }
                 ResultFormatter resultFormatter =
                         new ResultFormatter();
-                resultFormatter.fillFromResultSet(statement.getResultSet());
+                resultFormatter.fillFromStatementResult(statement);
                 // Datenbankzugriff und Aufbereitung der Daten werden zusammen in die Laufzeit eingerechnet
                 // Zwischenstand ausgeben
                 if (guiUpdater != null) {
@@ -100,7 +100,7 @@ public class ExecutionTask extends Task<Void> {
                     guiUpdater.setSqlForHistory(null);
                     ResultFormatter resultFormatter =
                             new ResultFormatter();
-                    resultFormatter.fillFromResultSet(null);
+                    resultFormatter.fillFromStatementResult(null);
                     guiUpdater.setResultFormatter(resultFormatter);
                 }
                 guiUpdater.setIntermediateUpdate(false);

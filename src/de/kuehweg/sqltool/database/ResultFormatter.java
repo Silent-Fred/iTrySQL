@@ -29,8 +29,10 @@ import de.kuehweg.sqltool.common.DialogDictionary;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,6 +47,8 @@ public class ResultFormatter {
     private List<Object[]> rows;
     private boolean initialised;
     private boolean headOnly;
+    private String executedBy;
+    private Date executedAt;
 
     public ResultFormatter() {
     }
@@ -57,17 +61,24 @@ public class ResultFormatter {
         rows.add(Arrays.copyOf(row, row.length));
     }
 
-    public void fillFromResultSet(final ResultSet resultSet) {
+    public void fillFromStatementResult(final Statement statement) throws SQLException {
         initialised = true;
-        header = null;
+        setHeader(new String[]{DialogDictionary.LABEL_RESULT_EXECUTED.
+            toString()});
         rows = new LinkedList<>();
-        if (resultSet == null) {
-            headOnly = true;
-            setHeader(new String[]{DialogDictionary.LABEL_RESULT_EXECUTED.
-                toString()});
-        } else {
-            headOnly = false;
-            try {
+        executedAt = new Date();
+        if (statement == null) {
+            return;
+        }
+        ResultSet resultSet = null;
+        try {
+            executedBy = statement.getConnection().getMetaData().getUserName()
+                    + "@" + statement.getConnection().getMetaData().getURL();
+            resultSet = statement.getResultSet();
+            if (resultSet == null) {
+                headOnly = true;
+            } else {
+                headOnly = false;
                 final ResultSetMetaData metaData = resultSet.getMetaData();
                 final int col = metaData.getColumnCount();
                 final Object[] headRow = new Object[col];
@@ -85,25 +96,35 @@ public class ResultFormatter {
                     }
                     addRow(row);
                 }
-            } catch (SQLException ex) {
-                setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
-                    toString()});
-                rows.clear();
             }
-            try {
+        } catch (SQLException ex) {
+            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
+                toString()});
+            rows.clear();
+        }
+        try {
+            if (resultSet != null) {
                 resultSet.close();
-            } catch (SQLException ex) {
-                setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
-                    toString()});
-                addRow(new String[]{DialogDictionary.LABEL_EMPTY.toString()});
             }
+        } catch (SQLException ex) {
+            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
+                toString()});
+            addRow(new String[]{DialogDictionary.LABEL_EMPTY.toString()});
         }
     }
 
     public boolean isHeadOnly() {
         return headOnly;
     }
-    
+
+    public Date getExecutedAt() {
+        return executedAt != null ? executedAt : new Date();
+    }
+
+    public String getExecutedBy() {
+        return executedBy != null ? executedBy : "unknown";
+    }
+
     public String[] getHeader() {
         if (!initialised) {
             setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
