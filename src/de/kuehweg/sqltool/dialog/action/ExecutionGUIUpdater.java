@@ -28,6 +28,7 @@ package de.kuehweg.sqltool.dialog.action;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.database.ResultFormatter;
+import de.kuehweg.sqltool.database.TextResultFormatter;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -125,7 +126,7 @@ public class ExecutionGUIUpdater implements Runnable {
                 if (dbOutput != null) {
                     String currentResult = MessageFormat.format(DialogDictionary.PATTERN_EXECUTION_TIMESTAMP.toString(), new Date())
                             + "\n\n"
-                            + resultFormatter.formatAsText();
+                            + new TextResultFormatter(resultFormatter).formatAsText();
                     if (dbOutput.getText().length() + currentResult.length() < MAX_DBOUTPUT) {
                         dbOutput.appendText(currentResult);
                     } else {

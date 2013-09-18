@@ -42,14 +42,14 @@ public class FileUtil {
     }
 
     public static String readFile(final String file) throws IOException {
-        Path path = FileSystems.getDefault().getPath(file);
-        byte[] filearray = Files.readAllBytes(path);
+        final Path path = FileSystems.getDefault().getPath(file);
+        final byte[] filearray = Files.readAllBytes(path);
         return new String(filearray);
     }
 
-    public static void writeFile(final String file, final String text) throws IOException {
-        Path path = FileSystems.getDefault().getPath(file);
-        Files.write(path, text.getBytes(),
-                StandardOpenOption.CREATE);
+    public static void writeFile(final String file, final String text)
+            throws IOException {
+        final Path path = FileSystems.getDefault().getPath(file);
+        Files.write(path, text.getBytes(), StandardOpenOption.CREATE);
     }
 }

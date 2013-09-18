@@ -26,11 +26,9 @@
 package de.kuehweg.sqltool.database;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.UserPreferencesManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -102,87 +100,10 @@ public class ResultFormatter {
         }
     }
 
-    private int[] calculateColumnWidths() {
-        final int columnCount = header.length;
-        final int[] width = new int[columnCount];
-
-        // Spaltenbreiten ermitteln (Titel)
-        for (int i = 0; i < columnCount; i++) {
-            width[i] = header[i].toString().trim().length();
-        }
-
-        // Spaltenbreiten ermitteln (Inhalt)
-        for (final Object[] row : rows) {
-            for (int j = 0; j < columnCount; j++) {
-                final String item = row[j] == null ? "" : row[j].toString();
-                final int l = item.trim().length();
-                if (l > width[j]) {
-                    width[j] = l;
-                }
-            }
-        }
-        return width;
+    public boolean isHeadOnly() {
+        return headOnly;
     }
-
-    private String rightPad(final String str, final String paddingString,
-            final int paddingLength) {
-        final StringBuilder builder = new StringBuilder(str);
-        while (builder.length() <= paddingLength) {
-            builder.append(paddingString);
-        }
-        return builder.substring(0, paddingLength);
-    }
-
-    public String formatAsText() {
-        if (!initialised) {
-            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
-                toString()});
-            addRow(new String[]{DialogDictionary.LABEL_EMPTY.toString()});
-        }
-        final int width = header.length;
-        final int[] size = calculateColumnWidths();
-
-        // Spaltenüberschriften aufbauen
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < width; i++) {
-            builder.append(rightPad(header[i].toString(), " ", size[i]));
-            builder.append(' ');
-        }
-        builder.append("\n");
-        if (!headOnly) {
-            for (int i = 0; i < width; i++) {
-                builder.append(rightPad("", "-", size[i]));
-                builder.append(' ');
-            }
-            builder.append("\n");
-
-            // Inhalte aufbauen
-            for (final Object[] row : rows) {
-                for (int i = 0; i < width; i++) {
-                    builder.append(rightPad(row[i] == null ? "" : row[i].
-                            toString().trim(), " ",
-                            size[i]));
-                    builder.append(' ');
-                }
-                builder.append("\n");
-            }
-            builder.append("\n");
-            builder.append(MessageFormat.format(
-                    DialogDictionary.PATTERN_ROWCOUNT.toString(), rows.size()));
-            // ist das Ergebnis eventuell abgeschnitten, wird eine Meldung ausgegeben
-            if (rows.size() >= DatabaseConstants.MAX_ROWS) {
-                if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
-                    builder.append("\n\n");
-                    builder.append(MessageFormat.format(
-                            DialogDictionary.PATTERN_MAX_ROWS.toString(), rows.
-                            size()));
-                }
-            }
-        }
-
-        return builder.toString();
-    }
-
+    
     public String[] getHeader() {
         if (!initialised) {
             setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
