@@ -164,40 +164,40 @@
                       <children>
                         <ToolBar fx:id="toolBar" minWidth="-Infinity" orientation="VERTICAL" prefHeight="279.0" prefWidth="42.0" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                            <Button fx:id="toolbarExecute" mnemonicParsing="false" onAction="#execute" styleClass="itry-tool-bar-button" text="Button">
+                            <Button fx:id="toolbarExecute" mnemonicParsing="false" onAction="#execute" styleClass="itry-tool-bar-button">
                               <stylesheets>
                                 <URL value="@itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Separator prefHeight="20.0" prefWidth="36.0" />
-                            <Button fx:id="toolbarCommit" mnemonicParsing="false" onAction="#commit" styleClass="itry-tool-bar-button" text="Button">
+                            <Button fx:id="toolbarCommit" mnemonicParsing="false" onAction="#commit" styleClass="itry-tool-bar-button">
                               <stylesheets>
                                 <URL value="@itrysql.css" />
                               </stylesheets>
                             </Button>
-                            <Button fx:id="toolbarCheckpoint" mnemonicParsing="false" onAction="#checkpoint" styleClass="itry-tool-bar-button" text="Button">
+                            <Button fx:id="toolbarCheckpoint" mnemonicParsing="false" onAction="#checkpoint" styleClass="itry-tool-bar-button">
                               <stylesheets>
                                 <URL value="@itrysql.css" />
                               </stylesheets>
                             </Button>
-                            <Button fx:id="toolbarRollback" mnemonicParsing="false" onAction="#rollback" styleClass="itry-tool-bar-button" text="Button">
-                              <stylesheets>
-                                <URL value="@itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                            <Separator prefHeight="20.0" prefWidth="36.0" />
-                            <Button fx:id="toolbarZoomOut" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button" text="Button">
-                              <stylesheets>
-                                <URL value="@itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                            <Button fx:id="toolbarZoomIn" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button" text="Button">
+                            <Button fx:id="toolbarRollback" mnemonicParsing="false" onAction="#rollback" styleClass="itry-tool-bar-button">
                               <stylesheets>
                                 <URL value="@itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Separator prefHeight="20.0" prefWidth="36.0" />
-                            <Button fx:id="toolbarTutorialData" mnemonicParsing="false" onAction="#tutorialAction" styleClass="itry-tool-bar-button" text="Button">
+                            <Button fx:id="toolbarZoomOut" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
+                              <stylesheets>
+                                <URL value="@itrysql.css" />
+                              </stylesheets>
+                            </Button>
+                            <Button fx:id="toolbarZoomIn" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
+                              <stylesheets>
+                                <URL value="@itrysql.css" />
+                              </stylesheets>
+                            </Button>
+                            <Separator prefHeight="20.0" prefWidth="36.0" />
+                            <Button fx:id="toolbarTutorialData" mnemonicParsing="false" onAction="#tutorialAction" styleClass="itry-tool-bar-button">
                               <stylesheets>
                                 <URL value="@itrysql.css" />
                               </stylesheets>
@@ -254,7 +254,12 @@
                                     </TextArea>
                                     <ToolBar maxWidth="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="317.9999000000025" prefWidth="42.0" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
-                                        <Button fx:id="toolbarTabDbOutputClear" mnemonicParsing="false" onAction="#toolbarTabDbOutputClearAction" styleClass="itry-tool-bar-button" text="Button">
+                                        <Button fx:id="toolbarTabDbOutputExport" mnemonicParsing="false" onAction="#toolbarTabDbOutputExportAction" styleClass="itry-tool-bar-button">
+                                          <stylesheets>
+                                            <URL value="@itrysql.css" />
+                                          </stylesheets>
+                                        </Button>
+                                        <Button fx:id="toolbarTabDbOutputClear" mnemonicParsing="false" onAction="#toolbarTabDbOutputClearAction" styleClass="itry-tool-bar-button">
                                           <stylesheets>
                                             <URL value="@itrysql.css" />
                                           </stylesheets>

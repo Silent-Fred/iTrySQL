@@ -45,7 +45,6 @@ import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
 import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.SchemaTreeBuilderTask;
-import de.kuehweg.sqltool.dialog.images.ImagePack;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +83,6 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -195,6 +193,8 @@ public class iTrySQLController
     private Button toolbarRollback; // Value injected by FXMLLoader
     @FXML //  fx:id="toolbarTabDbOutputClear"
     private Button toolbarTabDbOutputClear; // Value injected by FXMLLoader
+    @FXML //  fx:id="toolbarTabDbOutputExport"
+    private Button toolbarTabDbOutputExport; // Value injected by FXMLLoader
     @FXML //  fx:id="toolbarTutorialData"
     private Button toolbarTutorialData; // Value injected by FXMLLoader
     @FXML //  fx:id="toolbarZoomIn"
@@ -346,7 +346,7 @@ public class iTrySQLController
     // Handler for MenuItem[fx:id="menuItemFileSaveScript"] onAction
     public void fileSaveScriptAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(DialogDictionary.LABEL_OPEN_SCRIPT.toString());
+        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_SCRIPT.toString());
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
             try {
@@ -395,12 +395,32 @@ public class iTrySQLController
         ExecuteAction.handleExecuteAction(menuBar.getScene(), this, "ROLLBACK");
     }
 
-    // Handler for ImageView[fx:id="toolbarTabDbOutputClear"] onMouseClicked
+    // Handler for Button[fx:id="toolbarTabDbOutputClear"] onAction
     public void toolbarTabDbOutputClearAction(ActionEvent event) {
         dbOutput.clear();
     }
 
-    // Handler for ImageView[fx:id="toolbarTutorialData"] onMouseClicked
+    // Handler for Button[fx:id="toolbarTabDbOutputExport"] onAction
+    public void toolbarTabDbOutputExportAction(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT.toString());
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            try {
+                FileUtil.writeFile(file.getAbsolutePath(), dbOutput.
+                        getText());
+            } catch (IOException ex) {
+                ErrorMessage msg = new ErrorMessage(
+                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                        DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                msg.askUserFeedback();
+
+            }
+        }
+    }
+
+    // Handler for Button[fx:id="toolbarTutorialData"] onAction
     public void tutorialAction(ActionEvent event) {
         ConfirmDialog confirm = new ConfirmDialog(
                 DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
@@ -635,6 +655,7 @@ public class iTrySQLController
         assert toolbarExecute != null : "fx:id=\"toolbarExecute\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarRollback != null : "fx:id=\"toolbarRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarTabDbOutputClear != null : "fx:id=\"toolbarTabDbOutputClear\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarTabDbOutputExport != null : "fx:id=\"toolbarTabDbOutputExport\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarTutorialData != null : "fx:id=\"toolbarTutorialData\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomIn != null : "fx:id=\"toolbarZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -655,7 +676,7 @@ public class iTrySQLController
         limitMaxRows.setSelected(UserPreferencesManager.getSharedInstance().
                 isLimitMaxRows());
 
-        setupToolbarButtons();
+        setupToolbar();
         setupMenuAccelerators();
 
         controlAutoCommitCheckBoxState();
@@ -664,48 +685,23 @@ public class iTrySQLController
         refreshTree(null);
     }
 
-    private void setupToolbarButtons() {
-        toolbarExecute.setGraphic(new ImageView(ImagePack.EXECUTE.getAsImage()));
-        toolbarExecute.setText(null);
+    private void setupToolbar() {
         Tooltip.install(toolbarExecute, new Tooltip(
                 DialogDictionary.TOOLTIP_EXECUTE.toString()));
-
-        toolbarCommit.setGraphic(new ImageView(ImagePack.COMMIT.getAsImage()));
-        toolbarCommit.setText(null);
         Tooltip.install(toolbarCommit, new Tooltip(
                 DialogDictionary.TOOLTIP_COMMIT.toString()));
-
-        toolbarCheckpoint.setGraphic(new ImageView(ImagePack.CHECKPOINT.
-                getAsImage()));
-        toolbarCheckpoint.setText(null);
         Tooltip.install(toolbarCheckpoint, new Tooltip(
                 DialogDictionary.TOOLTIP_CHECKPOINT.toString()));
-
-        toolbarRollback.setGraphic(
-                new ImageView(ImagePack.ROLLBACK.getAsImage()));
-        toolbarRollback.setText(null);
         Tooltip.install(toolbarRollback, new Tooltip(
                 DialogDictionary.TOOLTIP_ROLLBACK.toString()));
-
-        toolbarZoomOut.setGraphic(new ImageView(ImagePack.ZOOMOUT.getAsImage()));
-        toolbarZoomOut.setText(null);
         Tooltip.install(toolbarZoomOut, new Tooltip(
                 DialogDictionary.TOOLTIP_DECREASE_FONTSIZE.toString()));
-
-        toolbarZoomIn.setGraphic(new ImageView(ImagePack.ZOOMIN.getAsImage()));
-        toolbarZoomIn.setText(null);
         Tooltip.install(toolbarZoomIn, new Tooltip(
                 DialogDictionary.TOOLTIP_INCREASE_FONTSIZE.toString()));
-
-        toolbarTutorialData.setGraphic(new ImageView(ImagePack.TUTORIAL_DATA.
-                getAsImage()));
-        toolbarTutorialData.setText(null);
         Tooltip.install(toolbarTutorialData, new Tooltip(
                 DialogDictionary.TOOLTIP_TUTORIAL_DATA.toString()));
-
-        toolbarTabDbOutputClear.setGraphic(new ImageView(ImagePack.CLEAR.
-                getAsImage()));
-        toolbarTabDbOutputClear.setText(null);
+        Tooltip.install(toolbarTabDbOutputExport, new Tooltip(
+                DialogDictionary.TOOLTIP_EXPORT_OUTPUT.toString()));
         Tooltip.install(toolbarTabDbOutputClear, new Tooltip(
                 DialogDictionary.TOOLTIP_CLEAR_OUTPUT.toString()));
     }

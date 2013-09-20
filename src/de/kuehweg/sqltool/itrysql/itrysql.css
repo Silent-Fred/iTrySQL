@@ -1,7 +1,5 @@
 /* 
     Document   : itrysql.css
-    Created on : 22.08.2013, 17:53:38
-    Author     : michael
     Description:
         Styles für iTry SQL.
 */
@@ -13,6 +11,7 @@
     -fx-base: -mid-gray;
     -fx-focus-color: #067db7;
     -fx-accent: #067db7;
+    -scroll-bar-background: #d9d9d9;
     display: block;
 }
 
@@ -30,8 +29,7 @@
 }
 
 .itry-tool-bar {
-    -fx-background-color: 
-        linear-gradient(to bottom, derive(-warm-gray,0%), derive(-warm-gray,100%));
+    -fx-background-color: #f7f7f7;
 }
 
 .itry-tool-bar-button {
@@ -44,31 +42,67 @@
     -fx-content-display: LEFT;
 }
 
-.itry-tool-bar-button:focused {
-    -fx-color: -fx-focused-base;
-    -fx-background-color: 
-        linear-gradient(to bottom, derive(-warm-gray,100%), derive(-warm-gray,0%));
+#toolbarExecute {
+    -fx-graphic: url('/resources/images/execute.png');
+}
+#toolbarExecute:armed, #toolbarExecute:hover, #toolbarExecute:pressed {
+    -fx-graphic: url('/resources/images/execute_active.png');
 }
 
-.itry-tool-bar-button:hover {
-    -fx-color: -fx-hover-base;
-    -fx-background-color: 
-        linear-gradient(to bottom, derive(-warm-gray,100%), derive(-warm-gray,0%));
+#toolbarCommit {
+    -fx-graphic: url('/resources/images/commit.png');
+}
+#toolbarCommit:armed, #toolbarCommit:hover, #toolbarCommit:pressed {
+    -fx-graphic: url('/resources/images/commit_active.png');
 }
 
-.itry-tool-bar-button:armed {
-    -fx-background-color: 
-        linear-gradient(to bottom, derive(-warm-gray,0%), derive(-warm-gray,100%));
+#toolbarCheckpoint {
+    -fx-graphic: url('/resources/images/checkpoint.png');
+}
+#toolbarCheckpoint:armed, #toolbarCheckpoint:hover, #toolbarCheckpoint:pressed {
+    -fx-graphic: url('/resources/images/checkpoint_active.png');
 }
 
-.itry-tool-bar-button:default {
+#toolbarRollback {
+    -fx-graphic: url('/resources/images/rollback.png');
+}
+#toolbarRollback:armed, #toolbarRollback:hover, #toolbarRollback:pressed {
+    -fx-graphic: url('/resources/images/rollback_active.png');
 }
 
-.itry-tool-bar-button:cancel {
+#toolbarZoomIn {
+    -fx-graphic: url('/resources/images/zoomin.png');
+}
+#toolbarZoomIn:armed, #toolbarZoomIn:hover, #toolbarZoomIn:pressed {
+    -fx-graphic: url('/resources/images/zoomin_active.png');
 }
 
-.itry-tool-bar-button:disabled {
-    -fx-opacity: 0.25;
+#toolbarZoomOut {
+    -fx-graphic: url('/resources/images/zoomout.png');
+}
+#toolbarZoomOut:armed, #toolbarZoomOut:hover, #toolbarZoomOut:pressed {
+    -fx-graphic: url('/resources/images/zoomout_active.png');
+}
+
+#toolbarTutorialData {
+    -fx-graphic: url('/resources/images/tutorialdata.png');
+}
+#toolbarTutorialData:armed, #toolbarTutorialData:hover, #toolbarTutorialData:pressed {
+    -fx-graphic: url('/resources/images/tutorialdata_active.png');
+}
+
+#toolbarTabDbOutputExport {
+    -fx-graphic: url('/resources/images/export.png');
+}
+#toolbarTabDbOutputExport:armed, #toolbarTabDbOutputExport:hover, #toolbarTabDbOutputExport:pressed {
+    -fx-graphic: url('/resources/images/export_active.png');
+}
+
+#toolbarTabDbOutputClear {
+    -fx-graphic: url('/resources/images/clear.png');
+}
+#toolbarTabDbOutputClear:armed, #toolbarTabDbOutputClear:hover, #toolbarTabDbOutputClear:pressed {
+    -fx-graphic: url('/resources/images/clear_active.png');
 }
 
 #permanentMessage {
@@ -98,4 +132,39 @@
 .menu .label {
     -fx-text-fill: -fx-mid-text-color;
     -fx-stroke: -fx-text-fill;
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track{
+    -fx-background-color: white;
+    -fx-border-color: white;
+    -fx-background-radius: 0em;
+    -fx-border-radius: 2em;
+}
+
+.scroll-bar:horizontal .increment-button ,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0em;
+    -fx-padding: 0 0 10 0;
+}
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0em;
+    -fx-padding: 0 10 0 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: -scroll-bar-background;
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2em;
 }
