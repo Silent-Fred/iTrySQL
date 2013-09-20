@@ -61,19 +61,12 @@ public class SchemaTreeBuilder implements Runnable {
 
     private void refreshSchemaTree(final DataBaseDescription db,
             final TreeView treeToUpdate) {
-        TreeItem root = treeToUpdate.getRoot();
-        if (root == null) {
-            root = new TreeItem();
-        }
+        TreeItem root = new TreeItem();
+        treeToUpdate.setRoot(root);
         if (db != null) {
             root.setValue(db.getName());
-            root.setGraphic(new ImageView(ImagePack.TREE_DATABASE.
-                    getAsImage()));
-            treeToUpdate.setRoot(root);
-
-            root.getChildren()
-                    .clear();
-            TreeView treeView = new TreeView(root);
+            root.setGraphic(new ImageView(ImagePack.TREE_DATABASE.getAsImage()));
+            root.getChildren().clear();
             for (final CatalogDescription catalog : db.getCatalogs()) {
                 TreeItem catalogItem = new TreeItem(catalog.getCatalog());
                 catalogItem.getChildren().addAll(getSchemas(catalog));

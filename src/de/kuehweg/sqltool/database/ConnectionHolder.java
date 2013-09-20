@@ -32,6 +32,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  * Hält die Verbindung zur Datenbank
@@ -41,6 +43,11 @@ import java.sql.Statement;
 public class ConnectionHolder {
 
     private Connection connection;
+    private BooleanProperty connectedProperty;
+
+    public ConnectionHolder() {
+        this.connectedProperty = new SimpleBooleanProperty(false);
+    }
 
     private void connect(Connection connection) {
         if (this.connection != null) {
@@ -57,9 +64,11 @@ public class ConnectionHolder {
         try {
             Class.forName(connectionSetting.getType().getDriverClass()).
                     newInstance();
-            newConnection = DriverManager.getConnection(connectionSetting.getUrl(),
+            newConnection = DriverManager.getConnection(connectionSetting.
+                    getUrl(),
                     connectionSetting.getUser(), connectionSetting.getPassword());
             connect(newConnection);
+            connectedProperty.set(true);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
             ErrorMessage msg = new ErrorMessage(
                     DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -67,6 +76,21 @@ public class ConnectionHolder {
                     DialogDictionary.COMMON_BUTTON_OK.toString());
             msg.askUserFeedback();
         }
+    }
+
+    public void disconnect() {
+        if (connection != null) {
+            try {
+                connection.close();
+                connectedProperty.set(false);
+            } catch (SQLException ex) {
+            }
+            connection = null;
+        }
+    }
+
+    public BooleanProperty connectedProperty() {
+        return connectedProperty;
     }
 
     public Connection getConnection() {

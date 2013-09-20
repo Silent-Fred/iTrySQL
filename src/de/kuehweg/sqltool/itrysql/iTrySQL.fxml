@@ -304,6 +304,7 @@
         <Menu mnemonicParsing="false" style="" text="%menu_file">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#connect" text="%menu_item_connect" fx:id="menuItemConnect" />
+            <MenuItem id="menuItemDisconnect" mnemonicParsing="false" onAction="#disconnect" text="%menu_item_disconnect" fx:id="menuItemDisconnect" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#fileOpenScriptAction" text="%menu_item_openScript" fx:id="menuItemFileOpenScript" />
             <MenuItem mnemonicParsing="false" onAction="#fileSaveScriptAction" text="%menu_item_saveScript" fx:id="menuItemFileSaveScript" />

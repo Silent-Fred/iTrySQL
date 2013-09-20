@@ -29,7 +29,7 @@
 }
 
 .itry-tool-bar {
-    -fx-background-color: #f7f7f7;
+    -fx-background-color: #f0f0f0;
 }
 
 .itry-tool-bar-button {
@@ -113,8 +113,7 @@
 }
 
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color:
-        linear-gradient(to top, derive(-warm-gray,0%), derive(-warm-gray,100%));
+    -fx-background-color: #f0f0f0;
 }
 
 .menu-bar {

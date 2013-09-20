@@ -56,6 +56,7 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -137,6 +138,8 @@ public class iTrySQLController
     private MenuItem menuItemCommit; // Value injected by FXMLLoader
     @FXML //  fx:id="menuItemConnect"
     private MenuItem menuItemConnect; // Value injected by FXMLLoader
+    @FXML //  fx:id="menuItemDisconnect"
+    private MenuItem menuItemDisconnect; // Value injected by FXMLLoader
     @FXML //  fx:id="menuItemCopy"
     private MenuItem menuItemCopy; // Value injected by FXMLLoader
     @FXML //  fx:id="menuItemCut"
@@ -302,6 +305,13 @@ public class iTrySQLController
                 permanentMessage.visibleProperty().set(false);
             }
         }
+    }
+
+    // Handler for MenuItem[fx:id="menuItemDisconnect"] onAction
+    public void disconnect(ActionEvent event) {
+        getConnectionHolder().disconnect();
+        refreshTree(null);
+        permanentMessage.visibleProperty().set(false);
     }
 
     // Handler for Button[fx:id="toolbarExecute"] onAction
@@ -624,6 +634,7 @@ public class iTrySQLController
         assert menuItemClose != null : "fx:id=\"menuItemClose\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemCommit != null : "fx:id=\"menuItemCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemConnect != null : "fx:id=\"menuItemConnect\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemDisconnect != null : "fx:id=\"menuItemDisconnect\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemCopy != null : "fx:id=\"menuItemCopy\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemCut != null : "fx:id=\"menuItemCut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemExecute != null : "fx:id=\"menuItemExecute\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -677,7 +688,7 @@ public class iTrySQLController
                 isLimitMaxRows());
 
         setupToolbar();
-        setupMenuAccelerators();
+        setupMenu();
 
         controlAutoCommitCheckBoxState();
         controlServerStatusButtonStates();
@@ -706,7 +717,7 @@ public class iTrySQLController
                 DialogDictionary.TOOLTIP_CLEAR_OUTPUT.toString()));
     }
 
-    private void setupMenuAccelerators() {
+    private void setupMenu() {
         menuItemExecute.setAccelerator(
                 new KeyCodeCombination(
                 KeyCode.ENTER,
@@ -724,6 +735,8 @@ public class iTrySQLController
                 new KeyCodeCombination(
                 KeyCode.S,
                 KeyCombination.SHORTCUT_DOWN));
+        menuItemDisconnect.disableProperty().bind(Bindings.not(
+                getConnectionHolder().connectedProperty()));
     }
 
     private void controlAutoCommitCheckBoxState() {
