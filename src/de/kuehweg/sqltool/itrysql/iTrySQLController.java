@@ -57,6 +57,8 @@ import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -65,6 +67,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -219,6 +222,75 @@ public class iTrySQLController
     // my own special creation
     private ConnectionHolder connectionHolder;
     private ObservableList<SQLHistory> sqlHistoryItems;
+    private BooleanProperty connectionSettingsEdit;
+    private BooleanProperty connectionSettingFileBased;
+
+    @Override // This method is called by the FXMLLoader when initialization is complete
+    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+        assert accordionCodeTemplateList != null : "fx:id=\"accordionCodeTemplateList\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert accordionCodeTemplates != null : "fx:id=\"accordionCodeTemplates\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert accordionPreferences != null : "fx:id=\"accordionPreferences\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert accordionSchemaTreeView != null : "fx:id=\"accordionSchemaTreeView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert autoCommit != null : "fx:id=\"autoCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionDbName != null : "fx:id=\"connectionDbName\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionDirectoryChoice != null : "fx:id=\"connectionDirectoryChoice\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionName != null : "fx:id=\"connectionName\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionSelection != null : "fx:id=\"connectionSelection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionSettings != null : "fx:id=\"connectionSettings\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionType != null : "fx:id=\"connectionType\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionUrl != null : "fx:id=\"connectionUrl\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert connectionUser != null : "fx:id=\"connectionUser\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert createConnection != null : "fx:id=\"createConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert dbOutput != null : "fx:id=\"dbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert editConnection != null : "fx:id=\"editConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert executionProgressIndicator != null : "fx:id=\"executionProgressIndicator\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert executionTime != null : "fx:id=\"executionTime\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert limitMaxRows != null : "fx:id=\"limitMaxRows\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuBar != null : "fx:id=\"menuBar\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemCheckpoint != null : "fx:id=\"menuItemCheckpoint\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemClose != null : "fx:id=\"menuItemClose\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemCommit != null : "fx:id=\"menuItemCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemConnect != null : "fx:id=\"menuItemConnect\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemDisconnect != null : "fx:id=\"menuItemDisconnect\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemCopy != null : "fx:id=\"menuItemCopy\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemCut != null : "fx:id=\"menuItemCut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemExecute != null : "fx:id=\"menuItemExecute\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemExecuteScript != null : "fx:id=\"menuItemExecuteScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemFileOpenScript != null : "fx:id=\"menuItemFileOpenScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemFileSaveScript != null : "fx:id=\"menuItemFileSaveScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemPaste != null : "fx:id=\"menuItemPaste\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemRollback != null : "fx:id=\"menuItemRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert permanentMessage != null : "fx:id=\"permanentMessage\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert refreshTree != null : "fx:id=\"refreshTree\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert removeConnection != null : "fx:id=\"removeConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert resultTableContainer != null : "fx:id=\"resultTableContainer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert schemaTreeView != null : "fx:id=\"schemaTreeView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert serverAlias != null : "fx:id=\"serverAlias\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert serverConnectionSelection != null : "fx:id=\"serverConnectionSelection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert shutdownServer != null : "fx:id=\"shutdownServer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert sqlHistory != null : "fx:id=\"sqlHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert sqlHistoryColumnStatement != null : "fx:id=\"sqlHistoryColumnStatement\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert sqlHistoryColumnTimestamp != null : "fx:id=\"sqlHistoryColumnTimestamp\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert startServer != null : "fx:id=\"startServer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert statementInput != null : "fx:id=\"statementInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert tabDbOutput != null : "fx:id=\"tabDbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert tabHistory != null : "fx:id=\"tabHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert tabPaneProtocols != null : "fx:id=\"tabPaneProtocols\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert tabResult != null : "fx:id=\"tabResult\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolBar != null : "fx:id=\"toolBar\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarCheckpoint != null : "fx:id=\"toolbarCheckpoint\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarCommit != null : "fx:id=\"toolbarCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarExecute != null : "fx:id=\"toolbarExecute\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarRollback != null : "fx:id=\"toolbarRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarTabDbOutputClear != null : "fx:id=\"toolbarTabDbOutputClear\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarTabDbOutputExport != null : "fx:id=\"toolbarTabDbOutputExport\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarTutorialData != null : "fx:id=\"toolbarTutorialData\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarZoomIn != null : "fx:id=\"toolbarZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+
+        // initialize your logic here: all @FXML variables will have been injected
+        initializeContinued();
+    }
 
     // Handler for MenuItem[javafx.scene.control.MenuItem@e6702f4] onAction
     public void about(ActionEvent event) {
@@ -338,7 +410,7 @@ public class iTrySQLController
     public void fileOpenScriptAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(DialogDictionary.LABEL_OPEN_SCRIPT.toString());
-        File file = fileChooser.showOpenDialog(null);
+        File file = fileChooser.showOpenDialog(menuBar.getScene().getWindow());
         if (file != null) {
             try {
                 String script = FileUtil.readFile(file.getAbsolutePath());
@@ -357,7 +429,7 @@ public class iTrySQLController
     public void fileSaveScriptAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(DialogDictionary.LABEL_SAVE_SCRIPT.toString());
-        File file = fileChooser.showSaveDialog(null);
+        File file = fileChooser.showSaveDialog(menuBar.getScene().getWindow());
         if (file != null) {
             try {
                 FileUtil.writeFile(file.getAbsolutePath(), statementInput.
@@ -414,7 +486,8 @@ public class iTrySQLController
     public void toolbarTabDbOutputExportAction(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT.toString());
-        File file = fileChooser.showSaveDialog(null);
+        File file = fileChooser.showSaveDialog(((Node) event.getSource()).
+                getScene().getWindow());
         if (file != null) {
             try {
                 FileUtil.writeFile(file.getAbsolutePath(), dbOutput.
@@ -473,6 +546,7 @@ public class iTrySQLController
     public void cancelConnectionSettings(ActionEvent event) {
         connectionSelection.valueProperty().set(null);
         controlConnectionSettingsVisibility();
+        connectionSettingsEdit.set(false);
     }
 
     // Handler for ComboBox[fx:id="connectionSelection"] onAction
@@ -484,13 +558,11 @@ public class iTrySQLController
 
     // Handler for ComboBox[fx:id="connectionType"] onAction
     public void changeConnectionType(ActionEvent event) {
-        ConnectionSetting setting = connectionSelection.getValue();
         JDBCType type = connectionType.getValue();
         if (type != null) {
             connectionUrl.setText(null);
             connectionDbName.setText(null);
-            connectionDirectoryChoice.disableProperty().set(type
-                    != JDBCType.HSQL_STANDALONE);
+            connectionSettingFileBased.set(type == JDBCType.HSQL_STANDALONE);
         }
     }
 
@@ -499,7 +571,7 @@ public class iTrySQLController
         DirectoryChooser dirChooser = new DirectoryChooser();
         dirChooser.setTitle(DialogDictionary.LABEL_DB_DIRECTORY_CHOOSER.
                 toString());
-        File dir = dirChooser.showDialog(null);
+        File dir = dirChooser.showDialog(menuBar.getScene().getWindow());
         if (dir != null) {
             JDBCType type = connectionType.valueProperty().get();
             if (type != null) {
@@ -519,7 +591,8 @@ public class iTrySQLController
         connectionSettings.visibleProperty().set(true);
         editConnection.disableProperty().set(true);
         removeConnection.disableProperty().set(true);
-        enableConnectionSettingsControls(true);
+        connectionSettingsEdit.set(true);
+        connectionSettingFileBased.set(false);
     }
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
@@ -527,7 +600,7 @@ public class iTrySQLController
         ConnectionSetting setting = connectionSelection.getValue();
         putConnectionSettingInDialog(setting);
         controlConnectionSettingsVisibility();
-        enableConnectionSettingsControls(true);
+        connectionSettingsEdit.set(true);
     }
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
@@ -608,74 +681,24 @@ public class iTrySQLController
         }
     }
 
-    @Override // This method is called by the FXMLLoader when initialization is complete
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-        assert accordionCodeTemplateList != null : "fx:id=\"accordionCodeTemplateList\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert accordionCodeTemplates != null : "fx:id=\"accordionCodeTemplates\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert accordionPreferences != null : "fx:id=\"accordionPreferences\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert accordionSchemaTreeView != null : "fx:id=\"accordionSchemaTreeView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert autoCommit != null : "fx:id=\"autoCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionDbName != null : "fx:id=\"connectionDbName\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionDirectoryChoice != null : "fx:id=\"connectionDirectoryChoice\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionName != null : "fx:id=\"connectionName\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionSelection != null : "fx:id=\"connectionSelection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionSettings != null : "fx:id=\"connectionSettings\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionType != null : "fx:id=\"connectionType\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionUrl != null : "fx:id=\"connectionUrl\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert connectionUser != null : "fx:id=\"connectionUser\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert createConnection != null : "fx:id=\"createConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert dbOutput != null : "fx:id=\"dbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert editConnection != null : "fx:id=\"editConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert executionProgressIndicator != null : "fx:id=\"executionProgressIndicator\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert executionTime != null : "fx:id=\"executionTime\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert limitMaxRows != null : "fx:id=\"limitMaxRows\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuBar != null : "fx:id=\"menuBar\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemCheckpoint != null : "fx:id=\"menuItemCheckpoint\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemClose != null : "fx:id=\"menuItemClose\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemCommit != null : "fx:id=\"menuItemCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemConnect != null : "fx:id=\"menuItemConnect\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemDisconnect != null : "fx:id=\"menuItemDisconnect\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemCopy != null : "fx:id=\"menuItemCopy\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemCut != null : "fx:id=\"menuItemCut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemExecute != null : "fx:id=\"menuItemExecute\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemExecuteScript != null : "fx:id=\"menuItemExecuteScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemFileOpenScript != null : "fx:id=\"menuItemFileOpenScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemFileSaveScript != null : "fx:id=\"menuItemFileSaveScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemPaste != null : "fx:id=\"menuItemPaste\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemRollback != null : "fx:id=\"menuItemRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert permanentMessage != null : "fx:id=\"permanentMessage\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert refreshTree != null : "fx:id=\"refreshTree\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert removeConnection != null : "fx:id=\"removeConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert resultTableContainer != null : "fx:id=\"resultTableContainer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert schemaTreeView != null : "fx:id=\"schemaTreeView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert serverAlias != null : "fx:id=\"serverAlias\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert serverConnectionSelection != null : "fx:id=\"serverConnectionSelection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert shutdownServer != null : "fx:id=\"shutdownServer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert sqlHistory != null : "fx:id=\"sqlHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert sqlHistoryColumnStatement != null : "fx:id=\"sqlHistoryColumnStatement\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert sqlHistoryColumnTimestamp != null : "fx:id=\"sqlHistoryColumnTimestamp\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert startServer != null : "fx:id=\"startServer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert statementInput != null : "fx:id=\"statementInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert tabDbOutput != null : "fx:id=\"tabDbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert tabHistory != null : "fx:id=\"tabHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert tabPaneProtocols != null : "fx:id=\"tabPaneProtocols\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert tabResult != null : "fx:id=\"tabResult\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolBar != null : "fx:id=\"toolBar\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarCheckpoint != null : "fx:id=\"toolbarCheckpoint\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarCommit != null : "fx:id=\"toolbarCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarExecute != null : "fx:id=\"toolbarExecute\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarRollback != null : "fx:id=\"toolbarRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarTabDbOutputClear != null : "fx:id=\"toolbarTabDbOutputClear\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarTabDbOutputExport != null : "fx:id=\"toolbarTabDbOutputExport\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarTutorialData != null : "fx:id=\"toolbarTutorialData\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarZoomIn != null : "fx:id=\"toolbarZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-
-        // initialize your logic here: all @FXML variables will have been injected
-        initializeContinued();
-    }
+    // ---
 
     private void initializeContinued() {
+        connectionSettingsEdit = new SimpleBooleanProperty(false);
+        connectionSettingFileBased = new SimpleBooleanProperty(false);
+        connectionName.disableProperty().bind(Bindings.not(
+                connectionSettingsEdit));
+        connectionType.disableProperty().bind(Bindings.not(
+                connectionSettingsEdit));
+        connectionUrl.disableProperty().bind(Bindings.
+                not(connectionSettingsEdit));
+        connectionDbName.disableProperty().bind(Bindings.not(
+                connectionSettingsEdit));
+        connectionUser.disableProperty().bind(Bindings.not(
+                connectionSettingsEdit));
+        connectionDirectoryChoice.disableProperty().bind(Bindings.not(
+                connectionSettingsEdit).or(Bindings.not(
+                connectionSettingFileBased)));
         prepareConnectionSettings();
         fillCodeTemplates();
         prepareHistory();
@@ -834,7 +857,6 @@ public class iTrySQLController
         fillConnectionSettings();
         fillJdbcTypes();
         controlConnectionSettingsVisibility();
-        enableConnectionSettingsControls(false);
     }
 
     private void controlConnectionSettingsVisibility() {
@@ -842,14 +864,8 @@ public class iTrySQLController
         connectionSettings.visibleProperty().set(!empty);
         removeConnection.disableProperty().set(empty);
         editConnection.disableProperty().set(empty);
-    }
 
-    private void enableConnectionSettingsControls(final boolean enabled) {
-        connectionName.disableProperty().set(!enabled);
-        connectionType.disableProperty().set(!enabled);
-        connectionUrl.disableProperty().set(!enabled);
-        connectionDbName.disableProperty().set(!enabled);
-        connectionUser.disableProperty().set(!enabled);
+
     }
 
     private void putConnectionSettingInDialog(final ConnectionSetting setting) {
@@ -920,6 +936,8 @@ public class iTrySQLController
         return false;
     }
 
+    // --- Interfaces und specialties
+    
     @Override
     public void addExecutedSQLToHistory(final String sql) {
         if (sql != null && sql.trim().length() > 0) {
