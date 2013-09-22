@@ -133,12 +133,16 @@
     -fx-stroke: -fx-text-fill;
 }
 
-.scroll-bar:horizontal .track,
-.scroll-bar:vertical .track{
+.scroll-bar .track {
     -fx-background-color: white;
     -fx-border-color: white;
     -fx-background-radius: 0em;
     -fx-border-radius: 2em;
+}
+
+.scroll-bar .track-background {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
 }
 
 .scroll-bar:horizontal .increment-button ,
@@ -161,9 +165,12 @@
     -fx-padding: 0;
 }
 
-.scroll-bar:horizontal .thumb,
-.scroll-bar:vertical .thumb {
+.scroll-bar .thumb {
     -fx-background-color: -scroll-bar-background;
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
+}
+
+.scroll-bar:disabled {
+    -fx-opacity: 0.4;
 }
