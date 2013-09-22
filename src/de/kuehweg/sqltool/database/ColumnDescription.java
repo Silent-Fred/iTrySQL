@@ -46,8 +46,9 @@ public class ColumnDescription implements Comparable<ColumnDescription> {
 
     public ColumnDescription(final String catalog, final String schema,
             final String tableName, final String columnName, final String type,
-            final int size, final int decimalDigits, final Nullability nullable,
-            final String defaultValue, final String remarks) {
+            final int size, final int decimalDigits,
+            final Nullability nullable, final String defaultValue,
+            final String remarks) {
         this.catalog = catalog == null ? "" : catalog;
         this.schema = schema == null ? "" : schema;
         this.tableName = tableName == null ? "" : tableName;
@@ -111,7 +112,7 @@ public class ColumnDescription implements Comparable<ColumnDescription> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -135,7 +136,7 @@ public class ColumnDescription implements Comparable<ColumnDescription> {
     }
 
     @Override
-    public int compareTo(ColumnDescription other) {
+    public int compareTo(final ColumnDescription other) {
         int result = this.catalog.compareTo(other.catalog);
         if (result == 0) {
             result = this.schema.compareTo(other.schema);

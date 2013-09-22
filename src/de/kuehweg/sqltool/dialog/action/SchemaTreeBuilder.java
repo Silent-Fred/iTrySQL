@@ -27,7 +27,7 @@ package de.kuehweg.sqltool.dialog.action;
 
 import de.kuehweg.sqltool.database.CatalogDescription;
 import de.kuehweg.sqltool.database.ColumnDescription;
-import de.kuehweg.sqltool.database.DataBaseDescription;
+import de.kuehweg.sqltool.database.DatabaseDescription;
 import de.kuehweg.sqltool.database.IndexDescription;
 import de.kuehweg.sqltool.database.Nullability;
 import de.kuehweg.sqltool.database.SchemaDescription;
@@ -45,10 +45,10 @@ import javafx.scene.image.ImageView;
  */
 public class SchemaTreeBuilder implements Runnable {
 
-    private final DataBaseDescription db;
+    private final DatabaseDescription db;
     private final TreeView treeToUpdate;
 
-    public SchemaTreeBuilder(final DataBaseDescription db,
+    public SchemaTreeBuilder(final DatabaseDescription db,
             final TreeView treeToUpdate) {
         this.db = db;
         this.treeToUpdate = treeToUpdate;
@@ -59,16 +59,16 @@ public class SchemaTreeBuilder implements Runnable {
         refreshSchemaTree(db, treeToUpdate);
     }
 
-    private void refreshSchemaTree(final DataBaseDescription db,
+    private void refreshSchemaTree(final DatabaseDescription db,
             final TreeView treeToUpdate) {
-        TreeItem root = new TreeItem();
+        final TreeItem root = new TreeItem();
         treeToUpdate.setRoot(root);
         if (db != null) {
             root.setValue(db.getName());
             root.setGraphic(new ImageView(ImagePack.TREE_DATABASE.getAsImage()));
             root.getChildren().clear();
             for (final CatalogDescription catalog : db.getCatalogs()) {
-                TreeItem catalogItem = new TreeItem(catalog.getCatalog());
+                final TreeItem catalogItem = new TreeItem(catalog.getCatalog());
                 catalogItem.getChildren().addAll(getSchemas(catalog));
                 root.getChildren().add(catalogItem);
             }
@@ -76,9 +76,9 @@ public class SchemaTreeBuilder implements Runnable {
     }
 
     private List<TreeItem> getSchemas(final CatalogDescription catalog) {
-        List<TreeItem> schemaItems = new ArrayList<>();
+        final List<TreeItem> schemaItems = new ArrayList<>();
         for (final SchemaDescription schema : catalog.getSchemas()) {
-            TreeItem schemaItem = new TreeItem(schema.getSchema(),
+            final TreeItem schemaItem = new TreeItem(schema.getSchema(),
                     new ImageView(ImagePack.TREE_SCHEMA.getAsImage()));
             schemaItem.getChildren().addAll(getTables(schema));
             schemaItems.add(schemaItem);
@@ -87,18 +87,16 @@ public class SchemaTreeBuilder implements Runnable {
     }
 
     private List<TreeItem> getTables(final SchemaDescription schema) {
-        List<TreeItem> typeItems = new ArrayList<>();
+        final List<TreeItem> typeItems = new ArrayList<>();
         for (final String type : schema.getTableTypes()) {
-            TreeItem typeItem = new TreeItem(type);
-            for (final TableDescription table : schema.getTablesByType(
-                    type)) {
-                TreeItem tableItem = new TreeItem(table.getTableName(),
+            final TreeItem typeItem = new TreeItem(type);
+            for (final TableDescription table : schema.getTablesByType(type)) {
+                final TreeItem tableItem = new TreeItem(table.getTableName(),
                         new ImageView(ImagePack.TREE_TABLE.getAsImage()));
-                if (table.getRemarks() != null && table.getRemarks().
-                        trim().
-                        length() > 0) {
-                    tableItem.getChildren().add(new TreeItem(table.
-                            getRemarks()));
+                if (table.getRemarks() != null
+                        && table.getRemarks().trim().length() > 0) {
+                    tableItem.getChildren().add(
+                            new TreeItem(table.getRemarks()));
                 }
                 tableItem.getChildren().addAll(getColumns(table));
                 tableItem.getChildren().addAll(getIndices(table));
@@ -110,16 +108,17 @@ public class SchemaTreeBuilder implements Runnable {
     }
 
     private List<TreeItem> getColumns(final TableDescription table) {
-        List<TreeItem> columnItems = new ArrayList<>(table.getColumns().size());
+        final List<TreeItem> columnItems = new ArrayList<>(table.getColumns()
+                .size());
         for (final ColumnDescription column : table.getColumns()) {
-            TreeItem columnItem = new TreeItem(column.
-                    getColumnName(), new ImageView(
+            final TreeItem columnItem = new TreeItem(
+                    column.getColumnName(), new ImageView(
                     ImagePack.TREE_COLUMN.getAsImage()));
-            columnItem.getChildren().add(new TreeItem(column.
-                    getType() + "(" + column.getSize() + ")"));
+            columnItem.getChildren().add(
+                    new TreeItem(column.getType() + "(" + column.getSize()
+                    + ")"));
             if (column.getNullable() == Nullability.YES) {
-                columnItem.getChildren().add(
-                        new TreeItem("NULLABLE"));
+                columnItem.getChildren().add(new TreeItem("NULLABLE"));
             }
             columnItems.add(columnItem);
         }
@@ -127,16 +126,14 @@ public class SchemaTreeBuilder implements Runnable {
     }
 
     private List<TreeItem> getIndices(final TableDescription table) {
-        List<TreeItem> indexItems = new ArrayList<>(table.getIndices().size());
+        final List<TreeItem> indexItems = new ArrayList<>(table.getIndices()
+                .size());
         for (final IndexDescription index : table.getIndices()) {
-            TreeItem indexItem = new TreeItem(index.
-                    getIndexName(), new ImageView(
-                    ImagePack.TREE_INDEX.getAsImage()));
-            indexItem.getChildren().add(new TreeItem(index.
-                    getColumnName()));
+            final TreeItem indexItem = new TreeItem(index.getIndexName(),
+                    new ImageView(ImagePack.TREE_INDEX.getAsImage()));
+            indexItem.getChildren().add(new TreeItem(index.getColumnName()));
             if (index.isNonUnique()) {
-                indexItem.getChildren().add(
-                        new TreeItem("NON UNIQUE"));
+                indexItem.getChildren().add(new TreeItem("NON UNIQUE"));
             }
             indexItems.add(indexItem);
         }

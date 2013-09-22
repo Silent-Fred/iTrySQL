@@ -59,12 +59,12 @@ public class ITrySQL extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("iTrySQL.fxml"),
+        Parent root = FXMLLoader.load(getClass().getResource("/resources/fxml/iTrySQL.fxml"),
                 ResourceBundle.getBundle("dictionary"));
 
         Scene scene = new Scene(root);
 
-        scene.getStylesheets().add(ITrySQL.class.getResource("itrysql.css").
+        scene.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").
                 toExternalForm());
 
         stage.setScene(scene);

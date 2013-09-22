@@ -43,16 +43,19 @@ public class FontAction {
         // utility class - no instances desired
     }
 
-    private static void modifyFontSize(final TextArea textArea, double diff) {
+    private static void modifyFontSize(final TextArea textArea,
+            final double diff) {
         if (textArea != null) {
-            Text text = ((Text) textArea.lookup(".text"));
+            final Text text = (Text) textArea.lookup(".text");
             if (text != null) {
-                double fontSize = ((Text) textArea.lookup(".text")).getFont().getSize();
+                double fontSize = ((Text) textArea.lookup(".text")).getFont()
+                        .getSize();
                 fontSize += diff;
                 fontSize = fontSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : fontSize;
                 fontSize = fontSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : fontSize;
                 textArea.setStyle("-fx-font-size: " + (fontSize + diff) + ";");
-                UserPreferencesManager.getSharedInstance().setFontSize((int)Math.round(fontSize));
+                UserPreferencesManager.getSharedInstance().setFontSize(
+                        (int) Math.round(fontSize));
             }
         }
     }
@@ -65,11 +68,13 @@ public class FontAction {
         modifyFontSize(textArea, -1);
     }
 
-    public static void handleFontAction(Event event) {
-        Node source = event != null ? (Node) event.getSource() : null;
+    public static void handleFontAction(final Event event) {
+        final Node source = event != null ? (Node) event.getSource() : null;
         if (source != null) {
-            TextArea statementInput = (TextArea) source.getScene().lookup("#statementInput");
-            TextArea dbOutput = (TextArea) source.getScene().lookup("#dbOutput");
+            final TextArea statementInput = (TextArea) source.getScene()
+                    .lookup("#statementInput");
+            final TextArea dbOutput = (TextArea) source.getScene().lookup(
+                    "#dbOutput");
             if (statementInput != null) {
                 switch (source.getId()) {
                     case "toolbarZoomIn":
@@ -84,5 +89,4 @@ public class FontAction {
             }
         }
     }
-
 }

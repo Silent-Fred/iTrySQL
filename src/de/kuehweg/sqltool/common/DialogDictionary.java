@@ -48,6 +48,7 @@ public enum DialogDictionary {
     MSG_NO_STATEMENT_TO_EXECUTE("msg_noStatementToExecute"),
     MSG_REALLY_REMOVE_CONNECTION("msg_reallyRemoveConnection"),
     MSG_REALLY_CREATE_TUTORIAL_DATA("msg_reallyCreateTutorialData"),
+    MSG_SELECT_CONNECTION("msg_selectConnection"),
     MESSAGEBOX_INFO("label_info"),
     MESSAGEBOX_WARNING("label_warning"),
     MESSAGEBOX_CONFIRM("label_confirm"),

@@ -25,7 +25,7 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.database.DataBaseDescription;
+import de.kuehweg.sqltool.database.DatabaseDescription;
 import de.kuehweg.sqltool.database.MetaDataReader;
 import java.sql.Connection;
 import javafx.application.Platform;
@@ -49,8 +49,7 @@ public class SchemaTreeBuilderTask extends Task<Void> {
 
     @Override
     protected Void call() throws Exception {
-        DataBaseDescription db = MetaDataReader.readMetaData(
-                connection);
+        final DatabaseDescription db = MetaDataReader.readMetaData(connection);
         Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
         return null;
     }

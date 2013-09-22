@@ -51,7 +51,7 @@ import javafx.util.Callback;
 public class ExecutionGUIUpdater implements Runnable {
 
     private static final int MAX_DBOUTPUT = 1024 * 1024;
-    private Scene sceneToUpdate;
+    private final Scene sceneToUpdate;
     private final SQLHistoryKeeper historyKeeper;
     private final long startTime;
     private long executionTimeInMilliseconds;
@@ -112,7 +112,8 @@ public class ExecutionGUIUpdater implements Runnable {
 
     private void updateScene() {
         if (executionTimeInMilliseconds == 0) {
-            executionTimeInMilliseconds = System.currentTimeMillis() - startTime;
+            executionTimeInMilliseconds = System.currentTimeMillis()
+                    - startTime;
         }
         if (intermediateUpdate) {
             ActionVisualisation.prepareSceneRunning(sceneToUpdate);
@@ -123,22 +124,24 @@ public class ExecutionGUIUpdater implements Runnable {
         if (errorThatOccurred == null) {
             historyKeeper.addExecutedSQLToHistory(sqlForHistory);
             if (resultFormatter != null) {
-                TextArea dbOutput = (TextArea) sceneToUpdate.lookup("#dbOutput");
+                final TextArea dbOutput = (TextArea) sceneToUpdate
+                        .lookup("#dbOutput");
                 if (dbOutput != null) {
-                    String currentResult = new TextResultFormatter(
+                    final String currentResult = new TextResultFormatter(
                             resultFormatter).formatAsText();
                     if (dbOutput.getText().length() + currentResult.length()
                             < MAX_DBOUTPUT) {
                         dbOutput.appendText(currentResult);
                     } else {
-                        int howMuchFromOld = MAX_DBOUTPUT - currentResult.
-                                length();
-                        howMuchFromOld = howMuchFromOld < 0 ? 0 : howMuchFromOld;
+                        int howMuchFromOld = MAX_DBOUTPUT
+                                - currentResult.length();
+                        howMuchFromOld = howMuchFromOld < 0 ? 0
+                                : howMuchFromOld;
                         int startInOld = dbOutput.getText().length()
                                 - howMuchFromOld - 1;
                         startInOld = startInOld < 0 ? 0 : startInOld;
-                        String old = dbOutput.getText(startInOld, dbOutput.
-                                getText().length());
+                        final String old = dbOutput.getText(startInOld,
+                                dbOutput.getText().length());
                         dbOutput.setText(old + currentResult);
                     }
                     dbOutput.appendText("\n");
@@ -146,7 +149,7 @@ public class ExecutionGUIUpdater implements Runnable {
                 buildTableViewFromResultFormatter();
             }
         } else {
-            ErrorMessage msg = new ErrorMessage(
+            final ErrorMessage msg = new ErrorMessage(
                     DialogDictionary.MESSAGEBOX_ERROR.toString(),
                     errorThatOccurred,
                     DialogDictionary.COMMON_BUTTON_OK.toString());
@@ -155,31 +158,32 @@ public class ExecutionGUIUpdater implements Runnable {
     }
 
     private void buildTableViewFromResultFormatter() {
-        HBox resultTableContainer = (HBox) sceneToUpdate.lookup(
-                "#resultTableContainer");
+        final HBox resultTableContainer = (HBox) sceneToUpdate
+                .lookup("#resultTableContainer");
         resultTableContainer.getChildren().clear();
-        TableView<ObservableList> dynamicTableView = new TableView<>();
+        final TableView<ObservableList> dynamicTableView = new TableView<>();
         int i = 0;
         for (final String head : resultFormatter.getHeader()) {
-            TableColumn col = new TableColumn(head);
+            final TableColumn col = new TableColumn(head);
             col.setMinWidth(100);
             final int accessIndex = i++;
             col.setCellValueFactory(
                     new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
                 @Override
                 public ObservableValue<String> call(
-                        CellDataFeatures<ObservableList, String> param) {
-                    return new SimpleStringProperty(param.getValue().get(
-                            accessIndex).toString());
+                        final CellDataFeatures<ObservableList, String> param) {
+                    return new SimpleStringProperty(param.getValue()
+                            .get(accessIndex).toString());
                 }
             });
             dynamicTableView.getColumns().add(col);
         }
-        ObservableList<ObservableList> content = FXCollections.
-                observableArrayList();
+        final ObservableList<ObservableList> content = FXCollections
+                .observableArrayList();
         for (final List<String> rowFromFormatter : resultFormatter.getRows()) {
-            ObservableList<String> row = FXCollections.observableArrayList();
-            for (String column : rowFromFormatter) {
+            final ObservableList<String> row = FXCollections
+                    .observableArrayList();
+            for (final String column : rowFromFormatter) {
                 row.add(column);
             }
             content.add(row);
@@ -187,8 +191,7 @@ public class ExecutionGUIUpdater implements Runnable {
 
         dynamicTableView.setItems(content);
 
-        resultTableContainer.getChildren()
-                .add(dynamicTableView);
+        resultTableContainer.getChildren().add(dynamicTableView);
         HBox.setHgrow(dynamicTableView, Priority.ALWAYS);
     }
 }

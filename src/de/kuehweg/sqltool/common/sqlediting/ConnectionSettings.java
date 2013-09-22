@@ -56,7 +56,7 @@ public class ConnectionSettings {
     private Set<ConnectionSetting> connectionSettings;
 
     public ConnectionSettings() {
-        // mehrere Instanzen von ConnectionSettings können angelegt werden,
+        // mehrere Instanzen von ConnectionSettings k��nnen angelegt werden,
         // die eigentliche Ablage in den Preferences passiert aber zentral
         // pro Anwender
         preferences = Preferences.userNodeForPackage(getClass()).node(
@@ -65,7 +65,7 @@ public class ConnectionSettings {
 
     private void initConnectionSettingsFromPreferences() {
         try {
-            Collection<String> keys = Arrays.asList(preferences.keys());
+            final Collection<String> keys = Arrays.asList(preferences.keys());
             final Map<String, ConnectionSetting> settings = new HashMap<>();
             for (final String key : keys) {
                 final String name = extractConnectionNameFromKey(key);
@@ -79,20 +79,18 @@ public class ConnectionSettings {
                     setSettingFromKey(setting, key);
                 }
             }
-            connectionSettings = new HashSet<>(
-                    settings.values());
+            connectionSettings = new HashSet<>(settings.values());
             connectionSettings.add(getDefaultConnection());
         } catch (final BackingStoreException e) {
-            connectionSettings = new HashSet<>(Collections.singleton(
-                    getDefaultConnection()));
+            connectionSettings = new HashSet<>(
+                    Collections.singleton(getDefaultConnection()));
         }
     }
 
     private static ConnectionSetting getDefaultConnection() {
         return new ConnectionSetting(
                 DialogDictionary.LABEL_DEFAULT_CONNECTION.toString(),
-                JDBCType.HSQL_IN_MEMORY, null, "rastelli",
-                null, null);
+                JDBCType.HSQL_IN_MEMORY, null, "rastelli", null, null);
     }
 
     public List<ConnectionSetting> getConnectionSettings() {

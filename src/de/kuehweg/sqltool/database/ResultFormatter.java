@@ -61,10 +61,11 @@ public class ResultFormatter {
         rows.add(Arrays.copyOf(row, row.length));
     }
 
-    public void fillFromStatementResult(final Statement statement) throws SQLException {
+    public void fillFromStatementResult(final Statement statement)
+            throws SQLException {
         initialised = true;
-        setHeader(new String[]{DialogDictionary.LABEL_RESULT_EXECUTED.
-            toString()});
+        setHeader(new String[]{DialogDictionary.LABEL_RESULT_EXECUTED
+            .toString()});
         rows = new LinkedList<>();
         executedAt = new Date();
         if (statement == null) {
@@ -97,18 +98,18 @@ public class ResultFormatter {
                     addRow(row);
                 }
             }
-        } catch (SQLException ex) {
-            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
-                toString()});
+        } catch (final SQLException ex) {
+            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR
+                .toString()});
             rows.clear();
         }
         try {
             if (resultSet != null) {
                 resultSet.close();
             }
-        } catch (SQLException ex) {
-            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
-                toString()});
+        } catch (final SQLException ex) {
+            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR
+                .toString()});
             addRow(new String[]{DialogDictionary.LABEL_EMPTY.toString()});
         }
     }
@@ -127,11 +128,11 @@ public class ResultFormatter {
 
     public String[] getHeader() {
         if (!initialised) {
-            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
-                toString()});
+            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR
+                .toString()});
             addRow(new String[]{DialogDictionary.LABEL_EMPTY.toString()});
         }
-        String[] result = new String[header.length];
+        final String[] result = new String[header.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = header[i].toString();
         }
@@ -140,15 +141,15 @@ public class ResultFormatter {
 
     public List<List<String>> getRows() {
         if (!initialised) {
-            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR.
-                toString()});
+            setHeader(new String[]{DialogDictionary.LABEL_RESULT_ERROR
+                .toString()});
             addRow(new String[]{DialogDictionary.LABEL_EMPTY.toString()});
         }
-        List<List<String>> result = new ArrayList<>(rows.size());
+        final List<List<String>> result = new ArrayList<>(rows.size());
         if (!headOnly) {
             for (final Object[] row : rows) {
-                List<String> oneRow = new ArrayList<>(header.length);
-                for (Object col : row) {
+                final List<String> oneRow = new ArrayList<>(header.length);
+                for (final Object col : row) {
                     oneRow.add(col != null ? col.toString() : "");
                 }
                 result.add(oneRow);

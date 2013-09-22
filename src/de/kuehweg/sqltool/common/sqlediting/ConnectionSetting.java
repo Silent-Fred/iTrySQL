@@ -117,7 +117,7 @@ public class ConnectionSetting implements Serializable,
         }
         try {
             return url + URLEncoder.encode(dbName, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
+        } catch (final UnsupportedEncodingException ex) {
             return url + "johndoe";
         }
     }
@@ -129,7 +129,7 @@ public class ConnectionSetting implements Serializable,
         }
         try {
             return url + URLEncoder.encode(dbName, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
+        } catch (final UnsupportedEncodingException ex) {
             return url + "johndoe";
         }
     }

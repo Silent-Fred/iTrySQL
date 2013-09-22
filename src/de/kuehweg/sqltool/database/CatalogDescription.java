@@ -39,7 +39,7 @@ import java.util.Set;
 public class CatalogDescription implements Comparable<CatalogDescription> {
 
     private final String catalog;
-    private Set<SchemaDescription> schemas;
+    private final Set<SchemaDescription> schemas;
 
     public CatalogDescription(final String catalog) {
         this.catalog = catalog == null ? "" : catalog;
@@ -51,12 +51,12 @@ public class CatalogDescription implements Comparable<CatalogDescription> {
     }
 
     public List<SchemaDescription> getSchemas() {
-        List<SchemaDescription> result = new ArrayList<>(schemas);
+        final List<SchemaDescription> result = new ArrayList<>(schemas);
         Collections.sort(result);
         return result;
     }
 
-    public void addSchemas(SchemaDescription... schs) {
+    public void addSchemas(final SchemaDescription... schs) {
         for (final SchemaDescription schema : schs) {
             schemas.add(schema);
         }
@@ -70,7 +70,7 @@ public class CatalogDescription implements Comparable<CatalogDescription> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -85,7 +85,7 @@ public class CatalogDescription implements Comparable<CatalogDescription> {
     }
 
     @Override
-    public int compareTo(CatalogDescription other) {
+    public int compareTo(final CatalogDescription other) {
         return this.catalog.compareTo(other.catalog);
     }
 }

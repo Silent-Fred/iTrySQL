@@ -47,7 +47,7 @@ public class ServerManager {
     private Server server;
 
     private ServerManager() {
-        // kein Aufruf von außerhalb
+        // kein Aufruf von au��erhalb
     }
 
     public static ServerManager getSharedInstance() {
@@ -55,33 +55,33 @@ public class ServerManager {
     }
 
     public void startServer(final ConnectionSetting connectionSetting,
-            final String alias) throws IOException, ServerAcl.AclFormatException, IllegalArgumentException {
+            final String alias) throws IOException,
+            ServerAcl.AclFormatException, IllegalArgumentException {
         try {
-            // eventuell noch laufende andere  beenden
+            // eventuell noch laufende andere beenden
             shutdownServer();
-        } catch (Throwable ex) {
+        } catch (final Throwable ex) {
         }
-        if (connectionSetting == null || !connectionSetting.getType().
-                isPossibleServer()) {
+        if (connectionSetting == null
+                || !connectionSetting.getType().isPossibleServer()) {
             throw new IllegalArgumentException(
-                    "Illegal: HSQL-Server based on type " + (connectionSetting
-                    == null ? "<null>" : connectionSetting.
-                    getType()));
+                    "Illegal: HSQL-Server based on type "
+                    + (connectionSetting == null ? "<null>"
+                    : connectionSetting.getType()));
         }
-        HsqlProperties properties = new HsqlProperties();
-        properties.setProperty("server.database.0", connectionSetting.
-                getUrlWithoutTypePrefix());
-        String dbname =
-                alias != null && alias.trim().length() > 0 ? alias : connectionSetting.
-                getDbName();
+        final HsqlProperties properties = new HsqlProperties();
+        properties.setProperty("server.database.0",
+                connectionSetting.getUrlWithoutTypePrefix());
+        String dbname = alias != null && alias.trim().length() > 0 ? alias
+                : connectionSetting.getDbName();
         try {
             dbname = URLEncoder.encode(dbname, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
+        } catch (final UnsupportedEncodingException ex) {
             dbname = "johndoe";
         }
         properties.setProperty("server.dbname.0", dbname);
         // server.silent true - default
-        // server.trace	false - default
+        // server.trace false - default
         // server.address - default
         // server.tls false - default
         // server.daemon false - default
@@ -103,7 +103,7 @@ public class ServerManager {
         }
         try {
             server.checkRunning(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
         return true;

@@ -55,23 +55,32 @@ public abstract class CommonDialog extends Stage {
     public CommonDialog(final String message) {
         super();
         try {
-            final Parent root = FXMLLoader.load(CommonDialog.class.getResource("CommonDialog.fxml"), ResourceBundle.getBundle("dictionary"));
+            final Parent root = FXMLLoader
+                    .load(getClass().getResource(
+                    "/resources/fxml/CommonDialog.fxml"),
+                    ResourceBundle.getBundle("dictionary"));
             initStyle(StageStyle.UTILITY);
             setScene(new Scene(root));
-            Label messageLabel = (Label) getScene().lookup("#message");
+            final Label messageLabel = (Label) getScene().lookup("#message");
             if (messageLabel != null) {
                 messageLabel.setText(message);
             }
             centerOnScreen();
             setResizable(false);
             initModality(Modality.APPLICATION_MODAL);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             initStyle(StageStyle.UTILITY);
             initModality(Modality.APPLICATION_MODAL);
             setScene(new Scene(
-                    VBoxBuilder.create().
-                    children(new Text(DialogDictionary.APPLICATION.toString()),
-                    new Text(DialogDictionary.ERR_LOAD_FXML.toString())).alignment(Pos.CENTER).padding(new Insets(50)).build()));
+                    VBoxBuilder
+                    .create()
+                    .children(
+                    new Text(
+                    DialogDictionary.APPLICATION
+                    .toString()),
+                    new Text(DialogDictionary.ERR_LOAD_FXML
+                    .toString())).alignment(Pos.CENTER)
+                    .padding(new Insets(50)).build()));
             centerOnScreen();
             setResizable(false);
             setTitle("Alert");
@@ -79,30 +88,30 @@ public abstract class CommonDialog extends Stage {
     }
 
     public void specializeDialogTitle(final String titleText) {
-        Label titleLabel = (Label) getScene().lookup("#title");
+        final Label titleLabel = (Label) getScene().lookup("#title");
         if (titleLabel != null) {
             titleLabel.setText(titleText);
         }
     }
 
     public void specializeDialogIcon(final ImagePack image) {
-        ImageView icon = (ImageView) getScene().lookup("#icon");
+        final ImageView icon = (ImageView) getScene().lookup("#icon");
         if (icon != null) {
             icon.setImage(image.getAsImage());
         }
     }
 
     public void addDialogButtons(final String... buttons) {
-        HBox buttonBox = (HBox) getScene().lookup("#buttonBox");
+        final HBox buttonBox = (HBox) getScene().lookup("#buttonBox");
         if (buttonBox != null) {
             boolean first = true;
             for (final String button : buttons) {
-                Button buttonNode = new Button(button);
+                final Button buttonNode = new Button(button);
                 buttonNode.setDefaultButton(first);
                 first = false;
                 buttonNode.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
-                    public void handle(ActionEvent event) {
+                    public void handle(final ActionEvent event) {
                         activatedButton = button;
                         close();
                     }

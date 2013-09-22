@@ -31,10 +31,10 @@ package de.kuehweg.sqltool.database;
 public enum JDBCType {
 
     HSQL_IN_MEMORY("HSQL Database Engine In-Memory", "org.hsqldb.jdbcDriver",
-    "jdbc:hsqldb:", "mem:", false),
-    HSQL_STANDALONE("HSQL Database Engine Standalone", "org.hsqldb.jdbcDriver",
-    "jdbc:hsqldb:", "file:", true),
-    HSQL_SERVER("HSQL Database Engine Server", "org.hsqldb.jdbcDriver",
+    "jdbc:hsqldb:", "mem:", false), HSQL_STANDALONE(
+    "HSQL Database Engine Standalone", "org.hsqldb.jdbcDriver",
+    "jdbc:hsqldb:", "file:", true), HSQL_SERVER(
+    "HSQL Database Engine Server", "org.hsqldb.jdbcDriver",
     "jdbc:hsqldb:", "hsql:", false);
     private String name;
     private String driverClass;
@@ -43,7 +43,8 @@ public enum JDBCType {
     private boolean possibleServer;
 
     private JDBCType(final String name, final String driverClass,
-            final String urlPrefix, final String dbType, final boolean possibleServer) {
+            final String urlPrefix, final String dbType,
+            final boolean possibleServer) {
         this.name = name;
         this.driverClass = driverClass;
         this.urlPrefix = urlPrefix;

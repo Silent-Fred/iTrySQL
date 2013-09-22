@@ -56,41 +56,42 @@ public class ExecutionTask extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         try {
-            long timing = System.currentTimeMillis();
-            List<String> statements = StatementExtractor.
-                    getStatementsFromScript(sql);
+            final long timing = System.currentTimeMillis();
+            final List<String> statements = StatementExtractor
+                    .getStatementsFromScript(sql);
             if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
                 statement.setMaxRows(DatabaseConstants.MAX_ROWS);
             }
-            Iterator<String> queryIterator = statements.iterator();
+            final Iterator<String> queryIterator = statements.iterator();
             while (queryIterator.hasNext() && !isCancelled()) {
-                String singleQuery = queryIterator.next();
+                final String singleQuery = queryIterator.next();
                 statement.execute(singleQuery);
                 if (guiUpdater.isSilent()) {
                     continue;
                 }
-                ResultFormatter resultFormatter =
-                        new ResultFormatter();
+                final ResultFormatter resultFormatter = new ResultFormatter();
                 resultFormatter.fillFromStatementResult(statement);
-                // Datenbankzugriff und Aufbereitung der Daten werden zusammen in die Laufzeit eingerechnet
+                // Datenbankzugriff und Aufbereitung der Daten werden zusammen
+                // in die Laufzeit eingerechnet
                 // Zwischenstand ausgeben
                 if (guiUpdater != null) {
-                    ExecutionGUIUpdater intermediateResultUpdater =
-                            new ExecutionGUIUpdater(guiUpdater.
-                            getSceneToUpdate(),
+                    final ExecutionGUIUpdater intermediateResultUpdater =
+                            new ExecutionGUIUpdater(
+                            guiUpdater.getSceneToUpdate(),
                             guiUpdater.getHistoryKeeper());
-                    intermediateResultUpdater.setExecutionTimeInMilliseconds(
-                            System.currentTimeMillis() - timing);
-                    intermediateResultUpdater.
-                            setResultFormatter(resultFormatter);
+                    intermediateResultUpdater
+                            .setExecutionTimeInMilliseconds(System
+                            .currentTimeMillis() - timing);
+                    intermediateResultUpdater
+                            .setResultFormatter(resultFormatter);
                     intermediateResultUpdater.setIntermediateUpdate(true);
                     intermediateResultUpdater.setSqlForHistory(singleQuery);
                     Platform.runLater(intermediateResultUpdater);
                 }
             }
         } catch (final SQLException ex) {
-            String msg = ex.getLocalizedMessage() + " (SQL-State: " + ex.
-                    getSQLState() + ")";
+            final String msg = ex.getLocalizedMessage() + " (SQL-State: "
+                    + ex.getSQLState() + ")";
             if (guiUpdater != null) {
                 guiUpdater.setErrorThatOccurred(msg);
             }
@@ -98,7 +99,7 @@ public class ExecutionTask extends Task<Void> {
             if (guiUpdater != null) {
                 if (guiUpdater.isSilent()) {
                     guiUpdater.setSqlForHistory(null);
-                    ResultFormatter resultFormatter =
+                    final ResultFormatter resultFormatter =
                             new ResultFormatter();
                     resultFormatter.fillFromStatementResult(null);
                     guiUpdater.setResultFormatter(resultFormatter);

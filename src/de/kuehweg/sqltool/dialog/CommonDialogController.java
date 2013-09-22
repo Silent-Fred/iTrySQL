@@ -33,32 +33,23 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
+public class CommonDialogController implements Initializable {
 
-public class CommonDialogController
-    implements Initializable {
+    @FXML
+    private HBox buttonBox;
+    @FXML
+    private ImageView icon;
+    @FXML
+    private Label message;
+    @FXML
+    private Label title;
 
-    @FXML //  fx:id="buttonBox"
-    private HBox buttonBox; // Value injected by FXMLLoader
-
-    @FXML //  fx:id="icon"
-    private ImageView icon; // Value injected by FXMLLoader
-
-    @FXML //  fx:id="message"
-    private Label message; // Value injected by FXMLLoader
-
-    @FXML //  fx:id="title"
-    private Label title; // Value injected by FXMLLoader
-
-
-    @Override // This method is called by the FXMLLoader when initialization is complete
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    @Override
+    public void initialize(final URL fxmlFileLocation,
+            final ResourceBundle resources) {
         assert buttonBox != null : "fx:id=\"buttonBox\" was not injected: check your FXML file 'CommonDialog.fxml'.";
         assert icon != null : "fx:id=\"icon\" was not injected: check your FXML file 'CommonDialog.fxml'.";
         assert message != null : "fx:id=\"message\" was not injected: check your FXML file 'CommonDialog.fxml'.";
         assert title != null : "fx:id=\"title\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-
-        // initialize your logic here: all @FXML variables will have been injected
-
     }
-
 }

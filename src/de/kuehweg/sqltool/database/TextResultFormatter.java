@@ -48,7 +48,8 @@ public class TextResultFormatter {
 
         // Spaltenbreiten ermitteln (Titel)
         for (int i = 0; i < columnCount; i++) {
-            width[i] = resultFormatter.getHeader()[i].toString().trim().length();
+            width[i] = resultFormatter.getHeader()[i].toString().trim()
+                    .length();
         }
 
         // Spaltenbreiten ermitteln (Inhalt)
@@ -78,13 +79,14 @@ public class TextResultFormatter {
         final StringBuilder builder = new StringBuilder();
         builder.append(MessageFormat.format(
                 DialogDictionary.PATTERN_EXECUTION_TIMESTAMP.toString(),
-                resultFormatter.getExecutedAt(), resultFormatter.getExecutedBy()));
+                resultFormatter.getExecutedAt(),
+                resultFormatter.getExecutedBy()));
         builder.append("\n\n");
 
         final int width = resultFormatter.getHeader().length;
         final int[] size = calculateColumnWidths();
 
-        // Spaltenüberschriften aufbauen
+        // Spalten��berschriften aufbauen
         for (int i = 0; i < width; i++) {
             builder.append(rightPad(resultFormatter.getHeader()[i].toString(),
                     " ", size[i]));
@@ -102,8 +104,8 @@ public class TextResultFormatter {
             for (final List<String> row : resultFormatter.getRows()) {
                 int columnIndex = 0;
                 for (final String column : row) {
-                    builder.append(rightPad(column == null ? "" : column.trim(),
-                            " ",
+                    builder.append(rightPad(
+                            column == null ? "" : column.trim(), " ",
                             size[columnIndex]));
                     builder.append(' ');
                     columnIndex++;
@@ -113,9 +115,9 @@ public class TextResultFormatter {
             builder.append("\n");
             builder.append(MessageFormat.format(
                     DialogDictionary.PATTERN_ROWCOUNT.toString(),
-                    resultFormatter.getRows().
-                    size()));
-            // ist das Ergebnis eventuell abgeschnitten, wird eine Meldung ausgegeben
+                    resultFormatter.getRows().size()));
+            // ist das Ergebnis eventuell abgeschnitten, wird eine Meldung
+            // ausgegeben
             if (resultFormatter.getRows().size() >= DatabaseConstants.MAX_ROWS) {
                 if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
                     builder.append("\n\n");

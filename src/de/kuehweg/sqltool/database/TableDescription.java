@@ -43,8 +43,8 @@ public class TableDescription implements Comparable<TableDescription> {
     private final String tableName;
     private final String tableType;
     private final String remarks;
-    private Set<ColumnDescription> columns;
-    private Set<IndexDescription> indices;
+    private final Set<ColumnDescription> columns;
+    private final Set<IndexDescription> indices;
 
     public TableDescription(final String catalog, final String schema,
             final String tableName, final String tableType, final String remarks) {
@@ -78,24 +78,24 @@ public class TableDescription implements Comparable<TableDescription> {
     }
 
     public List<ColumnDescription> getColumns() {
-        List<ColumnDescription> result = new ArrayList<>(columns);
+        final List<ColumnDescription> result = new ArrayList<>(columns);
         Collections.sort(result);
         return result;
     }
 
-    public void addColumns(ColumnDescription... cols) {
+    public void addColumns(final ColumnDescription... cols) {
         for (final ColumnDescription col : cols) {
             columns.add(col);
         }
     }
 
     public List<IndexDescription> getIndices() {
-        List<IndexDescription> result = new ArrayList<>(indices);
+        final List<IndexDescription> result = new ArrayList<>(indices);
         Collections.sort(result);
         return result;
     }
 
-    public void addIndices(IndexDescription... inds) {
+    public void addIndices(final IndexDescription... inds) {
         for (final IndexDescription index : inds) {
             indices.add(index);
         }
@@ -111,7 +111,7 @@ public class TableDescription implements Comparable<TableDescription> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -132,7 +132,7 @@ public class TableDescription implements Comparable<TableDescription> {
     }
 
     @Override
-    public int compareTo(TableDescription other) {
+    public int compareTo(final TableDescription other) {
         int result = this.catalog.compareTo(other.catalog);
         if (result == 0) {
             result = this.schema.compareTo(other.schema);

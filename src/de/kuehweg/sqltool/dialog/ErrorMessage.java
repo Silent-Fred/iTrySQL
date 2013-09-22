@@ -32,7 +32,8 @@ import de.kuehweg.sqltool.dialog.images.ImagePack;
  */
 public class ErrorMessage extends CommonDialog {
 
-    public ErrorMessage(final String title, final String message, final String buttonText) {
+    public ErrorMessage(final String title, final String message,
+            final String buttonText) {
         super(message);
         specializeDialogTitle(title);
         specializeDialogIcon(ImagePack.MSG_ERROR);

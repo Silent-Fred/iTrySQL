@@ -52,11 +52,12 @@ public class StatementExtractor {
         int pos = 0;
         String maybeFinalStatement = "";
         while (pos < input.length) {
-            while (state != StatementExtractionStates.FINAL && pos
-                    < input.length) {
+            while (state != StatementExtractionStates.FINAL
+                    && pos < input.length) {
                 state = state.evaluate(input[pos++]);
             }
-            String statement = new String(input, lastPos, pos - lastPos).trim();
+            final String statement = new String(input, lastPos, pos - lastPos)
+                    .trim();
             if (statement.length() > 0) {
                 maybeFinalStatement = statement;
             }
@@ -79,11 +80,12 @@ public class StatementExtractor {
         int lastPos = 0;
         int pos = 0;
         while (pos < input.length) {
-            while (state != StatementExtractionStates.FINAL && pos
-                    < input.length) {
+            while (state != StatementExtractionStates.FINAL
+                    && pos < input.length) {
                 state = state.evaluate(input[pos++]);
             }
-            String statement = new String(input, lastPos, pos - lastPos).trim();
+            final String statement = new String(input, lastPos, pos - lastPos)
+                    .trim();
             lastPos = pos;
             if (statement.length() > 0) {
                 statements.add(statement);

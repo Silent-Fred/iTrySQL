@@ -35,12 +35,12 @@ import java.util.Set;
  *
  * @author Michael Kühweg
  */
-public class DataBaseDescription {
+public class DatabaseDescription {
 
     private final String name;
-    private Set<CatalogDescription> catalogs;
+    private final Set<CatalogDescription> catalogs;
 
-    public DataBaseDescription(final String name) {
+    public DatabaseDescription(final String name) {
         this.name = name == null ? "" : name;
         catalogs = new HashSet<>(32);
     }
@@ -50,12 +50,12 @@ public class DataBaseDescription {
     }
 
     public List<CatalogDescription> getCatalogs() {
-        List<CatalogDescription> result = new ArrayList<>(catalogs);
+        final List<CatalogDescription> result = new ArrayList<>(catalogs);
         Collections.sort(result);
         return result;
     }
 
-    public void addCatalogs(CatalogDescription... cats) {
+    public void addCatalogs(final CatalogDescription... cats) {
         for (final CatalogDescription catalog : cats) {
             catalogs.add(catalog);
         }

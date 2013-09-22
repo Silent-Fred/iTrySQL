@@ -23,7 +23,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 package de.kuehweg.sqltool.dialog;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
@@ -43,26 +42,32 @@ import javafx.stage.StageStyle;
  *
  * @author Michael Kühweg
  */
-public class License  extends Stage{
+public class License extends Stage {
 
     public License() {
         super();
         try {
             final Parent root;
-            root = FXMLLoader.load(License.class.getResource("License.fxml"), ResourceBundle.getBundle("dictionary"));
+            root = FXMLLoader.load(
+                    getClass().getResource("/resources/fxml/License.fxml"),
+                    ResourceBundle.getBundle("dictionary"));
             initStyle(StageStyle.UTILITY);
             setScene(new Scene(root));
             centerOnScreen();
             setResizable(false);
             initModality(Modality.APPLICATION_MODAL);
             setTitle(DialogDictionary.APPLICATION.toString());
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             initStyle(StageStyle.UTILITY);
             initModality(Modality.APPLICATION_MODAL);
             setScene(new Scene(
-                    VBoxBuilder.create().
-                    children(new Text(DialogDictionary.APPLICATION.toString()),
-                    new Text(DialogDictionary.ERR_LOAD_FXML.toString())).alignment(Pos.CENTER).padding(new Insets(50)).build()));
+                    VBoxBuilder
+                    .create()
+                    .children(
+                    new Text(DialogDictionary.APPLICATION.toString()),
+                    new Text(DialogDictionary.ERR_LOAD_FXML
+                    .toString())).alignment(Pos.CENTER)
+                    .padding(new Insets(50)).build()));
             centerOnScreen();
             setResizable(false);
             setTitle(DialogDictionary.APPLICATION.toString());

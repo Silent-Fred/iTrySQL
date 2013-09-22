@@ -35,17 +35,17 @@ import javafx.scene.web.WebView;
  *
  * @author Michael Kühweg
  */
-public class LicenseController
-        implements Initializable {
+public class LicenseController implements Initializable {
 
-    @FXML //  fx:id="licenseWebView"
-    private WebView licenseWebView; // Value injected by FXMLLoader
+    @FXML
+    private WebView licenseWebView;
 
-    @Override // This method is called by the FXMLLoader when initialization is complete
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    @Override
+    public void initialize(final URL fxmlFileLocation,
+            final ResourceBundle resources) {
         assert licenseWebView != null : "fx:id=\"licenseWebView\" was not injected: check your FXML file 'License.fxml'.";
 
-        // initialize your logic here: all @FXML variables will have been injected
-        licenseWebView.getEngine().load(this.getClass().getResource("license.html").toExternalForm());
+        licenseWebView.getEngine().load(
+                this.getClass().getResource("license.html").toExternalForm());
     }
 }

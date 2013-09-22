@@ -13,7 +13,7 @@
   <children>
     <ImageView fitHeight="225.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <image>
-        <Image url="@images/about.png" preserveRatio="false" smooth="false" />
+        <Image url="@../images/about.png" preserveRatio="false" smooth="false" />
       </image>
     </ImageView>
     <Label alignment="BOTTOM_RIGHT" prefWidth="275.0" text="%application_copyright" textAlignment="RIGHT" textFill="WHITE" AnchorPane.bottomAnchor="257.0" AnchorPane.rightAnchor="7.0">

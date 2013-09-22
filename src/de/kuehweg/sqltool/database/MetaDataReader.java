@@ -42,29 +42,34 @@ import java.util.logging.Logger;
  */
 public class MetaDataReader {
 
-    public static DataBaseDescription readMetaData(
-            final Connection connection) {
+    private MetaDataReader() {
+        // utility class
+    }
+
+    public static DatabaseDescription readMetaData(final Connection connection) {
         String dbName = "DB";
-        DataBaseDescription db = null;
-        Map<SchemaDescription, SchemaDescription> schemas =
+        DatabaseDescription db = null;
+        final Map<SchemaDescription, SchemaDescription> schemas =
                 new HashMap<>();
         try {
-            DatabaseMetaData metaData = connection.getMetaData();
+            final DatabaseMetaData metaData = connection.getMetaData();
             dbName = metaData.getUserName() + "@" + metaData.getURL();
-            db = new DataBaseDescription(dbName);
-            Collection<TableDescription> tableDescriptions = new HashSet<>();
-            ResultSet tables = connection.getMetaData().getTables(null, null,
-                    null,
-                    null);
+            db = new DatabaseDescription(dbName);
+            final Collection<TableDescription> tableDescriptions =
+                    new HashSet<>();
+            final ResultSet tables = connection.getMetaData().getTables(null,
+                    null, null, null);
             while (tables.next()) {
-                TableDescription tableDescription = new TableDescription(tables.
-                        getString("TABLE_CAT"),
-                        tables.getString("TABLE_SCHEM"), tables.getString(
-                        "TABLE_NAME"), tables.getString("TABLE_TYPE"), tables.
-                        getString("REMARKS"));
+                final TableDescription tableDescription = new TableDescription(
+                        tables.getString("TABLE_CAT"),
+                        tables.getString("TABLE_SCHEM"),
+                        tables.getString("TABLE_NAME"),
+                        tables.getString("TABLE_TYPE"),
+                        tables.getString("REMARKS"));
                 tableDescriptions.add(tableDescription);
-                SchemaDescription key = new SchemaDescription(tableDescription.
-                        getCatalog(), tableDescription.getSchema());
+                final SchemaDescription key = new SchemaDescription(
+                        tableDescription.getCatalog(),
+                        tableDescription.getSchema());
                 SchemaDescription value = schemas.get(key);
                 if (value == null) {
                     value = key;
@@ -75,16 +80,16 @@ public class MetaDataReader {
             tables.close();
             readColumnsForGivenTables(metaData, tableDescriptions);
             readIndicesForGivenTables(metaData, tableDescriptions);
-        } catch (SQLException ex) {
-            Logger.getLogger(MetaDataReader.class.getName()).
-                    log(Level.SEVERE, null, ex);
-            db = new DataBaseDescription(dbName);
+        } catch (final SQLException ex) {
+            Logger.getLogger(MetaDataReader.class.getName()).log(Level.SEVERE,
+                    null, ex);
+            db = new DatabaseDescription(dbName);
         } finally {
-            Map<CatalogDescription, CatalogDescription> catalogs =
+            final Map<CatalogDescription, CatalogDescription> catalogs =
                     new HashMap<>();
             for (final SchemaDescription schema : schemas.values()) {
-                CatalogDescription key = new CatalogDescription(schema.
-                        getCatalog());
+                final CatalogDescription key = new CatalogDescription(
+                        schema.getCatalog());
                 CatalogDescription value = catalogs.get(key);
                 if (value == null) {
                     value = key;
@@ -92,11 +97,13 @@ public class MetaDataReader {
                 }
                 value.addSchemas(schema);
             }
-            for (final CatalogDescription catalog : catalogs.values()) {
-                db.addCatalogs(catalog);
+            if (db != null) {
+                for (final CatalogDescription catalog : catalogs.values()) {
+                    db.addCatalogs(catalog);
+                }
             }
-            return db;
         }
+        return db;
     }
 
     private static void readIndicesForGivenTables(
@@ -105,12 +112,11 @@ public class MetaDataReader {
         for (final TableDescription table : tables) {
             ResultSet indices;
             try {
-                indices =
-                        metaData.getIndexInfo(table.getCatalog(), table.
-                        getSchema(), table.getTableName(), false,
-                        false);
+                indices = metaData.getIndexInfo(table.getCatalog(),
+                        table.getSchema(), table.getTableName(), false, false);
                 while (indices.next()) {
-                    IndexDescription indexDescription = new IndexDescription(
+                    final IndexDescription indexDescription =
+                            new IndexDescription(
                             indices.getString("TABLE_CAT"),
                             indices.getString("TABLE_SCHEM"),
                             indices.getString("TABLE_NAME"),
@@ -121,9 +127,9 @@ public class MetaDataReader {
                     table.addIndices(indexDescription);
                 }
                 indices.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(MetaDataReader.class.getName()).
-                        log(Level.SEVERE, null, ex);
+            } catch (final SQLException ex) {
+                Logger.getLogger(MetaDataReader.class.getName()).log(
+                        Level.SEVERE, null, ex);
             }
         }
     }
@@ -131,16 +137,17 @@ public class MetaDataReader {
     private static void readColumnsForGivenTables(
             final DatabaseMetaData metaData,
             final Collection<TableDescription> tables) {
-        Map<TableDescription, TableDescription> tablesMapping = new HashMap<>();
+        final Map<TableDescription, TableDescription> tablesMapping =
+                new HashMap<>();
         for (final TableDescription table : tables) {
             tablesMapping.put(table, table);
         }
         try {
-            ResultSet columns = metaData.getColumns(null, null,
-                    null, null);
+            final ResultSet columns = metaData.getColumns(null, null, null,
+                    null);
             while (columns.next()) {
 
-                String nullableMeta = columns.getString("IS_NULLABLE");
+                final String nullableMeta = columns.getString("IS_NULLABLE");
                 Nullability nullabilityToUse = Nullability.MAYBE;
                 switch (nullableMeta) {
                     case "YES":
@@ -150,31 +157,31 @@ public class MetaDataReader {
                         nullabilityToUse = Nullability.NO;
                         break;
                 }
-                ColumnDescription columnDescription = new ColumnDescription(
+                final ColumnDescription columnDescription =
+                        new ColumnDescription(
                         columns.getString("TABLE_CAT"),
                         columns.getString("TABLE_SCHEM"),
                         columns.getString("TABLE_NAME"),
                         columns.getString("COLUMN_NAME"),
                         columns.getString("TYPE_NAME"),
                         columns.getInt("COLUMN_SIZE"),
-                        columns.getInt("DECIMAL_DIGITS"),
-                        nullabilityToUse,
+                        columns.getInt("DECIMAL_DIGITS"), nullabilityToUse,
                         columns.getString("REMARKS"),
                         columns.getString("COLUMN_DEF"));
-                TableDescription key = new TableDescription(columnDescription.
-                        getCatalog(), columnDescription.getSchema(),
+                final TableDescription key = new TableDescription(
+                        columnDescription.getCatalog(),
+                        columnDescription.getSchema(),
                         columnDescription.getTableName(), null, null);
-                TableDescription value = tablesMapping.get(key);
-                // nur für die übergebenen Tabellen wird ergänzt
+                final TableDescription value = tablesMapping.get(key);
+                // nur f��r die ��bergebenen Tabellen wird erg��nzt
                 if (value != null) {
                     value.addColumns(columnDescription);
                 }
             }
             columns.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(MetaDataReader.class
-                    .getName()).
-                    log(Level.SEVERE, null, ex);
+        } catch (final SQLException ex) {
+            Logger.getLogger(MetaDataReader.class.getName()).log(Level.SEVERE,
+                    null, ex);
         }
     }
 }

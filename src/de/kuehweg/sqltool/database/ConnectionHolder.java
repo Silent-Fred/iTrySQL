@@ -43,34 +43,34 @@ import javafx.beans.property.SimpleBooleanProperty;
 public class ConnectionHolder {
 
     private Connection connection;
-    private BooleanProperty connectedProperty;
+    private final BooleanProperty connectedProperty;
 
     public ConnectionHolder() {
         this.connectedProperty = new SimpleBooleanProperty(false);
     }
 
-    private void connect(Connection connection) {
+    private void connect(final Connection connection) {
         if (this.connection != null) {
             try {
                 this.connection.close();
-            } catch (SQLException ex) {
+            } catch (final SQLException ex) {
             }
         }
         this.connection = connection;
     }
 
-    public void connect(ConnectionSetting connectionSetting) {
+    public void connect(final ConnectionSetting connectionSetting) {
         Connection newConnection = null;
         try {
-            Class.forName(connectionSetting.getType().getDriverClass()).
-                    newInstance();
-            newConnection = DriverManager.getConnection(connectionSetting.
-                    getUrl(),
-                    connectionSetting.getUser(), connectionSetting.getPassword());
+            Class.forName(connectionSetting.getType().getDriverClass())
+                    .newInstance();
+            newConnection = DriverManager.getConnection(
+                    connectionSetting.getUrl(), connectionSetting.getUser(),
+                    connectionSetting.getPassword());
             connect(newConnection);
             connectedProperty.set(true);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
-            ErrorMessage msg = new ErrorMessage(
+            final ErrorMessage msg = new ErrorMessage(
                     DialogDictionary.MESSAGEBOX_ERROR.toString(),
                     DialogDictionary.ERR_CONNECTION_FAILURE.toString(),
                     DialogDictionary.COMMON_BUTTON_OK.toString());
@@ -83,7 +83,7 @@ public class ConnectionHolder {
             try {
                 connection.close();
                 connectedProperty.set(false);
-            } catch (SQLException ex) {
+            } catch (final SQLException ex) {
             }
             connection = null;
         }

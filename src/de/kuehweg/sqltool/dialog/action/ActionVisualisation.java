@@ -43,26 +43,31 @@ public class ActionVisualisation {
     }
 
     public static void prepareSceneRunning(final Scene scene) {
-        ProgressIndicator progressIndicator = (ProgressIndicator) scene.lookup("#executionProgressIndicator");
+        final ProgressIndicator progressIndicator = (ProgressIndicator) scene
+                .lookup("#executionProgressIndicator");
         if (progressIndicator != null) {
             progressIndicator.setProgress(-1);
         }
-        Label executionTime = (Label) scene.lookup("#executionTime");
+        final Label executionTime = (Label) scene.lookup("#executionTime");
         if (executionTime != null) {
             executionTime.setText(DialogDictionary.LABEL_EXECUTING.toString());
         }
     }
 
-    public static void showFinished(final Scene scene, final long executionTimeInMilliseconds) {
-        ProgressIndicator progressIndicator = (ProgressIndicator) scene.lookup("#executionProgressIndicator");
+    public static void showFinished(final Scene scene,
+            final long executionTimeInMilliseconds) {
+        final ProgressIndicator progressIndicator = (ProgressIndicator) scene
+                .lookup("#executionProgressIndicator");
         if (progressIndicator != null) {
             progressIndicator.setProgress(1);
         }
-        Label executionTime = (Label) scene.lookup("#executionTime");
+        final Label executionTime = (Label) scene.lookup("#executionTime");
         if (executionTime != null) {
-            BigDecimal executionTimeInSeconds = BigDecimal.valueOf(executionTimeInMilliseconds)
-                    .divide(BigDecimal.valueOf(1000));
-            executionTime.setText(MessageFormat.format(DialogDictionary.PATTERN_EXECUTION_TIME.toString(),
+            final BigDecimal executionTimeInSeconds = BigDecimal.valueOf(
+                    executionTimeInMilliseconds).divide(
+                    BigDecimal.valueOf(1000));
+            executionTime.setText(MessageFormat.format(
+                    DialogDictionary.PATTERN_EXECUTION_TIME.toString(),
                     executionTimeInSeconds.toString()));
         }
     }

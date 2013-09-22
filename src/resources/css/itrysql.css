@@ -43,66 +43,66 @@
 }
 
 #toolbarExecute {
-    -fx-graphic: url('/resources/images/execute.png');
+    -fx-graphic: url('../images/execute.png');
 }
 #toolbarExecute:armed, #toolbarExecute:hover, #toolbarExecute:pressed {
-    -fx-graphic: url('/resources/images/execute_active.png');
+    -fx-graphic: url('../images/execute_active.png');
 }
 
 #toolbarCommit {
-    -fx-graphic: url('/resources/images/commit.png');
+    -fx-graphic: url('../images/commit.png');
 }
 #toolbarCommit:armed, #toolbarCommit:hover, #toolbarCommit:pressed {
-    -fx-graphic: url('/resources/images/commit_active.png');
+    -fx-graphic: url('../images/commit_active.png');
 }
 
 #toolbarCheckpoint {
-    -fx-graphic: url('/resources/images/checkpoint.png');
+    -fx-graphic: url('../images/checkpoint.png');
 }
 #toolbarCheckpoint:armed, #toolbarCheckpoint:hover, #toolbarCheckpoint:pressed {
-    -fx-graphic: url('/resources/images/checkpoint_active.png');
+    -fx-graphic: url('../images/checkpoint_active.png');
 }
 
 #toolbarRollback {
-    -fx-graphic: url('/resources/images/rollback.png');
+    -fx-graphic: url('../images/rollback.png');
 }
 #toolbarRollback:armed, #toolbarRollback:hover, #toolbarRollback:pressed {
-    -fx-graphic: url('/resources/images/rollback_active.png');
+    -fx-graphic: url('../images/rollback_active.png');
 }
 
 #toolbarZoomIn {
-    -fx-graphic: url('/resources/images/zoomin.png');
+    -fx-graphic: url('../images/zoomin.png');
 }
 #toolbarZoomIn:armed, #toolbarZoomIn:hover, #toolbarZoomIn:pressed {
-    -fx-graphic: url('/resources/images/zoomin_active.png');
+    -fx-graphic: url('../images/zoomin_active.png');
 }
 
 #toolbarZoomOut {
-    -fx-graphic: url('/resources/images/zoomout.png');
+    -fx-graphic: url('../images/zoomout.png');
 }
 #toolbarZoomOut:armed, #toolbarZoomOut:hover, #toolbarZoomOut:pressed {
-    -fx-graphic: url('/resources/images/zoomout_active.png');
+    -fx-graphic: url('../images/zoomout_active.png');
 }
 
 #toolbarTutorialData {
-    -fx-graphic: url('/resources/images/tutorialdata.png');
+    -fx-graphic: url('../images/tutorialdata.png');
 }
 #toolbarTutorialData:armed, #toolbarTutorialData:hover, #toolbarTutorialData:pressed {
-    -fx-graphic: url('/resources/images/tutorialdata_active.png');
+    -fx-graphic: url('../images/tutorialdata_active.png');
 }
 
 #toolbarTabDbOutputExport {
-    -fx-graphic: url('/resources/images/export.png');
+    -fx-graphic: url('../images/export.png');
 }
 #toolbarTabDbOutputExport:armed, #toolbarTabDbOutputExport:hover, #toolbarTabDbOutputExport:pressed {
-    -fx-graphic: url('/resources/images/export_active.png');
+    -fx-graphic: url('../images/export_active.png');
 }
 
 #toolbarTabDbOutputClear {
-    -fx-graphic: url('/resources/images/clear.png');
+    -fx-graphic: url('../images/clear.png');
 }
 #toolbarTabDbOutputClear:armed, #toolbarTabDbOutputClear:hover, #toolbarTabDbOutputClear:pressed {
-    -fx-graphic: url('/resources/images/clear_active.png');
+    -fx-graphic: url('../images/clear_active.png');
 }
 
 #permanentMessage {

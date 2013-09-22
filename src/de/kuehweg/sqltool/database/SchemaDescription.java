@@ -41,7 +41,7 @@ public class SchemaDescription implements Comparable<SchemaDescription> {
     private static final String UNKNOWN_TYPE = "n/a";
     private final String catalog;
     private final String schema;
-    private Set<TableDescription> tables;
+    private final Set<TableDescription> tables;
 
     public SchemaDescription(final String catalog, final String schema) {
         this.catalog = catalog == null ? "" : catalog;
@@ -59,12 +59,12 @@ public class SchemaDescription implements Comparable<SchemaDescription> {
     }
 
     public List<TableDescription> getTables() {
-        List<TableDescription> result = new ArrayList<>(tables);
+        final List<TableDescription> result = new ArrayList<>(tables);
         Collections.sort(result);
         return result;
     }
 
-    public void addTables(TableDescription... tabs) {
+    public void addTables(final TableDescription... tabs) {
         for (final TableDescription table : tabs) {
             tables.add(table);
         }
@@ -79,7 +79,7 @@ public class SchemaDescription implements Comparable<SchemaDescription> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -97,7 +97,7 @@ public class SchemaDescription implements Comparable<SchemaDescription> {
     }
 
     @Override
-    public int compareTo(SchemaDescription other) {
+    public int compareTo(final SchemaDescription other) {
         int result = this.catalog.compareTo(other.catalog);
         if (result == 0) {
             result = this.schema.compareTo(other.schema);
@@ -106,28 +106,29 @@ public class SchemaDescription implements Comparable<SchemaDescription> {
     }
 
     public List<String> getTableTypes() {
-        Set<String> tableTypes = new HashSet<>(32);
+        final Set<String> tableTypes = new HashSet<>(32);
         for (final TableDescription table : tables) {
-            if (table.getTableType() == null || table.getTableType().trim().
-                    length() == 0) {
+            if (table.getTableType() == null
+                    || table.getTableType().trim().length() == 0) {
                 tableTypes.add(UNKNOWN_TYPE);
             } else {
                 tableTypes.add(table.getTableType());
             }
         }
-        List<String> result = new ArrayList<>(tableTypes);
+        final List<String> result = new ArrayList<>(tableTypes);
         Collections.sort(result);
         return result;
     }
 
     public List<TableDescription> getTablesByType(final String type) {
-        String wantedType =
-                type == null || type.trim().length() == 0 ? UNKNOWN_TYPE : type;
-        List<TableDescription> result = new ArrayList<>(tables.size());
+        final String wantedType =
+                type == null || type.trim().length() == 0 ? UNKNOWN_TYPE
+                : type;
+        final List<TableDescription> result = new ArrayList<>(tables.size());
         for (final TableDescription table : getTables()) {
-            String tableType = table.getTableType() == null || table.
-                    getTableType().trim().
-                    length() == 0 ? UNKNOWN_TYPE : table.getTableType();
+            final String tableType = table.getTableType() == null
+                    || table.getTableType().trim().length() == 0 ? UNKNOWN_TYPE
+                    : table.getTableType();
             if (wantedType.equals(tableType)) {
                 result.add(table);
             }

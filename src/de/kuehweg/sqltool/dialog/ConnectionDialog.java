@@ -46,12 +46,14 @@ import javafx.stage.StageStyle;
 public class ConnectionDialog extends Stage {
 
     private ConnectionSetting connectionSetting;
-    
+
     public ConnectionDialog() {
         super();
         try {
             final Parent root;
-            root = FXMLLoader.load(ConnectionDialog.class.getResource("ConnectionDialog.fxml"),
+            root = FXMLLoader.load(
+                    getClass().getResource(
+                    "/resources/fxml/ConnectionDialog.fxml"),
                     ResourceBundle.getBundle("dictionary"));
             initStyle(StageStyle.UTILITY);
             setScene(new Scene(root));
@@ -59,25 +61,30 @@ public class ConnectionDialog extends Stage {
             setResizable(false);
             initModality(Modality.APPLICATION_MODAL);
             setTitle(DialogDictionary.LABEL_TITLE_CONNECT.toString());
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             initStyle(StageStyle.UTILITY);
             initModality(Modality.APPLICATION_MODAL);
             setScene(new Scene(
-                    VBoxBuilder.create().
-                    children(new Text(DialogDictionary.APPLICATION.toString()),
-                    new Text(DialogDictionary.ERR_LOAD_FXML.toString()))
-                    .alignment(Pos.CENTER)
+                    VBoxBuilder
+                    .create()
+                    .children(
+                    new Text(
+                    DialogDictionary.APPLICATION
+                    .toString()),
+                    new Text(DialogDictionary.ERR_LOAD_FXML
+                    .toString())).alignment(Pos.CENTER)
                     .padding(new Insets(50)).build()));
             centerOnScreen();
             setResizable(false);
             setTitle(DialogDictionary.APPLICATION.toString());
         }
     }
-    
-    protected void setConnectionSetting(final ConnectionSetting connectionSetting) {
+
+    protected void setConnectionSetting(
+            final ConnectionSetting connectionSetting) {
         this.connectionSetting = connectionSetting;
     }
-    
+
     public ConnectionSetting getConnectionSetting() {
         return connectionSetting;
     }

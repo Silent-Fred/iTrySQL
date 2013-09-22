@@ -44,56 +44,51 @@ public class ExecuteAction {
     }
 
     public static void handleExecuteAction(final Scene sceneToUpdate,
-            final iTrySQLController callingController,
-            final String sql) {
-        handleExecuteAction(sceneToUpdate,
-                callingController,
-                sql, false);
+            final iTrySQLController callingController, final String sql) {
+        handleExecuteAction(sceneToUpdate, callingController, sql, false);
     }
 
     public static void handleExecuteActionSilently(final Scene sceneToUpdate,
-            final iTrySQLController callingController,
-            final String sql) {
-        handleExecuteAction(sceneToUpdate,
-                callingController,
-                sql, true);
+            final iTrySQLController callingController, final String sql) {
+        handleExecuteAction(sceneToUpdate, callingController, sql, true);
     }
 
     private static void handleExecuteAction(final Scene sceneToUpdate,
-            final iTrySQLController callingController,
-            final String sql, final boolean silent) {
+            final iTrySQLController callingController, final String sql,
+            final boolean silent) {
         if (sql == null || sql.trim().length() == 0) {
-            AlertBox msg = new AlertBox(DialogDictionary.MESSAGEBOX_WARNING.
-                    toString(),
+            final AlertBox msg = new AlertBox(
+                    DialogDictionary.MESSAGEBOX_WARNING.toString(),
                     DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE.toString(),
                     DialogDictionary.COMMON_BUTTON_OK.toString());
             msg.askUserFeedback();
         } else {
-            Connection connection = callingController.getConnectionHolder().
-                    getConnection();
+            final Connection connection = callingController
+                    .getConnectionHolder().getConnection();
             if (connection == null) {
-                AlertBox msg = new AlertBox(DialogDictionary.MESSAGEBOX_WARNING.
-                        toString(),
+                final AlertBox msg = new AlertBox(
+                        DialogDictionary.MESSAGEBOX_WARNING.toString(),
                         DialogDictionary.MSG_NO_DB_CONNECTION.toString(),
                         DialogDictionary.COMMON_BUTTON_OK.toString());
                 msg.askUserFeedback();
             } else {
                 ActionVisualisation.prepareSceneRunning(sceneToUpdate);
                 try {
-                    ExecutionGUIUpdater guiUpdater = new ExecutionGUIUpdater(
+                    final ExecutionGUIUpdater guiUpdater =
+                            new ExecutionGUIUpdater(
                             sceneToUpdate, callingController);
                     guiUpdater.setSilent(silent);
-                    Task executionTask = new ExecutionTask(
-                            callingController.getConnectionHolder().
-                            getStatement(),
-                            sql, guiUpdater);
-                    Thread th = new Thread(executionTask);
+                    final Task<Void> executionTask = new ExecutionTask(
+                            callingController.getConnectionHolder()
+                            .getStatement(), sql, guiUpdater);
+                    final Thread th = new Thread(executionTask);
                     th.setDaemon(true);
                     th.start();
-                } catch (SQLException ex) {
-                    // falls kein Statement erzeugt werden kann, landen wir schon vor der eigentlichen
-                    // Ausführung in einer SQL-Exception
-                    ErrorMessage msg = new ErrorMessage(
+                } catch (final SQLException ex) {
+                    // falls kein Statement erzeugt werden kann, landen wir
+                    // schon vor der eigentlichen Ausführung in einer 
+                    // SQL-Exception
+                    final ErrorMessage msg = new ErrorMessage(
                             DialogDictionary.MESSAGEBOX_ERROR.toString(),
                             ex.getLocalizedMessage() + " (" + ex.getSQLState()
                             + ")",

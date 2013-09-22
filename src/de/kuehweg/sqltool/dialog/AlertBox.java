@@ -32,7 +32,8 @@ import de.kuehweg.sqltool.dialog.images.ImagePack;
  */
 public class AlertBox extends CommonDialog {
 
-    public AlertBox(final String title, final String message, final String buttonText) {
+    public AlertBox(final String title, final String message,
+            final String buttonText) {
         super(message);
         specializeDialogTitle(title);
         specializeDialogIcon(ImagePack.MSG_WARNING);

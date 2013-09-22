@@ -33,7 +33,6 @@ import javafx.scene.image.Image;
 public enum ImagePack {
 
     APP_ICON("AppIcon.png"),
-    ABOUT("about.png"),
     TUTORIAL_DATA("tutorialdata.png"),
     TREE_DATABASE("tree_database.png"), TREE_SCHEMA("tree_schema.png"),
     TREE_TABLE("tree_table.png"), TREE_COLUMN("tree_column.png"), TREE_INDEX("tree_index.png"),

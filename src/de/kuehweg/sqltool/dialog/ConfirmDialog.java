@@ -32,7 +32,8 @@ import de.kuehweg.sqltool.dialog.images.ImagePack;
  */
 public class ConfirmDialog extends CommonDialog {
 
-    public ConfirmDialog(final String title, final String message, final String... buttonTexts) {
+    public ConfirmDialog(final String title, final String message,
+            final String... buttonTexts) {
         super(message);
         specializeDialogTitle(title);
         specializeDialogIcon(ImagePack.MSG_QUESTION);

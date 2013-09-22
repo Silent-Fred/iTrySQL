@@ -42,8 +42,7 @@ public class IndexDescription implements Comparable<IndexDescription> {
     private final boolean nonUnique;
 
     public IndexDescription(final String catalog, final String schema,
-            final String tableName,
-            final String indexName,
+            final String tableName, final String indexName,
             final String columnName, final int ordinalPosition,
             final boolean nonUnique) {
         this.catalog = catalog == null ? "" : catalog;
@@ -95,7 +94,7 @@ public class IndexDescription implements Comparable<IndexDescription> {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -122,7 +121,7 @@ public class IndexDescription implements Comparable<IndexDescription> {
     }
 
     @Override
-    public int compareTo(IndexDescription other) {
+    public int compareTo(final IndexDescription other) {
         int result = this.catalog.compareTo(other.catalog);
         if (result == 0) {
             result = this.schema.compareTo(other.schema);

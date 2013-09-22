@@ -42,6 +42,6 @@
     </VBox>
   </children>
   <stylesheets>
-    <URL value="@../itrysql/itrysql.css" />
+    <URL value="@itrysql.css" />
   </stylesheets>
 </AnchorPane>
