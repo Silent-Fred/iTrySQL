@@ -3611,7 +3611,7 @@ INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('213900', 12.90
 -- verkaufspreis - reduziert
 --
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis, filialnummer, gilt_ab, gilt_bis)
-SELECT artikelnummer, verkaufspreis * 0.75, '1390', '2010-05-27', '2010-07-14' FROM verkaufspreis;
+SELECT artikelnummer, verkaufspreis * 0.75, '1390', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-05-27', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-07-14' FROM verkaufspreis;
 -- verkaufspreis waehrung nachtragen
 UPDATE verkaufspreis SET waehrung = 'EUR';
 --
@@ -3620,36 +3620,36 @@ UPDATE verkaufspreis SET waehrung = 'EUR';
 CREATE TABLE listung (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), artikelnummer VARCHAR(10) REFERENCES artikel(artikelnummer), gilt_ab DATE, gilt_bis DATE);
 -- Erste Filiale mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
-SELECT '1000', artikelnummer, '2008-07-14' FROM artikel;
+SELECT '1000', artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 4 || '-07-14' FROM artikel;
 -- Nächste Eröffnungswelle mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
-SELECT filialnummer, artikelnummer, '2009-01-01' FROM artikel, filiale
+SELECT filialnummer, artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 3 || '-01-01' FROM artikel, filiale
 WHERE filialnummer BETWEEN '1010' AND '1370';
 -- Nächste Eröffnungswelle mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
-SELECT filialnummer, artikelnummer, '2009-04-01' FROM artikel, filiale
+SELECT filialnummer, artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 3 || '-04-01' FROM artikel, filiale
 WHERE filialnummer BETWEEN '1380' AND '1700';
 -- Nächste Eröffnungswelle mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
-SELECT filialnummer, artikelnummer, '2009-05-01' FROM artikel, filiale
+SELECT filialnummer, artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 3 || '-05-01' FROM artikel, filiale
 WHERE filialnummer BETWEEN '1710' AND '1830';
 -- Nächste Eröffnungswelle mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
-SELECT filialnummer, artikelnummer, '2009-06-01' FROM artikel, filiale
+SELECT filialnummer, artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 2 || '-06-01' FROM artikel, filiale
 WHERE filialnummer BETWEEN '1840' AND '1920';
 -- Nächste Eröffnungswelle mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
-SELECT filialnummer, artikelnummer, '2009-08-01' FROM artikel, filiale
+SELECT filialnummer, artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 2 || '-08-01' FROM artikel, filiale
 WHERE filialnummer BETWEEN '1930' AND '2000';
 -- Nächste Eröffnungswelle mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
-SELECT filialnummer, artikelnummer, '2009-10-01' FROM artikel, filiale
+SELECT filialnummer, artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-01-01' FROM artikel, filiale
 WHERE filialnummer BETWEEN '2010' AND '2130';
 -- Alle Artikel oberhalb 200000 haben nur Texte für Locale DE gepflegt, werden also auch nur dort verkauft
 DELETE FROM listung WHERE artikelnummer >= '200000' AND filialnummer <> '1886';
 DELETE FROM verkaufspreis WHERE artikelnummer >= '200000' AND filialnummer IS NOT NULL AND filialnummer <> '1886';
 -- Auslistung aller Feuerprodukte ab einem Stichdatum
-UPDATE listung SET gilt_bis = '2012-03-17' WHERE artikelnummer IN (
+UPDATE listung SET gilt_bis = EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-03-17' WHERE artikelnummer IN (
   SELECT artikelnummer FROM artikel WHERE produktgruppe = 'FIRE');
 --
 -- Ende
