@@ -28,33 +28,39 @@ package de.kuehweg.sqltool.dialog.action;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.itrysql.iTrySQLController;
+import de.kuehweg.sqltool.dialog.ExecutionInputEnvironment;
+import de.kuehweg.sqltool.dialog.ExecutionProgressEnvironment;
+import de.kuehweg.sqltool.dialog.ExecutionResultEnvironment;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javafx.concurrent.Task;
-import javafx.scene.Scene;
 
 /**
  * @author Michael Kühweg
  */
 public class ExecuteAction {
 
-    private ExecuteAction() {
-        // no instances
+    private ExecutionInputEnvironment input;
+    private ExecutionProgressEnvironment progress;
+    private ExecutionResultEnvironment result;
+
+    public ExecuteAction(final ExecutionInputEnvironment input,
+            final ExecutionProgressEnvironment progress,
+            final ExecutionResultEnvironment result) {
+        this.input = input;
+        this.progress = progress;
+        this.result = result;
     }
 
-    public static void handleExecuteAction(final Scene sceneToUpdate,
-            final iTrySQLController callingController, final String sql) {
-        handleExecuteAction(sceneToUpdate, callingController, sql, false);
+    public void handleExecuteAction(final String sql) {
+        handleExecuteAction(sql, false);
     }
 
-    public static void handleExecuteActionSilently(final Scene sceneToUpdate,
-            final iTrySQLController callingController, final String sql) {
-        handleExecuteAction(sceneToUpdate, callingController, sql, true);
+    public void handleExecuteActionSilently(final String sql) {
+        handleExecuteAction(sql, true);
     }
 
-    private static void handleExecuteAction(final Scene sceneToUpdate,
-            final iTrySQLController callingController, final String sql,
+    private void handleExecuteAction(final String sql,
             final boolean silent) {
         if (sql == null || sql.trim().length() == 0) {
             final AlertBox msg = new AlertBox(
@@ -63,8 +69,9 @@ public class ExecuteAction {
                     DialogDictionary.COMMON_BUTTON_OK.toString());
             msg.askUserFeedback();
         } else {
-            final Connection connection = callingController
-                    .getConnectionHolder().getConnection();
+            final Connection connection =
+                    input.getConnectionHolder() != null ? input.
+                    getConnectionHolder().getConnection() : null;
             if (connection == null) {
                 final AlertBox msg = new AlertBox(
                         DialogDictionary.MESSAGEBOX_WARNING.toString(),
@@ -72,15 +79,17 @@ public class ExecuteAction {
                         DialogDictionary.COMMON_BUTTON_OK.toString());
                 msg.askUserFeedback();
             } else {
-                ActionVisualisation.prepareSceneRunning(sceneToUpdate);
+                ActionVisualisation.prepareSceneRunning(progress.
+                        getProgressIndicator().getScene());
                 try {
                     final ExecutionGUIUpdater guiUpdater =
                             new ExecutionGUIUpdater(
-                            sceneToUpdate, callingController);
+                            progress.getProgressIndicator().getScene(),
+                            input.getHistoryKeeper());
                     guiUpdater.setSilent(silent);
-                    final Task<Void> executionTask = new ExecutionTask(
-                            callingController.getConnectionHolder()
-                            .getStatement(), sql, guiUpdater);
+                    final Task<Void> executionTask = new ExecutionTask(input.
+                            getConnectionHolder().getStatement(), sql,
+                            guiUpdater);
                     final Thread th = new Thread(executionTask);
                     th.setDaemon(true);
                     th.start();
@@ -94,7 +103,8 @@ public class ExecuteAction {
                             + ")",
                             DialogDictionary.COMMON_BUTTON_OK.toString());
                     msg.askUserFeedback();
-                    ActionVisualisation.showFinished(sceneToUpdate, 0);
+                    ActionVisualisation.showFinished(progress.
+                            getProgressIndicator().getScene(), 0);
                 }
             }
         }

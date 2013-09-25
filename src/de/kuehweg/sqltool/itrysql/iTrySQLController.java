@@ -41,15 +41,17 @@ import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ConnectionDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
+import de.kuehweg.sqltool.dialog.ExecutionInputEnvironment;
+import de.kuehweg.sqltool.dialog.ExecutionProgressEnvironment;
+import de.kuehweg.sqltool.dialog.ExecutionResultEnvironment;
 import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
 import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.SchemaTreeBuilderTask;
-import java.io.BufferedReader;
+import de.kuehweg.sqltool.dialog.action.ScriptAction;
+import de.kuehweg.sqltool.dialog.action.TutorialAction;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -324,41 +326,19 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         }
     }
 
-    // Handler for Button[fx:id="toolbarCheckpoint"] onAction
-    // Handler for MenuItem[fx:id="menuItemCheckpoint"] onAction
-    public void checkpoint(final ActionEvent event) {
-        ExecuteAction.handleExecuteAction(menuBar.getScene(), this,
-                "CHECKPOINT");
-    }
-
     // Handler for MenuItem[fx:id="menuItemCopy"] onAction
     public void clipboardCopy(final ActionEvent event) {
-        // Clipboard clipboard = Clipboard.getSystemClipboard();
-        // final ClipboardContent content = new ClipboardContent();
-        // content.putString(statementInput.getSelectedText());
-        // clipboard.setContent(content);
+        // currently no action
     }
 
     // Handler for MenuItem[fx:id="menuItemCut"] onAction
     public void clipboardCut(final ActionEvent event) {
-        // Clipboard clipboard = Clipboard.getSystemClipboard();
-        // final ClipboardContent content = new ClipboardContent();
-        // content.putString(statementInput.getSelectedText());
-        // clipboard.setContent(content);
-        // statementInput.replaceSelection("");
+        // currently no action
     }
 
     // Handler for MenuItem[fx:id="menuItemPaste"] onAction
     public void clipboardPaste(final ActionEvent event) {
-        // Clipboard clipboard = Clipboard.getSystemClipboard();
-        // String content = (String)clipboard.getContent(DataFormat.PLAIN_TEXT);
-        // statementInput.replaceSelection(content);
-    }
-
-    // Handler for Button[fx:id="toolbarCommit"] onAction
-    // Handler for MenuItem[fx:id="menuItemCommit"] onAction
-    public void commit(final ActionEvent event) {
-        ExecuteAction.handleExecuteAction(menuBar.getScene(), this, "COMMIT");
+        // currently no action
     }
 
     // Handler for MenuItem[fx:id="menuItemConnect"] onAction
@@ -400,60 +380,51 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
                     .extractStatementAtCaretPosition(statementInput.getText(),
                     statementInput.getCaretPosition());
         }
-        ExecuteAction.handleExecuteAction(menuBar.getScene(), this, sql);
+        createExecuteAction().handleExecuteAction(sql);
     }
 
     // Handler for MenuItem[fx:id="menuItemExecuteScript"] onAction
     public void executeScript(final ActionEvent event) {
-        ExecuteAction.handleExecuteAction(menuBar.getScene(), this,
-                statementInput.getText());
+        createExecuteAction().handleExecuteAction(statementInput.getText());
     }
 
-    // Handler for MenuItem[fx:id="menuItemFileOpenScript"] onAction
-    public void fileOpenScriptAction(final ActionEvent event) {
-        final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(DialogDictionary.LABEL_OPEN_SCRIPT.toString());
-        final File file = fileChooser.showOpenDialog(menuBar.getScene()
-                .getWindow());
-        if (file != null) {
-            try {
-                final String script = FileUtil.readFile(file.getAbsolutePath());
-                statementInput.setText(script);
-            } catch (final IOException ex) {
-                final ErrorMessage msg = new ErrorMessage(
-                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                        DialogDictionary.ERR_FILE_OPEN_FAILED.toString(),
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                msg.askUserFeedback();
-            }
-        }
+    // Handler for Button[fx:id="toolbarCommit"] onAction
+    // Handler for MenuItem[fx:id="menuItemCommit"] onAction
+    public void commit(final ActionEvent event) {
+        createExecuteAction().handleExecuteAction("COMMIT");
     }
 
-    // Handler for MenuItem[fx:id="menuItemFileSaveScript"] onAction
-    public void fileSaveScriptAction(final ActionEvent event) {
-        final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_SCRIPT.toString());
-        final File file = fileChooser.showSaveDialog(menuBar.getScene()
-                .getWindow());
-        if (file != null) {
-            try {
-                FileUtil.writeFile(file.getAbsolutePath(),
-                        statementInput.getText());
-            } catch (final IOException ex) {
-                final ErrorMessage msg = new ErrorMessage(
-                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                        DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                msg.askUserFeedback();
+    // Handler for Button[fx:id="toolbarCheckpoint"] onAction
+    // Handler for MenuItem[fx:id="menuItemCheckpoint"] onAction
+    public void checkpoint(final ActionEvent event) {
+        createExecuteAction().handleExecuteAction("CHECKPOINT");
+    }
 
-            }
-        }
+    // Handler for Button[fx:id="toolbarRollback"] onAction
+    // Handler for MenuItem[fx:id="menuItemRollback"] onAction
+    public void rollback(final ActionEvent event) {
+        createExecuteAction().handleExecuteAction("ROLLBACK");
     }
 
     // Handler for Button[fx:id="toolbarZoomIn"] onAction
     // Handler for Button[fx:id="toolbarZoomOut"] onAction
     public void fontAction(final ActionEvent event) {
         FontAction.handleFontAction(event);
+    }
+
+    // Handler for Button[fx:id="toolbarTutorialData"] onAction
+    public void tutorialAction(final ActionEvent event) {
+        new TutorialAction().createTutorial(createExecuteAction());
+    }
+
+    // Handler for MenuItem[fx:id="menuItemFileOpenScript"] onAction
+    public void fileOpenScriptAction(final ActionEvent event) {
+        new ScriptAction(statementInput).loadScript();
+    }
+
+    // Handler for MenuItem[fx:id="menuItemFileSaveScript"] onAction
+    public void fileSaveScriptAction(final ActionEvent event) {
+        new ScriptAction(statementInput).saveScript();
     }
 
     // Handler for CheckBox[fx:id="limitMaxRows"] onAction
@@ -465,21 +436,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
     // Handler for MenuItem[fx:id="menuItemClose"] onAction
     public void quit(final ActionEvent event) {
         Platform.exit();
-    }
-
-    // Handler for Button[fx:id="refreshTree"] onAction
-    public void refreshTree(final ActionEvent event) {
-        final Task refreshTask = new SchemaTreeBuilderTask(
-                getConnectionHolder().getConnection(), schemaTreeView);
-        final Thread th = new Thread(refreshTask);
-        th.setDaemon(true);
-        th.start();
-    }
-
-    // Handler for Button[fx:id="toolbarRollback"] onAction
-    // Handler for MenuItem[fx:id="menuItemRollback"] onAction
-    public void rollback(final ActionEvent event) {
-        ExecuteAction.handleExecuteAction(menuBar.getScene(), this, "ROLLBACK");
     }
 
     // Handler for Button[fx:id="toolbarTabDbOutputClear"] onAction
@@ -507,42 +463,13 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         }
     }
 
-    // Handler for Button[fx:id="toolbarTutorialData"] onAction
-    public void tutorialAction(final ActionEvent event) {
-        final ConfirmDialog confirm = new ConfirmDialog(
-                DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
-                DialogDictionary.MSG_REALLY_CREATE_TUTORIAL_DATA.toString(),
-                DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString(),
-                DialogDictionary.COMMON_BUTTON_CANCEL.toString());
-        if (DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString().equals(
-                confirm.askUserFeedback())) {
-            try {
-                final InputStream tutorialStream = getClass()
-                        .getResourceAsStream("/resources/sql/tutorial.sql");
-                final StringBuffer b;
-                try (InputStreamReader reader = new InputStreamReader(
-                        tutorialStream, "UTF-8");
-                        BufferedReader bufferedReader = new BufferedReader(
-                        reader)) {
-                    b = new StringBuffer();
-                    String s = null;
-                    while ((s = bufferedReader.readLine()) != null) {
-                        b.append(s);
-                        b.append('\n');
-                    }
-                }
-                final String tutorialSql = b.toString();
-                ExecuteAction.handleExecuteActionSilently(menuBar.getScene(),
-                        this, tutorialSql);
-            } catch (final IOException ex) {
-                final ErrorMessage msg = new ErrorMessage(
-                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                        DialogDictionary.ERR_TUTORIAL_CREATION_FAILED + " ("
-                        + ex.getLocalizedMessage() + ")",
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                msg.askUserFeedback();
-            }
-        }
+    // Handler for Button[fx:id="refreshTree"] onAction
+    public void refreshTree(final ActionEvent event) {
+        final Task refreshTask = new SchemaTreeBuilderTask(
+                getConnectionHolder().getConnection(), schemaTreeView);
+        final Thread th = new Thread(refreshTask);
+        th.setDaemon(true);
+        th.start();
     }
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
@@ -937,6 +864,22 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
             }
         }
         return false;
+    }
+
+    private ExecuteAction createExecuteAction() {
+        final ExecutionInputEnvironment input =
+                new ExecutionInputEnvironment.Builder(getConnectionHolder()).
+                limitMaxRows(
+                UserPreferencesManager.getSharedInstance().isLimitMaxRows()).
+                historyKeeper(this).build();
+        final ExecutionProgressEnvironment progress =
+                new ExecutionProgressEnvironment.Builder(
+                executionProgressIndicator).dbOutput(dbOutput).executionTime(
+                executionTime).build();
+        final ExecutionResultEnvironment result =
+                new ExecutionResultEnvironment.Builder().dbOutput(dbOutput).
+                resultTableContainer(resultTableContainer).build();
+        return new ExecuteAction(input, progress, result);
     }
 
     // --- Interfaces und specialties
