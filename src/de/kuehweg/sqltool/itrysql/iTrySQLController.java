@@ -30,15 +30,12 @@ import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.CodeHelp;
 import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSettings;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.ConnectionHolder;
 import de.kuehweg.sqltool.database.JDBCType;
-import de.kuehweg.sqltool.database.ServerManager;
 import de.kuehweg.sqltool.dialog.AlertBox;
-import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ConnectionDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.ExecutionInputEnvironment;
@@ -50,17 +47,17 @@ import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
+import de.kuehweg.sqltool.dialog.component.CodeTemplateComponent;
+import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
+import de.kuehweg.sqltool.dialog.component.ServerComponentController;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-import java.util.prefs.BackingStoreException;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -94,9 +91,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import org.hsqldb.server.ServerAcl;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper {
 
@@ -223,8 +218,9 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
     // my own special creation
     private ConnectionHolder connectionHolder;
     private ObservableList<SQLHistory> sqlHistoryItems;
-    private BooleanProperty connectionSettingsEdit;
-    private BooleanProperty connectionSettingFileBased;
+    private CodeTemplateComponent codeTemplateComponent;
+    private ConnectionComponentController connectionComponentController;
+    private ServerComponentController serverComponentController;
 
     @Override
     // This method is called by the FXMLLoader when initialization is complete
@@ -291,8 +287,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         assert toolbarZoomIn != null : "fx:id=\"toolbarZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 
-        // initialize your logic here: all @FXML variables will have been
-        // injected
         initializeContinued();
     }
 
@@ -474,166 +468,68 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void cancelConnectionSettings(final ActionEvent event) {
-        connectionSelection.valueProperty().set(null);
-        controlConnectionSettingsVisibility();
-        connectionSettingsEdit.set(false);
+        connectionComponentController.cancelEdit();
     }
 
     // Handler for ComboBox[fx:id="connectionSelection"] onAction
     public void changeConnection(final ActionEvent event) {
-        controlConnectionSettingsVisibility();
-        final ConnectionSetting setting = connectionSelection.getValue();
-        putConnectionSettingInDialog(setting);
+        connectionComponentController.changeConnection();
     }
 
     // Handler for ComboBox[fx:id="connectionType"] onAction
     public void changeConnectionType(final ActionEvent event) {
-        final JDBCType type = connectionType.getValue();
-        if (type != null) {
-            connectionUrl.setText(null);
-            connectionDbName.setText(null);
-            connectionSettingFileBased.set(type == JDBCType.HSQL_STANDALONE);
-        }
+        connectionComponentController.changeConnectionType();
     }
 
     // Handler for Button[fx:id="connectionDirectoryChoice"] onAction
     public void chooseDbDirectory(final ActionEvent event) {
-        final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(DialogDictionary.LABEL_DB_DIRECTORY_CHOOSER
-                .toString());
-        final File dir = dirChooser.showDialog(menuBar.getScene().getWindow());
-        if (dir != null) {
-            final JDBCType type = connectionType.valueProperty().get();
-            if (type != null) {
-                final String dbSource = dir.getAbsolutePath();
-                connectionUrl.setText(dbSource);
-            }
-        }
+        connectionComponentController.chooseDbDirectory();
     }
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void createConnection(final ActionEvent event) {
-        final String name = createValidNewConnectionName(
-                DialogDictionary.PATTERN_NEW_CONNECTION_NAME
-                .toString());
-        final ConnectionSetting setting = new ConnectionSetting(name,
-                JDBCType.HSQL_IN_MEMORY, "", "johndoe", null, null);
-        putConnectionSettingInDialog(setting);
-        connectionSettings.visibleProperty().set(true);
-        editConnection.disableProperty().set(true);
-        removeConnection.disableProperty().set(true);
-        connectionSettingsEdit.set(true);
-        connectionSettingFileBased.set(false);
+        connectionComponentController.createConnection();
     }
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void editConnection(final ActionEvent event) {
-        final ConnectionSetting setting = connectionSelection.getValue();
-        putConnectionSettingInDialog(setting);
-        controlConnectionSettingsVisibility();
-        connectionSettingsEdit.set(true);
+        connectionComponentController.editConnection();
     }
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void removeConnection(final ActionEvent event) {
-        final ConfirmDialog confirm = new ConfirmDialog(
-                DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
-                DialogDictionary.MSG_REALLY_REMOVE_CONNECTION.toString(),
-                DialogDictionary.LABEL_REMOVE_CONNECTION.toString(),
-                DialogDictionary.COMMON_BUTTON_CANCEL.toString());
-        final String confirmation = confirm.askUserFeedback();
-        if (DialogDictionary.LABEL_REMOVE_CONNECTION.toString().equals(
-                confirmation)) {
-            try {
-                final ConnectionSettings settings = new ConnectionSettings();
-                settings.getConnectionSettingsAfterRemovalOf(
-                        getConnectionSettingFromDialog());
-            } catch (final BackingStoreException ex) {
-                final ErrorMessage msg = new ErrorMessage(
-                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                        DialogDictionary.ERR_CONNECTION_SETTING_SAVE_FAILED
-                        .toString(),
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                msg.askUserFeedback();
-            }
-            prepareConnectionSettings();
-        }
+        connectionComponentController.removeConnection();
+        serverComponentController.refreshServerConnectionSettings();
     }
 
     // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void saveConnectionSettings(final ActionEvent event) {
-        final ConnectionSetting setting = getConnectionSettingFromDialog();
-        final ConnectionSettings settings = new ConnectionSettings();
-        try {
-            settings.getConnectionSettingsAfterAdditionOf(setting);
-        } catch (final BackingStoreException ex) {
-            final ErrorMessage msg = new ErrorMessage(
-                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                    DialogDictionary.ERR_CONNECTION_SETTING_SAVE_FAILED
-                    .toString(),
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
-        }
-        prepareConnectionSettings();
+        connectionComponentController.saveConnectionSettings();
+        serverComponentController.refreshServerConnectionSettings();
     }
 
     // Handler for ComboBox[fx:id="serverConnectionSelection"] onAction
     public void changeServerConnection(final ActionEvent event) {
-        final ConnectionSetting connectionSetting = serverConnectionSelection
-                .getValue();
-        serverAlias.setText(connectionSetting != null ? connectionSetting
-                .getDbName() : null);
+        serverComponentController.changeServerConnection();
     }
 
     // Handler for Button[fx:id="startServer"] onAction
     public void startServer(final ActionEvent event) {
-        try {
-            final ConnectionSetting connectionSetting =
-                    serverConnectionSelection
-                    .getValue();
-            ServerManager.getSharedInstance().startServer(connectionSetting,
-                    serverAlias.getText());
-        } catch (IOException | ServerAcl.AclFormatException | IllegalArgumentException ex) {
-            final ErrorMessage msg = new ErrorMessage(
-                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                    DialogDictionary.ERR_SERVER_START_FAILED.toString(),
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
-        }
+        serverComponentController.startServer();
     }
 
     // Handler for Button[fx:id="shutdownServer"] onAction
     public void shutdownServer(final ActionEvent event) {
-        try {
-            ServerManager.getSharedInstance().shutdownServer();
-        } catch (final Throwable ex) {
-            final ErrorMessage msg = new ErrorMessage(
-                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                    DialogDictionary.ERR_SERVER_START_FAILED.toString(),
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
-        }
+        serverComponentController.shutdownServer();
     }
 
     // ---
     private void initializeContinued() {
-        connectionSettingsEdit = new SimpleBooleanProperty(false);
-        connectionSettingFileBased = new SimpleBooleanProperty(false);
-        connectionName.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        connectionType.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        connectionUrl.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        connectionDbName.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        connectionUser.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        connectionDirectoryChoice.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit).or(
-                Bindings.not(connectionSettingFileBased)));
-        prepareConnectionSettings();
-        fillCodeTemplates();
+        initializeConnectionComponentController();
+        initializeServerComponentController();
+        codeTemplateComponent = new CodeTemplateComponent(
+                accordionCodeTemplateList, statementInput, dbOutput);
+        codeTemplateComponent.fillCodeTemplates();
         prepareHistory();
         statementInput.setStyle("-fx-font-size: "
                 + UserPreferencesManager.getSharedInstance().getFontSize()
@@ -649,9 +545,32 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         setupMenu();
 
         controlAutoCommitCheckBoxState();
-        controlServerStatusButtonStates();
         permanentMessage.visibleProperty().set(false);
         refreshTree(null);
+    }
+
+    private void initializeConnectionComponentController() {
+        ConnectionComponentController.Builder builder =
+                new ConnectionComponentController.Builder(
+                connectionSettings);
+        builder.connectionName(connectionName);
+        builder.connectionSelection(connectionSelection);
+        builder.connectionType(connectionType);
+        builder.connectionUrl(connectionUrl);
+        builder.connectionUser(connectionUser);
+        builder.dbName(connectionDbName);
+        builder.browseButton(connectionDirectoryChoice);
+        builder.editButton(editConnection);
+        builder.removeButton(removeConnection);
+        connectionComponentController = builder.build();
+    }
+
+    private void initializeServerComponentController() {
+        serverComponentController = new ServerComponentController.Builder().
+                serverConnectionSelection(serverConnectionSelection).
+                startButton(startServer).shutdownButton(shutdownServer).
+                serverAlias(serverAlias).build();
+        serverComponentController.refreshServerConnectionSettings();
     }
 
     private void setupToolbar() {
@@ -700,66 +619,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         }
     }
 
-    private void controlServerStatusButtonStates() {
-        startServer.disableProperty().set(false);
-        shutdownServer.disableProperty().set(true);
-        Task serverStatusTask;
-        serverStatusTask = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                while (!isCancelled()) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            final boolean running = ServerManager
-                                    .getSharedInstance().isRunning();
-                            startServer.disableProperty().set(running);
-                            shutdownServer.disableProperty().set(!running);
-                        }
-                    });
-                    Thread.sleep(1000);
-                }
-                return null;
-            }
-        };
-        final Thread th = new Thread(serverStatusTask);
-        th.setDaemon(true);
-        th.start();
-    }
-
-    private void fillCodeTemplates() {
-        final ObservableList<CodeHelp> templateListViewItems = FXCollections
-                .observableArrayList();
-        for (final CodeHelp template : CodeHelp.values()) {
-            templateListViewItems.add(template);
-        }
-        accordionCodeTemplateList.setItems(templateListViewItems);
-        accordionCodeTemplateList.getSelectionModel().selectedItemProperty()
-                .addListener(new ChangeListener<CodeHelp>() {
-            @Override
-            public void changed(
-                    final ObservableValue<? extends CodeHelp> ov,
-                    final CodeHelp oldValue, final CodeHelp newValue) {
-                final StringBuilder statementTemplate = new StringBuilder();
-                if (newValue.getSyntaxDescription() != null
-                        && newValue.getSyntaxDescription().trim()
-                        .length() > 0) {
-                    statementTemplate
-                            .append("-- ")
-                            .append(
-                            DialogDictionary.LABEL_SEE_SYNTAX_IN_DBOUTPUT
-                            .toString()).append("\n");
-                    dbOutput.appendText("\n"
-                            + newValue.getSyntaxDescription() + "\n");
-                }
-                statementTemplate.append(newValue.getCodeTemplate());
-                statementInput.insertText(
-                        statementInput.getCaretPosition(),
-                        statementTemplate.toString());
-            }
-        });
-    }
-
     private void prepareHistory() {
         sqlHistoryItems = FXCollections.observableArrayList();
         sqlHistoryColumnTimestamp
@@ -783,87 +642,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
                 sqlHistory.getSelectionModel().clearSelection();
             }
         });
-    }
-
-    private void prepareConnectionSettings() {
-        fillConnectionSettings();
-        fillJdbcTypes();
-        controlConnectionSettingsVisibility();
-    }
-
-    private void controlConnectionSettingsVisibility() {
-        final boolean empty = connectionSelection.valueProperty().get() == null;
-        connectionSettings.visibleProperty().set(!empty);
-        removeConnection.disableProperty().set(empty);
-        editConnection.disableProperty().set(empty);
-
-    }
-
-    private void putConnectionSettingInDialog(final ConnectionSetting setting) {
-        if (setting == null) {
-            connectionSettings.visibleProperty().set(false);
-        } else {
-            connectionName.setText(setting.getName());
-            connectionType.valueProperty().set(setting.getType());
-            connectionUrl.setText(setting.getDbPath());
-            connectionDbName.setText(setting.getDbName());
-            connectionUser.setText(setting.getUser());
-        }
-    }
-
-    private ConnectionSetting getConnectionSettingFromDialog() {
-        final ConnectionSetting setting = new ConnectionSetting(
-                connectionName.getText(), connectionType.getValue(),
-                connectionUrl.getText(), connectionDbName.getText(),
-                connectionUser.getText(), null);
-        return setting;
-    }
-
-    private void fillConnectionSettings() {
-        final ConnectionSettings settings = new ConnectionSettings();
-        final ObservableList<ConnectionSetting> localSettings = FXCollections
-                .observableArrayList();
-        final ObservableList<ConnectionSetting> serverSettings = FXCollections
-                .observableArrayList();
-        for (final ConnectionSetting connectionSetting : settings
-                .getConnectionSettings()) {
-            localSettings.add(connectionSetting);
-            if (connectionSetting.getType().isPossibleServer()) {
-                serverSettings.add(connectionSetting);
-            }
-        }
-        connectionSelection.setItems(localSettings);
-        serverConnectionSelection.setItems(serverSettings);
-    }
-
-    private void fillJdbcTypes() {
-        connectionType.getItems().clear();
-        connectionType.getItems().addAll(JDBCType.values());
-    }
-
-    private String createValidNewConnectionName(final String baseName) {
-        String name = baseName;
-        if (connectionNameAlreadyUsed(name)) {
-            int count = 1;
-            do {
-                name = DialogDictionary.PATTERN_NEW_CONNECTION_NAME.toString()
-                        + " (" + count++ + ")";
-            } while (connectionNameAlreadyUsed(name));
-        }
-        return name;
-    }
-
-    private boolean connectionNameAlreadyUsed(final String name) {
-        if (name == null) {
-            return true;
-        }
-        final ConnectionSettings settings = new ConnectionSettings();
-        for (final ConnectionSetting setting : settings.getConnectionSettings()) {
-            if (setting.getName() != null && setting.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private ExecuteAction createExecuteAction() {

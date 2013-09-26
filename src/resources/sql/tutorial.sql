@@ -38,20 +38,20 @@ DROP TABLE produktgruppe IF EXISTS;
 --
 -- tutor
 --
-CREATE TABLE tutor (tutor VARCHAR(20) PRIMARY KEY, vorname VARCHAR(80), nachname VARCHAR(80), www VARCHAR(80), mail VARCHAR(80), phone VARCHAR(40) );
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('GATTO', 'Anthony', 'Gatto', 'http://www.anthonygatto.com', NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('DIETZ', 'Thomas', 'Dietz', 'http://www.thomas-dietz.com', 'info@thomas-dietz.com', '+49 (0)941 / 4618xxxx');
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('FREBOURG', 'Tony', 'Frébourg', 'http://www.tonyfrebourg.com', NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('KREMO', 'Kris', 'Kremo', NULL, NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('SULC', 'Alan', 'Sulc', NULL, NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('KEE', 'Viktor', 'Kee', 'http://www.viktorkee.com', NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('KARAS', 'Michael', 'Karas', 'http://www.michaelkaras.net', 'booking@michaelkarasonline.com', NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('ROCHAIS', 'Françoise', 'Rochais', 'http://www.francoiserochais.com', NULL, '+33 6 80 251 xxx');
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('PONCE', 'Paul', 'Ponce', 'http://www.paulponce.com', NULL, '+34 639 72 xx xx');
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('PECEL', 'Ivan', 'Pecel', 'http://www.ivanpecel.com', NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('BURRAGE', 'Luke', 'Burrage', 'http://www.lukeburrage.com', 'luke@lukeburrage.com', '+49 (0)30 5306 xxxx');
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('RAGATZ', 'Steven', 'Ragatz', 'http://www.stevenragatz.com', NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, www, mail, phone) VALUES ('GANDINI', 'Gandini', NULL, 'http://gandinijuggling.com', 'anne-agathe@gandinijuggling.com', '+33 (0)6 43 36 xx xx');
+CREATE TABLE tutor (tutor VARCHAR(20) PRIMARY KEY, vorname VARCHAR(80), nachname VARCHAR(80), web VARCHAR(80), mail VARCHAR(80), phone VARCHAR(40) );
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('GATTO', 'Anthony', 'Gatto', 'http://www.anthonygatto.com', NULL, NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('DIETZ', 'Thomas', 'Dietz', 'http://www.thomas-dietz.com', 'info@thomas-dietz.com', '+49 (0)941 / 4618xxxx');
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('FREBOURG', 'Tony', 'Frébourg', 'http://www.tonyfrebourg.com', NULL, NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('KREMO', 'Kris', 'Kremo', NULL, NULL, NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('SULC', 'Alan', 'Sulc', NULL, NULL, NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('KEE', 'Viktor', 'Kee', 'http://www.viktorkee.com', NULL, NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('KARAS', 'Michael', 'Karas', 'http://www.michaelkaras.net', 'booking@michaelkarasonline.com', NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('ROCHAIS', 'Françoise', 'Rochais', 'http://www.francoiserochais.com', NULL, '+33 6 80 251 xxx');
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('PONCE', 'Paul', 'Ponce', 'http://www.paulponce.com', NULL, '+34 639 72 xx xx');
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('PECEL', 'Ivan', 'Pecel', 'http://www.ivanpecel.com', NULL, NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('BURRAGE', 'Luke', 'Burrage', 'http://www.lukeburrage.com', 'luke@lukeburrage.com', '+49 (0)30 5306 xxxx');
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('RAGATZ', 'Steven', 'Ragatz', 'http://www.stevenragatz.com', NULL, NULL);
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('GANDINI', 'Gandini', NULL, 'http://gandinijuggling.com', 'anne-agathe@gandinijuggling.com', '+33 (0)6 43 36 xx xx');
 --
 -- workshop
 --
