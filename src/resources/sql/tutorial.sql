@@ -51,7 +51,7 @@ INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('PONCE', 
 INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('PECEL', 'Ivan', 'Pecel', 'http://www.ivanpecel.com', NULL, NULL);
 INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('BURRAGE', 'Luke', 'Burrage', 'http://www.lukeburrage.com', 'luke@lukeburrage.com', '+49 (0)30 5306 xxxx');
 INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('RAGATZ', 'Steven', 'Ragatz', 'http://www.stevenragatz.com', NULL, NULL);
-INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('GANDINI', 'Gandini', NULL, 'http://gandinijuggling.com', 'anne-agathe@gandinijuggling.com', '+33 (0)6 43 36 xx xx');
+INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('GANDINI', NULL, 'Gandini', 'http://gandinijuggling.com', 'anne-agathe@gandinijuggling.com', '+33 (0)6 43 36 xx xx');
 --
 -- workshop
 --

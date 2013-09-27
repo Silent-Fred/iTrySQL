@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.itrysql;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.ServerManager;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 import java.util.ResourceBundle;
@@ -69,6 +70,7 @@ public class ITrySQL extends Application {
 
         stage.setScene(scene);
         stage.getIcons().add(ImagePack.APP_ICON.getAsImage());
+        stage.setTitle(DialogDictionary.APPLICATION.toString());
         stage.show();
     }
 
