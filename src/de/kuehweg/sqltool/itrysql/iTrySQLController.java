@@ -639,7 +639,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
                 if (newValue != null) {
                     statementInput.appendText(newValue.getOriginalSQL());
                 }
-                sqlHistory.getSelectionModel().clearSelection();
             }
         });
     }
