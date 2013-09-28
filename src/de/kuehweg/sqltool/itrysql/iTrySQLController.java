@@ -27,6 +27,7 @@ package de.kuehweg.sqltool.itrysql;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
+import de.kuehweg.sqltool.common.RomanNumber;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.CodeHelp;
 import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
@@ -92,6 +93,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper {
 
@@ -155,6 +157,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
     private MenuItem menuItemPaste;
     @FXML
     private MenuItem menuItemRollback;
+    @FXML
+    private MenuItem menuItemNewSession;
     @FXML
     private Button refreshTree;
     @FXML
@@ -221,6 +225,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
     private CodeTemplateComponent codeTemplateComponent;
     private ConnectionComponentController connectionComponentController;
     private ServerComponentController serverComponentController;
+    private static int countWindows = 1;
 
     @Override
     // This method is called by the FXMLLoader when initialization is complete
@@ -259,6 +264,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         assert menuItemFileSaveScript != null : "fx:id=\"menuItemFileSaveScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemPaste != null : "fx:id=\"menuItemPaste\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemRollback != null : "fx:id=\"menuItemRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert menuItemNewSession != null : "fx:id=\"menuItemNewSession\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert permanentMessage != null : "fx:id=\"permanentMessage\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert refreshTree != null : "fx:id=\"refreshTree\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert removeConnection != null : "fx:id=\"removeConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -290,13 +296,11 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         initializeContinued();
     }
 
-    // Handler for MenuItem[javafx.scene.control.MenuItem@e6702f4] onAction
     public void about(final ActionEvent event) {
         final License aboutBox = new License();
         aboutBox.showAndWait();
     }
 
-    // Handler for CheckBox[fx:id="autoCommit"] onAction
     public void autoCommit(final ActionEvent event) {
         // Auto-Commit ist keine echte Benutzereinstellung sondern wird pro
         // Verbindung gesteuert, z.T. auch durch JDBC-Vorgaben
@@ -320,22 +324,26 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         }
     }
 
-    // Handler for MenuItem[fx:id="menuItemCopy"] onAction
+    public void newSession(final ActionEvent event) {
+        ITrySQLStage iTrySQLStage = new ITrySQLStage((Stage) menuBar.getScene().
+                getWindow(), DialogDictionary.APPLICATION.toString() + "("
+                + new RomanNumber(countWindows++).toRomanNumber().
+                toLowerCase() + ")");
+        iTrySQLStage.show();
+    }
+
     public void clipboardCopy(final ActionEvent event) {
         // currently no action
     }
 
-    // Handler for MenuItem[fx:id="menuItemCut"] onAction
     public void clipboardCut(final ActionEvent event) {
         // currently no action
     }
 
-    // Handler for MenuItem[fx:id="menuItemPaste"] onAction
     public void clipboardPaste(final ActionEvent event) {
         // currently no action
     }
 
-    // Handler for MenuItem[fx:id="menuItemConnect"] onAction
     public void connect(final ActionEvent event) {
         final ConnectionDialog connectionDialog = new ConnectionDialog();
         connectionDialog.showAndWait();
@@ -356,15 +364,12 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         }
     }
 
-    // Handler for MenuItem[fx:id="menuItemDisconnect"] onAction
     public void disconnect(final ActionEvent event) {
         getConnectionHolder().disconnect();
         refreshTree(null);
         permanentMessage.visibleProperty().set(false);
     }
 
-    // Handler for Button[fx:id="toolbarExecute"] onAction
-    // Handler for MenuItem[fx:id="menuItemExecute"] onAction
     public void execute(final ActionEvent event) {
         // highlighted text to be executed ?
         String sql = statementInput.getSelectedText();
@@ -377,67 +382,51 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         createExecuteAction().handleExecuteAction(sql);
     }
 
-    // Handler for MenuItem[fx:id="menuItemExecuteScript"] onAction
     public void executeScript(final ActionEvent event) {
         createExecuteAction().handleExecuteAction(statementInput.getText());
     }
 
-    // Handler for Button[fx:id="toolbarCommit"] onAction
-    // Handler for MenuItem[fx:id="menuItemCommit"] onAction
     public void commit(final ActionEvent event) {
         createExecuteAction().handleExecuteAction("COMMIT");
     }
 
-    // Handler for Button[fx:id="toolbarCheckpoint"] onAction
-    // Handler for MenuItem[fx:id="menuItemCheckpoint"] onAction
     public void checkpoint(final ActionEvent event) {
         createExecuteAction().handleExecuteAction("CHECKPOINT");
     }
 
-    // Handler for Button[fx:id="toolbarRollback"] onAction
-    // Handler for MenuItem[fx:id="menuItemRollback"] onAction
     public void rollback(final ActionEvent event) {
         createExecuteAction().handleExecuteAction("ROLLBACK");
     }
 
-    // Handler for Button[fx:id="toolbarZoomIn"] onAction
-    // Handler for Button[fx:id="toolbarZoomOut"] onAction
     public void fontAction(final ActionEvent event) {
         FontAction.handleFontAction(event);
     }
 
-    // Handler for Button[fx:id="toolbarTutorialData"] onAction
     public void tutorialAction(final ActionEvent event) {
         new TutorialAction().createTutorial(createExecuteAction());
     }
 
-    // Handler for MenuItem[fx:id="menuItemFileOpenScript"] onAction
     public void fileOpenScriptAction(final ActionEvent event) {
         new ScriptAction(statementInput).loadScript();
     }
 
-    // Handler for MenuItem[fx:id="menuItemFileSaveScript"] onAction
     public void fileSaveScriptAction(final ActionEvent event) {
         new ScriptAction(statementInput).saveScript();
     }
 
-    // Handler for CheckBox[fx:id="limitMaxRows"] onAction
     public void limitMaxRows(final ActionEvent event) {
         UserPreferencesManager.getSharedInstance().setLimitMaxRows(
                 limitMaxRows.isSelected());
     }
 
-    // Handler for MenuItem[fx:id="menuItemClose"] onAction
     public void quit(final ActionEvent event) {
         Platform.exit();
     }
 
-    // Handler for Button[fx:id="toolbarTabDbOutputClear"] onAction
     public void toolbarTabDbOutputClearAction(final ActionEvent event) {
         dbOutput.clear();
     }
 
-    // Handler for Button[fx:id="toolbarTabDbOutputExport"] onAction
     public void toolbarTabDbOutputExportAction(final ActionEvent event) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT.toString());
@@ -457,7 +446,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         }
     }
 
-    // Handler for Button[fx:id="refreshTree"] onAction
     public void refreshTree(final ActionEvent event) {
         final Task refreshTask = new SchemaTreeBuilderTask(
                 getConnectionHolder().getConnection(), schemaTreeView);
@@ -466,59 +454,48 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
         th.start();
     }
 
-    // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void cancelConnectionSettings(final ActionEvent event) {
         connectionComponentController.cancelEdit();
     }
 
-    // Handler for ComboBox[fx:id="connectionSelection"] onAction
     public void changeConnection(final ActionEvent event) {
         connectionComponentController.changeConnection();
     }
 
-    // Handler for ComboBox[fx:id="connectionType"] onAction
     public void changeConnectionType(final ActionEvent event) {
         connectionComponentController.changeConnectionType();
     }
 
-    // Handler for Button[fx:id="connectionDirectoryChoice"] onAction
     public void chooseDbDirectory(final ActionEvent event) {
         connectionComponentController.chooseDbDirectory();
     }
 
-    // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void createConnection(final ActionEvent event) {
         connectionComponentController.createConnection();
     }
 
-    // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void editConnection(final ActionEvent event) {
         connectionComponentController.editConnection();
     }
 
-    // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void removeConnection(final ActionEvent event) {
         connectionComponentController.removeConnection();
         serverComponentController.refreshServerConnectionSettings();
     }
 
-    // Handler for Button[Button[id=null, styleClass=button]] onAction
     public void saveConnectionSettings(final ActionEvent event) {
         connectionComponentController.saveConnectionSettings();
         serverComponentController.refreshServerConnectionSettings();
     }
 
-    // Handler for ComboBox[fx:id="serverConnectionSelection"] onAction
     public void changeServerConnection(final ActionEvent event) {
         serverComponentController.changeServerConnection();
     }
 
-    // Handler for Button[fx:id="startServer"] onAction
     public void startServer(final ActionEvent event) {
         serverComponentController.startServer();
     }
 
-    // Handler for Button[fx:id="shutdownServer"] onAction
     public void shutdownServer(final ActionEvent event) {
         serverComponentController.shutdownServer();
     }
@@ -604,6 +581,9 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
                 KeyCombination.SHORTCUT_DOWN));
         menuItemFileSaveScript.setAccelerator(new KeyCodeCombination(KeyCode.S,
                 KeyCombination.SHORTCUT_DOWN));
+        menuItemNewSession.setAccelerator(new KeyCodeCombination(KeyCode.N,
+                KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+
         menuItemDisconnect.disableProperty().bind(
                 Bindings.not(getConnectionHolder().connectedProperty()));
     }

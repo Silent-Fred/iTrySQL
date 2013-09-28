@@ -59,7 +59,7 @@ public class ITrySQL extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/resources/fxml/iTrySQL.fxml"),
                 ResourceBundle.getBundle("dictionary"));
 
@@ -68,10 +68,10 @@ public class ITrySQL extends Application {
         scene.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").
                 toExternalForm());
 
-        stage.setScene(scene);
-        stage.getIcons().add(ImagePack.APP_ICON.getAsImage());
-        stage.setTitle(DialogDictionary.APPLICATION.toString());
-        stage.show();
+        primaryStage.setScene(scene);
+        primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
+        primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
+        primaryStage.show();
     }
 
     @Override

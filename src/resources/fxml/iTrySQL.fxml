@@ -10,7 +10,6 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?scenebuilder-preview-i18n-resource ../../../../dictionary.properties?>
 
 <AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="1200.0" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.itrysql.iTrySQLController">
   <children>
@@ -166,47 +165,47 @@
                           <items>
                             <Button fx:id="toolbarExecute" mnemonicParsing="false" onAction="#execute" styleClass="itry-tool-bar-button">
                               <stylesheets>
-                                <URL value="@itrysql.css" />
+                                <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Separator prefHeight="20.0" prefWidth="36.0" />
                             <Button fx:id="toolbarCommit" mnemonicParsing="false" onAction="#commit" styleClass="itry-tool-bar-button">
                               <stylesheets>
-                                <URL value="@itrysql.css" />
+                                <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Button fx:id="toolbarCheckpoint" mnemonicParsing="false" onAction="#checkpoint" styleClass="itry-tool-bar-button">
                               <stylesheets>
-                                <URL value="@itrysql.css" />
+                                <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Button fx:id="toolbarRollback" mnemonicParsing="false" onAction="#rollback" styleClass="itry-tool-bar-button">
                               <stylesheets>
-                                <URL value="@itrysql.css" />
+                                <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Separator prefHeight="20.0" prefWidth="36.0" />
                             <Button fx:id="toolbarZoomOut" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
                               <stylesheets>
-                                <URL value="@itrysql.css" />
+                                <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Button fx:id="toolbarZoomIn" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
                               <stylesheets>
-                                <URL value="@itrysql.css" />
+                                <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
                             <Separator prefHeight="20.0" prefWidth="36.0" />
                             <Button fx:id="toolbarTutorialData" mnemonicParsing="false" onAction="#tutorialAction" styleClass="itry-tool-bar-button">
                               <stylesheets>
-                                <URL value="@itrysql.css" />
+                                <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
                           </items>
                         </ToolBar>
                         <TextArea fx:id="statementInput" prefHeight="333.0" prefWidth="844.0" promptText="%prompt_enterStatement" styleClass="itry-statement-edit" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <stylesheets>
-                            <URL value="@itrysql.css" />
+                            <URL value="@../css/itrysql.css" />
                           </stylesheets>
                         </TextArea>
                         <ProgressBar fx:id="executionProgressIndicator" layoutX="323.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="5.0" />
@@ -217,7 +216,7 @@
                         </Label>
                         <Label fx:id="permanentMessage" alignment="CENTER_RIGHT" text="Label" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="0.0">
                           <stylesheets>
-                            <URL value="@itrysql.css" />
+                            <URL value="@../css/itrysql.css" />
                           </stylesheets>
                         </Label>
                       </children>
@@ -249,19 +248,19 @@
                                   <children>
                                     <TextArea fx:id="dbOutput" editable="false" prefHeight="318.0" prefWidth="844.0" styleClass="itry-db-output" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <stylesheets>
-                                        <URL value="@itrysql.css" />
+                                        <URL value="@../css/itrysql.css" />
                                       </stylesheets>
                                     </TextArea>
                                     <ToolBar maxWidth="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="317.9999000000025" prefWidth="42.0" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
                                         <Button fx:id="toolbarTabDbOutputExport" mnemonicParsing="false" onAction="#toolbarTabDbOutputExportAction" styleClass="itry-tool-bar-button">
                                           <stylesheets>
-                                            <URL value="@itrysql.css" />
+                                            <URL value="@../css/itrysql.css" />
                                           </stylesheets>
                                         </Button>
                                         <Button fx:id="toolbarTabDbOutputClear" mnemonicParsing="false" onAction="#toolbarTabDbOutputClearAction" styleClass="itry-tool-bar-button">
                                           <stylesheets>
-                                            <URL value="@itrysql.css" />
+                                            <URL value="@../css/itrysql.css" />
                                           </stylesheets>
                                         </Button>
                                       </items>
@@ -328,6 +327,11 @@
             <MenuItem mnemonicParsing="false" onAction="#checkpoint" text="%menu_item_checkpoint" fx:id="menuItemCheckpoint" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#rollback" text="%menu_item_rollback" fx:id="menuItemRollback" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="%menu_window">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#newSession" text="%menu_item_newSession" fx:id="menuItemNewSession" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu_help">
