@@ -325,10 +325,10 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
     }
 
     public void newSession(final ActionEvent event) {
+        final String title = DialogDictionary.APPLICATION.toString() + "("
+                + new RomanNumber(countWindows++).toString().toLowerCase() + ")";
         ITrySQLStage iTrySQLStage = new ITrySQLStage((Stage) menuBar.getScene().
-                getWindow(), DialogDictionary.APPLICATION.toString() + "("
-                + new RomanNumber(countWindows++).toRomanNumber().
-                toLowerCase() + ")");
+                getWindow(), title);
         iTrySQLStage.show();
     }
 

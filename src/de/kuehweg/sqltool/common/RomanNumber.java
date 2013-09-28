@@ -58,7 +58,8 @@ public class RomanNumber {
         }
     };
 
-    public String toRomanNumber() {
+    @Override
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         long remainder = value;
         while (remainder > 0) {
