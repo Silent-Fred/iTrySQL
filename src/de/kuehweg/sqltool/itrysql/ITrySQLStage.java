@@ -48,13 +48,19 @@ public class ITrySQLStage extends Stage {
     public ITrySQLStage(final Stage callerStage) {
         this(callerStage, DialogDictionary.APPLICATION.toString());
     }
-    
+
     public ITrySQLStage(final Stage callerStage, final String title) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource(
-                    "/resources/fxml/iTrySQL.fxml"),
-                    ResourceBundle.getBundle("dictionary"));
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setResources(ResourceBundle.getBundle("dictionary"));
+            fxmlLoader.setLocation(getClass().getResource(
+                    "/resources/fxml/iTrySQL.fxml"));
+            Parent root = (Parent) fxmlLoader.load();
 
+            iTrySQLController controller = fxmlLoader.getController();
+            setOnHiding(controller);
+            setOnCloseRequest(controller);
+            
             Scene scene = new Scene(root);
 
             scene.getStylesheets().add(getClass().getResource(

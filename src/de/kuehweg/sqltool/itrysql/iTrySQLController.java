@@ -65,6 +65,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -94,8 +95,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
-public class iTrySQLController implements Initializable, SQLHistoryKeeper {
+public class iTrySQLController implements Initializable, SQLHistoryKeeper,
+        EventHandler<WindowEvent> {
 
     @FXML
     private ListView<CodeHelp> accordionCodeTemplateList;
@@ -640,6 +643,11 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper {
     }
 
     // --- Interfaces und specialties
+    @Override
+    public void handle(final WindowEvent event) {
+        getConnectionHolder().disconnect();
+    }
+
     @Override
     public void addExecutedSQLToHistory(final String sql) {
         if (sql != null && sql.trim().length() > 0) {

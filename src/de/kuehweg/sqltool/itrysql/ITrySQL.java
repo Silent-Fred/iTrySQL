@@ -45,6 +45,8 @@ import javafx.stage.Stage;
  */
 public class ITrySQL extends Application {
 
+    private iTrySQLController controller;
+
     @Override
     public void init() throws Exception {
         super.init();
@@ -60,13 +62,18 @@ public class ITrySQL extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/resources/fxml/iTrySQL.fxml"),
-                ResourceBundle.getBundle("dictionary"));
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setResources(ResourceBundle.getBundle("dictionary"));
+        fxmlLoader.setLocation(getClass().getResource(
+                "/resources/fxml/iTrySQL.fxml"));
+        Parent root = (Parent) fxmlLoader.load();
+
+        controller = (iTrySQLController) fxmlLoader.getController();
 
         Scene scene = new Scene(root);
 
-        scene.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").
-                toExternalForm());
+        scene.getStylesheets().add(getClass().getResource(
+                "/resources/css/itrysql.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
@@ -77,6 +84,9 @@ public class ITrySQL extends Application {
     @Override
     public void stop() throws Exception {
         try {
+            if (controller != null) {
+                controller.getConnectionHolder().disconnect();
+            }
             ServerManager.getSharedInstance().shutdownServer();
         } catch (Throwable ex) {
             Logger.getLogger(ITrySQL.class.getName()).
