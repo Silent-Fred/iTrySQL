@@ -31,8 +31,10 @@ package de.kuehweg.sqltool.database;
  */
 public class DatabaseConstants {
 
+    public static final int MAX_ROWS = 2500;
+    public static final String DEFAULT_TRANSACTION_CONTROL = "MVCC";
+
     private DatabaseConstants() {
         // no instances
     }
-    public static final int MAX_ROWS = 2500;
 }

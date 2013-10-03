@@ -86,6 +86,8 @@ public class ServerManager {
         // server.tls false - default
         // server.daemon false - default
         // server.remote_open false - default
+        properties.setProperty("hsqldb.tx",
+                DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
         server = new Server();
         server.setProperties(properties);
         server.start();

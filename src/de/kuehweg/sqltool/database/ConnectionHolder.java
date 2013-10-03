@@ -32,6 +32,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -64,9 +65,13 @@ public class ConnectionHolder {
         try {
             Class.forName(connectionSetting.getType().getDriverClass())
                     .newInstance();
+            final Properties properties = new Properties();
+            properties.setProperty("user", connectionSetting.getUser());
+            properties.setProperty("password", connectionSetting.getPassword());
+            properties.setProperty("hsqldb.tx",
+                    DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
             newConnection = DriverManager.getConnection(
-                    connectionSetting.getUrl(), connectionSetting.getUser(),
-                    connectionSetting.getPassword());
+                    connectionSetting.getUrl(), properties);
             connect(newConnection);
             connectedProperty.set(true);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
