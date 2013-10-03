@@ -107,9 +107,11 @@
 
 #permanentMessage {
     -fx-text-fill: white;
-    -fx-padding: 4px 4px 4px 20px;
+    -fx-padding: 4px 20px 4px 20px;
     -fx-background-color: #34a97b;
     -fx-opacity: 0.5;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
 }
 
 .tab-pane .tab-header-area .tab-header-background {

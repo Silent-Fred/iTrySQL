@@ -214,7 +214,7 @@
                             <Font size="11.0" fx:id="x2" />
                           </font>
                         </Label>
-                        <Label fx:id="permanentMessage" alignment="CENTER_RIGHT" text="Label" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="0.0">
+                        <Label fx:id="permanentMessage" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Label" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="43.0">
                           <stylesheets>
                             <URL value="@../css/itrysql.css" />
                           </stylesheets>

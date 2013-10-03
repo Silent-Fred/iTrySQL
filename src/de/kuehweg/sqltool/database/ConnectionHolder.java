@@ -66,8 +66,11 @@ public class ConnectionHolder {
             Class.forName(connectionSetting.getType().getDriverClass())
                     .newInstance();
             final Properties properties = new Properties();
-            properties.setProperty("user", connectionSetting.getUser());
-            properties.setProperty("password", connectionSetting.getPassword());
+            properties.setProperty("user",
+                    connectionSetting.getUser() != null ? connectionSetting.
+                    getUser() : "");
+            properties.setProperty("password", connectionSetting.getPassword()
+                    != null ? connectionSetting.getPassword() : "");
             properties.setProperty("hsqldb.tx",
                     DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
             newConnection = DriverManager.getConnection(
