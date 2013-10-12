@@ -26,13 +26,13 @@
 DROP TABLE workshoptutor IF EXISTS;
 DROP TABLE workshop IF EXISTS;
 DROP TABLE tutor IF EXISTS;
-DROP TABLE land IF EXISTS;
 DROP TABLE artikeltext IF EXISTS;
 DROP TABLE verkaufspreis IF EXISTS;
 DROP TABLE listung IF EXISTS;
 DROP TABLE multilingual IF EXISTS;
 DROP TABLE filiale IF EXISTS;
 DROP TABLE region IF EXISTS;
+DROP TABLE land IF EXISTS;
 DROP TABLE artikel IF EXISTS;
 DROP TABLE produktgruppe IF EXISTS;
 --
@@ -117,7 +117,7 @@ INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('SJU', 'Jura', 'Del
 --
 -- filiale
 --
-CREATE TABLE filiale (filialnummer VARCHAR(10) PRIMARY KEY, strasse VARCHAR(80), plz VARCHAR(10), ort VARCHAR(80), land varchar(3), region VARCHAR(10) REFERENCES region(region));
+CREATE TABLE filiale (filialnummer VARCHAR(10) PRIMARY KEY, strasse VARCHAR(80), plz VARCHAR(10), ort VARCHAR(80), land VARCHAR(3) NOT NULL REFERENCES land, region VARCHAR(10) NOT NULL REFERENCES region(region));
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1000', '16, Rue Albert Henri', '75001', 'Paris', 'FR', 'ILE');                     
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1010', '19, Rue Aristide Briand', '13002', 'Marseille', 'FR', 'PRO');              
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1020', '17, Rue Blanche Vitte', '69003', 'Lyon', 'FR', 'RHO');                     
@@ -289,7 +289,7 @@ INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('DVD', NULL);
 --
 -- artikel
 --
-CREATE TABLE artikel (artikelnummer VARCHAR(10) PRIMARY KEY , bezeichnung VARCHAR(200), produktgruppe VARCHAR(10) REFERENCES produktgruppe(produktgruppe), hauptartikel VARCHAR(10) REFERENCES artikel(artikelnummer));
+CREATE TABLE artikel (artikelnummer VARCHAR(10) PRIMARY KEY , bezeichnung VARCHAR(200), produktgruppe VARCHAR(10) NOT NULL REFERENCES produktgruppe(produktgruppe), hauptartikel VARCHAR(10) REFERENCES artikel(artikelnummer));
 INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('100000', 'BNBG', NULL);
 INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('100001', 'BNBG', '100000');
 INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('100002', 'BNBG', '100000');
