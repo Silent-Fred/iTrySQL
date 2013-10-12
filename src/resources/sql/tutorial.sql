@@ -238,8 +238,11 @@ INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('213
 -- multilingual
 --
 CREATE TABLE multilingual (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), locale VARCHAR(2), UNIQUE (filialnummer, locale));
-INSERT INTO multilingual (filialnummer, locale) VALUES ('1886', 'DE');
+INSERT INTO multilingual (filialnummer, locale) SELECT filialnummer, land FROM filiale;
 INSERT INTO multilingual (filialnummer, locale) VALUES ('1886', 'FR');
+INSERT INTO multilingual (filialnummer, locale) VALUES ('1060', 'DE');
+INSERT INTO multilingual (filialnummer, locale) VALUES ('1310', 'DE');
+INSERT INTO multilingual (filialnummer, locale) VALUES ('1650', 'DE');
 --
 -- Produktgruppe
 --
