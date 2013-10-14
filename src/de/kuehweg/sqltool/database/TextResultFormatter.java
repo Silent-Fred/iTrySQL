@@ -86,7 +86,7 @@ public class TextResultFormatter {
         final int width = resultFormatter.getHeader().length;
         final int[] size = calculateColumnWidths();
 
-        // Spalten��berschriften aufbauen
+        // Spaltenüberschriften aufbauen
         for (int i = 0; i < width; i++) {
             builder.append(rightPad(resultFormatter.getHeader()[i].toString(),
                     " ", size[i]));
