@@ -26,12 +26,10 @@
 package de.kuehweg.sqltool.dialog.action;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  *
@@ -50,24 +48,12 @@ public class TutorialAction {
                 DialogDictionary.COMMON_BUTTON_CANCEL.toString());
         if (DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString().equals(
                 confirm.askUserFeedback())) {
+            final String tutorialSql;
             try {
-                final InputStream tutorialStream = getClass()
-                        .getResourceAsStream("/resources/sql/tutorial.sql");
-                final StringBuffer b;
-                try (InputStreamReader reader = new InputStreamReader(
-                        tutorialStream, "UTF-8");
-                        BufferedReader bufferedReader = new BufferedReader(
-                        reader)) {
-                    b = new StringBuffer();
-                    String s = null;
-                    while ((s = bufferedReader.readLine()) != null) {
-                        b.append(s);
-                        b.append('\n');
-                    }
-                }
-                final String tutorialSql = b.toString();
+                tutorialSql = FileUtil.readResourceFile(
+                        "/resources/sql/tutorial.sql");
                 executeAction.handleExecuteActionSilently(tutorialSql);
-            } catch (final IOException ex) {
+            } catch (IOException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),
                         DialogDictionary.ERR_TUTORIAL_CREATION_FAILED + " ("

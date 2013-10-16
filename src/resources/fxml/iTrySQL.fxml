@@ -223,15 +223,24 @@
                     </AnchorPane>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="720.0" prefWidth="708.0">
                       <children>
-                        <TabPane fx:id="tabPaneProtocols" prefHeight="356.0" prefWidth="706.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TabPane fx:id="tabPaneProtocols" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <tabs>
                             <Tab fx:id="tabResult" closable="false" style="" text="%label_tabResult">
                               <content>
                                 <AnchorPane id="Content">
                                   <children>
-                                    <HBox fx:id="resultTableContainer" prefHeight="318.0" prefWidth="887.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <ToolBar maxWidth="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="318.0" prefWidth="42.0" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="845.0" AnchorPane.topAnchor="0.0">
+                                      <items>
+                                        <Button fx:id="toolbarTabTableViewExport" mnemonicParsing="false" onAction="#toolbarTabTableViewExportAction" styleClass="itry-tool-bar-button">
+                                          <stylesheets>
+                                            <URL value="@../css/itrysql.css" />
+                                          </stylesheets>
+                                        </Button>
+                                      </items>
+                                    </ToolBar>
+                                    <HBox fx:id="resultTableContainer" prefHeight="318.0" prefWidth="851.0" spacing="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="0.0">
                                       <children>
-                                        <TableView id="" HBox.hgrow="ALWAYS">
+                                        <TableView id="" prefHeight="318.0" prefWidth="845.0" HBox.hgrow="ALWAYS">
                                           <columns>
                                             <TableColumn prefWidth="75.0" text="%label_empty" />
                                           </columns>

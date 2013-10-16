@@ -46,6 +46,6 @@ public class LicenseController implements Initializable {
         assert licenseWebView != null : "fx:id=\"licenseWebView\" was not injected: check your FXML file 'License.fxml'.";
 
         licenseWebView.getEngine().load(
-                this.getClass().getResource("license.html").toExternalForm());
+                this.getClass().getResource("/resources/html/license.html").toExternalForm());
     }
 }

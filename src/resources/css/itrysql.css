@@ -91,6 +91,13 @@
     -fx-graphic: url('../images/tutorialdata_active.png');
 }
 
+#toolbarTabTableViewExport {
+    -fx-graphic: url('../images/export.png');
+}
+#toolbarTabTableViewExport:armed, #toolbarTabTableViewExport:hover, #toolbarTabTableViewExport:pressed {
+    -fx-graphic: url('../images/export_active.png');
+}
+
 #toolbarTabDbOutputExport {
     -fx-graphic: url('../images/export.png');
 }

@@ -25,7 +25,10 @@
  */
 package de.kuehweg.sqltool.common;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +53,24 @@ public class FileUtil {
     public static void writeFile(final String file, final String text)
             throws IOException {
         final Path path = FileSystems.getDefault().getPath(file);
-        Files.write(path, text.getBytes(), StandardOpenOption.CREATE);
+        Files.write(path, text.getBytes(), StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    public static String readResourceFile(final String resourceName) throws IOException {
+        final InputStream tutorialStream = FileUtil.class
+                .getResourceAsStream(resourceName);
+        final StringBuffer b;
+        InputStreamReader reader = new InputStreamReader(
+                tutorialStream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(
+                reader);
+        b = new StringBuffer();
+        String s = null;
+        while ((s = bufferedReader.readLine()) != null) {
+            b.append(s);
+            b.append('\n');
+        }
+        return b.toString();
     }
 }

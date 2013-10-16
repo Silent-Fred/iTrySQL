@@ -35,6 +35,7 @@ import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.ConnectionHolder;
+import de.kuehweg.sqltool.database.HtmlResultFormatter;
 import de.kuehweg.sqltool.database.JDBCType;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ConnectionDialog;
@@ -44,12 +45,14 @@ import de.kuehweg.sqltool.dialog.ExecutionProgressEnvironment;
 import de.kuehweg.sqltool.dialog.ExecutionResultEnvironment;
 import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
+import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
 import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
 import de.kuehweg.sqltool.dialog.component.CodeTemplateComponent;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
+import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.ServerComponentController;
 import java.io.File;
 import java.io.IOException;
@@ -205,6 +208,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     @FXML
     private Button toolbarTabDbOutputExport;
     @FXML
+    private Button toolbarTabTableViewExport;
+    @FXML
     private Button toolbarTutorialData;
     @FXML
     private Button toolbarZoomIn;
@@ -292,6 +297,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert toolbarRollback != null : "fx:id=\"toolbarRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarTabDbOutputClear != null : "fx:id=\"toolbarTabDbOutputClear\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarTabDbOutputExport != null : "fx:id=\"toolbarTabDbOutputExport\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarTabTableViewExport != null : "fx:id=\"toolbarTabTableViewExport\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarTutorialData != null : "fx:id=\"toolbarTutorialData\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomIn != null : "fx:id=\"toolbarZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -437,7 +443,37 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 .getScene().getWindow());
         if (file != null) {
             try {
-                FileUtil.writeFile(file.getAbsolutePath(), dbOutput.getText());
+                FileUtil.
+                        writeFile(file.getAbsolutePath(), dbOutput.getText());
+            } catch (final IOException ex) {
+                final ErrorMessage msg = new ErrorMessage(
+                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                        DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                msg.askUserFeedback();
+
+            }
+        }
+    }
+
+    public void toolbarTabTableViewExportAction(final ActionEvent event) {
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT.toString());
+        final File file = fileChooser.showSaveDialog(((Node) event.getSource())
+                .getScene().getWindow());
+        if (file != null) {
+            try {
+                if (resultTableContainer.getChildren() != null) {
+                    for (final Node node : resultTableContainer.getChildren()) {
+                        if (ExecutionGUIUpdater.RESULT_TABLE_ID.equals(node.
+                                getId())) {
+                            FileUtil.writeFile(file.getAbsolutePath(),
+                                    new HtmlResultFormatter(
+                                    ((QueryResultTableView) node).
+                                    getResultFormatter()).formatAsHtml());
+                        }
+                    }
+                }
             } catch (final IOException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),

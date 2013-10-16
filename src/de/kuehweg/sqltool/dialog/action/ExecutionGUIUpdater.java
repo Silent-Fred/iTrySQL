@@ -30,19 +30,11 @@ import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.database.ResultFormatter;
 import de.kuehweg.sqltool.database.TextResultFormatter;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import java.util.List;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.util.Callback;
 
 /**
  *
@@ -50,6 +42,8 @@ import javafx.util.Callback;
  */
 public class ExecutionGUIUpdater implements Runnable {
 
+    public static final String RESULT_TABLE_ID =
+            "useMeToFetchTheResultFormatter";
     private static final int MAX_DBOUTPUT = 1024 * 1024;
     private final Scene sceneToUpdate;
     private final SQLHistoryKeeper historyKeeper;
@@ -161,36 +155,10 @@ public class ExecutionGUIUpdater implements Runnable {
         final HBox resultTableContainer = (HBox) sceneToUpdate
                 .lookup("#resultTableContainer");
         resultTableContainer.getChildren().clear();
-        final TableView<ObservableList> dynamicTableView = new TableView<>();
-        int i = 0;
-        for (final String head : resultFormatter.getHeader()) {
-            final TableColumn col = new TableColumn(head);
-            col.setMinWidth(100);
-            final int accessIndex = i++;
-            col.setCellValueFactory(
-                    new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(
-                        final CellDataFeatures<ObservableList, String> param) {
-                    return new SimpleStringProperty(param.getValue()
-                            .get(accessIndex).toString());
-                }
-            });
-            dynamicTableView.getColumns().add(col);
-        }
-        final ObservableList<ObservableList> content = FXCollections
-                .observableArrayList();
-        for (final List<String> rowFromFormatter : resultFormatter.getRows()) {
-            final ObservableList<String> row = FXCollections
-                    .observableArrayList();
-            for (final String column : rowFromFormatter) {
-                row.add(column);
-            }
-            content.add(row);
-        }
-
-        dynamicTableView.setItems(content);
-
+        final QueryResultTableView dynamicTableView =
+                new QueryResultTableView(resultFormatter);
+        dynamicTableView.setId(RESULT_TABLE_ID);
+        dynamicTableView.buildTableView();
         resultTableContainer.getChildren().add(dynamicTableView);
         HBox.setHgrow(dynamicTableView, Priority.ALWAYS);
     }
