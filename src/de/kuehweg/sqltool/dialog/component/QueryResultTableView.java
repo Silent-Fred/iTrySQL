@@ -25,7 +25,9 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
+import de.kuehweg.sqltool.database.HtmlResultFormatter;
 import de.kuehweg.sqltool.database.ResultFormatter;
+import java.io.IOException;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -81,7 +83,14 @@ public class QueryResultTableView extends TableView {
         setItems(content);
     }
 
-    public ResultFormatter getResultFormatter() {
-        return resultFormatter;
+    public String toHtml() {
+        if (resultFormatter != null) {
+            try {
+                return new HtmlResultFormatter(resultFormatter).formatAsHtml();
+            } catch (IOException ex) {
+                return ex.toString();
+            }
+        }
+        return "";
     }
 }

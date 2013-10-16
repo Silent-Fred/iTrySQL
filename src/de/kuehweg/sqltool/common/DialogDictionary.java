@@ -64,6 +64,7 @@ public enum DialogDictionary {
     LABEL_OPEN_SCRIPT("label_openScript"),
     LABEL_SAVE_SCRIPT("label_saveScript"),
     LABEL_SAVE_OUTPUT("label_saveOutput"),
+    LABEL_SAVE_OUTPUT_HTML("label_saveOutputHtml"),
     LABEL_TITLE_CONNECT("label_connectToDatabase"),
     LABEL_CONNECT("label_connect"),
     LABEL_REMOVE_CONNECTION("label_removeConnection"),

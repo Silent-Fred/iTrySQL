@@ -35,7 +35,6 @@ import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.ConnectionHolder;
-import de.kuehweg.sqltool.database.HtmlResultFormatter;
 import de.kuehweg.sqltool.database.JDBCType;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ConnectionDialog;
@@ -458,7 +457,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 
     public void toolbarTabTableViewExportAction(final ActionEvent event) {
         final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT.toString());
+        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT_HTML.toString());
         final File file = fileChooser.showSaveDialog(((Node) event.getSource())
                 .getScene().getWindow());
         if (file != null) {
@@ -468,9 +467,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                         if (ExecutionGUIUpdater.RESULT_TABLE_ID.equals(node.
                                 getId())) {
                             FileUtil.writeFile(file.getAbsolutePath(),
-                                    new HtmlResultFormatter(
-                                    ((QueryResultTableView) node).
-                                    getResultFormatter()).formatAsHtml());
+                                    ((QueryResultTableView) node).toHtml());
                         }
                     }
                 }
