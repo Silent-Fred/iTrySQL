@@ -35,15 +35,19 @@ public enum ImagePack {
     APP_ICON("AppIcon.png"),
     TUTORIAL_DATA("tutorialdata.png"),
     TREE_DATABASE("tree_database.png"), TREE_SCHEMA("tree_schema.png"),
-    TREE_TABLE("tree_table.png"), TREE_COLUMN("tree_column.png"), TREE_INDEX("tree_index.png"),
-    MSG_ERROR("msg_error.png"), MSG_INFO("msg_info.png"), MSG_QUESTION("msg_question.png"), MSG_WARNING("msg_warning.png");
-    private final String path;
+    TREE_TABLE("tree_table.png"), TREE_COLUMN("tree_column.png"), TREE_INDEX(
+    "tree_index.png"),
+    MSG_ERROR("msg_error.png"), MSG_INFO("msg_info.png"), MSG_QUESTION(
+    "msg_question.png"), MSG_WARNING("msg_warning.png");
+    private static final String resourcePath = "/resources/images/";
+    private final String imageName;
 
-    private ImagePack(final String path) {
-        this.path = path;
+    private ImagePack(final String imageName) {
+        this.imageName = imageName;
     }
 
     public Image getAsImage() {
-        return new Image(this.getClass().getResourceAsStream(path));
+        return new Image(this.getClass().getResourceAsStream(resourcePath
+                + imageName));
     }
 }
