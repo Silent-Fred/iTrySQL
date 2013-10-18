@@ -48,11 +48,14 @@ public class TutorialAction {
                 DialogDictionary.COMMON_BUTTON_CANCEL.toString());
         if (DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString().equals(
                 confirm.askUserFeedback())) {
-            final String tutorialSql;
+            String sql;
             try {
-                tutorialSql = FileUtil.readResourceFile(
+                sql = FileUtil.readResourceFile(
+                        "/resources/sql/examples.sql");
+                executeAction.handleExecuteActionSilently(sql);
+                sql = FileUtil.readResourceFile(
                         "/resources/sql/tutorial.sql");
-                executeAction.handleExecuteActionSilently(tutorialSql);
+                executeAction.handleExecuteActionSilently(sql);
             } catch (IOException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),
