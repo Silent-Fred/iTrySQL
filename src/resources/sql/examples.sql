@@ -39,11 +39,12 @@ INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('US48000', 'M
 --
 -- person
 --
-CREATE TABLE person (persnr INTEGER PRIMARY KEY, vorname VARCHAR(80), name VARCHAR(80), wohnort VARCHAR(20) REFERENCES ort(ort), geburtsort VARCHAR(20) REFERENCES ort(ort), geburtstag DATE);
-INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag) VALUES (1622, 'Jean-Baptiste', 'Poquelin', 'FR00001', 'FR00001', '1622-01-15');
-INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag) VALUES (1694, 'François-Marie', 'Arouet', 'FR00001', 'FR00001', '1694-11-21');
-INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag) VALUES (1564, 'William', 'Shakespeare', 'EN01196', 'EN01196', '1564-04-26');
-INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag) VALUES (1935, 'Elvis Aaron', 'Presley', 'EN01196', 'US74840', '1935-01-08');
+CREATE TABLE person (persnr INTEGER PRIMARY KEY, vorname VARCHAR(80), name VARCHAR(80), wohnort VARCHAR(20) REFERENCES ort(ort), geburtsort VARCHAR(20) REFERENCES ort(ort), geburtstag DATE, mutter_persnr INTEGER REFERENCES person(persnr));
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1622, 'Jean-Baptiste', 'Poquelin', 'FR00001', 'FR00001', '1622-01-15', NULL);
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1694, 'François-Marie', 'Arouet', 'FR00001', 'FR00001', '1694-11-21', NULL);
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1564, 'William', 'Shakespeare', 'EN01196', 'EN01196', '1564-04-26', NULL);
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1912, 'Gladys Love', 'Presley', NULL, NULL, '1912-04-25', NULL);
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1935, 'Elvis Aaron', 'Presley', 'US48000', 'US74840', '1935-01-08', 1912);
 --
 -- werk
 --
