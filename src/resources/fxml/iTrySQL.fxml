@@ -238,9 +238,9 @@
                                         </Button>
                                       </items>
                                     </ToolBar>
-                                    <HBox fx:id="resultTableContainer" prefHeight="318.0" prefWidth="851.0" spacing="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="0.0">
+                                    <HBox fx:id="resultTableContainer" prefHeight="318.0" prefWidth="845.0" spacing="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <children>
-                                        <TableView id="" prefHeight="318.0" prefWidth="845.0" HBox.hgrow="ALWAYS">
+                                        <TableView id="" prefHeight="318.0" prefWidth="843.0" HBox.hgrow="ALWAYS">
                                           <columns>
                                             <TableColumn prefWidth="75.0" text="%label_empty" />
                                           </columns>
