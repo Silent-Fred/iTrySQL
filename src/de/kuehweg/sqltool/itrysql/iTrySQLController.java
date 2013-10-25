@@ -53,6 +53,7 @@ import de.kuehweg.sqltool.dialog.component.CodeTemplateComponent;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.ServerComponentController;
+import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -93,6 +94,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -184,6 +186,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     private Button shutdownServer;
     @FXML
     private TextArea statementInput;
+    @FXML
+    private AnchorPane statementPane;
     @FXML
     private Tab tabDbOutput;
     @FXML
@@ -285,6 +289,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert sqlHistoryColumnTimestamp != null : "fx:id=\"sqlHistoryColumnTimestamp\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert startServer != null : "fx:id=\"startServer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert statementInput != null : "fx:id=\"statementInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert statementPane != null : "fx:id=\"statementPane\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert tabDbOutput != null : "fx:id=\"tabDbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert tabHistory != null : "fx:id=\"tabHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert tabPaneProtocols != null : "fx:id=\"tabPaneProtocols\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -560,6 +565,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         controlAutoCommitCheckBoxState();
         permanentMessage.visibleProperty().set(false);
         refreshTree(null);
+        SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(statementPane, statementInput);
     }
 
     private void initializeConnectionComponentController() {

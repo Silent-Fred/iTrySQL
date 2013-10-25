@@ -203,11 +203,15 @@
                             </Button>
                           </items>
                         </ToolBar>
-                        <TextArea fx:id="statementInput" prefHeight="333.0" prefWidth="844.0" promptText="%prompt_enterStatement" styleClass="itry-statement-edit" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <stylesheets>
-                            <URL value="@../css/itrysql.css" />
-                          </stylesheets>
-                        </TextArea>
+                        <AnchorPane id="AnchorPane" fx:id="statementPane" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <children>
+                            <TextArea fx:id="statementInput" prefHeight="333.0" prefWidth="844.0" promptText="%prompt_enterStatement" styleClass="itry-statement-edit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <stylesheets>
+                                <URL value="@../css/itrysql.css" />
+                              </stylesheets>
+                            </TextArea>
+                          </children>
+                        </AnchorPane>
                         <ProgressBar fx:id="executionProgressIndicator" layoutX="323.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="5.0" />
                         <Label fx:id="executionTime" prefWidth="295.0" text="0ms" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="529.0">
                           <font>
