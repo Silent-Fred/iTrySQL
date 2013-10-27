@@ -12,6 +12,7 @@
 
             table {
                 border-collapse: collapse;
+                border-spacing: 0;
                 border: none;
             }
 
@@ -20,13 +21,20 @@
                 font-weight: lighter;
                 color: #067db7;
                 font-size: 12pt;
+                padding-left: 4pt;
+                padding-right: 4pt;
                 border-bottom: 1px solid #067db7;
             }
 
+            tbody tr:nth-child(even) {
+                background: #fafafa;
+            }
+
             td {
+                padding-left: 4pt;
+                padding-right: 4pt;
                 font-family: "Helvetica Neue", Helvetica, Calibri, sans-serif;
                 font-weight: lighter;
-                border-bottom: 1px solid #f0f0f0;
             }
         </style>
     </head>
