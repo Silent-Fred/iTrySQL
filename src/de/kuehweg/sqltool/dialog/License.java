@@ -52,6 +52,9 @@ public class License extends Stage {
                     getClass().getResource("/resources/fxml/License.fxml"),
                     ResourceBundle.getBundle("dictionary"));
             initStyle(StageStyle.UTILITY);
+            root.getStylesheets().add(getClass().getResource(
+                    "/resources/css/itrysql.css").
+                    toExternalForm());
             setScene(new Scene(root));
             centerOnScreen();
             setResizable(false);

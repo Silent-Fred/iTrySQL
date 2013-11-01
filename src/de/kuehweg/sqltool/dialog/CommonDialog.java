@@ -60,6 +60,9 @@ public abstract class CommonDialog extends Stage {
                     "/resources/fxml/CommonDialog.fxml"),
                     ResourceBundle.getBundle("dictionary"));
             initStyle(StageStyle.UTILITY);
+            root.getStylesheets().add(getClass().getResource(
+                    "/resources/css/itrysql.css").
+                    toExternalForm());
             setScene(new Scene(root));
             final Label messageLabel = (Label) getScene().lookup("#message");
             if (messageLabel != null) {
