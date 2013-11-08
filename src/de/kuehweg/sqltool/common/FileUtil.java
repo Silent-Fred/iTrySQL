@@ -73,4 +73,16 @@ public class FileUtil {
         }
         return b.toString();
     }
+
+    public static String enforceExtension(final String filename, final String ext) {
+        if (ext == null) {
+            return filename;
+        }
+        String trimmedExt = ext.trim();
+        String trimmedFilename = filename.trim();
+        if (trimmedFilename.toLowerCase().endsWith("." + trimmedExt.toLowerCase())) {
+            return trimmedFilename;
+        }
+        return trimmedFilename + (trimmedExt.startsWith(".") ? "" : ".") + ext;
+    }
 }

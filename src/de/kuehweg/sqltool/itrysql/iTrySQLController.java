@@ -99,6 +99,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper,
@@ -440,15 +441,18 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         dbOutput.clear();
     }
 
-    public void toolbarTabDbOutputExportAction(final ActionEvent event) {
+    private void export(DialogDictionary fileChooserTitle,
+            final Window attachChooser,
+            final String filenameExtension,
+            final String exportContent) {
         final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT.toString());
-        final File file = fileChooser.showSaveDialog(((Node) event.getSource())
-                .getScene().getWindow());
+        fileChooser.setTitle(fileChooserTitle.toString());
+        final File file = fileChooser.showSaveDialog(attachChooser);
         if (file != null) {
             try {
                 FileUtil.
-                        writeFile(file.getAbsolutePath(), dbOutput.getText());
+                        writeFile(FileUtil.enforceExtension(file.
+                        getAbsolutePath(), filenameExtension), exportContent);
             } catch (final IOException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -460,29 +464,21 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         }
     }
 
-    public void toolbarTabTableViewExportAction(final ActionEvent event) {
-        final FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(DialogDictionary.LABEL_SAVE_OUTPUT_HTML.toString());
-        final File file = fileChooser.showSaveDialog(((Node) event.getSource())
-                .getScene().getWindow());
-        if (file != null) {
-            try {
-                if (resultTableContainer.getChildren() != null) {
-                    for (final Node node : resultTableContainer.getChildren()) {
-                        if (ExecutionGUIUpdater.RESULT_TABLE_ID.equals(node.
-                                getId())) {
-                            FileUtil.writeFile(file.getAbsolutePath(),
-                                    ((QueryResultTableView) node).toHtml());
-                        }
-                    }
-                }
-            } catch (final IOException ex) {
-                final ErrorMessage msg = new ErrorMessage(
-                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                        DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                msg.askUserFeedback();
+    public void toolbarTabDbOutputExportAction(final ActionEvent event) {
+        export(DialogDictionary.LABEL_SAVE_OUTPUT, ((Node) event.getSource())
+                .getScene().getWindow(), "txt", dbOutput.getText());
+    }
 
+    public void toolbarTabTableViewExportAction(final ActionEvent event) {
+        if (resultTableContainer.getChildren() != null) {
+            for (final Node node : resultTableContainer.getChildren()) {
+                if (ExecutionGUIUpdater.RESULT_TABLE_ID.equals(node.
+                        getId())) {
+                    export(DialogDictionary.LABEL_SAVE_OUTPUT_HTML,
+                            ((Node) event.getSource())
+                            .getScene().getWindow(), "html",
+                            ((QueryResultTableView) node).toHtml());
+                }
             }
         }
     }
@@ -565,7 +561,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         controlAutoCommitCheckBoxState();
         permanentMessage.visibleProperty().set(false);
         refreshTree(null);
-        SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(statementPane, statementInput);
+        SourceFileDropTargetUtil.
+                transformIntoSourceFileDropTarget(statementPane, statementInput);
     }
 
     private void initializeConnectionComponentController() {
