@@ -35,17 +35,35 @@ public class EBNFProductions {
     public static final String SUBQUERY =
             "subquery ::=\n"
             + "  SELECT [ LIMIT n m ] [ DISTINCT | ALL ] select_list\n"
-            + "  FROM table_reference [ , table_reference ]...\n"
+            + "  FROM join_source\n"
             + "  [ where_clause ]\n"
             + "  [ group_by_clause ]\n"
-            + "  [ {UNION [ALL] | INTERSECT | {MINUS | EXCEPT}} ( subquery ) ]\n"
+            + "  [ compound_operator subquery ]\n"
             + "  [ order_by_clause ]\n";
     public static final String SELECT_LIST =
             "select_list ::=\n"
             + "  {*\n"
             + "  | { [schema.] { table | view } .* | expr }\n"
-            + "  , { [schema.] { table | view } .* | expr } ]...\n"
+            + "    [ , { [schema.] { table | view } .* | expr } ]...\n"
             + "  }\n";
+    public static final String COMPOUND_OPERATOR =
+            "compound_operator ::=\n"
+            + "  { UNION [ ALL ] | INTERSECT | EXCEPT }\n";
+    public static final String JOIN_SOURCE =
+            "join_source ::=\n"
+            + "  { table_reference | join_clause | ( join_clause ) }\n"
+            + "  [ , { table_reference | join_clause | ( join_clause ) } ]...\n";
+    public static final String JOIN_CLAUSE =
+            "join_clause ::=\n  table_reference { inner_cross_join_clause | outer_join_clause }...\n";
+    public static final String INNER_CROSS_JOIN_CLAUSE =
+            "inner_cross_join_clause ::=\n"
+            + "  {\n"
+            + "     [ INNER ] JOIN table_reference ON condition\n"
+            + "   | CROSS JOIN table_reference\n"
+            + "  }\n";
+    public static final String OUTER_JOIN_CLAUSE =
+            "outer_join_clause ::=\n"
+            + "  { LEFT | RIGHT | FULL } [ OUTER ] JOIN table_reference ON condition\n";
     public static final String TABLE_REFERENCE =
             "table_reference ::=\n"
             + "  query_table_expression [ t_alias ]\n";
@@ -64,7 +82,7 @@ public class EBNFProductions {
             + "  ORDER BY\n"
             + "  { expr | position }\n"
             + "  [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]\n"
-            + "  [, { expr | position }\n"
+            + "  [ , { expr | position }\n"
             + "  [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]]...\n";
     public static final String INSERT =
             "insert ::=\n"
@@ -82,7 +100,7 @@ public class EBNFProductions {
             + "  [ where_clause ]\n";
     public static final String UPDATE_SET_CLAUSE = "update_set_clause ::=\n"
             + "  SET column = { expr | ( subquery ) }\n"
-            + "   [ ,column = { expr | ( subquery ) } ]...\n";
+            + "  [ , column = { expr | ( subquery ) } ]...\n";
     public static final String DELETE =
             "delete ::=\n  DELETE FROM table_reference\n  [ where_clause ]\n";
     public static final String CREATE_TABLE = "create_table ::=\n"

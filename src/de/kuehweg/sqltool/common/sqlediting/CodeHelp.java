@@ -39,6 +39,16 @@ public enum CodeHelp {
     + "\n"
     + EBNFProductions.SELECT_LIST
     + "\n"
+    + EBNFProductions.JOIN_SOURCE
+    + "\n"
+    + EBNFProductions.JOIN_CLAUSE
+    + "\n"
+    + EBNFProductions.INNER_CROSS_JOIN_CLAUSE
+    + "\n"
+    + EBNFProductions.OUTER_JOIN_CLAUSE
+    + "\n"
+    + EBNFProductions.COMPOUND_OPERATOR
+    + "\n"
     + EBNFProductions.TABLE_REFERENCE
     + "\n"
     + EBNFProductions.QUERY_TABLE_EXPRESSION
