@@ -92,7 +92,7 @@ public class EBNFProductions {
             + "  INTO table_reference [ ( column [, column]... ) ]\n";
     public static final String VALUES_CLAUSE =
             "values_clause ::=\n"
-            + "  VALUES ( expr [, expr]... )\n";
+            + "  VALUES ( expr [, expr]... ) [, ( expr [, expr]... ) ]...\n";
     public static final String UPDATE =
             "update ::=\n"
             + "  UPDATE table_reference\n"
