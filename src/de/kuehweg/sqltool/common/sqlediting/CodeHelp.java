@@ -47,6 +47,8 @@ public enum CodeHelp {
     + "\n"
     + EBNFProductions.OUTER_JOIN_CLAUSE
     + "\n"
+    + EBNFProductions.JOIN_CONSTRAINT
+    + "\n"
     + EBNFProductions.COMPOUND_OPERATOR
     + "\n"
     + EBNFProductions.TABLE_REFERENCE

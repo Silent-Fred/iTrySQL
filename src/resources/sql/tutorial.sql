@@ -28,6 +28,7 @@ DROP TABLE workshop IF EXISTS;
 DROP TABLE tutor IF EXISTS;
 DROP TABLE artikeltext IF EXISTS;
 DROP TABLE verkaufspreis IF EXISTS;
+DROP TABLE sonderpreis IF EXISTS;
 DROP TABLE listung IF EXISTS;
 DROP TABLE multilingual IF EXISTS;
 DROP TABLE filiale IF EXISTS;
@@ -35,6 +36,7 @@ DROP TABLE region IF EXISTS;
 DROP TABLE land IF EXISTS;
 DROP TABLE artikel IF EXISTS;
 DROP TABLE produktgruppe IF EXISTS;
+DROP TABLE waehrung IF EXISTS;
 --
 -- tutor
 --
@@ -66,7 +68,7 @@ INSERT INTO workshop (workshop, titel, min_teilnehmer, max_teilnehmer, datum, ta
 --
 -- workshoptutor
 --
-CREATE TABLE workshoptutor (workshop INTEGER REFERENCES workshop(workshop), tutor VARCHAR(20) REFERENCES tutor(tutor));
+CREATE TABLE workshoptutor (workshop INTEGER REFERENCES workshop(workshop), tutor VARCHAR(20) REFERENCES tutor(tutor), PRIMARY KEY (workshop, tutor));
 INSERT INTO workshoptutor (workshop, tutor) VALUES (1, 'GATTO');
 INSERT INTO workshoptutor (workshop, tutor) VALUES (2, 'KARAS');
 INSERT INTO workshoptutor (workshop, tutor) VALUES (3, 'ROCHAIS');
@@ -75,9 +77,16 @@ INSERT INTO workshoptutor (workshop, tutor) VALUES (5, 'FREBOURG');
 INSERT INTO workshoptutor (workshop, tutor) VALUES (6, 'SULC');
 INSERT INTO workshoptutor (workshop, tutor) VALUES (6, 'PECEL');
 --
+-- waehrung
+--
+CREATE TABLE waehrung (waehrung VARCHAR(3) PRIMARY KEY);
+INSERT INTO waehrung (waehrung) VALUES ('EUR');
+INSERT INTO waehrung (waehrung) VALUES ('SFR');
+INSERT INTO waehrung (waehrung) VALUES ('USD');
+--
 -- land
 --
-CREATE TABLE land (land VARCHAR(2) PRIMARY KEY, waehrung VARCHAR(3));
+CREATE TABLE land (land VARCHAR(2) PRIMARY KEY, waehrung VARCHAR(3) REFERENCES waehrung(waehrung));
 INSERT INTO land (land, waehrung) VALUES ('DE', 'EUR');
 INSERT INTO land (land, waehrung) VALUES ('FR', 'EUR');
 INSERT INTO land (land, waehrung) VALUES ('CH', 'SFR');
@@ -237,7 +246,7 @@ INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('213
 --
 -- multilingual
 --
-CREATE TABLE multilingual (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), locale VARCHAR(2), UNIQUE (filialnummer, locale));
+CREATE TABLE multilingual (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), locale VARCHAR(2), PRIMARY KEY (filialnummer, locale));
 INSERT INTO multilingual (filialnummer, locale) SELECT filialnummer, land FROM filiale;
 INSERT INTO multilingual (filialnummer, locale) VALUES ('1886', 'FR');
 INSERT INTO multilingual (filialnummer, locale) VALUES ('1060', 'DE');
@@ -246,7 +255,7 @@ INSERT INTO multilingual (filialnummer, locale) VALUES ('1650', 'DE');
 --
 -- Produktgruppe
 --
-CREATE TABLE produktgruppe (produktgruppe VARCHAR(10) PRIMARY KEY  NOT NULL , bezeichnung VARCHAR(80));
+CREATE TABLE produktgruppe (produktgruppe VARCHAR(10) PRIMARY KEY, bezeichnung VARCHAR(80));
 INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('ALLR', 'Allerlei');
 INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('OUT', 'Außenspielzeug');
 INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('EBAL', 'Erzi Balancierspiele');
@@ -3229,7 +3238,7 @@ SET main.bezeichnung = (
 --
 -- verkaufspreis
 --
-CREATE TABLE verkaufspreis (artikelnummer VARCHAR(10) REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung VARCHAR(3), filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), gilt_ab DATE, gilt_bis DATE);
+CREATE TABLE verkaufspreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung VARCHAR(3) REFERENCES waehrung(waehrung), gilt_ab DATE);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100000', 4.9);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100100', 4.7);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100200', 4.9);
@@ -3611,16 +3620,32 @@ INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('213700', 11.69
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('213800', 19.00);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('213900', 12.90);
 --
+-- Verkaufspreis muss immer einen Bezug zu einer Währung haben
+--
+UPDATE verkaufspreis SET waehrung = 'EUR' WHERE waehrung IS NULL;
+--
+-- Verkaufspreis muss immer ein gilt_ab haben, ein "unendlich" gültiger Verkaufspreis ist unrealistisch
+--
+UPDATE verkaufspreis SET gilt_ab = '2002-01-01' WHERE gilt_ab IS NULL;
+--
+-- Jetzt noch per Constraints absichern
+--
+-- ALTER TABLE verkaufspreis ADD CHECK (waehrung IS NOT NULL);
+-- ALTER TABLE verkaufspreis ADD CHECK (gilt_ab IS NOT NULL);
+--
+-- Preise für alle Filialen haben keinen Eintrag einer Filialnummer, daher kein Primärschlüssel möglich
+--
+ALTER TABLE verkaufspreis ADD PRIMARY KEY (artikelnummer, waehrung, gilt_ab);
+--
 -- verkaufspreis - reduziert
 --
-INSERT INTO verkaufspreis (artikelnummer, verkaufspreis, filialnummer, gilt_ab, gilt_bis)
-SELECT artikelnummer, verkaufspreis * 0.75, '1390', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-05-27', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-07-14' FROM verkaufspreis;
--- verkaufspreis waehrung nachtragen
-UPDATE verkaufspreis SET waehrung = 'EUR';
+CREATE TABLE sonderpreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung VARCHAR(3) REFERENCES waehrung(waehrung), filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (artikelnummer, filialnummer, waehrung, gilt_ab));
+INSERT INTO sonderpreis (artikelnummer, verkaufspreis, waehrung, filialnummer, gilt_ab, gilt_bis)
+SELECT artikelnummer, verkaufspreis * 0.75, 'EUR', '1390', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-05-27', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-07-14' FROM verkaufspreis;
 --
 -- listung
 --
-CREATE TABLE listung (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), artikelnummer VARCHAR(10) REFERENCES artikel(artikelnummer), gilt_ab DATE, gilt_bis DATE);
+CREATE TABLE listung (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), artikelnummer VARCHAR(10) REFERENCES artikel(artikelnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (filialnummer, artikelnummer, gilt_ab));
 -- Erste Filiale mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
 SELECT '1000', artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 4 || '-07-14' FROM artikel;
@@ -3650,7 +3675,7 @@ SELECT filialnummer, artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-01-
 WHERE filialnummer BETWEEN '2010' AND '2130';
 -- Alle Artikel oberhalb 200000 haben nur Texte für Locale DE gepflegt, werden also auch nur dort verkauft
 DELETE FROM listung WHERE artikelnummer >= '200000' AND filialnummer <> '1886';
-DELETE FROM verkaufspreis WHERE artikelnummer >= '200000' AND filialnummer IS NOT NULL AND filialnummer <> '1886';
+DELETE FROM sonderpreis WHERE artikelnummer >= '200000' AND filialnummer <> '1886';
 -- Auslistung aller Feuerprodukte ab einem Stichdatum
 UPDATE listung SET gilt_bis = EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-03-17' WHERE artikelnummer IN (
   SELECT artikelnummer FROM artikel WHERE produktgruppe = 'FIRE');

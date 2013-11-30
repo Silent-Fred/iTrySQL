@@ -58,12 +58,18 @@ public class EBNFProductions {
     public static final String INNER_CROSS_JOIN_CLAUSE =
             "inner_cross_join_clause ::=\n"
             + "  {\n"
-            + "     [ INNER ] JOIN table_reference ON condition\n"
+            + "     [ INNER ] JOIN table_reference join_constraint\n"
             + "   | CROSS JOIN table_reference\n"
             + "  }\n";
     public static final String OUTER_JOIN_CLAUSE =
             "outer_join_clause ::=\n"
-            + "  { LEFT | RIGHT | FULL } [ OUTER ] JOIN table_reference ON condition\n";
+            + "  { LEFT | RIGHT | FULL } [ OUTER ] JOIN table_reference join_constraint\n";
+    public static final String JOIN_CONSTRAINT =
+            "join_constraint ::=\n"
+            + "  {\n"
+            + "     ON condition\n"
+            + "   | USING ( expr [ , expr ]... )\n"
+            + "  }\n";
     public static final String TABLE_REFERENCE =
             "table_reference ::=\n"
             + "  query_table_expression [ t_alias ]\n";
