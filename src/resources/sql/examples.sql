@@ -36,6 +36,8 @@ INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('EN01196', 'S
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('IT00001', 'Roma', 37, NULL, 'N41D53ME12D29M');
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('US74840', 'Tupelo MS', 85, NULL, 'N34D16MW88D44M');
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('US48000', 'Memphis TN', 78, NULL, 'N35D09MW90D03M');
+INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('DE00001', 'Berlin', 34, 115, 'N52D31ME13D24M');
+INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('EN00001', 'London', 15, NULL, 'N51D31MW00D07M');
 --
 -- person
 --
@@ -45,6 +47,8 @@ INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutt
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1564, 'William', 'Shakespeare', 'EN01196', 'EN01196', '1564-04-26', NULL);
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1912, 'Gladys Love', 'Presley', NULL, NULL, '1912-04-25', NULL);
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1935, 'Elvis Aaron', 'Presley', 'US48000', 'US74840', '1935-01-08', 1912);
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1888, 'Irving', 'Berlin', NULL, NULL, '1888-05-11', NULL);
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtstag, mutter_persnr) VALUES (1876, 'Jack', 'London', NULL, NULL, '1876-01-12', NULL);
 --
 -- werk
 --
@@ -53,6 +57,8 @@ INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VA
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (2, 'Romeo and Juliet', 'The Most Excellent and Lamentable Tragedy Of Romeo and Juliet', 1564,'EN', '1597-01-01');
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (3, 'Le Malade imaginaire', NULL, 1622, 'FR', '1673-02-10');
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (4, 'Hound Dog', NULL, 1935, 'EN', '1956-06-05');
+INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (5, 'White Christmas', NULL, 1888, 'EN', '1941-12-25');
+INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (6, 'Martin Eden', NULL, 1876, 'EN', '1909-01-01');
 --
 -- epoche
 --

@@ -68,7 +68,7 @@ public class EBNFProductions {
             "join_constraint ::=\n"
             + "  {\n"
             + "     ON condition\n"
-            + "   | USING ( expr [ , expr ]... )\n"
+            + "   | USING ( column_name [ , column_name ]... )\n"
             + "  }\n";
     public static final String TABLE_REFERENCE =
             "table_reference ::=\n"
