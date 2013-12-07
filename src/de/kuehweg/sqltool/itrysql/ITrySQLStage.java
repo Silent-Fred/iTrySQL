@@ -27,11 +27,13 @@ package de.kuehweg.sqltool.itrysql;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
+import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -60,7 +62,7 @@ public class ITrySQLStage extends Stage {
             iTrySQLController controller = fxmlLoader.getController();
             setOnHiding(controller);
             setOnCloseRequest(controller);
-            
+
             Scene scene = new Scene(root);
 
             scene.getStylesheets().add(getClass().getResource(
@@ -73,6 +75,15 @@ public class ITrySQLStage extends Stage {
             if (callerStage != null) {
                 setX(callerStage.getX() + X_OFFSET);
                 setY(callerStage.getY() + Y_OFFSET);
+                setWidth(callerStage.getWidth());
+                setHeight(callerStage.getHeight());
+            } else {
+                Rectangle2D calculatedSize = StageSizerUtil.
+                        calculateSizeDependingOnScreenSize();
+                setX(calculatedSize.getMinX());
+                setY(calculatedSize.getMinY());
+                setWidth(calculatedSize.getWidth());
+                setHeight(calculatedSize.getHeight());
             }
         } catch (IOException ex) {
             Logger.getLogger(ITrySQLStage.class.getName()).

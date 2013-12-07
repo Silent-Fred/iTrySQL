@@ -140,8 +140,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     @FXML
     private MenuBar menuBar;
     @FXML
-    private MenuItem menuItemCheckpoint;
-    @FXML
     private MenuItem menuItemClose;
     @FXML
     private MenuItem menuItemCommit;
@@ -199,8 +197,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     private Tab tabResult;
     @FXML
     private ToolBar toolBar;
-    @FXML
-    private Button toolbarCheckpoint;
     @FXML
     private Button toolbarCommit;
     @FXML
@@ -263,7 +259,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert executionTime != null : "fx:id=\"executionTime\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert limitMaxRows != null : "fx:id=\"limitMaxRows\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuBar != null : "fx:id=\"menuBar\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert menuItemCheckpoint != null : "fx:id=\"menuItemCheckpoint\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemClose != null : "fx:id=\"menuItemClose\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemCommit != null : "fx:id=\"menuItemCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert menuItemConnect != null : "fx:id=\"menuItemConnect\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -296,7 +291,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert tabPaneProtocols != null : "fx:id=\"tabPaneProtocols\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert tabResult != null : "fx:id=\"tabResult\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolBar != null : "fx:id=\"toolBar\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert toolbarCheckpoint != null : "fx:id=\"toolbarCheckpoint\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarCommit != null : "fx:id=\"toolbarCommit\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarExecute != null : "fx:id=\"toolbarExecute\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarRollback != null : "fx:id=\"toolbarRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -402,10 +396,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 
     public void commit(final ActionEvent event) {
         createExecuteAction().handleExecuteAction("COMMIT");
-    }
-
-    public void checkpoint(final ActionEvent event) {
-        createExecuteAction().handleExecuteAction("CHECKPOINT");
     }
 
     public void rollback(final ActionEvent event) {
@@ -594,8 +584,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 DialogDictionary.TOOLTIP_EXECUTE.toString()));
         Tooltip.install(toolbarCommit, new Tooltip(
                 DialogDictionary.TOOLTIP_COMMIT.toString()));
-        Tooltip.install(toolbarCheckpoint, new Tooltip(
-                DialogDictionary.TOOLTIP_CHECKPOINT.toString()));
         Tooltip.install(toolbarRollback, new Tooltip(
                 DialogDictionary.TOOLTIP_ROLLBACK.toString()));
         Tooltip.install(toolbarZoomOut, new Tooltip(

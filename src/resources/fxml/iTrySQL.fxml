@@ -174,11 +174,6 @@
                                 <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </Button>
-                            <Button fx:id="toolbarCheckpoint" mnemonicParsing="false" onAction="#checkpoint" styleClass="itry-tool-bar-button">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </Button>
                             <Button fx:id="toolbarRollback" mnemonicParsing="false" onAction="#rollback" styleClass="itry-tool-bar-button">
                               <stylesheets>
                                 <URL value="@../css/itrysql.css" />
@@ -337,7 +332,6 @@
             <MenuItem mnemonicParsing="false" onAction="#executeScript" text="%menu_item_executeScript" fx:id="menuItemExecuteScript" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#commit" text="%menu_item_commit" fx:id="menuItemCommit" />
-            <MenuItem mnemonicParsing="false" onAction="#checkpoint" text="%menu_item_checkpoint" fx:id="menuItemCheckpoint" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#rollback" text="%menu_item_rollback" fx:id="menuItemRollback" />
           </items>

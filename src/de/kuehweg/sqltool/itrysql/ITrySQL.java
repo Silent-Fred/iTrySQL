@@ -28,11 +28,13 @@ package de.kuehweg.sqltool.itrysql;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.ServerManager;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
+import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
@@ -76,6 +78,12 @@ public class ITrySQL extends Application {
                 "/resources/css/itrysql.css").toExternalForm());
 
         primaryStage.setScene(scene);
+        Rectangle2D calculatedSize = StageSizerUtil.
+                calculateSizeDependingOnScreenSize();
+        primaryStage.setX(calculatedSize.getMinX());
+        primaryStage.setY(calculatedSize.getMinY());
+        primaryStage.setWidth(calculatedSize.getWidth());
+        primaryStage.setHeight(calculatedSize.getHeight());
         primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
         primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
         primaryStage.show();

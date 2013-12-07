@@ -74,7 +74,6 @@ public enum DialogDictionary {
     TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
     TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),
     TOOLTIP_COMMIT("tooltip_commit"),
-    TOOLTIP_CHECKPOINT("tooltip_checkpoint"),
     TOOLTIP_ROLLBACK("tooltip_rollback"),
     TOOLTIP_EXECUTE("tooltip_execute"),
     TOOLTIP_EXPORT_OUTPUT("tooltip_exportOutput"),
