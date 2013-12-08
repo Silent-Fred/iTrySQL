@@ -79,21 +79,21 @@ INSERT INTO workshoptutor (workshop, tutor) VALUES (6, 'PECEL');
 --
 -- waehrung
 --
-CREATE TABLE waehrung (waehrung VARCHAR(3) PRIMARY KEY);
+CREATE TABLE waehrung (waehrung CHAR(3) PRIMARY KEY);
 INSERT INTO waehrung (waehrung) VALUES ('EUR');
 INSERT INTO waehrung (waehrung) VALUES ('SFR');
 INSERT INTO waehrung (waehrung) VALUES ('USD');
 --
 -- land
 --
-CREATE TABLE land (land VARCHAR(2) PRIMARY KEY, waehrung VARCHAR(3) REFERENCES waehrung(waehrung));
+CREATE TABLE land (land CHAR(2) PRIMARY KEY, waehrung VARCHAR(3) REFERENCES waehrung(waehrung));
 INSERT INTO land (land, waehrung) VALUES ('DE', 'EUR');
 INSERT INTO land (land, waehrung) VALUES ('FR', 'EUR');
 INSERT INTO land (land, waehrung) VALUES ('CH', 'SFR');
 --
 -- region
 --
-CREATE TABLE region (region VARCHAR(10) PRIMARY KEY, bezeichnung VARCHAR(80), hauptstadt VARCHAR(80));
+CREATE TABLE region (region CHAR(3) PRIMARY KEY, bezeichnung VARCHAR(80), hauptstadt VARCHAR(80));
 INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('ALS', 'Alsace', 'Strasbourg');
 INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('AQU', 'Aquitaine', 'Bordeaux');
 INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('AUV', 'Auvergne', 'Clermont-Ferrand');
@@ -126,7 +126,7 @@ INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('SJU', 'Jura', 'Del
 --
 -- filiale
 --
-CREATE TABLE filiale (filialnummer VARCHAR(10) PRIMARY KEY, strasse VARCHAR(80), plz VARCHAR(10), ort VARCHAR(80), land VARCHAR(3) NOT NULL REFERENCES land, region VARCHAR(10) NOT NULL REFERENCES region(region));
+CREATE TABLE filiale (filialnummer CHAR(4) PRIMARY KEY, strasse VARCHAR(80), plz VARCHAR(10), ort VARCHAR(80), land CHAR(3) NOT NULL REFERENCES land, region CHAR(3) NOT NULL REFERENCES region(region));
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1000', '16, Rue Albert Henri', '75001', 'Paris', 'FR', 'ILE');                     
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1010', '19, Rue Aristide Briand', '13002', 'Marseille', 'FR', 'PRO');              
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1020', '17, Rue Blanche Vitte', '69003', 'Lyon', 'FR', 'RHO');                     
@@ -246,7 +246,7 @@ INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('213
 --
 -- multilingual
 --
-CREATE TABLE multilingual (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), locale VARCHAR(2), PRIMARY KEY (filialnummer, locale));
+CREATE TABLE multilingual (filialnummer CHAR(4) REFERENCES filiale(filialnummer), locale CHAR(2), PRIMARY KEY (filialnummer, locale));
 INSERT INTO multilingual (filialnummer, locale) SELECT filialnummer, land FROM filiale;
 INSERT INTO multilingual (filialnummer, locale) VALUES ('1886', 'FR');
 INSERT INTO multilingual (filialnummer, locale) VALUES ('1060', 'DE');
@@ -1217,7 +1217,7 @@ INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('213900
 --
 -- artikeltext
 --
-CREATE TABLE artikeltext (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), locale VARCHAR(2) NOT NULL, textart VARCHAR(10) NOT NULL, artikeltext VARCHAR(2000), PRIMARY KEY (artikelnummer, locale, textart));
+CREATE TABLE artikeltext (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), locale CHAR(2) NOT NULL, textart VARCHAR(10) NOT NULL, artikeltext VARCHAR(2000), PRIMARY KEY (artikelnummer, locale, textart));
 -- DE
 INSERT INTO artikeltext (artikelnummer, locale, textart, artikeltext) VALUES ('100000', 'DE', 'BASIC', 'Bean-Bag Neon 130g, Stück Kunstleder, 70mm, 130g');
 INSERT INTO artikeltext (artikelnummer, locale, textart, artikeltext) VALUES ('100001', 'DE', 'BASIC', 'Bean-Bag Neon 130g, Stück Kunstleder, 70mm, 130g (uni sortiert)');
@@ -3238,7 +3238,7 @@ SET main.bezeichnung = (
 --
 -- verkaufspreis
 --
-CREATE TABLE verkaufspreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung VARCHAR(3) REFERENCES waehrung(waehrung), gilt_ab DATE);
+CREATE TABLE verkaufspreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung CHAR(3) REFERENCES waehrung(waehrung), gilt_ab DATE);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100000', 4.9);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100100', 4.7);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100200', 4.9);
@@ -3639,13 +3639,13 @@ ALTER TABLE verkaufspreis ADD PRIMARY KEY (artikelnummer, waehrung, gilt_ab);
 --
 -- verkaufspreis - reduziert
 --
-CREATE TABLE sonderpreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung VARCHAR(3) REFERENCES waehrung(waehrung), filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (artikelnummer, filialnummer, waehrung, gilt_ab));
+CREATE TABLE sonderpreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung CHAR(3) REFERENCES waehrung(waehrung), filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (artikelnummer, filialnummer, waehrung, gilt_ab));
 INSERT INTO sonderpreis (artikelnummer, verkaufspreis, waehrung, filialnummer, gilt_ab, gilt_bis)
 SELECT artikelnummer, verkaufspreis * 0.75, 'EUR', '1390', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-05-27', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-07-14' FROM verkaufspreis;
 --
 -- listung
 --
-CREATE TABLE listung (filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), artikelnummer VARCHAR(10) REFERENCES artikel(artikelnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (filialnummer, artikelnummer, gilt_ab));
+CREATE TABLE listung (filialnummer CHAR(4) REFERENCES filiale(filialnummer), artikelnummer VARCHAR(10) REFERENCES artikel(artikelnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (filialnummer, artikelnummer, gilt_ab));
 -- Erste Filiale mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
 SELECT '1000', artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 4 || '-07-14' FROM artikel;
