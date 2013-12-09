@@ -3642,6 +3642,8 @@ ALTER TABLE verkaufspreis ADD PRIMARY KEY (artikelnummer, waehrung, gilt_ab);
 CREATE TABLE sonderpreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung CHAR(3) REFERENCES waehrung(waehrung), filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (artikelnummer, filialnummer, waehrung, gilt_ab));
 INSERT INTO sonderpreis (artikelnummer, verkaufspreis, waehrung, filialnummer, gilt_ab, gilt_bis)
 SELECT artikelnummer, verkaufspreis * 0.75, 'EUR', '1390', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-05-27', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-07-14' FROM verkaufspreis;
+INSERT INTO sonderpreis (artikelnummer, verkaufspreis, waehrung, filialnummer, gilt_ab, gilt_bis)
+SELECT artikelnummer, verkaufspreis * 0.9, 'EUR', '1886', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-10-03', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-10-10' FROM verkaufspreis;
 --
 -- listung
 --
