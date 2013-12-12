@@ -41,7 +41,7 @@ public class SQLHistory {
     private static final String ELLIPSIS = "...";
     private final SimpleLongProperty timestamp;
     private SimpleStringProperty sqlForDisplay;
-    private String originalSQL;
+    private final String originalSQL;
 
     public SQLHistory(final String sql) {
         timestamp = new SimpleLongProperty(System.currentTimeMillis());
@@ -60,28 +60,12 @@ public class SQLHistory {
         return sqlForDisplay.get();
     }
 
-    public void setSqlForDisplay(final String sql) {
-        String oneLiner = sql.replace("\n", " ");
-        oneLiner = oneLiner.replace("\t", " ");
-        if (oneLiner.trim().length() > DEFAULT_LENGTH_FOR_SHORT_FORM) {
-            oneLiner = oneLiner.trim().substring(0,
-                    DEFAULT_LENGTH_FOR_SHORT_FORM - ELLIPSIS.length())
-                    + ELLIPSIS;
-        }
-        sqlForDisplay = new SimpleStringProperty(oneLiner);
-        originalSQL = sql;
-    }
-
     public String getTimestamp() {
         final Calendar cal = new GregorianCalendar();
         cal.setTimeInMillis(timestamp.get());
         return MessageFormat.format(
                 DialogDictionary.PATTERN_EXECUTION_TIMESTAMP.toString(),
                 cal.getTime());
-    }
-
-    public void setTimestamp(final Long timestamp) {
-        this.timestamp.set(timestamp);
     }
 
     public String getOriginalSQL() {

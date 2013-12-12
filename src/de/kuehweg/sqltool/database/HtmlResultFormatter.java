@@ -113,7 +113,8 @@ public class HtmlResultFormatter {
 
     public String formatAsHtml() throws IOException {
         final String statementExecution = MessageFormat.format(
-                DialogDictionary.PATTERN_EXECUTION_TIMESTAMP.toString(),
+                DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER.
+                toString(),
                 resultFormatter.getExecutedAt(),
                 resultFormatter.getExecutedBy());
 

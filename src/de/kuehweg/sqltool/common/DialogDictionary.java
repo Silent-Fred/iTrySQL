@@ -80,6 +80,7 @@ public enum DialogDictionary {
     TOOLTIP_CLEAR_OUTPUT("tooltip_clearOutput"),
     PATTERN_EXECUTION_TIME("pattern_executionTime"),
     PATTERN_EXECUTION_TIMESTAMP("pattern_executionTimestamp"),
+    PATTERN_EXECUTION_TIMESTAMP_WITH_USER("pattern_executionTimestampWithUser"),
     PATTERN_ROWCOUNT("pattern_rowcount"),
     PATTERN_MAX_ROWS("pattern_maxRows"),
     PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),

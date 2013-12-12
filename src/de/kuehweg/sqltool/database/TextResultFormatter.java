@@ -78,7 +78,8 @@ public class TextResultFormatter {
     public String formatAsText() {
         final StringBuilder builder = new StringBuilder();
         builder.append(MessageFormat.format(
-                DialogDictionary.PATTERN_EXECUTION_TIMESTAMP.toString(),
+                DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER.
+                toString(),
                 resultFormatter.getExecutedAt(),
                 resultFormatter.getExecutedBy()));
         builder.append("\n\n");
