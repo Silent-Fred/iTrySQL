@@ -38,6 +38,7 @@ INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('US74840', 'T
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('US48000', 'Memphis TN', 78, NULL, 'N35D09MW90D03M');
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('DE00001', 'Berlin', 34, 115, 'N52D31ME13D24M');
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('EN00001', 'London', 15, NULL, 'N51D31MW00D07M');
+INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('FR94068', 'Saint-Maur-des-Fossés', 32, 53, 'N48D48ME02D30M');
 --
 -- person
 --
@@ -49,6 +50,7 @@ INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mu
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1935, 'Elvis Aaron', 'Presley', 'US48000', 'US74840', '1935-01-08', 1912);
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1888, 'Irving', 'Berlin', NULL, NULL, '1888-05-11', NULL);
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1876, 'Jack', 'London', NULL, NULL, '1876-01-12', NULL);
+INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1903, 'Raymond', 'Radiguet', 'FR00001', 'FR94068', '1903-06-18', NULL);
 --
 -- werk
 --
@@ -59,6 +61,7 @@ INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VA
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (4, 'Hound Dog', NULL, 1935, 'EN', '1956-06-05');
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (5, 'White Christmas', NULL, 1888, 'EN', '1941-12-25');
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (6, 'Martin Eden', NULL, 1876, 'EN', '1909-01-01');
+INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (7, 'Le diable au corps', NULL, 1903, 'FR', '1923-01-01');
 --
 -- epoche
 --
