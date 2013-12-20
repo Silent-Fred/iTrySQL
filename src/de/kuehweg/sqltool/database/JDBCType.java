@@ -26,54 +26,58 @@
 package de.kuehweg.sqltool.database;
 
 /**
+ * Unterstützte JDBC-Treiber
+ * 
  * @author Michael Kühweg
  */
 public enum JDBCType {
 
-    HSQL_IN_MEMORY("HSQL Database Engine In-Memory", "org.hsqldb.jdbcDriver",
-    "jdbc:hsqldb:", "mem:", false), HSQL_STANDALONE(
-    "HSQL Database Engine Standalone", "org.hsqldb.jdbcDriver",
-    "jdbc:hsqldb:", "file:", true), HSQL_SERVER(
-    "HSQL Database Engine Server", "org.hsqldb.jdbcDriver",
-    "jdbc:hsqldb:", "hsql:", false);
-    private String name;
-    private String driverClass;
-    private String urlPrefix;
-    private String dbType;
-    private boolean possibleServer;
+	HSQL_IN_MEMORY("HSQL Database Engine In-Memory", "org.hsqldb.jdbcDriver",
+			"jdbc:hsqldb:", "mem:", false), HSQL_STANDALONE(
+			"HSQL Database Engine Standalone", "org.hsqldb.jdbcDriver",
+			"jdbc:hsqldb:", "file:", true), HSQL_SERVER(
+			"HSQL Database Engine Server", "org.hsqldb.jdbcDriver",
+			"jdbc:hsqldb:", "hsql:", false);
+	private String name;
+	private String driverClass;
+	private String urlPrefix;
+	private String dbType;
+	// manche Datenbanken können als Grundlage dienen, mit der ein DB-Server
+	// gestartet werden kann
+	private boolean possibleServer;
 
-    private JDBCType(final String name, final String driverClass,
-            final String urlPrefix, final String dbType,
-            final boolean possibleServer) {
-        this.name = name;
-        this.driverClass = driverClass;
-        this.urlPrefix = urlPrefix;
-        this.dbType = dbType;
-        this.possibleServer = possibleServer;
-    }
+	private JDBCType(final String name, final String driverClass,
+			final String urlPrefix, final String dbType,
+			final boolean possibleServer) {
+		this.name = name;
+		this.driverClass = driverClass;
+		this.urlPrefix = urlPrefix;
+		this.dbType = dbType;
+		this.possibleServer = possibleServer;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getDriverClass() {
-        return driverClass;
-    }
+	public String getDriverClass() {
+		return driverClass;
+	}
 
-    public String getUrlPrefix() {
-        return urlPrefix;
-    }
+	public String getUrlPrefix() {
+		return urlPrefix;
+	}
 
-    public String getDbType() {
-        return dbType;
-    }
+	public String getDbType() {
+		return dbType;
+	}
 
-    public boolean isPossibleServer() {
-        return possibleServer;
-    }
+	public boolean isPossibleServer() {
+		return possibleServer;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 }

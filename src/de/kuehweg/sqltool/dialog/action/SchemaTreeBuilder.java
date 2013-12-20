@@ -25,13 +25,13 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.database.CatalogDescription;
-import de.kuehweg.sqltool.database.ColumnDescription;
-import de.kuehweg.sqltool.database.DatabaseDescription;
-import de.kuehweg.sqltool.database.IndexDescription;
-import de.kuehweg.sqltool.database.Nullability;
-import de.kuehweg.sqltool.database.SchemaDescription;
-import de.kuehweg.sqltool.database.TableDescription;
+import de.kuehweg.sqltool.database.metadata.CatalogDescription;
+import de.kuehweg.sqltool.database.metadata.ColumnDescription;
+import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.IndexDescription;
+import de.kuehweg.sqltool.database.metadata.Nullability;
+import de.kuehweg.sqltool.database.metadata.SchemaDescription;
+import de.kuehweg.sqltool.database.metadata.TableDescription;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 import java.util.ArrayList;
 import java.util.List;

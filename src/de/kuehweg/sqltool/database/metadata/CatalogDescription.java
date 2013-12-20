@@ -23,41 +23,70 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database;
+package de.kuehweg.sqltool.database.metadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
- *
+ * Beschreibung der catalog Metadaten. Ein catalog enthält Schemata.
+ * 
  * @author Michael Kühweg
  */
-public class DatabaseDescription {
+public class CatalogDescription implements Comparable<CatalogDescription> {
 
-    private final String name;
-    private final Set<CatalogDescription> catalogs;
+	private final String catalog;
+	private final Set<SchemaDescription> schemas;
 
-    public DatabaseDescription(final String name) {
-        this.name = name == null ? "" : name;
-        catalogs = new HashSet<>(32);
-    }
+	public CatalogDescription(final String catalog) {
+		this.catalog = catalog == null ? "" : catalog;
+		schemas = new HashSet<>(32);
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getCatalog() {
+		return catalog;
+	}
 
-    public List<CatalogDescription> getCatalogs() {
-        final List<CatalogDescription> result = new ArrayList<>(catalogs);
-        Collections.sort(result);
-        return result;
-    }
+	public List<SchemaDescription> getSchemas() {
+		final List<SchemaDescription> result = new ArrayList<>(schemas);
+		Collections.sort(result);
+		return result;
+	}
 
-    public void addCatalogs(final CatalogDescription... cats) {
-        for (final CatalogDescription catalog : cats) {
-            catalogs.add(catalog);
-        }
-    }
+	public void addSchemas(final SchemaDescription... schs) {
+		for (final SchemaDescription schema : schs) {
+			schemas.add(schema);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 71 * hash + Objects.hashCode(catalog);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final CatalogDescription other = (CatalogDescription) obj;
+		if (!Objects.equals(catalog, other.catalog)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int compareTo(final CatalogDescription other) {
+		return catalog.compareTo(other.catalog);
+	}
 }

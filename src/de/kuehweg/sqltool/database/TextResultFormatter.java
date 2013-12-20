@@ -25,110 +25,138 @@
  */
 package de.kuehweg.sqltool.database;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.UserPreferencesManager;
 import java.text.MessageFormat;
 import java.util.List;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.UserPreferencesManager;
+
 /**
- *
+ * Ergebnis einer Datenbankabfrage als Text aufbereiten
+ * 
  * @author Michael Kühweg
  */
 public class TextResultFormatter {
 
-    private final ResultFormatter resultFormatter;
+	private final ResultFormatter resultFormatter;
 
-    public TextResultFormatter(final ResultFormatter resultFormatter) {
-        this.resultFormatter = resultFormatter;
-    }
+	/**
+	 * Im Konstruktor wird das Abfrageergebnis übergeben
+	 * 
+	 * @param resultFormatter
+	 */
+	public TextResultFormatter(final ResultFormatter resultFormatter) {
+		this.resultFormatter = resultFormatter;
+	}
 
-    private int[] calculateColumnWidths() {
-        final int columnCount = resultFormatter.getHeader().length;
-        final int[] width = new int[columnCount];
+	/**
+	 * Spaltenbreiten in Zeichen ermitteln (zur Ausgabe in monospaced Fonts)
+	 * 
+	 * @return
+	 */
+	private int[] calculateColumnWidths() {
+		final int columnCount = resultFormatter.getHeader().length;
+		final int[] width = new int[columnCount];
 
-        // Spaltenbreiten ermitteln (Titel)
-        for (int i = 0; i < columnCount; i++) {
-            width[i] = resultFormatter.getHeader()[i].toString().trim()
-                    .length();
-        }
+		// Spaltenbreiten ermitteln (Titel)
+		for (int i = 0; i < columnCount; i++) {
+			width[i] = resultFormatter.getHeader()[i].toString().trim()
+					.length();
+		}
 
-        // Spaltenbreiten ermitteln (Inhalt)
-        for (final List<String> row : resultFormatter.getRows()) {
-            int columnIndex = 0;
-            for (final String column : row) {
-                final int length = column.trim().length();
-                if (length > width[columnIndex]) {
-                    width[columnIndex] = length;
-                }
-                columnIndex++;
-            }
-        }
-        return width;
-    }
+		// Spaltenbreiten ermitteln (Inhalt)
+		for (final List<String> row : resultFormatter.getRows()) {
+			int columnIndex = 0;
+			for (final String column : row) {
+				final int length = column.trim().length();
+				if (length > width[columnIndex]) {
+					width[columnIndex] = length;
+				}
+				columnIndex++;
+			}
+		}
+		return width;
+	}
 
-    private String rightPad(final String str, final String paddingString,
-            final int paddingLength) {
-        final StringBuilder builder = new StringBuilder(str);
-        while (builder.length() <= paddingLength) {
-            builder.append(paddingString);
-        }
-        return builder.substring(0, paddingLength);
-    }
+	/**
+	 * String rechts mit dem Füllzeichen bis zur angegebenen Länge auffüllen
+	 * 
+	 * @param str
+	 *            Ausgangstext
+	 * @param paddingString
+	 *            Fülltext / Füllzeichen
+	 * @param paddingLength
+	 *            Länge bis zu der aufgefüllt wird
+	 * @return Aufgefüllter Text
+	 */
+	private String rightPad(final String str, final String paddingString,
+			final int paddingLength) {
+		final StringBuilder builder = new StringBuilder(str);
+		while (builder.length() <= paddingLength) {
+			builder.append(paddingString);
+		}
+		return builder.substring(0, paddingLength);
+	}
 
-    public String formatAsText() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(MessageFormat.format(
-                DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER.
-                toString(),
-                resultFormatter.getExecutedAt(),
-                resultFormatter.getExecutedBy()));
-        builder.append("\n\n");
+	/**
+	 * Bereitet den Inhalt des im Konstruktor angegebenen Abfrageergebnisses
+	 * komplett als Text auf.
+	 * 
+	 * @return
+	 */
+	public String formatAsText() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(MessageFormat.format(
+				DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER
+						.toString(), resultFormatter.getExecutedAt(),
+				resultFormatter.getExecutedBy()));
+		builder.append("\n\n");
 
-        final int width = resultFormatter.getHeader().length;
-        final int[] size = calculateColumnWidths();
+		final int width = resultFormatter.getHeader().length;
+		final int[] size = calculateColumnWidths();
 
-        // Spaltenüberschriften aufbauen
-        for (int i = 0; i < width; i++) {
-            builder.append(rightPad(resultFormatter.getHeader()[i].toString(),
-                    " ", size[i]));
-            builder.append(' ');
-        }
-        builder.append("\n");
-        if (!resultFormatter.isHeadOnly()) {
-            for (int i = 0; i < width; i++) {
-                builder.append(rightPad("", "-", size[i]));
-                builder.append(' ');
-            }
-            builder.append("\n");
+		// Spaltenüberschriften aufbauen
+		for (int i = 0; i < width; i++) {
+			builder.append(rightPad(resultFormatter.getHeader()[i].toString(),
+					" ", size[i]));
+			builder.append(' ');
+		}
+		builder.append("\n");
+		if (!resultFormatter.isHeadOnly()) {
+			for (int i = 0; i < width; i++) {
+				builder.append(rightPad("", "-", size[i]));
+				builder.append(' ');
+			}
+			builder.append("\n");
 
-            // Inhalte aufbauen
-            for (final List<String> row : resultFormatter.getRows()) {
-                int columnIndex = 0;
-                for (final String column : row) {
-                    builder.append(rightPad(
-                            column == null ? "" : column.trim(), " ",
-                            size[columnIndex]));
-                    builder.append(' ');
-                    columnIndex++;
-                }
-                builder.append("\n");
-            }
-            builder.append("\n");
-            builder.append(MessageFormat.format(
-                    DialogDictionary.PATTERN_ROWCOUNT.toString(),
-                    resultFormatter.getRows().size()));
-            // ist das Ergebnis eventuell abgeschnitten, wird eine Meldung
-            // ausgegeben
-            if (resultFormatter.getRows().size() >= DatabaseConstants.MAX_ROWS) {
-                if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
-                    builder.append("\n\n");
-                    builder.append(MessageFormat.format(
-                            DialogDictionary.PATTERN_MAX_ROWS.toString(),
-                            resultFormatter.getRows().size()));
-                }
-            }
-        }
+			// Inhalte aufbauen
+			for (final List<String> row : resultFormatter.getRows()) {
+				int columnIndex = 0;
+				for (final String column : row) {
+					builder.append(rightPad(
+							column == null ? "" : column.trim(), " ",
+							size[columnIndex]));
+					builder.append(' ');
+					columnIndex++;
+				}
+				builder.append("\n");
+			}
+			builder.append("\n");
+			builder.append(MessageFormat.format(
+					DialogDictionary.PATTERN_ROWCOUNT.toString(),
+					resultFormatter.getRows().size()));
+			// ist das Ergebnis eventuell abgeschnitten, wird eine Meldung
+			// ausgegeben
+			if (resultFormatter.getRows().size() >= DatabaseConstants.MAX_ROWS) {
+				if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
+					builder.append("\n\n");
+					builder.append(MessageFormat.format(
+							DialogDictionary.PATTERN_MAX_ROWS.toString(),
+							resultFormatter.getRows().size()));
+				}
+			}
+		}
 
-        return builder.toString();
-    }
+		return builder.toString();
+	}
 }

@@ -25,8 +25,8 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.database.DatabaseDescription;
-import de.kuehweg.sqltool.database.MetaDataReader;
+import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.MetaDataReader;
 import java.sql.Connection;
 import javafx.application.Platform;
 import javafx.concurrent.Task;

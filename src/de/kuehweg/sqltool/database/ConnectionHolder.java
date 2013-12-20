@@ -25,87 +25,103 @@
  */
 package de.kuehweg.sqltool.database;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
 
 /**
  * Hält die Verbindung zur Datenbank
- *
+ * 
  * @author Michael Kühweg
  */
 public class ConnectionHolder {
 
-    private Connection connection;
-    private final BooleanProperty connectedProperty;
+	private Connection connection;
+	private final BooleanProperty connectedProperty;
 
-    public ConnectionHolder() {
-        this.connectedProperty = new SimpleBooleanProperty(false);
-    }
+	public ConnectionHolder() {
+		connectedProperty = new SimpleBooleanProperty(false);
+	}
 
-    private void connect(final Connection connection) {
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (final SQLException ex) {
-            }
-        }
-        this.connection = connection;
-    }
+	/**
+	 * Baut die "richtige" Verbindung auf, abgeleitet aus den
+	 * "benutzertauglichen" Verbindungsdaten
+	 * 
+	 * @param connection
+	 */
+	private void connect(final Connection connection) {
+		if (this.connection != null) {
+			try {
+				this.connection.close();
+			} catch (final SQLException ex) {
+			}
+		}
+		this.connection = connection;
+	}
 
-    public void connect(final ConnectionSetting connectionSetting) {
-        Connection newConnection = null;
-        try {
-            Class.forName(connectionSetting.getType().getDriverClass())
-                    .newInstance();
-            final Properties properties = new Properties();
-            properties.setProperty("user",
-                    connectionSetting.getUser() != null ? connectionSetting.
-                    getUser() : "");
-            properties.setProperty("password", connectionSetting.getPassword()
-                    != null ? connectionSetting.getPassword() : "");
-            properties.setProperty("hsqldb.tx",
-                    DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
-            newConnection = DriverManager.getConnection(
-                    connectionSetting.getUrl(), properties);
-            connect(newConnection);
-            connectedProperty.set(true);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
-            final ErrorMessage msg = new ErrorMessage(
-                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                    DialogDictionary.ERR_CONNECTION_FAILURE.toString(),
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
-        }
-    }
+	/**
+	 * Baut die Verbindung auf Basis der übergebenen Verbindungsdaten auf
+	 * 
+	 * @param connectionSetting
+	 */
+	public void connect(final ConnectionSetting connectionSetting) {
+		Connection newConnection = null;
+		try {
+			Class.forName(connectionSetting.getType().getDriverClass())
+					.newInstance();
+			final Properties properties = new Properties();
+			properties.setProperty(
+					"user",
+					connectionSetting.getUser() != null ? connectionSetting
+							.getUser() : "");
+			properties.setProperty(
+					"password",
+					connectionSetting.getPassword() != null ? connectionSetting
+							.getPassword() : "");
+			properties.setProperty("hsqldb.tx",
+					DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
+			newConnection = DriverManager.getConnection(
+					connectionSetting.getUrl(), properties);
+			connect(newConnection);
+			connectedProperty.set(true);
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | SQLException ex) {
+			final ErrorMessage msg = new ErrorMessage(
+					DialogDictionary.MESSAGEBOX_ERROR.toString(),
+					DialogDictionary.ERR_CONNECTION_FAILURE.toString(),
+					DialogDictionary.COMMON_BUTTON_OK.toString());
+			msg.askUserFeedback();
+		}
+	}
 
-    public void disconnect() {
-        if (connection != null) {
-            try {
-                connection.close();
-                connectedProperty.set(false);
-            } catch (final SQLException ex) {
-            }
-            connection = null;
-        }
-    }
+	public void disconnect() {
+		if (connection != null) {
+			try {
+				connection.close();
+				connectedProperty.set(false);
+			} catch (final SQLException ex) {
+			}
+			connection = null;
+		}
+	}
 
-    public BooleanProperty connectedProperty() {
-        return connectedProperty;
-    }
+	public BooleanProperty connectedProperty() {
+		return connectedProperty;
+	}
 
-    public Connection getConnection() {
-        return connection;
-    }
+	public Connection getConnection() {
+		return connection;
+	}
 
-    public Statement getStatement() throws SQLException {
-        return connection.createStatement();
-    }
+	public Statement getStatement() throws SQLException {
+		return connection.createStatement();
+	}
 }

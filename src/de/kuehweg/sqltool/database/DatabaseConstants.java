@@ -26,15 +26,16 @@
 package de.kuehweg.sqltool.database;
 
 /**
- *
+ * Die Datenbank betreffende Konstanten
+ * 
  * @author Michael Kühweg
  */
 public class DatabaseConstants {
 
-    public static final int MAX_ROWS = 2500;
-    public static final String DEFAULT_TRANSACTION_CONTROL = "MVCC";
+	public static final int MAX_ROWS = 2500;
+	public static final String DEFAULT_TRANSACTION_CONTROL = "MVCC";
 
-    private DatabaseConstants() {
-        // no instances
-    }
+	private DatabaseConstants() {
+		// no instances
+	}
 }

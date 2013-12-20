@@ -23,13 +23,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database;
+package de.kuehweg.sqltool.database.metadata;
 
 /**
- *
+ * Mögliche Werte für die Nullability von Tabellenspalten
+ * 
  * @author Michael Kühweg
  */
 public enum Nullability {
 
-    YES, NO, MAYBE
+	YES, NO, MAYBE;
 }
