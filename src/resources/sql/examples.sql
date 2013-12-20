@@ -31,6 +31,7 @@ DROP TABLE epoche IF EXISTS;
 -- ort
 --
 CREATE TABLE ort (ort VARCHAR(20) PRIMARY KEY, name VARCHAR(80), alt_min INTEGER, alt_max INTEGER, koordinaten VARCHAR(20) );
+COMMENT ON TABLE ort IS 'Ortsangaben (Beispieldaten)';
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('FR00001', 'Paris', 28, 131, 'N48D51ME02D21M');
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('EN01196', 'Stratford-upon-Avon', 72, NULL, 'N52D11MW01D42M');
 INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('IT00001', 'Roma', 37, NULL, 'N41D53ME12D29M');
@@ -43,6 +44,7 @@ INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('FR94068', 'S
 -- person
 --
 CREATE TABLE person (persnr INTEGER PRIMARY KEY, vorname VARCHAR(80), name VARCHAR(80), wohnort VARCHAR(20) REFERENCES ort(ort), geburtsort VARCHAR(20) REFERENCES ort(ort), geburtsdatum DATE, mutter_persnr INTEGER REFERENCES person(persnr));
+COMMENT ON TABLE person IS 'Personen (Beispieldaten)';
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1622, 'Jean-Baptiste', 'Poquelin', 'FR00001', 'FR00001', '1622-01-15', NULL);
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1694, 'François-Marie', 'Arouet', 'FR00001', 'FR00001', '1694-11-21', NULL);
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1564, 'William', 'Shakespeare', 'EN01196', 'EN01196', '1564-04-26', NULL);
@@ -55,6 +57,7 @@ INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mu
 -- werk
 --
 CREATE TABLE werk (werk INTEGER PRIMARY KEY, titel VARCHAR(80), untertitel VARCHAR(80), autor INTEGER REFERENCES person(persnr), sprache VARCHAR(2), veroeffentlichung DATE);
+COMMENT ON TABLE werk IS 'Werke - Literatur, Musik,... (Beispieldaten)';
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (1, 'The Taming of the Shrew', NULL, 1564,'EN', '1594-01-01');
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (2, 'Romeo and Juliet', 'The Most Excellent and Lamentable Tragedy Of Romeo and Juliet', 1564,'EN', '1597-01-01');
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (3, 'Le Malade imaginaire', NULL, 1622, 'FR', '1673-02-10');
@@ -66,6 +69,7 @@ INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VA
 -- epoche
 --
 CREATE TABLE epoche (epoche INTEGER PRIMARY KEY, bezeichnung VARCHAR(80), beginn DATE, ende DATE);
+COMMENT ON TABLE epoche IS 'Epochen (Beispieldaten)';
 INSERT INTO epoche (epoche, bezeichnung, beginn, ende) VALUES (1, 'Renaissance', '1470-01-01', '1611-12-31');
 INSERT INTO epoche (epoche, bezeichnung, beginn, ende) VALUES (2, 'Barock', '1600-01-01', '1770-12-31');
 INSERT INTO epoche (epoche, bezeichnung, beginn, ende) VALUES (3, 'Aufklärung', '1720-01-01', '1800-12-31');

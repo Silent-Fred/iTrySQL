@@ -41,6 +41,7 @@ DROP TABLE waehrung IF EXISTS;
 -- tutor
 --
 CREATE TABLE tutor (tutor VARCHAR(20) PRIMARY KEY, vorname VARCHAR(80), nachname VARCHAR(80), web VARCHAR(80), mail VARCHAR(80), phone VARCHAR(40) );
+COMMENT ON TABLE tutor IS 'Tutoren, die Workshops leiten können';
 INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('GATTO', 'Anthony', 'Gatto', 'http://www.anthonygatto.com', NULL, NULL);
 INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('DIETZ', 'Thomas', 'Dietz', 'http://www.thomas-dietz.com', 'info@thomas-dietz.com', '+49 (0)941 / 4618xxxx');
 INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('FREBOURG', 'Tony', 'Frébourg', 'http://www.tonyfrebourg.com', NULL, NULL);
@@ -58,6 +59,7 @@ INSERT INTO tutor (tutor, vorname, nachname, web, mail, phone) VALUES ('GANDINI'
 -- workshop
 --
 CREATE TABLE workshop (workshop INTEGER PRIMARY KEY, titel VARCHAR(80), min_teilnehmer INTEGER, max_teilnehmer INTEGER, datum DATE, tage INTEGER);
+COMMENT ON TABLE workshop IS 'Geplante und durchgeführte Workshops';
 INSERT INTO workshop (workshop, titel, min_teilnehmer, max_teilnehmer, datum, tage) VALUES (1, 'Seven club juggling made easy', 2, 4, TRUNC(DATE_ADD ( CURRENT_DATE , INTERVAL 3 MONTH )), 2);
 INSERT INTO workshop (workshop, titel, min_teilnehmer, max_teilnehmer, datum, tage) VALUES (2, 'Green planet', 2, 8, TRUNC(DATE_ADD ( CURRENT_DATE , INTERVAL 4 MONTH )), 1);
 INSERT INTO workshop (workshop, titel, min_teilnehmer, max_teilnehmer, datum, tage) VALUES (3, 'Le parasol', 2, 4, TRUNC(DATE_ADD ( CURRENT_DATE , INTERVAL 5 MONTH )), 1);
@@ -69,6 +71,7 @@ INSERT INTO workshop (workshop, titel, min_teilnehmer, max_teilnehmer, datum, ta
 -- workshoptutor
 --
 CREATE TABLE workshoptutor (workshop INTEGER REFERENCES workshop(workshop), tutor VARCHAR(20) REFERENCES tutor(tutor), PRIMARY KEY (workshop, tutor));
+COMMENT ON TABLE workshoptutor IS 'Zurodnung zwischen Workshops und den durchführenden Tutoren (n:m)';
 INSERT INTO workshoptutor (workshop, tutor) VALUES (1, 'GATTO');
 INSERT INTO workshoptutor (workshop, tutor) VALUES (2, 'KARAS');
 INSERT INTO workshoptutor (workshop, tutor) VALUES (3, 'ROCHAIS');
@@ -80,6 +83,7 @@ INSERT INTO workshoptutor (workshop, tutor) VALUES (6, 'PECEL');
 -- waehrung
 --
 CREATE TABLE waehrung (waehrung CHAR(3) PRIMARY KEY);
+COMMENT ON TABLE waehrung IS 'Lookup-Tabelle für Währungen';
 INSERT INTO waehrung (waehrung) VALUES ('EUR');
 INSERT INTO waehrung (waehrung) VALUES ('SFR');
 INSERT INTO waehrung (waehrung) VALUES ('USD');
@@ -87,6 +91,7 @@ INSERT INTO waehrung (waehrung) VALUES ('USD');
 -- land
 --
 CREATE TABLE land (land CHAR(2) PRIMARY KEY, waehrung VARCHAR(3) REFERENCES waehrung(waehrung));
+COMMENT ON TABLE land IS 'Länderinformationen';
 INSERT INTO land (land, waehrung) VALUES ('DE', 'EUR');
 INSERT INTO land (land, waehrung) VALUES ('FR', 'EUR');
 INSERT INTO land (land, waehrung) VALUES ('CH', 'SFR');
@@ -94,6 +99,7 @@ INSERT INTO land (land, waehrung) VALUES ('CH', 'SFR');
 -- region
 --
 CREATE TABLE region (region CHAR(3) PRIMARY KEY, bezeichnung VARCHAR(80), hauptstadt VARCHAR(80));
+COMMENT ON TABLE region IS 'Regionen';
 INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('ALS', 'Alsace', 'Strasbourg');
 INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('AQU', 'Aquitaine', 'Bordeaux');
 INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('AUV', 'Auvergne', 'Clermont-Ferrand');
@@ -127,6 +133,7 @@ INSERT INTO region (region, bezeichnung, hauptstadt) VALUES ('SJU', 'Jura', 'Del
 -- filiale
 --
 CREATE TABLE filiale (filialnummer CHAR(4) PRIMARY KEY, strasse VARCHAR(80), plz VARCHAR(10), ort VARCHAR(80), land CHAR(3) NOT NULL REFERENCES land, region CHAR(3) NOT NULL REFERENCES region(region));
+COMMENT ON TABLE filiale IS 'Filialen';
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1000', '16, Rue Albert Henri', '75001', 'Paris', 'FR', 'ILE');                     
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1010', '19, Rue Aristide Briand', '13002', 'Marseille', 'FR', 'PRO');              
 INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('1020', '17, Rue Blanche Vitte', '69003', 'Lyon', 'FR', 'RHO');                     
@@ -247,6 +254,7 @@ INSERT INTO filiale (filialnummer, strasse, plz, ort, land, region) VALUES ('213
 -- multilingual
 --
 CREATE TABLE multilingual (filialnummer CHAR(4) REFERENCES filiale(filialnummer), locale CHAR(2), PRIMARY KEY (filialnummer, locale));
+COMMENT ON TABLE multilingual IS 'Zuordnungstabelle zur Beschreibung, in welcher/n Sprache/n Filialen etikettiert werden';
 INSERT INTO multilingual (filialnummer, locale) SELECT filialnummer, land FROM filiale;
 INSERT INTO multilingual (filialnummer, locale) VALUES ('1886', 'FR');
 INSERT INTO multilingual (filialnummer, locale) VALUES ('1060', 'DE');
@@ -256,6 +264,7 @@ INSERT INTO multilingual (filialnummer, locale) VALUES ('1650', 'DE');
 -- Produktgruppe
 --
 CREATE TABLE produktgruppe (produktgruppe VARCHAR(10) PRIMARY KEY, bezeichnung VARCHAR(80));
+COMMENT ON TABLE produktgruppe IS 'Produktgruppen';
 INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('ALLR', 'Allerlei');
 INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('OUT', 'Außenspielzeug');
 INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('EBAL', 'Erzi Balancierspiele');
@@ -302,6 +311,7 @@ INSERT INTO produktgruppe (produktgruppe, bezeichnung) VALUES ('DVD', NULL);
 -- artikel
 --
 CREATE TABLE artikel (artikelnummer VARCHAR(10) PRIMARY KEY , bezeichnung VARCHAR(200), produktgruppe VARCHAR(10) NOT NULL REFERENCES produktgruppe(produktgruppe), hauptartikel VARCHAR(10) REFERENCES artikel(artikelnummer));
+COMMENT ON TABLE artikel IS 'Artikel';
 INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('100000', 'BNBG', NULL);
 INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('100001', 'BNBG', '100000');
 INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('100002', 'BNBG', '100000');
@@ -1218,6 +1228,7 @@ INSERT INTO artikel (artikelnummer, produktgruppe, hauptartikel) VALUES ('213900
 -- artikeltext
 --
 CREATE TABLE artikeltext (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), locale CHAR(2) NOT NULL, textart VARCHAR(10) NOT NULL, artikeltext VARCHAR(2000), PRIMARY KEY (artikelnummer, locale, textart));
+COMMENT ON TABLE artikeltext IS 'Texte zur Etikettierung der Artikel';
 -- DE
 INSERT INTO artikeltext (artikelnummer, locale, textart, artikeltext) VALUES ('100000', 'DE', 'BASIC', 'Bean-Bag Neon 130g, Stück Kunstleder, 70mm, 130g');
 INSERT INTO artikeltext (artikelnummer, locale, textart, artikeltext) VALUES ('100001', 'DE', 'BASIC', 'Bean-Bag Neon 130g, Stück Kunstleder, 70mm, 130g (uni sortiert)');
@@ -3239,6 +3250,7 @@ SET main.bezeichnung = (
 -- verkaufspreis
 --
 CREATE TABLE verkaufspreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung CHAR(3) REFERENCES waehrung(waehrung), gilt_ab DATE);
+COMMENT ON TABLE verkaufspreis IS 'Normalverkaufspreise der Artikel je Währung und im zeitlichen Verlauf';
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100000', 4.9);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100100', 4.7);
 INSERT INTO verkaufspreis (artikelnummer, verkaufspreis) VALUES ('100200', 4.9);
@@ -3630,16 +3642,12 @@ UPDATE verkaufspreis SET gilt_ab = '2002-01-01' WHERE gilt_ab IS NULL;
 --
 -- Jetzt noch per Constraints absichern
 --
--- ALTER TABLE verkaufspreis ADD CHECK (waehrung IS NOT NULL);
--- ALTER TABLE verkaufspreis ADD CHECK (gilt_ab IS NOT NULL);
---
--- Preise für alle Filialen haben keinen Eintrag einer Filialnummer, daher kein Primärschlüssel möglich
---
 ALTER TABLE verkaufspreis ADD PRIMARY KEY (artikelnummer, waehrung, gilt_ab);
 --
 -- verkaufspreis - reduziert
 --
 CREATE TABLE sonderpreis (artikelnummer VARCHAR(10) NOT NULL REFERENCES artikel(artikelnummer), verkaufspreis NUMERIC(10,2), waehrung CHAR(3) REFERENCES waehrung(waehrung), filialnummer VARCHAR(10) REFERENCES filiale(filialnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (artikelnummer, filialnummer, waehrung, gilt_ab));
+COMMENT ON TABLE sonderpreis IS 'Sonderpreise für Artikel mit Währung und zeitlich sowie auf Filialen eingeschränkter Gültigkeit';
 INSERT INTO sonderpreis (artikelnummer, verkaufspreis, waehrung, filialnummer, gilt_ab, gilt_bis)
 SELECT artikelnummer, verkaufspreis * 0.75, 'EUR', '1390', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-05-27', EXTRACT(YEAR FROM CURRENT_DATE) - 1 || '-07-14' FROM verkaufspreis;
 INSERT INTO sonderpreis (artikelnummer, verkaufspreis, waehrung, filialnummer, gilt_ab, gilt_bis)
@@ -3648,6 +3656,7 @@ SELECT artikelnummer, verkaufspreis * 0.9, 'EUR', '1886', EXTRACT(YEAR FROM CURR
 -- listung
 --
 CREATE TABLE listung (filialnummer CHAR(4) REFERENCES filiale(filialnummer), artikelnummer VARCHAR(10) REFERENCES artikel(artikelnummer), gilt_ab DATE, gilt_bis DATE, PRIMARY KEY (filialnummer, artikelnummer, gilt_ab));
+COMMENT ON TABLE listung IS 'Zuordnungstabelle zur Beschreibung, welche Artikel in welchem Zeitraum in welchen Filialen im Sortiment sind';
 -- Erste Filiale mit allen Artikeln anlegen
 INSERT INTO listung (filialnummer, artikelnummer, gilt_ab)
 SELECT '1000', artikelnummer, EXTRACT(YEAR FROM CURRENT_DATE) - 4 || '-07-14' FROM artikel;
