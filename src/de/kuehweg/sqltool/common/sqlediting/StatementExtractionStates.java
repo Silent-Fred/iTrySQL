@@ -26,94 +26,106 @@
 package de.kuehweg.sqltool.common.sqlediting;
 
 /**
- *
+ * Mini-Automat um eine auszuführende SQL-Anweisung in einem Eingangstext zu
+ * identifizieren. Jeder Status erwartet das aktuell auszuwertende Zeichen. Der
+ * Status FINAL zeigt an, dass das Ende einer SQL-Anweisung erreicht wurde. Vom
+ * Start eines Textes an, können somit die enthaltenen SQL-Anweisungen separiert
+ * werden.
+ * 
  * @author Michael Kühweg
  */
 public enum StatementExtractionStates {
 
-    START {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '/') {
-                return MAYBE_BLOCK_COMMENT;
-            } else if (input == '-') {
-                return MAYBE_LINE_COMMENT;
-            } else if (input == '\'') {
-                return STRING_LITERAL;
-            } else if (input == '\"') {
-                return QUOTED_NAME;
-            } else if (input == ';') {
-                return FINAL;
-            }
-            return START;
-        }
-    },
-    MAYBE_BLOCK_COMMENT {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '*') {
-                return INSIDE_BLOCK_COMMENT;
-            }
-            return START;
-        }
-    },
-    INSIDE_BLOCK_COMMENT {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '*') {
-                return MAYBE_END_OF_BLOCK_COMMENT;
-            }
-            return INSIDE_BLOCK_COMMENT;
-        }
-    },
-    MAYBE_END_OF_BLOCK_COMMENT {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '/') {
-                return START;
-            }
-            return INSIDE_BLOCK_COMMENT;
-        }
-    },
-    MAYBE_LINE_COMMENT {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '-') {
-                return INSIDE_LINE_COMMENT;
-            }
-            return START;
-        }
-    },
-    INSIDE_LINE_COMMENT {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '\n' || input == '\r') {
-                return START;
-            }
-            return INSIDE_LINE_COMMENT;
-        }
-    },
-    STRING_LITERAL {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '\'') {
-                return START;
-            }
-            return STRING_LITERAL;
-        }
-    },
-    QUOTED_NAME {
-        @Override
-        public StatementExtractionStates evaluate(final char input) {
-            if (input == '\"') {
-                return START;
-            }
-            return QUOTED_NAME;
-        }
-    },
-    FINAL;
+	/**
+	 * Mit diesem Status wird immer begonnen...
+	 */
+	START {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '/') {
+				return MAYBE_BLOCK_COMMENT;
+			} else if (input == '-') {
+				return MAYBE_LINE_COMMENT;
+			} else if (input == '\'') {
+				return STRING_LITERAL;
+			} else if (input == '\"') {
+				return QUOTED_NAME;
+			} else if (input == ';') {
+				return FINAL;
+			}
+			return START;
+		}
+	},
+	MAYBE_BLOCK_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '*') {
+				return INSIDE_BLOCK_COMMENT;
+			}
+			return START;
+		}
+	},
+	INSIDE_BLOCK_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '*') {
+				return MAYBE_END_OF_BLOCK_COMMENT;
+			}
+			return INSIDE_BLOCK_COMMENT;
+		}
+	},
+	MAYBE_END_OF_BLOCK_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '/') {
+				return START;
+			}
+			return INSIDE_BLOCK_COMMENT;
+		}
+	},
+	MAYBE_LINE_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '-') {
+				return INSIDE_LINE_COMMENT;
+			}
+			return START;
+		}
+	},
+	INSIDE_LINE_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '\n' || input == '\r') {
+				return START;
+			}
+			return INSIDE_LINE_COMMENT;
+		}
+	},
+	STRING_LITERAL {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '\'') {
+				return START;
+			}
+			return STRING_LITERAL;
+		}
+	},
+	QUOTED_NAME {
+		@Override
+		public StatementExtractionStates evaluate(final char input) {
+			if (input == '\"') {
+				return START;
+			}
+			return QUOTED_NAME;
+		}
+	},
+	/**
+	 * wenn dieser Status erreicht ist, ist das Ende einer SQL-Anweisung (oder
+	 * des Eingabetexts) erreicht.
+	 */
+	FINAL;
 
-    public StatementExtractionStates evaluate(final char input) {
-        throw new IllegalArgumentException();
-    }
+	public StatementExtractionStates evaluate(final char input) {
+		throw new IllegalArgumentException();
+	}
 }

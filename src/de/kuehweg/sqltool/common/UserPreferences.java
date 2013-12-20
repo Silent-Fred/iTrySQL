@@ -30,61 +30,81 @@ import java.util.prefs.Preferences;
 
 /**
  * Abbildung der vom Anwender steuerbaren Einstellungen, die beim nächsten
- * Programmstart wiederhergestellt werden
- *
+ * Programmstart wiederhergestellt werden.
+ * 
  * @author Michael Kühweg
  */
 public class UserPreferences {
 
-    private boolean limitMaxRows = true;
-    private int fontSize = 12;
-    private final Preferences preferences;
-    private boolean initialized;
+	private boolean limitMaxRows = true;
+	private int fontSize = 12;
+	private final Preferences preferences;
+	private boolean initialized;
 
-    public UserPreferences() {
-        preferences = Preferences.userNodeForPackage(getClass()).node(
-                getClass().getSimpleName());
-    }
+	public UserPreferences() {
+		preferences = Preferences.userNodeForPackage(getClass()).node(
+				getClass().getSimpleName());
+	}
 
-    private void initialize() {
-        if (!initialized) {
-            limitMaxRows = preferences.getBoolean("limitMaxRows", true);
-            fontSize = preferences.getInt("fontSize", 12);
-            initialized = true;
-        }
-    }
+	private void initialize() {
+		if (!initialized) {
+			limitMaxRows = preferences.getBoolean("limitMaxRows", true);
+			fontSize = preferences.getInt("fontSize", 12);
+			initialized = true;
+		}
+	}
 
-    public boolean isLimitMaxRows() {
-        initialize();
-        return limitMaxRows;
-    }
+	/**
+	 * Datenbankabfragen begrenzt?
+	 * 
+	 * @return
+	 */
+	public boolean isLimitMaxRows() {
+		initialize();
+		return limitMaxRows;
+	}
 
-    public void setLimitMaxRows(final boolean showSchemas) {
-        initialize();
-        if (this.limitMaxRows != showSchemas) {
-            this.limitMaxRows = showSchemas;
-            preferences.putBoolean("limitMaxRows", showSchemas);
-            try {
-                preferences.flush();
-            } catch (final BackingStoreException e) {
-            }
-        }
-    }
+	/**
+	 * Begrenzung der Ergebnismengen ein- oder ausschalten
+	 * 
+	 * @param limitMaxRows
+	 */
+	public void setLimitMaxRows(final boolean limitMaxRows) {
+		initialize();
+		if (this.limitMaxRows != limitMaxRows) {
+			this.limitMaxRows = limitMaxRows;
+			preferences.putBoolean("limitMaxRows", limitMaxRows);
+			try {
+				preferences.flush();
+			} catch (final BackingStoreException e) {
+			}
+		}
+	}
 
-    public int getFontSize() {
-        initialize();
-        return fontSize;
-    }
+	/**
+	 * Ausgewählte Schriftgröße
+	 * 
+	 * @return
+	 */
+	public int getFontSize() {
+		initialize();
+		return fontSize;
+	}
 
-    public void setFontSize(final int fontSize) {
-        initialize();
-        if (this.fontSize != fontSize) {
-            this.fontSize = fontSize;
-            preferences.putInt("fontSize", fontSize);
-            try {
-                preferences.flush();
-            } catch (final BackingStoreException e) {
-            }
-        }
-    }
+	/**
+	 * Schriftgröße in den Voreinstellungen setzen
+	 * 
+	 * @param fontSize
+	 */
+	public void setFontSize(final int fontSize) {
+		initialize();
+		if (this.fontSize != fontSize) {
+			this.fontSize = fontSize;
+			preferences.putInt("fontSize", fontSize);
+			try {
+				preferences.flush();
+			} catch (final BackingStoreException e) {
+			}
+		}
+	}
 }

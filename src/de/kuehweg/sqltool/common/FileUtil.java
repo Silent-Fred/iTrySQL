@@ -35,54 +35,92 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
- *
+ * Dateioperationen
+ * 
  * @author Michael Kühweg
  */
 public class FileUtil {
 
-    private FileUtil() {
-        // no instances
-    }
+	private FileUtil() {
+		// no instances
+	}
 
-    public static String readFile(final String file) throws IOException {
-        final Path path = FileSystems.getDefault().getPath(file);
-        final byte[] filearray = Files.readAllBytes(path);
-        return new String(filearray);
-    }
+	/**
+	 * Textdatei mit dem angegebenen Dateinamen enilesen und als String
+	 * zurückliefern
+	 * 
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readFile(final String file) throws IOException {
+		final Path path = FileSystems.getDefault().getPath(file);
+		final byte[] filearray = Files.readAllBytes(path);
+		return new String(filearray);
+	}
 
-    public static void writeFile(final String file, final String text)
-            throws IOException {
-        final Path path = FileSystems.getDefault().getPath(file);
-        Files.write(path, text.getBytes(), StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING);
-    }
+	/**
+	 * Text in die Datei mit dem angegebenen Dateinamen ausgeben.
+	 * 
+	 * @param file
+	 *            Dateiname
+	 * @param text
+	 *            Textinhalt der ausgegeben werden soll
+	 * @throws IOException
+	 */
+	public static void writeFile(final String file, final String text)
+			throws IOException {
+		final Path path = FileSystems.getDefault().getPath(file);
+		Files.write(path, text.getBytes(), StandardOpenOption.CREATE,
+				StandardOpenOption.TRUNCATE_EXISTING);
+	}
 
-    public static String readResourceFile(final String resourceName) throws IOException {
-        final InputStream tutorialStream = FileUtil.class
-                .getResourceAsStream(resourceName);
-        final StringBuffer b;
-        InputStreamReader reader = new InputStreamReader(
-                tutorialStream, "UTF-8");
-        BufferedReader bufferedReader = new BufferedReader(
-                reader);
-        b = new StringBuffer();
-        String s = null;
-        while ((s = bufferedReader.readLine()) != null) {
-            b.append(s);
-            b.append('\n');
-        }
-        return b.toString();
-    }
+	/**
+	 * Datei lesen, die als Ressource im Paket eingebettet ist (z.B. vorgegebene
+	 * Initialisierungsskripte für die Datenbankinhalte)
+	 * 
+	 * @param resourceName
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readResourceFile(final String resourceName)
+			throws IOException {
+		final InputStream tutorialStream = FileUtil.class
+				.getResourceAsStream(resourceName);
+		final StringBuffer b;
+		final InputStreamReader reader = new InputStreamReader(tutorialStream,
+				"UTF-8");
+		final BufferedReader bufferedReader = new BufferedReader(reader);
+		b = new StringBuffer();
+		String s = null;
+		while ((s = bufferedReader.readLine()) != null) {
+			b.append(s);
+			b.append('\n');
+		}
+		return b.toString();
+	}
 
-    public static String enforceExtension(final String filename, final String ext) {
-        if (ext == null) {
-            return filename;
-        }
-        String trimmedExt = ext.trim();
-        String trimmedFilename = filename.trim();
-        if (trimmedFilename.toLowerCase().endsWith("." + trimmedExt.toLowerCase())) {
-            return trimmedFilename;
-        }
-        return trimmedFilename + (trimmedExt.startsWith(".") ? "" : ".") + ext;
-    }
+	/**
+	 * Dateinamenserweiterung an einen Dateinamen anhängen, sofern nicht bereits
+	 * vorhanden.
+	 * 
+	 * @param filename
+	 *            Bisheriger Dateiname
+	 * @param ext
+	 *            erforderliche Erweiterung (z.B. html, sql o.ä.)
+	 * @return Dateiname mit Erweiterung
+	 */
+	public static String enforceExtension(final String filename,
+			final String ext) {
+		if (ext == null) {
+			return filename;
+		}
+		final String trimmedExt = ext.trim();
+		final String trimmedFilename = filename.trim();
+		if (trimmedFilename.toLowerCase().endsWith(
+				"." + trimmedExt.toLowerCase())) {
+			return trimmedFilename;
+		}
+		return trimmedFilename + (trimmedExt.startsWith(".") ? "" : ".") + ext;
+	}
 }

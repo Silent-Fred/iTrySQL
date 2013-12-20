@@ -31,67 +31,98 @@ import java.util.List;
 
 /**
  * Bei längeren Eingaben im Skriptbereich soll jeweils die Anweisung, in der
- * sich der Cursor befindet ausgeführt werden.
- *
+ * sich der Cursor befindet, ausgeführt werden.
+ * 
  * @author Michael Kühweg
  */
 public class StatementExtractor {
 
-    private StatementExtractor() {
-        // util class has no instances
-    }
+	private StatementExtractor() {
+		// util class has no instances
+	}
 
-    public static String extractStatementAtCaretPosition(final String script,
-            final int caretPosition) {
-        if (script == null || script.trim().length() == 0) {
-            return "";
-        }
-        final char[] input = script.toCharArray();
-        StatementExtractionStates state = StatementExtractionStates.START;
-        int lastPos = 0;
-        int pos = 0;
-        String maybeFinalStatement = "";
-        while (pos < input.length) {
-            while (state != StatementExtractionStates.FINAL
-                    && pos < input.length) {
-                state = state.evaluate(input[pos++]);
-            }
-            final String statement = new String(input, lastPos, pos - lastPos)
-                    .trim();
-            if (statement.length() > 0) {
-                maybeFinalStatement = statement;
-            }
-            if (lastPos <= caretPosition && pos >= caretPosition) {
-                return maybeFinalStatement;
-            }
-            lastPos = pos;
-            state = StatementExtractionStates.START;
-        }
-        return maybeFinalStatement;
-    }
+	/**
+	 * Ermittelt die SQL-Anweisung, in der sich die Eingabemarkierung aktuell
+	 * befindet.
+	 * 
+	 * @param script
+	 * @param caretPosition
+	 * @return
+	 */
+	public static String extractStatementAtCaretPosition(final String script,
+			final int caretPosition) {
+		if (script == null || script.trim().length() == 0) {
+			return "";
+		}
+		final char[] input = script.toCharArray();
+		// von vorne einzelne Anweisungen suchen und jeweils Anfang und Ende der
+		// Anweisung merken
+		StatementExtractionStates state = StatementExtractionStates.START;
+		int lastPos = 0;
+		int pos = 0;
+		// Sonderfall ist immer, dass man sich in der letzten Anweisung befindet
+		// und diese gar nicht mit Semikolon abgeschlossen ist
+		String maybeFinalStatement = "";
+		// kompletten Text durchlaufen wenn erforderlich
+		while (pos < input.length) {
+			// Zeichen auswerten, bis eine fertige Anweisung erkannt wurde oder
+			// das Ende der Eingabe erreicht ist
+			while (state != StatementExtractionStates.FINAL
+					&& pos < input.length) {
+				state = state.evaluate(input[pos++]);
+			}
+			// die Anweisung ist ein möglicher Kandidat, wenn überhaupt was
+			// gelesen wurde (außer whitespace)
+			final String statement = new String(input, lastPos, pos - lastPos)
+					.trim();
+			if (statement.length() > 0) {
+				maybeFinalStatement = statement;
+			}
+			// befindet sich die Eingabemarkierung innerhalb der gerade
+			// erkannten Anweisung, dann ist die richtige Anweisung gefunden und
+			// kann als Ergebnis zurückgegeben werden
+			if (lastPos <= caretPosition && pos >= caretPosition) {
+				return maybeFinalStatement;
+			}
+			// ansonsten weiter versuchen mit einer neuen Anweisung
+			lastPos = pos;
+			state = StatementExtractionStates.START;
+		}
+		// falls das Ende ohne Semikolon erreicht wurde (oder gar nichts erkannt
+		// wurde), dann landen wir hier und geben eben die nicht abgeschlossene
+		// Anweisung zurück - ist ja kein Beinbruch
+		return maybeFinalStatement;
+	}
 
-    public static List<String> getStatementsFromScript(final String script) {
-        if (script == null || script.trim().length() == 0) {
-            return Collections.emptyList();
-        }
-        final char[] input = script.toCharArray();
-        final List<String> statements = new LinkedList<>();
-        StatementExtractionStates state = StatementExtractionStates.START;
-        int lastPos = 0;
-        int pos = 0;
-        while (pos < input.length) {
-            while (state != StatementExtractionStates.FINAL
-                    && pos < input.length) {
-                state = state.evaluate(input[pos++]);
-            }
-            final String statement = new String(input, lastPos, pos - lastPos)
-                    .trim();
-            lastPos = pos;
-            if (statement.length() > 0) {
-                statements.add(statement);
-            }
-            state = StatementExtractionStates.START;
-        }
-        return statements;
-    }
+	/**
+	 * Extrahiert alle SQL-Anweisungen aus einem Skript.
+	 * 
+	 * @param script
+	 *            SQL-Skript
+	 * @return Liste der enthaltenen SQL-Anweisungen
+	 */
+	public static List<String> getStatementsFromScript(final String script) {
+		if (script == null || script.trim().length() == 0) {
+			return Collections.emptyList();
+		}
+		final char[] input = script.toCharArray();
+		final List<String> statements = new LinkedList<>();
+		StatementExtractionStates state = StatementExtractionStates.START;
+		int lastPos = 0;
+		int pos = 0;
+		while (pos < input.length) {
+			while (state != StatementExtractionStates.FINAL
+					&& pos < input.length) {
+				state = state.evaluate(input[pos++]);
+			}
+			final String statement = new String(input, lastPos, pos - lastPos)
+					.trim();
+			lastPos = pos;
+			if (statement.length() > 0) {
+				statements.add(statement);
+			}
+			state = StatementExtractionStates.START;
+		}
+		return statements;
+	}
 }

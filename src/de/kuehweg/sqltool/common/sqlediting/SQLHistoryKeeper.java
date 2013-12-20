@@ -26,10 +26,11 @@
 package de.kuehweg.sqltool.common.sqlediting;
 
 /**
- *
+ * Interface für z.B. einen Controller, der eine SQL-Historie führt
+ * 
  * @author Michael Kühweg
  */
 public interface SQLHistoryKeeper {
 
-    void addExecutedSQLToHistory(final String sql);
+	void addExecutedSQLToHistory(final String sql);
 }

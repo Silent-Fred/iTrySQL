@@ -26,52 +26,55 @@
 package de.kuehweg.sqltool.common;
 
 /**
- *
+ * Römische Ziffern erzeugen
+ * 
  * @author Michael Kühweg
  */
 public class RomanNumber {
 
-    private final long value;
+	private final long value;
 
-    public RomanNumber(final long value) {
-        this.value = value;
-    }
+	public RomanNumber(final long value) {
+		this.value = value;
+	}
 
-    private enum Digit {
+	private enum Digit {
 
-        M(1000), CM(900), D(500), CD(400), C(100), XC(90), L(50), XL(40), X(10),
-        IX(9), V(5), IV(4), I(1);
-        int value;
+		M(1000), CM(900), D(500), CD(400), C(100), XC(90), L(50), XL(40), X(10), IX(
+				9), V(5), IV(4), I(1);
+		int value;
 
-        private Digit(int value) {
-            this.value = value;
-        }
+		private Digit(final int value) {
+			this.value = value;
+		}
 
-        public static Digit fit(final long number) throws IllegalArgumentException {
-            for (final Digit digit : values()) {
-                if (digit.value <= number) {
-                    return digit;
-                }
-            }
-            throw new IllegalArgumentException("Cannot fit " + number
-                    + " into RomanNumber");
-        }
-    };
+		public static Digit fit(final long number)
+				throws IllegalArgumentException {
+			for (final Digit digit : values()) {
+				if (digit.value <= number) {
+					return digit;
+				}
+			}
+			throw new IllegalArgumentException("Cannot fit " + number
+					+ " into RomanNumber");
+		}
+	};
 
-    @Override
-    public String toString() {
-        try {
-            StringBuilder builder = new StringBuilder();
-            long remainder = value;
-            Digit romanDigit;
-            do {
-                romanDigit = Digit.fit(remainder);
-                builder.append(romanDigit.name());
-                remainder -= romanDigit.value;
-            } while (remainder > 0);
-            return builder.toString();
-        } catch (IllegalArgumentException ex) {
-            return "mendum";
-        }
-    }
+	@Override
+	public String toString() {
+		try {
+			final StringBuilder builder = new StringBuilder();
+			long remainder = value;
+			Digit romanDigit;
+			do {
+				romanDigit = Digit.fit(remainder);
+				builder.append(romanDigit.name());
+				remainder -= romanDigit.value;
+			} while (remainder > 0);
+			return builder.toString();
+		} catch (final IllegalArgumentException ex) {
+			// passende Fehlermeldung ausgeben
+			return "mendum";
+		}
+	}
 }
