@@ -23,63 +23,72 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog;
+package de.kuehweg.sqltool.dialog.environment;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 
 /**
- *
+ * Alle "Beteiligten", um im Dialog den Fortschritt einer SQL-Anweisung zu
+ * visualisieren.
+ * <ul>
+ * <li>TextArea für die DB-Ausgaben</li>
+ * <li>Fortschrittsanzeige (Ausgabe zum Beginn der Ausführung)</li>
+ * <li>Label für die Anzeige der Laufzeit</li>
+ * </ul>
+ * 
  * @author Michael Kühweg
  */
 public class ExecutionProgressEnvironment {
 
-    private final TextArea dbOutput;
-    private final ProgressIndicator progressIndicator;
-    private final Label executionTime;
+	private final TextArea dbOutput;
+	private final ProgressIndicator progressIndicator;
+	private final Label executionTime;
 
-    public static class Builder {
+	/**
+	 * Builder-Pattern
+	 */
+	public static class Builder {
 
-        private TextArea dbOutput;
-        private ProgressIndicator progressIndicator;
-        private Label executionTime;
+		private TextArea dbOutput;
+		private final ProgressIndicator progressIndicator;
+		private Label executionTime;
 
-        public Builder(final ProgressIndicator progressIndicator) {
-            this.progressIndicator = progressIndicator;
-        }
+		public Builder(final ProgressIndicator progressIndicator) {
+			this.progressIndicator = progressIndicator;
+		}
 
-        public Builder dbOutput(final TextArea dbOutput) {
-            this.dbOutput = dbOutput;
-            return this;
-        }
+		public Builder dbOutput(final TextArea dbOutput) {
+			this.dbOutput = dbOutput;
+			return this;
+		}
 
-        public Builder executionTime(final Label executionTime) {
-            this.executionTime = executionTime;
-            return this;
-        }
+		public Builder executionTime(final Label executionTime) {
+			this.executionTime = executionTime;
+			return this;
+		}
 
-        public ExecutionProgressEnvironment build() {
-            return new ExecutionProgressEnvironment(this);
-        }
-    }
+		public ExecutionProgressEnvironment build() {
+			return new ExecutionProgressEnvironment(this);
+		}
+	}
 
-    private ExecutionProgressEnvironment(
-            final Builder builder) {
-        this.dbOutput = builder.dbOutput;
-        this.progressIndicator = builder.progressIndicator;
-        this.executionTime = builder.executionTime;
-    }
+	private ExecutionProgressEnvironment(final Builder builder) {
+		dbOutput = builder.dbOutput;
+		progressIndicator = builder.progressIndicator;
+		executionTime = builder.executionTime;
+	}
 
-    public TextArea getDbOutput() {
-        return dbOutput;
-    }
+	public TextArea getDbOutput() {
+		return dbOutput;
+	}
 
-    public ProgressIndicator getProgressIndicator() {
-        return progressIndicator;
-    }
+	public ProgressIndicator getProgressIndicator() {
+		return progressIndicator;
+	}
 
-    public Label getExecutionTime() {
-        return executionTime;
-    }
+	public Label getExecutionTime() {
+		return executionTime;
+	}
 }

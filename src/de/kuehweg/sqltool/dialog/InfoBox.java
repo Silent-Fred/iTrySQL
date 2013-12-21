@@ -28,15 +28,17 @@ package de.kuehweg.sqltool.dialog;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 
 /**
+ * Spezialisierter Dialog für Hinweismeldungen mit einem einzelnen Button
+ * 
  * @author Michael Kühweg
  */
 public class InfoBox extends CommonDialog {
 
-    public InfoBox(final String title, final String message,
-            final String buttonText) {
-        super(message);
-        specializeDialogTitle(title);
-        specializeDialogIcon(ImagePack.MSG_INFO);
-        addDialogButtons(buttonText);
-    }
+	public InfoBox(final String title, final String message,
+			final String buttonText) {
+		super(message);
+		specializeDialogTitle(title);
+		specializeDialogIcon(ImagePack.MSG_INFO);
+		addDialogButtons(buttonText);
+	}
 }

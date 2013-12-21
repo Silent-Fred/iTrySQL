@@ -25,9 +25,8 @@
  */
 package de.kuehweg.sqltool.dialog;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -38,57 +37,60 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
 
 /**
- *
+ * Dialog zur Auswahl einer Datenbankverbindung
+ * 
  * @author Michael Kühweg
  */
 public class ConnectionDialog extends Stage {
 
-    private ConnectionSetting connectionSetting;
+	private ConnectionSetting connectionSetting;
 
-    public ConnectionDialog() {
-        super();
-        try {
-            final Parent root;
-            root = FXMLLoader.load(
-                    getClass().getResource(
-                    "/resources/fxml/ConnectionDialog.fxml"),
-                    ResourceBundle.getBundle("dictionary"));
-            initStyle(StageStyle.UTILITY);
-            root.getStylesheets().add(getClass().getResource(
-                    "/resources/css/itrysql.css").
-                    toExternalForm());
-            setScene(new Scene(root));
-            centerOnScreen();
-            setResizable(false);
-            initModality(Modality.APPLICATION_MODAL);
-            setTitle(DialogDictionary.LABEL_TITLE_CONNECT.toString());
-        } catch (final Exception ex) {
-            initStyle(StageStyle.UTILITY);
-            initModality(Modality.APPLICATION_MODAL);
-            setScene(new Scene(
-                    VBoxBuilder
-                    .create()
-                    .children(
-                    new Text(
-                    DialogDictionary.APPLICATION
-                    .toString()),
-                    new Text(DialogDictionary.ERR_LOAD_FXML
-                    .toString())).alignment(Pos.CENTER)
-                    .padding(new Insets(50)).build()));
-            centerOnScreen();
-            setResizable(false);
-            setTitle(DialogDictionary.APPLICATION.toString());
-        }
-    }
+	public ConnectionDialog() {
+		super();
+		try {
+			final Parent root;
+			root = FXMLLoader.load(
+					getClass().getResource(
+							"/resources/fxml/ConnectionDialog.fxml"),
+					ResourceBundle.getBundle("dictionary"));
+			initStyle(StageStyle.UTILITY);
+			root.getStylesheets().add(
+					getClass().getResource("/resources/css/itrysql.css")
+							.toExternalForm());
+			setScene(new Scene(root));
+			centerOnScreen();
+			setResizable(false);
+			initModality(Modality.APPLICATION_MODAL);
+			setTitle(DialogDictionary.LABEL_TITLE_CONNECT.toString());
+		} catch (final Exception ex) {
+			initStyle(StageStyle.UTILITY);
+			initModality(Modality.APPLICATION_MODAL);
+			setScene(new Scene(
+					VBoxBuilder
+							.create()
+							.children(
+									new Text(
+											DialogDictionary.APPLICATION
+													.toString()),
+									new Text(DialogDictionary.ERR_LOAD_FXML
+											.toString())).alignment(Pos.CENTER)
+							.padding(new Insets(50)).build()));
+			centerOnScreen();
+			setResizable(false);
+			setTitle(DialogDictionary.APPLICATION.toString());
+		}
+	}
 
-    protected void setConnectionSetting(
-            final ConnectionSetting connectionSetting) {
-        this.connectionSetting = connectionSetting;
-    }
+	protected void setConnectionSetting(
+			final ConnectionSetting connectionSetting) {
+		this.connectionSetting = connectionSetting;
+	}
 
-    public ConnectionSetting getConnectionSetting() {
-        return connectionSetting;
-    }
+	public ConnectionSetting getConnectionSetting() {
+		return connectionSetting;
+	}
 }

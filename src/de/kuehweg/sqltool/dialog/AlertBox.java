@@ -28,15 +28,17 @@ package de.kuehweg.sqltool.dialog;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 
 /**
+ * Spezialisierter Dialog für Warnmeldungen mit einem einzelnen Button
+ * 
  * @author Michael Kühweg
  */
 public class AlertBox extends CommonDialog {
 
-    public AlertBox(final String title, final String message,
-            final String buttonText) {
-        super(message);
-        specializeDialogTitle(title);
-        specializeDialogIcon(ImagePack.MSG_WARNING);
-        addDialogButtons(buttonText);
-    }
+	public AlertBox(final String title, final String message,
+			final String buttonText) {
+		super(message);
+		specializeDialogTitle(title);
+		specializeDialogIcon(ImagePack.MSG_WARNING);
+		addDialogButtons(buttonText);
+	}
 }

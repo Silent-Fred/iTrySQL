@@ -25,88 +25,86 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javafx.concurrent.Task;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.ExecutionInputEnvironment;
-import de.kuehweg.sqltool.dialog.ExecutionProgressEnvironment;
-import de.kuehweg.sqltool.dialog.ExecutionResultEnvironment;
-import java.sql.Connection;
-import java.sql.SQLException;
-import javafx.concurrent.Task;
+import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
 
 /**
  * @author Michael Kühweg
  */
 public class ExecuteAction {
 
-    private ExecutionInputEnvironment input;
-    private ExecutionProgressEnvironment progress;
-    private ExecutionResultEnvironment result;
+	private final ExecutionInputEnvironment input;
+	private final ExecutionProgressEnvironment progress;
+	private final ExecutionResultEnvironment result;
 
-    public ExecuteAction(final ExecutionInputEnvironment input,
-            final ExecutionProgressEnvironment progress,
-            final ExecutionResultEnvironment result) {
-        this.input = input;
-        this.progress = progress;
-        this.result = result;
-    }
+	public ExecuteAction(final ExecutionInputEnvironment input,
+			final ExecutionProgressEnvironment progress,
+			final ExecutionResultEnvironment result) {
+		this.input = input;
+		this.progress = progress;
+		this.result = result;
+	}
 
-    public void handleExecuteAction(final String sql) {
-        handleExecuteAction(sql, false);
-    }
+	public void handleExecuteAction(final String sql) {
+		handleExecuteAction(sql, false);
+	}
 
-    public void handleExecuteActionSilently(final String sql) {
-        handleExecuteAction(sql, true);
-    }
+	public void handleExecuteActionSilently(final String sql) {
+		handleExecuteAction(sql, true);
+	}
 
-    private void handleExecuteAction(final String sql,
-            final boolean silent) {
-        if (sql == null || sql.trim().length() == 0) {
-            final AlertBox msg = new AlertBox(
-                    DialogDictionary.MESSAGEBOX_WARNING.toString(),
-                    DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE.toString(),
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
-        } else {
-            final Connection connection =
-                    input.getConnectionHolder() != null ? input.
-                    getConnectionHolder().getConnection() : null;
-            if (connection == null) {
-                final AlertBox msg = new AlertBox(
-                        DialogDictionary.MESSAGEBOX_WARNING.toString(),
-                        DialogDictionary.MSG_NO_DB_CONNECTION.toString(),
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                msg.askUserFeedback();
-            } else {
-                ActionVisualisation.prepareSceneRunning(progress.
-                        getProgressIndicator().getScene());
-                try {
-                    final ExecutionGUIUpdater guiUpdater =
-                            new ExecutionGUIUpdater(
-                            progress.getProgressIndicator().getScene(),
-                            input.getHistoryKeeper());
-                    guiUpdater.setSilent(silent);
-                    final Task<Void> executionTask = new ExecutionTask(input.
-                            getConnectionHolder().getStatement(), sql,
-                            guiUpdater);
-                    final Thread th = new Thread(executionTask);
-                    th.setDaemon(true);
-                    th.start();
-                } catch (final SQLException ex) {
-                    // falls kein Statement erzeugt werden kann, landen wir
-                    // schon vor der eigentlichen Ausführung in einer 
-                    // SQL-Exception
-                    final ErrorMessage msg = new ErrorMessage(
-                            DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                            ex.getLocalizedMessage() + " (" + ex.getSQLState()
-                            + ")",
-                            DialogDictionary.COMMON_BUTTON_OK.toString());
-                    msg.askUserFeedback();
-                    ActionVisualisation.showFinished(progress.
-                            getProgressIndicator().getScene(), 0);
-                }
-            }
-        }
-    }
+	private void handleExecuteAction(final String sql, final boolean silent) {
+		if (sql == null || sql.trim().length() == 0) {
+			final AlertBox msg = new AlertBox(
+					DialogDictionary.MESSAGEBOX_WARNING.toString(),
+					DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE.toString(),
+					DialogDictionary.COMMON_BUTTON_OK.toString());
+			msg.askUserFeedback();
+		} else {
+			final Connection connection = input.getConnectionHolder() != null ? input
+					.getConnectionHolder().getConnection() : null;
+			if (connection == null) {
+				final AlertBox msg = new AlertBox(
+						DialogDictionary.MESSAGEBOX_WARNING.toString(),
+						DialogDictionary.MSG_NO_DB_CONNECTION.toString(),
+						DialogDictionary.COMMON_BUTTON_OK.toString());
+				msg.askUserFeedback();
+			} else {
+				ActionVisualisation.prepareSceneRunning(progress
+						.getProgressIndicator().getScene());
+				try {
+					final ExecutionGUIUpdater guiUpdater = new ExecutionGUIUpdater(
+							progress.getProgressIndicator().getScene(),
+							result.getHistoryKeeper());
+					guiUpdater.setSilent(silent);
+					final Task<Void> executionTask = new ExecutionTask(input
+							.getConnectionHolder().getStatement(), sql,
+							guiUpdater);
+					final Thread th = new Thread(executionTask);
+					th.setDaemon(true);
+					th.start();
+				} catch (final SQLException ex) {
+					// falls kein Statement erzeugt werden kann, landen wir
+					// schon vor der eigentlichen Ausführung in einer
+					// SQL-Exception
+					final ErrorMessage msg = new ErrorMessage(
+							DialogDictionary.MESSAGEBOX_ERROR.toString(),
+							ex.getLocalizedMessage() + " (" + ex.getSQLState()
+									+ ")",
+							DialogDictionary.COMMON_BUTTON_OK.toString());
+					msg.askUserFeedback();
+					ActionVisualisation.showFinished(progress
+							.getProgressIndicator().getScene(), 0);
+				}
+			}
+		}
+	}
 }

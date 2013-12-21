@@ -27,29 +27,35 @@ package de.kuehweg.sqltool.dialog;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
+/**
+ * Controller für Dialogboxen
+ * 
+ * @author michael
+ */
 public class CommonDialogController implements Initializable {
 
-    @FXML
-    private HBox buttonBox;
-    @FXML
-    private ImageView icon;
-    @FXML
-    private Label message;
-    @FXML
-    private Label title;
+	@FXML
+	private HBox buttonBox;
+	@FXML
+	private ImageView icon;
+	@FXML
+	private Label message;
+	@FXML
+	private Label title;
 
-    @Override
-    public void initialize(final URL fxmlFileLocation,
-            final ResourceBundle resources) {
-        assert buttonBox != null : "fx:id=\"buttonBox\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-        assert icon != null : "fx:id=\"icon\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-        assert message != null : "fx:id=\"message\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-        assert title != null : "fx:id=\"title\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-    }
+	@Override
+	public void initialize(final URL fxmlFileLocation,
+			final ResourceBundle resources) {
+		assert buttonBox != null : "fx:id=\"buttonBox\" was not injected: check your FXML file 'CommonDialog.fxml'.";
+		assert icon != null : "fx:id=\"icon\" was not injected: check your FXML file 'CommonDialog.fxml'.";
+		assert message != null : "fx:id=\"message\" was not injected: check your FXML file 'CommonDialog.fxml'.";
+		assert title != null : "fx:id=\"title\" was not injected: check your FXML file 'CommonDialog.fxml'.";
+	}
 }

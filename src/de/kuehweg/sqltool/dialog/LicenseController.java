@@ -27,25 +27,28 @@ package de.kuehweg.sqltool.dialog;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.web.WebView;
 
 /**
- *
+ * Controller für den Dialog mit Programm- und Lizenzinformationen
+ * 
  * @author Michael Kühweg
  */
 public class LicenseController implements Initializable {
 
-    @FXML
-    private WebView licenseWebView;
+	@FXML
+	private WebView licenseWebView;
 
-    @Override
-    public void initialize(final URL fxmlFileLocation,
-            final ResourceBundle resources) {
-        assert licenseWebView != null : "fx:id=\"licenseWebView\" was not injected: check your FXML file 'License.fxml'.";
+	@Override
+	public void initialize(final URL fxmlFileLocation,
+			final ResourceBundle resources) {
+		assert licenseWebView != null : "fx:id=\"licenseWebView\" was not injected: check your FXML file 'License.fxml'.";
 
-        licenseWebView.getEngine().load(
-                this.getClass().getResource("/resources/html/license.html").toExternalForm());
-    }
+		licenseWebView.getEngine().load(
+				this.getClass().getResource("/resources/html/license.html")
+						.toExternalForm());
+	}
 }

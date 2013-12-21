@@ -28,15 +28,25 @@ package de.kuehweg.sqltool.dialog;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 
 /**
+ * Spezialisierter Dialog für Rückfragen mit der Möglichkeit, mehrere Buttons
+ * anzuzeigen
+ * 
  * @author Michael Kühweg
  */
 public class ConfirmDialog extends CommonDialog {
 
-    public ConfirmDialog(final String title, final String message,
-            final String... buttonTexts) {
-        super(message);
-        specializeDialogTitle(title);
-        specializeDialogIcon(ImagePack.MSG_QUESTION);
-        addDialogButtons(buttonTexts);
-    }
+	/**
+	 * @param title
+	 * @param message
+	 * @param buttonTexts
+	 *            Buttons in der Reihenfolge von rechts nach links, wobei rechts
+	 *            (d.h. der erste angegebene Button) als Default vorbelegt ist
+	 */
+	public ConfirmDialog(final String title, final String message,
+			final String... buttonTexts) {
+		super(message);
+		specializeDialogTitle(title);
+		specializeDialogIcon(ImagePack.MSG_QUESTION);
+		addDialogButtons(buttonTexts);
+	}
 }

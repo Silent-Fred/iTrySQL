@@ -23,50 +23,70 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog;
+package de.kuehweg.sqltool.dialog.environment;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
+import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 
 /**
- *
+ * Alle "Beteiligten", um im Dialog das Ergebnis einer SQL-Anweisung zu
+ * visualisieren.
+ * <ul>
+ * <li>TextArea für die DB-Ausgaben</li>
+ * <li>SQL Verlauf</li>
+ * <li>Container (als HBox) in der die Ergebnistabelle aufgebaut wird</li>
+ * </ul>
+ * 
  * @author Michael Kühweg
  */
 public class ExecutionResultEnvironment {
 
-    private final TextArea dbOutput;
-    private final HBox resultTableContainer;
+	private final TextArea dbOutput;
+	private final SQLHistoryKeeper historyKeeper;
+	private final HBox resultTableContainer;
 
-    public static class Builder {
+	public static class Builder {
 
-        private TextArea dbOutput;
-        private HBox resultTableContainer;
+		private TextArea dbOutput;
+		private SQLHistoryKeeper historyKeeper;
+		private HBox resultTableContainer;
 
-        public Builder dbOutput(final TextArea dbOutput) {
-            this.dbOutput = dbOutput;
-            return this;
-        }
+		public Builder dbOutput(final TextArea dbOutput) {
+			this.dbOutput = dbOutput;
+			return this;
+		}
 
-        public Builder resultTableContainer(final HBox resultTableContainer) {
-            this.resultTableContainer = resultTableContainer;
-            return this;
-        }
+		public Builder historyKeeper(final SQLHistoryKeeper historyKeeper) {
+			this.historyKeeper = historyKeeper;
+			return this;
+		}
 
-        public ExecutionResultEnvironment build() {
-            return new ExecutionResultEnvironment(this);
-        }
-    }
+		public Builder resultTableContainer(final HBox resultTableContainer) {
+			this.resultTableContainer = resultTableContainer;
+			return this;
+		}
 
-    private ExecutionResultEnvironment(final Builder builder) {
-        this.dbOutput = builder.dbOutput;
-        this.resultTableContainer = builder.resultTableContainer;
-    }
+		public ExecutionResultEnvironment build() {
+			return new ExecutionResultEnvironment(this);
+		}
+	}
 
-    public TextArea getDbOutput() {
-        return dbOutput;
-    }
+	private ExecutionResultEnvironment(final Builder builder) {
+		dbOutput = builder.dbOutput;
+		historyKeeper = builder.historyKeeper;
+		resultTableContainer = builder.resultTableContainer;
+	}
 
-    public HBox getResultTableContainer() {
-        return resultTableContainer;
-    }
+	public TextArea getDbOutput() {
+		return dbOutput;
+	}
+
+	public SQLHistoryKeeper getHistoryKeeper() {
+		return historyKeeper;
+	}
+
+	public HBox getResultTableContainer() {
+		return resultTableContainer;
+	}
 }

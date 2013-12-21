@@ -23,61 +23,58 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog;
+package de.kuehweg.sqltool.dialog.environment;
 
-import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.database.ConnectionHolder;
 
 /**
- *
+ * Sammlung aller "Beteiligten", die eine Ausführung einer SQL-Anweisung
+ * beeinflussen.
+ * <ul>
+ * <li>Flag, ob die Ergebnismenge begrenzt werden soll</li>
+ * <li>ConnectionHolder für die Datenbankverbindung</li>
+ * </ul>
+ * 
  * @author Michael Kühweg
  */
 public class ExecutionInputEnvironment {
 
-    private final boolean limitMaxRows;
-    private final ConnectionHolder connectionHolder;
-    private final SQLHistoryKeeper historyKeeper;
+	private final boolean limitMaxRows;
+	private final ConnectionHolder connectionHolder;
 
-    public static class Builder {
+	/**
+	 * Builder-Pattern
+	 */
+	public static class Builder {
 
-        private boolean limitMaxRows = true;
-        private ConnectionHolder connectionHolder;
-        private SQLHistoryKeeper historyKeeper;
+		private boolean limitMaxRows = true;
+		private final ConnectionHolder connectionHolder;
 
-        public Builder (final ConnectionHolder connectionHolder) {
-            this.connectionHolder = connectionHolder;
-        }
-        
-        public Builder limitMaxRows(final boolean limitMaxRows) {
-            this.limitMaxRows = limitMaxRows;
-            return this;
-        }
+		public Builder(final ConnectionHolder connectionHolder) {
+			this.connectionHolder = connectionHolder;
+		}
 
-        public Builder historyKeeper(final SQLHistoryKeeper historyKeeper) {
-            this.historyKeeper = historyKeeper;
-            return this;
-        }
+		public Builder limitMaxRows(final boolean limitMaxRows) {
+			this.limitMaxRows = limitMaxRows;
+			return this;
+		}
 
-        public ExecutionInputEnvironment build() {
-            return new ExecutionInputEnvironment(this);
-        }
-    }
+		public ExecutionInputEnvironment build() {
+			return new ExecutionInputEnvironment(this);
+		}
+	}
 
-    private ExecutionInputEnvironment(final Builder builder) {
-        this.limitMaxRows = builder.limitMaxRows;
-        this.connectionHolder = builder.connectionHolder;
-        this.historyKeeper = builder.historyKeeper;
-    }
+	private ExecutionInputEnvironment(final Builder builder) {
+		limitMaxRows = builder.limitMaxRows;
+		connectionHolder = builder.connectionHolder;
+	}
 
-    public boolean isLimitMaxRows() {
-        return limitMaxRows;
-    }
+	public boolean isLimitMaxRows() {
+		return limitMaxRows;
+	}
 
-    public ConnectionHolder getConnectionHolder() {
-        return connectionHolder;
-    }
+	public ConnectionHolder getConnectionHolder() {
+		return connectionHolder;
+	}
 
-    public SQLHistoryKeeper getHistoryKeeper() {
-        return historyKeeper;
-    }
 }
