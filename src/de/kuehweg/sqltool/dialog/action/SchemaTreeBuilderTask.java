@@ -25,32 +25,36 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
 import java.sql.Connection;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeView;
+import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.MetaDataReader;
 
 /**
- *
+ * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der
+ * Metadaten vergleichsweise lang dauern kann (könnte) und die Oberfläche
+ * zwischenzeitlich nicht blockiert sein soll.
+ * 
  * @author Michael Kühweg
  */
 public class SchemaTreeBuilderTask extends Task<Void> {
 
-    private final Connection connection;
-    private final TreeView treeToUpdate;
+	private final Connection connection;
+	private final TreeView<String> treeToUpdate;
 
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
-    }
+	public SchemaTreeBuilderTask(final Connection connection,
+			final TreeView<String> treeToUpdate) {
+		this.connection = connection;
+		this.treeToUpdate = treeToUpdate;
+	}
 
-    @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = MetaDataReader.readMetaData(connection);
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
-    }
+	@Override
+	protected Void call() throws Exception {
+		final DatabaseDescription db = MetaDataReader.readMetaData(connection);
+		Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
+		return null;
+	}
 }

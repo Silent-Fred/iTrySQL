@@ -25,12 +25,8 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSettings;
-import de.kuehweg.sqltool.database.ServerManager;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.io.IOException;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,139 +34,148 @@ import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+
 import org.hsqldb.server.ServerAcl;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSettings;
+import de.kuehweg.sqltool.database.ServerManager;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
+
 /**
- *
+ * Steuerung der Serverkomponente (Dialog)
+ * 
  * @author Michael Kühweg
  */
 public class ServerComponentController {
 
-    public static class Builder {
+	public static class Builder {
 
-        private ComboBox<ConnectionSetting> serverConnectionSelection;
-        private Button startButton;
-        private Button shutdownButton;
-        private TextField serverAlias;
+		private ComboBox<ConnectionSetting> serverConnectionSelection;
+		private Button startButton;
+		private Button shutdownButton;
+		private TextField serverAlias;
 
-        public Builder() {
-        }
+		public Builder() {
+		}
 
-        public Builder serverConnectionSelection(
-                final ComboBox<ConnectionSetting> serverConnectionSelection) {
-            this.serverConnectionSelection = serverConnectionSelection;
-            return this;
-        }
+		public Builder serverConnectionSelection(
+				final ComboBox<ConnectionSetting> serverConnectionSelection) {
+			this.serverConnectionSelection = serverConnectionSelection;
+			return this;
+		}
 
-        public Builder startButton(final Button startButton) {
-            this.startButton = startButton;
-            return this;
-        }
+		public Builder startButton(final Button startButton) {
+			this.startButton = startButton;
+			return this;
+		}
 
-        public Builder shutdownButton(final Button shutdownButton) {
-            this.shutdownButton = shutdownButton;
-            return this;
-        }
+		public Builder shutdownButton(final Button shutdownButton) {
+			this.shutdownButton = shutdownButton;
+			return this;
+		}
 
-        public Builder serverAlias(final TextField serverAlias) {
-            this.serverAlias = serverAlias;
-            return this;
-        }
+		public Builder serverAlias(final TextField serverAlias) {
+			this.serverAlias = serverAlias;
+			return this;
+		}
 
-        public ServerComponentController build() {
-            return new ServerComponentController(this);
-        }
-    }
-    private final ComboBox<ConnectionSetting> serverConnectionSelection;
-    private final Button startButton;
-    private final Button shutdownButton;
-    private final TextField serverAlias;
+		public ServerComponentController build() {
+			return new ServerComponentController(this);
+		}
+	}
 
-    private ServerComponentController(final Builder builder) {
-        this.serverConnectionSelection = builder.serverConnectionSelection;
-        this.startButton = builder.startButton;
-        this.shutdownButton = builder.shutdownButton;
-        this.serverAlias = builder.serverAlias;
-        fillServerConnectionSettings();
-        controlServerStatusButtonStates();
-    }
+	private final ComboBox<ConnectionSetting> serverConnectionSelection;
+	private final Button startButton;
+	private final Button shutdownButton;
+	private final TextField serverAlias;
 
-    public void changeServerConnection() {
-        final ConnectionSetting connectionSetting = serverConnectionSelection
-                .getValue();
-        serverAlias.setText(connectionSetting != null ? connectionSetting
-                .getDbName() : null);
-    }
+	private ServerComponentController(final Builder builder) {
+		serverConnectionSelection = builder.serverConnectionSelection;
+		startButton = builder.startButton;
+		shutdownButton = builder.shutdownButton;
+		serverAlias = builder.serverAlias;
+		fillServerConnectionSettings();
+		controlServerStatusButtonStates();
+	}
 
-    public void startServer() {
-        try {
-            final ConnectionSetting connectionSetting =
-                    serverConnectionSelection
-                    .getValue();
-            ServerManager.getSharedInstance().startServer(connectionSetting,
-                    serverAlias.getText());
-        } catch (IOException | ServerAcl.AclFormatException | IllegalArgumentException ex) {
-            final ErrorMessage msg = new ErrorMessage(
-                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                    DialogDictionary.ERR_SERVER_START_FAILED.toString(),
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
-        }
-    }
+	public void changeServerConnection() {
+		final ConnectionSetting connectionSetting = serverConnectionSelection
+				.getValue();
+		serverAlias.setText(connectionSetting != null ? connectionSetting
+				.getDbName() : null);
+	}
 
-    public void shutdownServer() {
-        try {
-            ServerManager.getSharedInstance().shutdownServer();
-        } catch (final Throwable ex) {
-            final ErrorMessage msg = new ErrorMessage(
-                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                    DialogDictionary.ERR_SERVER_START_FAILED.toString(),
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
-        }
-    }
+	public void startServer() {
+		try {
+			final ConnectionSetting connectionSetting = serverConnectionSelection
+					.getValue();
+			ServerManager.getSharedInstance().startServer(connectionSetting,
+					serverAlias.getText());
+		} catch (IOException | ServerAcl.AclFormatException
+				| IllegalArgumentException ex) {
+			final ErrorMessage msg = new ErrorMessage(
+					DialogDictionary.MESSAGEBOX_ERROR.toString(),
+					DialogDictionary.ERR_SERVER_START_FAILED.toString(),
+					DialogDictionary.COMMON_BUTTON_OK.toString());
+			msg.askUserFeedback();
+		}
+	}
 
-    public void refreshServerConnectionSettings() {
-        fillServerConnectionSettings();
-    }
+	public void shutdownServer() {
+		try {
+			ServerManager.getSharedInstance().shutdownServer();
+		} catch (final Throwable ex) {
+			final ErrorMessage msg = new ErrorMessage(
+					DialogDictionary.MESSAGEBOX_ERROR.toString(),
+					DialogDictionary.ERR_SERVER_START_FAILED.toString(),
+					DialogDictionary.COMMON_BUTTON_OK.toString());
+			msg.askUserFeedback();
+		}
+	}
 
-    private void fillServerConnectionSettings() {
-        final ConnectionSettings settings = new ConnectionSettings();
-        final ObservableList<ConnectionSetting> serverSettings = FXCollections
-                .observableArrayList();
-        for (final ConnectionSetting connectionSetting : settings
-                .getConnectionSettings()) {
-            if (connectionSetting.getType().isPossibleServer()) {
-                serverSettings.add(connectionSetting);
-            }
-        }
-        serverConnectionSelection.setItems(serverSettings);
-    }
+	public void refreshServerConnectionSettings() {
+		fillServerConnectionSettings();
+	}
 
-    private void controlServerStatusButtonStates() {
-        startButton.disableProperty().set(false);
-        shutdownButton.disableProperty().set(true);
-        Task serverStatusTask;
-        serverStatusTask = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                while (!isCancelled()) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            final boolean running = ServerManager
-                                    .getSharedInstance().isRunning();
-                            startButton.disableProperty().set(running);
-                            shutdownButton.disableProperty().set(!running);
-                        }
-                    });
-                    Thread.sleep(1000);
-                }
-                return null;
-            }
-        };
-        final Thread th = new Thread(serverStatusTask);
-        th.setDaemon(true);
-        th.start();
-    }
+	private void fillServerConnectionSettings() {
+		final ConnectionSettings settings = new ConnectionSettings();
+		final ObservableList<ConnectionSetting> serverSettings = FXCollections
+				.observableArrayList();
+		for (final ConnectionSetting connectionSetting : settings
+				.getConnectionSettings()) {
+			if (connectionSetting.getType().isPossibleServer()) {
+				serverSettings.add(connectionSetting);
+			}
+		}
+		serverConnectionSelection.setItems(serverSettings);
+	}
+
+	private void controlServerStatusButtonStates() {
+		startButton.disableProperty().set(false);
+		shutdownButton.disableProperty().set(true);
+		Task<Void> serverStatusTask;
+		serverStatusTask = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				while (!isCancelled()) {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							final boolean running = ServerManager
+									.getSharedInstance().isRunning();
+							startButton.disableProperty().set(running);
+							shutdownButton.disableProperty().set(!running);
+						}
+					});
+					Thread.sleep(1000);
+				}
+				return null;
+			}
+		};
+		final Thread th = new Thread(serverStatusTask);
+		th.setDaemon(true);
+		th.start();
+	}
 }

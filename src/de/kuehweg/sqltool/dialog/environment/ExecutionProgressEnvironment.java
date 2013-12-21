@@ -25,15 +25,16 @@
  */
 package de.kuehweg.sqltool.dialog.environment;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import java.math.BigDecimal;
+import java.text.MessageFormat;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
 
 /**
  * Alle "Beteiligten", um im Dialog den Fortschritt einer SQL-Anweisung zu
  * visualisieren.
  * <ul>
- * <li>TextArea für die DB-Ausgaben</li>
  * <li>Fortschrittsanzeige (Ausgabe zum Beginn der Ausführung)</li>
  * <li>Label für die Anzeige der Laufzeit</li>
  * </ul>
@@ -42,7 +43,6 @@ import javafx.scene.control.TextArea;
  */
 public class ExecutionProgressEnvironment {
 
-	private final TextArea dbOutput;
 	private final ProgressIndicator progressIndicator;
 	private final Label executionTime;
 
@@ -51,17 +51,11 @@ public class ExecutionProgressEnvironment {
 	 */
 	public static class Builder {
 
-		private TextArea dbOutput;
 		private final ProgressIndicator progressIndicator;
 		private Label executionTime;
 
 		public Builder(final ProgressIndicator progressIndicator) {
 			this.progressIndicator = progressIndicator;
-		}
-
-		public Builder dbOutput(final TextArea dbOutput) {
-			this.dbOutput = dbOutput;
-			return this;
 		}
 
 		public Builder executionTime(final Label executionTime) {
@@ -75,13 +69,8 @@ public class ExecutionProgressEnvironment {
 	}
 
 	private ExecutionProgressEnvironment(final Builder builder) {
-		dbOutput = builder.dbOutput;
 		progressIndicator = builder.progressIndicator;
 		executionTime = builder.executionTime;
-	}
-
-	public TextArea getDbOutput() {
-		return dbOutput;
 	}
 
 	public ProgressIndicator getProgressIndicator() {
@@ -91,4 +80,29 @@ public class ExecutionProgressEnvironment {
 	public Label getExecutionTime() {
 		return executionTime;
 	}
+
+    public void prepareSceneRunning() {
+        if (progressIndicator != null) {
+            progressIndicator.setProgress(-1);
+        }
+        if (executionTime != null) {
+            executionTime.setText(DialogDictionary.LABEL_EXECUTING.toString());
+        }
+    }
+
+    public void showFinished(
+            final long executionTimeInMilliseconds) {
+        if (progressIndicator != null) {
+            progressIndicator.setProgress(1);
+        }
+        if (executionTime != null) {
+            final BigDecimal executionTimeInSeconds = BigDecimal.valueOf(
+                    executionTimeInMilliseconds).divide(
+                    BigDecimal.valueOf(1000));
+            executionTime.setText(MessageFormat.format(
+                    DialogDictionary.PATTERN_EXECUTION_TIME.toString(),
+                    executionTimeInSeconds.toString()));
+        }
+    }
+
 }

@@ -37,6 +37,8 @@ import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
 import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
 
 /**
+ * Dialogaktion: SQL-Anweisung(en) ausführen
+ * 
  * @author Michael Kühweg
  */
 public class ExecuteAction {
@@ -53,10 +55,21 @@ public class ExecuteAction {
 		this.result = result;
 	}
 
+	/**
+	 * SQL ausführen und Dialog aktualisieren
+	 * 
+	 * @param sql
+	 */
 	public void handleExecuteAction(final String sql) {
 		handleExecuteAction(sql, false);
 	}
 
+	/**
+	 * "Stille" Ausführung einer SQL-Anweisung, d.h. der Dialog wird nicht
+	 * aktualisiert (z.B. für Aufbau der Tutorialdaten aus Skript))
+	 * 
+	 * @param sql
+	 */
 	public void handleExecuteActionSilently(final String sql) {
 		handleExecuteAction(sql, true);
 	}
@@ -78,16 +91,17 @@ public class ExecuteAction {
 						DialogDictionary.COMMON_BUTTON_OK.toString());
 				msg.askUserFeedback();
 			} else {
-				ActionVisualisation.prepareSceneRunning(progress
-						.getProgressIndicator().getScene());
+				progress.prepareSceneRunning();
 				try {
+					// die eigentliche Ausführung wird im Hintergrund gestartet
+					// und bekommt alle Informationen mit auf den Weg, um
+					// während und zum Abschluss der Ausführung die Oberfläche
+					// aktualisieren zu können.
 					final ExecutionGUIUpdater guiUpdater = new ExecutionGUIUpdater(
-							progress.getProgressIndicator().getScene(),
-							result.getHistoryKeeper());
-					guiUpdater.setSilent(silent);
+							progress, result);
 					final Task<Void> executionTask = new ExecutionTask(input
 							.getConnectionHolder().getStatement(), sql,
-							guiUpdater);
+							guiUpdater, silent);
 					final Thread th = new Thread(executionTask);
 					th.setDaemon(true);
 					th.start();
@@ -101,8 +115,7 @@ public class ExecuteAction {
 									+ ")",
 							DialogDictionary.COMMON_BUTTON_OK.toString());
 					msg.askUserFeedback();
-					ActionVisualisation.showFinished(progress
-							.getProgressIndicator().getScene(), 0);
+					progress.showFinished(0);
 				}
 			}
 		}

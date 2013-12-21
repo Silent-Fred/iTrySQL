@@ -87,9 +87,6 @@ import de.kuehweg.sqltool.database.JDBCType;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ConnectionDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
 import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
 import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
@@ -102,6 +99,9 @@ import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.ServerComponentController;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
+import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 		EventHandler<WindowEvent> {
@@ -171,7 +171,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 	@FXML
 	private HBox resultTableContainer;
 	@FXML
-	private TreeView<?> schemaTreeView;
+	private TreeView<String> schemaTreeView;
 	@FXML
 	private ComboBox<ConnectionSetting> serverConnectionSelection;
 	@FXML
@@ -237,7 +237,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 	private static int countWindows = 1;
 
 	@Override
-	// This method is called by the FXMLLoader when initialization is complete
 	public void initialize(final URL fxmlFileLocation,
 			final ResourceBundle resources) {
 		assert accordionCodeTemplateList != null : "fx:id=\"accordionCodeTemplateList\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -381,9 +380,9 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 	}
 
 	public void execute(final ActionEvent event) {
-		// highlighted text to be executed ?
+		// Markierter Text?
 		String sql = statementInput.getSelectedText();
-		// current statement to be executed
+		// sonst die Anweisung, in der sich die Eingabemarkierung befindet
 		if (sql.trim().length() == 0) {
 			sql = StatementExtractor
 					.extractStatementAtCaretPosition(statementInput.getText(),
@@ -473,7 +472,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 	}
 
 	public void refreshTree(final ActionEvent event) {
-		final Task refreshTask = new SchemaTreeBuilderTask(
+		final Task<Void> refreshTask = new SchemaTreeBuilderTask(
 				getConnectionHolder().getConnection(), schemaTreeView);
 		final Thread th = new Thread(refreshTask);
 		th.setDaemon(true);
@@ -652,15 +651,15 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 				UserPreferencesManager.getSharedInstance().isLimitMaxRows())
 				.build();
 		final ExecutionProgressEnvironment progress = new ExecutionProgressEnvironment.Builder(
-				executionProgressIndicator).dbOutput(dbOutput)
-				.executionTime(executionTime).build();
+				executionProgressIndicator).executionTime(executionTime)
+				.build();
 		final ExecutionResultEnvironment result = new ExecutionResultEnvironment.Builder()
 				.dbOutput(dbOutput).historyKeeper(this)
 				.resultTableContainer(resultTableContainer).build();
 		return new ExecuteAction(input, progress, result);
 	}
 
-	// --- Interfaces und specialties
+	// --- implementierte Interfaces und weitere Spezialitäten
 	@Override
 	public void handle(final WindowEvent event) {
 		getConnectionHolder().disconnect();

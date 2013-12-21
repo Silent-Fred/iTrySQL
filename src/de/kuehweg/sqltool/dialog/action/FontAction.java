@@ -25,68 +25,76 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.common.UserPreferencesManager;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Text;
+import de.kuehweg.sqltool.common.UserPreferencesManager;
 
 /**
+ * Schriftgröße ändern
+ * 
  * @author Michael Kühweg
  */
 public class FontAction {
 
-    private static final double MIN_FONT_SIZE = 12;
-    private static final double MAX_FONT_SIZE = 32;
+	private static final double MIN_FONT_SIZE = 12;
+	private static final double MAX_FONT_SIZE = 32;
 
-    private FontAction() {
-        // utility class - no instances desired
-    }
+	private FontAction() {
+		// utility class - no instances desired
+	}
 
-    private static void modifyFontSize(final TextArea textArea,
-            final double diff) {
-        if (textArea != null) {
-            final Text text = (Text) textArea.lookup(".text");
-            if (text != null) {
-                double fontSize = ((Text) textArea.lookup(".text")).getFont()
-                        .getSize();
-                fontSize += diff;
-                fontSize = fontSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : fontSize;
-                fontSize = fontSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : fontSize;
-                textArea.setStyle("-fx-font-size: " + (fontSize + diff) + ";");
-                UserPreferencesManager.getSharedInstance().setFontSize(
-                        (int) Math.round(fontSize));
-            }
-        }
-    }
+	/**
+	 * Schriftgröße einer TextArea ändern
+	 * 
+	 * @param textArea
+	 * @param diff
+	 */
+	private static void modifyFontSize(final TextArea textArea,
+			final double diff) {
+		if (textArea != null) {
+			final Text text = (Text) textArea.lookup(".text");
+			if (text != null) {
+				double fontSize = ((Text) textArea.lookup(".text")).getFont()
+						.getSize();
+				fontSize += diff;
+				fontSize = fontSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : fontSize;
+				fontSize = fontSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : fontSize;
+				textArea.setStyle("-fx-font-size: " + (fontSize + diff) + ";");
+				UserPreferencesManager.getSharedInstance().setFontSize(
+						(int) Math.round(fontSize));
+			}
+		}
+	}
 
-    private static void increaseFontSize(final TextArea textArea) {
-        modifyFontSize(textArea, +1);
-    }
+	private static void increaseFontSize(final TextArea textArea) {
+		modifyFontSize(textArea, +1);
+	}
 
-    private static void decreaseFontSize(final TextArea textArea) {
-        modifyFontSize(textArea, -1);
-    }
+	private static void decreaseFontSize(final TextArea textArea) {
+		modifyFontSize(textArea, -1);
+	}
 
-    public static void handleFontAction(final Event event) {
-        final Node source = event != null ? (Node) event.getSource() : null;
-        if (source != null) {
-            final TextArea statementInput = (TextArea) source.getScene()
-                    .lookup("#statementInput");
-            final TextArea dbOutput = (TextArea) source.getScene().lookup(
-                    "#dbOutput");
-            if (statementInput != null) {
-                switch (source.getId()) {
-                    case "toolbarZoomIn":
-                        increaseFontSize(statementInput);
-                        increaseFontSize(dbOutput);
-                        break;
-                    case "toolbarZoomOut":
-                        decreaseFontSize(statementInput);
-                        decreaseFontSize(dbOutput);
-                        break;
-                }
-            }
-        }
-    }
+	public static void handleFontAction(final Event event) {
+		final Node source = event != null ? (Node) event.getSource() : null;
+		if (source != null) {
+			final TextArea statementInput = (TextArea) source.getScene()
+					.lookup("#statementInput");
+			final TextArea dbOutput = (TextArea) source.getScene().lookup(
+					"#dbOutput");
+			if (statementInput != null) {
+				switch (source.getId()) {
+				case "toolbarZoomIn":
+					increaseFontSize(statementInput);
+					increaseFontSize(dbOutput);
+					break;
+				case "toolbarZoomOut":
+					decreaseFontSize(statementInput);
+					decreaseFontSize(dbOutput);
+					break;
+				}
+			}
+		}
+	}
 }

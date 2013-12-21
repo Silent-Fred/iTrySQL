@@ -25,10 +25,8 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.FileUtil;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.io.IOException;
+
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
@@ -37,116 +35,130 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.FileUtil;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
 
 /**
- *
+ * Drag and Drop für SQL-Skripte
+ * 
  * @author Michael Kühweg
  */
 public class SourceFileDropTargetUtil {
 
-    private static final String DROP_TARGET_SYMBOL_ID = "removeMeOnDragExited";
+	private static final String DROP_TARGET_SYMBOL_ID = "removeMeOnDragExited";
 
-    private static void setOnDragOver(final Pane containerPane) {
+	private SourceFileDropTargetUtil() {
+		// Util
+	}
 
-        containerPane.setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                Dragboard dragboard = event.getDragboard();
-                if (event.getGestureSource() != containerPane && dragboard.
-                        hasFiles() && dragboard.getFiles().size() == 1) {
-                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
-                event.consume();
-            }
-        });
-    }
+	private static void setOnDragOver(final Pane containerPane) {
 
-    private static void setOnDragEntered(final Pane containerPane,
-            final TextArea statementInput) {
-        containerPane.setOnDragEntered(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                Dragboard dragboard = event.getDragboard();
-                if (event.getGestureSource() != containerPane && dragboard.
-                        hasFiles()
-                        && dragboard.getFiles().size()
-                        == 1) {
-                    final Pane dropTargetSymbol = new DropTargetSymbol(
-                            containerPane);
-                    dropTargetSymbol.setId(DROP_TARGET_SYMBOL_ID);
-                    containerPane.getChildren().add(dropTargetSymbol);
-                    statementInput.setOpacity(0.5);
-                    // Blur-Effekt kann im Moment noch nicht in FX-CSS angegeben werden
-                    BoxBlur bb = new BoxBlur();
-                    bb.setWidth(5);
-                    bb.setHeight(5);
-                    bb.setIterations(3);
-                    statementInput.setEffect(bb);
-                }
-                event.consume();
-            }
-        });
-    }
+		containerPane.setOnDragOver(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(final DragEvent event) {
+				final Dragboard dragboard = event.getDragboard();
+				if (event.getGestureSource() != containerPane
+						&& dragboard.hasFiles()
+						&& dragboard.getFiles().size() == 1) {
+					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+				}
+				event.consume();
+			}
+		});
+	}
 
-    private static void setOnDragExited(final Pane containerPane,
-            final TextArea statementInput) {
-        containerPane.setOnDragExited(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                Node child = containerPane.lookup("#" + DROP_TARGET_SYMBOL_ID);
-                if (child != null) {
-                    containerPane.getChildren().remove(child);
-                }
-                statementInput.setOpacity(1.0);
-                statementInput.setEffect(null);
-                event.consume();
-            }
-        });
-    }
+	private static void setOnDragEntered(final Pane containerPane,
+			final TextArea statementInput) {
+		containerPane.setOnDragEntered(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(final DragEvent event) {
+				final Dragboard dragboard = event.getDragboard();
+				if (event.getGestureSource() != containerPane
+						&& dragboard.hasFiles()
+						&& dragboard.getFiles().size() == 1) {
+					final Pane dropTargetSymbol = new DropTargetSymbol(
+							containerPane);
+					dropTargetSymbol.setId(DROP_TARGET_SYMBOL_ID);
+					containerPane.getChildren().add(dropTargetSymbol);
+					statementInput.setOpacity(0.5);
+					// Blur-Effekt kann im Moment noch nicht in FX-CSS angegeben
+					// werden
+					final BoxBlur bb = new BoxBlur();
+					bb.setWidth(5);
+					bb.setHeight(5);
+					bb.setIterations(3);
+					statementInput.setEffect(bb);
+				}
+				event.consume();
+			}
+		});
+	}
 
-    private static void setOnDragDropped(final Pane containerPane,
-            final TextArea statementInput) {
-        containerPane.setOnDragDropped(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                Dragboard dragboard = event.getDragboard();
-                boolean success = false;
-                if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
-                    try {
-                        final String script = FileUtil.readFile(dragboard.
-                                getFiles().get(0).
-                                getAbsolutePath());
-                        statementInput.setText(script);
-                        success = true;
-                    } catch (final IOException ex) {
-                        final ErrorMessage msg = new ErrorMessage(
-                                DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                                DialogDictionary.ERR_FILE_OPEN_FAILED.toString(),
-                                DialogDictionary.COMMON_BUTTON_OK.toString());
-                        msg.askUserFeedback();
-                    }
-                }
-                event.setDropCompleted(success);
-                event.consume();
-            }
-        });
-    }
+	private static void setOnDragExited(final Pane containerPane,
+			final TextArea statementInput) {
+		containerPane.setOnDragExited(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(final DragEvent event) {
+				final Node child = containerPane.lookup("#"
+						+ DROP_TARGET_SYMBOL_ID);
+				if (child != null) {
+					containerPane.getChildren().remove(child);
+				}
+				statementInput.setOpacity(1.0);
+				statementInput.setEffect(null);
+				event.consume();
+			}
+		});
+	}
 
-    private SourceFileDropTargetUtil() {
-        // Util
-    }
+	private static void setOnDragDropped(final Pane containerPane,
+			final TextArea statementInput) {
+		containerPane.setOnDragDropped(new EventHandler<DragEvent>() {
+			@Override
+			public void handle(final DragEvent event) {
+				final Dragboard dragboard = event.getDragboard();
+				boolean success = false;
+				if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
+					try {
+						final String script = FileUtil.readFile(dragboard
+								.getFiles().get(0).getAbsolutePath());
+						statementInput.setText(script);
+						success = true;
+					} catch (final IOException ex) {
+						final ErrorMessage msg = new ErrorMessage(
+								DialogDictionary.MESSAGEBOX_ERROR.toString(),
+								DialogDictionary.ERR_FILE_OPEN_FAILED
+										.toString(),
+								DialogDictionary.COMMON_BUTTON_OK.toString());
+						msg.askUserFeedback();
+					}
+				}
+				event.setDropCompleted(success);
+				event.consume();
+			}
+		});
+	}
 
-    public static void transformIntoSourceFileDropTarget(
-            final Pane containerPane,
-            final TextArea statementInput) {
+	/**
+	 * Macht den angegebenen Container zu einem DropTarget für SQL-Skripte und
+	 * setzt die TextArea als Ziel für den Skriptinhalt
+	 * 
+	 * @param containerPane
+	 *            DropTarget
+	 * @param statementInput
+	 *            Ziel für Skript
+	 */
+	public static void transformIntoSourceFileDropTarget(
+			final Pane containerPane, final TextArea statementInput) {
 
-        setOnDragOver(containerPane);
+		setOnDragOver(containerPane);
 
-        setOnDragEntered(containerPane, statementInput);
+		setOnDragEntered(containerPane, statementInput);
 
-        setOnDragExited(containerPane, statementInput);
+		setOnDragExited(containerPane, statementInput);
 
-        setOnDragDropped(containerPane, statementInput);
+		setOnDragDropped(containerPane, statementInput);
 
-    }
+	}
 }

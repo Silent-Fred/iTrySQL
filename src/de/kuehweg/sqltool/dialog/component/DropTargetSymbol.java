@@ -32,66 +32,68 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Line;
 
 /**
- *
+ * Symbol für ein DropTarget
+ * 
  * @author Michael Kühweg
  */
 public class DropTargetSymbol extends Pane {
 
-    public DropTargetSymbol(final Pane parentPane) {
-        super();
-        if (parentPane != null) {
-            double baseSize = Math.min(Math.min(parentPane.getWidth(),
-                    parentPane.getHeight()), 160);
+	public DropTargetSymbol(final Pane parentPane) {
+		super();
+		if (parentPane != null) {
+			final double baseSize = Math.min(
+					Math.min(parentPane.getWidth(), parentPane.getHeight()),
+					160);
 
-            double radius = baseSize / 3;
-            double arrowBounds = radius / 2;
+			final double radius = baseSize / 3;
+			final double arrowBounds = radius / 2;
 
-            double centerX = parentPane.getWidth() / 2 - radius;
-            double bottom = parentPane.getHeight() / 2 + baseSize / 2;
+			final double centerX = parentPane.getWidth() / 2 - radius;
+			final double bottom = parentPane.getHeight() / 2 + baseSize / 2;
 
-            Arc arc = new Arc();
-            arc.setCenterX(centerX);
-            arc.setCenterY(bottom - radius);
-            arc.setRadiusX(radius);
-            arc.setRadiusY(radius);
-            arc.setStartAngle(100.0f);
-            arc.setLength(340.0f);
-            arc.setType(ArcType.OPEN);
-            arc.setStrokeWidth(1.0);
-            arc.setStroke(Color.web("#0071bb"));
-            arc.setFill(Color.TRANSPARENT);
+			final Arc arc = new Arc();
+			arc.setCenterX(centerX);
+			arc.setCenterY(bottom - radius);
+			arc.setRadiusX(radius);
+			arc.setRadiusY(radius);
+			arc.setStartAngle(100.0f);
+			arc.setLength(340.0f);
+			arc.setType(ArcType.OPEN);
+			arc.setStrokeWidth(1.0);
+			arc.setStroke(Color.web("#0071bb"));
+			arc.setFill(Color.TRANSPARENT);
 
-            Line lineVert = new Line();
-            lineVert.startXProperty().set(centerX);
-            lineVert.startYProperty().set(bottom - radius);
-            lineVert.endXProperty().set(centerX);
-            lineVert.endYProperty().set(bottom - radius * 3);
-            lineVert.setStrokeWidth(1.0);
-            lineVert.setStroke(Color.web("#0071bb"));
-            lineVert.setFill(Color.web("#0071bb"));
+			final Line lineVert = new Line();
+			lineVert.startXProperty().set(centerX);
+			lineVert.startYProperty().set(bottom - radius);
+			lineVert.endXProperty().set(centerX);
+			lineVert.endYProperty().set(bottom - radius * 3);
+			lineVert.setStrokeWidth(1.0);
+			lineVert.setStroke(Color.web("#0071bb"));
+			lineVert.setFill(Color.web("#0071bb"));
 
-            Line arrowLeft = new Line();
-            arrowLeft.startXProperty().set(centerX);
-            arrowLeft.startYProperty().set(bottom - radius);
-            arrowLeft.endXProperty().set(centerX - arrowBounds);
-            arrowLeft.endYProperty().set(bottom - radius - arrowBounds);
-            arrowLeft.setStrokeWidth(1.0);
-            arrowLeft.setStroke(Color.web("#0071bb"));
-            arrowLeft.setFill(Color.web("#0071bb"));
+			final Line arrowLeft = new Line();
+			arrowLeft.startXProperty().set(centerX);
+			arrowLeft.startYProperty().set(bottom - radius);
+			arrowLeft.endXProperty().set(centerX - arrowBounds);
+			arrowLeft.endYProperty().set(bottom - radius - arrowBounds);
+			arrowLeft.setStrokeWidth(1.0);
+			arrowLeft.setStroke(Color.web("#0071bb"));
+			arrowLeft.setFill(Color.web("#0071bb"));
 
-            Line arrowRight = new Line();
-            arrowRight.startXProperty().set(centerX);
-            arrowRight.startYProperty().set(bottom - radius);
-            arrowRight.endXProperty().set(centerX + arrowBounds);
-            arrowRight.endYProperty().set(bottom - radius - arrowBounds);
-            arrowRight.setStrokeWidth(1.0);
-            arrowRight.setStroke(Color.web("#0071bb"));
-            arrowRight.setFill(Color.web("#0071bb"));
+			final Line arrowRight = new Line();
+			arrowRight.startXProperty().set(centerX);
+			arrowRight.startYProperty().set(bottom - radius);
+			arrowRight.endXProperty().set(centerX + arrowBounds);
+			arrowRight.endYProperty().set(bottom - radius - arrowBounds);
+			arrowRight.setStrokeWidth(1.0);
+			arrowRight.setStroke(Color.web("#0071bb"));
+			arrowRight.setFill(Color.web("#0071bb"));
 
-            getChildren().add(arc);
-            getChildren().add(lineVert);
-            getChildren().add(arrowLeft);
-            getChildren().add(arrowRight);
-        }
-    }
+			getChildren().add(arc);
+			getChildren().add(lineVert);
+			getChildren().add(arrowLeft);
+			getChildren().add(arrowRight);
+		}
+	}
 }

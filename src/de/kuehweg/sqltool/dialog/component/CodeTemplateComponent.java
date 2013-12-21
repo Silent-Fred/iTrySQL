@@ -26,62 +26,63 @@
 
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.CodeHelp;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.sqlediting.CodeHelp;
 
 /**
- *
+ * Baustein für die Code-Vorlagen
+ * 
  * @author Michael Kühweg
  */
 public class CodeTemplateComponent {
 
-    private final ListView<CodeHelp> templates;
-    private final TextArea targetForTemplate;
-    private final TextArea targetForSyntax;
-    
-    public CodeTemplateComponent(final ListView<CodeHelp> templates, final TextArea targetForTemplate, final TextArea targetForSyntax) {
-        this.templates = templates;
-        this.targetForTemplate = targetForTemplate;
-        this.targetForSyntax = targetForSyntax;
-    }
+	private final ListView<CodeHelp> templates;
+	private final TextArea targetForTemplate;
+	private final TextArea targetForSyntax;
 
-    public void fillCodeTemplates() {
-        final ObservableList<CodeHelp> templateListViewItems = FXCollections
-                .observableArrayList();
-        for (final CodeHelp template : CodeHelp.values()) {
-            templateListViewItems.add(template);
-        }
-        templates.setItems(templateListViewItems);
-        templates.getSelectionModel().selectedItemProperty()
-                .addListener(new ChangeListener<CodeHelp>() {
-            @Override
-            public void changed(
-                    final ObservableValue<? extends CodeHelp> ov,
-                    final CodeHelp oldValue, final CodeHelp newValue) {
-                final StringBuilder statementTemplate = new StringBuilder();
-                if (newValue.getSyntaxDescription() != null
-                        && newValue.getSyntaxDescription().trim()
-                        .length() > 0) {
-                    statementTemplate
-                            .append("-- ")
-                            .append(
-                            DialogDictionary.LABEL_SEE_SYNTAX_IN_DBOUTPUT
-                            .toString()).append("\n");
-                    targetForSyntax.appendText("\n"
-                            + newValue.getSyntaxDescription() + "\n");
-                }
-                statementTemplate.append(newValue.getCodeTemplate());
-                targetForTemplate.insertText(
-                        targetForTemplate.getCaretPosition(),
-                        statementTemplate.toString());
-            }
-        });
-    }
+	public CodeTemplateComponent(final ListView<CodeHelp> templates,
+			final TextArea targetForTemplate, final TextArea targetForSyntax) {
+		this.templates = templates;
+		this.targetForTemplate = targetForTemplate;
+		this.targetForSyntax = targetForSyntax;
+	}
+
+	public void fillCodeTemplates() {
+		final ObservableList<CodeHelp> templateListViewItems = FXCollections
+				.observableArrayList();
+		for (final CodeHelp template : CodeHelp.values()) {
+			templateListViewItems.add(template);
+		}
+		templates.setItems(templateListViewItems);
+		templates.getSelectionModel().selectedItemProperty()
+				.addListener(new ChangeListener<CodeHelp>() {
+					@Override
+					public void changed(
+							final ObservableValue<? extends CodeHelp> ov,
+							final CodeHelp oldValue, final CodeHelp newValue) {
+						final StringBuilder statementTemplate = new StringBuilder();
+						if (newValue.getSyntaxDescription() != null
+								&& newValue.getSyntaxDescription().trim()
+										.length() > 0) {
+							statementTemplate
+									.append("-- ")
+									.append(DialogDictionary.LABEL_SEE_SYNTAX_IN_DBOUTPUT
+											.toString()).append("\n");
+							targetForSyntax.appendText("\n"
+									+ newValue.getSyntaxDescription() + "\n");
+						}
+						statementTemplate.append(newValue.getCodeTemplate());
+						targetForTemplate.insertText(
+								targetForTemplate.getCaretPosition(),
+								statementTemplate.toString());
+					}
+				});
+	}
 
 }
