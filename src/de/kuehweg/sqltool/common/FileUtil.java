@@ -46,7 +46,7 @@ public class FileUtil {
 	}
 
 	/**
-	 * Textdatei mit dem angegebenen Dateinamen enilesen und als String
+	 * Textdatei mit dem angegebenen Dateinamen einlesen und als String
 	 * zurückliefern
 	 * 
 	 * @param file

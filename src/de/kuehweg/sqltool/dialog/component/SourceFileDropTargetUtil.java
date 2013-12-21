@@ -26,6 +26,8 @@
 package de.kuehweg.sqltool.dialog.component;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -121,11 +123,12 @@ public class SourceFileDropTargetUtil {
 				boolean success = false;
 				if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
 					try {
-						final String script = FileUtil.readFile(dragboard
-								.getFiles().get(0).getAbsolutePath());
+						final String script = FileUtil.readFile(new URI(
+								dragboard.getFiles().get(0).getAbsolutePath())
+								.getPath());
 						statementInput.setText(script);
 						success = true;
-					} catch (final IOException ex) {
+					} catch (final IOException | URISyntaxException ex) {
 						final ErrorMessage msg = new ErrorMessage(
 								DialogDictionary.MESSAGEBOX_ERROR.toString(),
 								DialogDictionary.ERR_FILE_OPEN_FAILED
