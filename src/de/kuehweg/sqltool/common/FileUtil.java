@@ -26,12 +26,15 @@
 package de.kuehweg.sqltool.common;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,24 +42,52 @@ import java.nio.file.StandardOpenOption;
 
 /**
  * Dateioperationen
- * 
+ *
  * @author Michael Kühweg
  */
 public class FileUtil {
 
-	private FileUtil() {
-		// no instances
-	}
+    private FileUtil() {
+        // no instances
+    }
 
-	/**
-	 * Textdatei mit dem angegebenen Dateinamen einlesen und als String
-	 * zurückliefern
-	 * 
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 */
-	public static String readFile(final URL file) throws IOException {
+    /**
+     * Textdatei mit dem angegebenen Dateinamen einlesen und als String
+     * zurückliefern
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public static String readFile(final URL file) throws IOException, URISyntaxException {
+        // die neue Variante mit Path und Files und allem Drum und Dran
+        // ist zwar hübscher - hilft aber nix, wenn es dann in manchen
+        // Konstellationen keine Umlaute in Dateinamen kann :-(
+        // (Mac OS X 10.9.1 mit Java 7u45 - Applikation als Standalone jar)
+        File theFile = new File(file.toURI());
+        final InputStream inputStream = new FileInputStream(theFile);
+        final StringBuffer b;
+        final InputStreamReader reader = new InputStreamReader(inputStream,
+                "UTF-8");
+        final BufferedReader bufferedReader = new BufferedReader(reader);
+        b = new StringBuffer();
+        String s = null;
+        while ((s = bufferedReader.readLine()) != null) {
+            b.append(s);
+            b.append('\n');
+        }
+        return b.toString();
+    }
+
+    /**
+     * Text in die Datei mit dem angegebenen Dateinamen ausgeben.
+     *
+     * @param file Dateiname
+     * @param text Textinhalt der ausgegeben werden soll
+     * @throws IOException
+     */
+    public static void writeFile(final URL file, final String text)
+            throws IOException {
         Path path = null;
         try {
             path = Paths.get(file.toURI());
@@ -65,86 +96,76 @@ public class FileUtil {
             // (derzeit keine Sonderbehandlung, wird als "normales" Problem verpackt
             throw new IOException(ex);
         }
-        StringBuilder builder = new StringBuilder();
-        for (String line : Files.readAllLines(path, Charset.forName("UTF-8"))) {
-            builder.append(line);
-            builder.append("\n");
+        Files.write(path, text.getBytes(), StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    /**
+     * Datei lesen, die als Ressource im Paket eingebettet ist (z.B. vorgegebene
+     * Initialisierungsskripte für die Datenbankinhalte)
+     *
+     * @param resourceName
+     * @return
+     * @throws IOException
+     */
+    public static String readResourceFile(final String resourceName)
+            throws IOException {
+        final InputStream tutorialStream = FileUtil.class
+                .getResourceAsStream(resourceName);
+        final StringBuffer b;
+        final InputStreamReader reader = new InputStreamReader(tutorialStream,
+                "UTF-8");
+        final BufferedReader bufferedReader = new BufferedReader(reader);
+        b = new StringBuffer();
+        String s = null;
+        while ((s = bufferedReader.readLine()) != null) {
+            b.append(s);
+            b.append('\n');
         }
-		return builder.toString();
-	}
 
-	/**
-	 * Text in die Datei mit dem angegebenen Dateinamen ausgeben.
-	 * 
-	 * @param file
-	 *            Dateiname
-	 * @param text
-	 *            Textinhalt der ausgegeben werden soll
-	 * @throws IOException
-	 */
-	public static void writeFile(final URL file, final String text)
-			throws IOException {
-        Path path = null;
-        try {
-            path = Paths.get(file.toURI());
-        } catch (Exception ex) {
-            // wenn Java mal wieder nicht mit der konkreten Plattform klarkommt
-            // (derzeit keine Sonderbehandlung, wird als "normales" Problem verpackt
-            throw new IOException(ex);
+        return b.toString();
+    }
+
+    /**
+     * Dateinamenserweiterung an einen Dateinamen anhängen, sofern nicht bereits
+     * vorhanden.
+     *
+     * @param filename Bisheriger Dateiname
+     * @param ext erforderliche Erweiterung (z.B. html, sql o.ä.)
+     * @return Dateiname mit Erweiterung
+     */
+    public static URL enforceExtension(final URL filename,
+            final String ext) {
+        if (ext == null) {
+            return filename;
         }
-		Files.write(path, text.getBytes(), StandardOpenOption.CREATE,
-				StandardOpenOption.TRUNCATE_EXISTING);
-	}
-
-	/**
-	 * Datei lesen, die als Ressource im Paket eingebettet ist (z.B. vorgegebene
-	 * Initialisierungsskripte für die Datenbankinhalte)
-	 * 
-	 * @param resourceName
-	 * @return
-	 * @throws IOException
-	 */
-	public static String readResourceFile(final String resourceName)
-			throws IOException {
-		final InputStream tutorialStream = FileUtil.class
-				.getResourceAsStream(resourceName);
-		final StringBuffer b;
-		final InputStreamReader reader = new InputStreamReader(tutorialStream,
-				"UTF-8");
-		final BufferedReader bufferedReader = new BufferedReader(reader);
-		b = new StringBuffer();
-		String s = null;
-		while ((s = bufferedReader.readLine()) != null) {
-			b.append(s);
-			b.append('\n');
-		}
-		return b.toString();
-	}
-
-	/**
-	 * Dateinamenserweiterung an einen Dateinamen anhängen, sofern nicht bereits
-	 * vorhanden.
-	 * 
-	 * @param filename
-	 *            Bisheriger Dateiname
-	 * @param ext
-	 *            erforderliche Erweiterung (z.B. html, sql o.ä.)
-	 * @return Dateiname mit Erweiterung
-	 */
-	public static URL enforceExtension(final URL filename,
-			final String ext) {
-		if (ext == null) {
-			return filename;
-		}
-		final String trimmedExt = ext.trim();
-		if (filename.getFile().toLowerCase().endsWith(
-				"." + trimmedExt.toLowerCase())) {
-			return filename;
-		}
+        final String trimmedExt = ext.trim();
+        if (filename.getFile().toLowerCase().endsWith(
+                "." + trimmedExt.toLowerCase())) {
+            return filename;
+        }
         try {
-            return new URL(filename.toExternalForm() + (trimmedExt.startsWith(".") ? "" : ".") + ext);
+            return new URL(filename.toExternalForm() + (trimmedExt.startsWith(
+                    ".") ? "" : ".") + ext);
         } catch (MalformedURLException ex) {
             return filename;
         }
-	}
+    }
+
+    /**
+     * Konvertierung in URI für ein File. Falls der Dateiname schon als URI
+     * vorliegt, wird nicht doppelt gewandelt (würde bei file.toURI() passieren).
+     *
+     * @param file
+     * @return URI der Datei
+     */
+    public static URI convertToURI(final File file) {
+        URI uri;
+        try {
+            uri = new URI("file:" + file.getAbsolutePath());
+        } catch (URISyntaxException ex) {
+            uri = file.toURI();
+        }
+        return uri;
+    }
 }

@@ -30,6 +30,7 @@ import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 
@@ -61,9 +62,10 @@ public class ScriptAction {
 				.getWindow());
 		if (file != null) {
 			try {
-				final String script = FileUtil.readFile(file.toURI().toURL());
+				final String script = FileUtil.readFile(FileUtil.convertToURI(
+                        file).toURL());
 				statementInput.setText(script);
-			} catch (final IOException ex) {
+			} catch (final IOException | URISyntaxException ex) {
 				final ErrorMessage msg = new ErrorMessage(
 						DialogDictionary.MESSAGEBOX_ERROR.toString(),
 						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(),

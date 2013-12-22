@@ -28,7 +28,6 @@ package de.kuehweg.sqltool.dialog.component;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import java.io.IOException;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
@@ -120,11 +119,12 @@ public class SourceFileDropTargetUtil {
 				boolean success = false;
 				if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
 					try {
-						final String script = FileUtil.readFile(
-								dragboard.getFiles().get(0).toURI().toURL());
+						final String script = FileUtil.readFile(FileUtil.convertToURI(dragboard.getFiles().get(0)).toURL());
 						statementInput.setText(script);
 						success = true;
-					} catch (final IOException ex) {
+					} catch (final Exception ex) {
+                        // egal welche Exception passiert, der Drop muss
+                        // beendet werden, damit die Anzeige zurückgesetzt wird
 						final ErrorMessage msg = new ErrorMessage(
 								DialogDictionary.MESSAGEBOX_ERROR.toString(),
 								DialogDictionary.ERR_FILE_OPEN_FAILED
