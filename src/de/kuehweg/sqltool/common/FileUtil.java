@@ -29,9 +29,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.FileSystems;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 /**
@@ -53,10 +56,21 @@ public class FileUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String readFile(final String file) throws IOException {
-		final Path path = FileSystems.getDefault().getPath(file);
-		final byte[] filearray = Files.readAllBytes(path);
-		return new String(filearray);
+	public static String readFile(final URL file) throws IOException {
+        Path path = null;
+        try {
+            path = Paths.get(file.toURI());
+        } catch (Exception ex) {
+            // wenn Java mal wieder nicht mit der konkreten Plattform klarkommt
+            // (derzeit keine Sonderbehandlung, wird als "normales" Problem verpackt
+            throw new IOException(ex);
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String line : Files.readAllLines(path, Charset.forName("UTF-8"))) {
+            builder.append(line);
+            builder.append("\n");
+        }
+		return builder.toString();
 	}
 
 	/**
@@ -68,9 +82,16 @@ public class FileUtil {
 	 *            Textinhalt der ausgegeben werden soll
 	 * @throws IOException
 	 */
-	public static void writeFile(final String file, final String text)
+	public static void writeFile(final URL file, final String text)
 			throws IOException {
-		final Path path = FileSystems.getDefault().getPath(file);
+        Path path = null;
+        try {
+            path = Paths.get(file.toURI());
+        } catch (Exception ex) {
+            // wenn Java mal wieder nicht mit der konkreten Plattform klarkommt
+            // (derzeit keine Sonderbehandlung, wird als "normales" Problem verpackt
+            throw new IOException(ex);
+        }
 		Files.write(path, text.getBytes(), StandardOpenOption.CREATE,
 				StandardOpenOption.TRUNCATE_EXISTING);
 	}
@@ -110,17 +131,20 @@ public class FileUtil {
 	 *            erforderliche Erweiterung (z.B. html, sql o.ä.)
 	 * @return Dateiname mit Erweiterung
 	 */
-	public static String enforceExtension(final String filename,
+	public static URL enforceExtension(final URL filename,
 			final String ext) {
 		if (ext == null) {
 			return filename;
 		}
 		final String trimmedExt = ext.trim();
-		final String trimmedFilename = filename.trim();
-		if (trimmedFilename.toLowerCase().endsWith(
+		if (filename.getFile().toLowerCase().endsWith(
 				"." + trimmedExt.toLowerCase())) {
-			return trimmedFilename;
+			return filename;
 		}
-		return trimmedFilename + (trimmedExt.startsWith(".") ? "" : ".") + ext;
+        try {
+            return new URL(filename.toExternalForm() + (trimmedExt.startsWith(".") ? "" : ".") + ext);
+        } catch (MalformedURLException ex) {
+            return filename;
+        }
 	}
 }

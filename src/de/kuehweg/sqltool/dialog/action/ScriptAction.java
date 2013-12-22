@@ -25,14 +25,13 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import java.io.File;
-import java.io.IOException;
-
-import javafx.scene.control.TextArea;
-import javafx.stage.FileChooser;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
+import java.io.File;
+import java.io.IOException;
+import javafx.scene.control.TextArea;
+import javafx.stage.FileChooser;
 
 /**
  * SQL-Skripte laden und speichern
@@ -62,7 +61,7 @@ public class ScriptAction {
 				.getWindow());
 		if (file != null) {
 			try {
-				final String script = FileUtil.readFile(file.getAbsolutePath());
+				final String script = FileUtil.readFile(file.toURI().toURL());
 				statementInput.setText(script);
 			} catch (final IOException ex) {
 				final ErrorMessage msg = new ErrorMessage(
@@ -84,7 +83,7 @@ public class ScriptAction {
 				.getWindow());
 		if (file != null) {
 			try {
-				FileUtil.writeFile(file.getAbsolutePath(),
+				FileUtil.writeFile(file.toURI().toURL(),
 						statementInput.getText());
 			} catch (final IOException ex) {
 				final ErrorMessage msg = new ErrorMessage(

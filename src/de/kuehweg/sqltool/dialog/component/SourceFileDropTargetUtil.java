@@ -25,10 +25,10 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.FileUtil;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
@@ -37,9 +37,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.FileUtil;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
 
 /**
  * Drag and Drop für SQL-Skripte
@@ -123,12 +120,11 @@ public class SourceFileDropTargetUtil {
 				boolean success = false;
 				if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
 					try {
-						final String script = FileUtil.readFile(new URI(
-								dragboard.getFiles().get(0).getAbsolutePath())
-								.getPath());
+						final String script = FileUtil.readFile(
+								dragboard.getFiles().get(0).toURI().toURL());
 						statementInput.setText(script);
 						success = true;
-					} catch (final IOException | URISyntaxException ex) {
+					} catch (final IOException ex) {
 						final ErrorMessage msg = new ErrorMessage(
 								DialogDictionary.MESSAGEBOX_ERROR.toString(),
 								DialogDictionary.ERR_FILE_OPEN_FAILED

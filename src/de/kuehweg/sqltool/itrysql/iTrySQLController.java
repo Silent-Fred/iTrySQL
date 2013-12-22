@@ -25,13 +25,41 @@
  */
 package de.kuehweg.sqltool.itrysql;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.FileUtil;
+import de.kuehweg.sqltool.common.RomanNumber;
+import de.kuehweg.sqltool.common.UserPreferencesManager;
+import de.kuehweg.sqltool.common.sqlediting.CodeHelp;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
+import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
+import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
+import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
+import de.kuehweg.sqltool.database.ConnectionHolder;
+import de.kuehweg.sqltool.database.JDBCType;
+import de.kuehweg.sqltool.dialog.AlertBox;
+import de.kuehweg.sqltool.dialog.ConnectionDialog;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
+import de.kuehweg.sqltool.dialog.License;
+import de.kuehweg.sqltool.dialog.action.ExecuteAction;
+import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
+import de.kuehweg.sqltool.dialog.action.FontAction;
+import de.kuehweg.sqltool.dialog.action.SchemaTreeBuilderTask;
+import de.kuehweg.sqltool.dialog.action.ScriptAction;
+import de.kuehweg.sqltool.dialog.action.TutorialAction;
+import de.kuehweg.sqltool.dialog.component.CodeTemplateComponent;
+import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
+import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
+import de.kuehweg.sqltool.dialog.component.ServerComponentController;
+import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
+import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -73,35 +101,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.FileUtil;
-import de.kuehweg.sqltool.common.RomanNumber;
-import de.kuehweg.sqltool.common.UserPreferencesManager;
-import de.kuehweg.sqltool.common.sqlediting.CodeHelp;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
-import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
-import de.kuehweg.sqltool.database.ConnectionHolder;
-import de.kuehweg.sqltool.database.JDBCType;
-import de.kuehweg.sqltool.dialog.AlertBox;
-import de.kuehweg.sqltool.dialog.ConnectionDialog;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.License;
-import de.kuehweg.sqltool.dialog.action.ExecuteAction;
-import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
-import de.kuehweg.sqltool.dialog.action.FontAction;
-import de.kuehweg.sqltool.dialog.action.SchemaTreeBuilderTask;
-import de.kuehweg.sqltool.dialog.action.ScriptAction;
-import de.kuehweg.sqltool.dialog.action.TutorialAction;
-import de.kuehweg.sqltool.dialog.component.CodeTemplateComponent;
-import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
-import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
-import de.kuehweg.sqltool.dialog.component.ServerComponentController;
-import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
-import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 		EventHandler<WindowEvent> {
@@ -441,7 +440,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
 		if (file != null) {
 			try {
 				FileUtil.writeFile(FileUtil.enforceExtension(
-						file.getAbsolutePath(), filenameExtension),
+						file.toURI().toURL(), filenameExtension),
 						exportContent);
 			} catch (final IOException ex) {
 				final ErrorMessage msg = new ErrorMessage(
