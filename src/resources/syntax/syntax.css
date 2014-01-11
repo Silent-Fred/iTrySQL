@@ -1,0 +1,22 @@
+/* 
+    Document   : syntax
+    Created on : 11.01.2014, 15:43:14
+    Author     : Michael Kühweg
+    Description:
+        Styles für Syntaxbeschreibungen.
+*/
+
+body {font-family: Helvetica, sans-serif; background-color: white;}
+code {font-size: larger;}
+kbd {font-weight: bold; font-size: larger;}
+.toc ul {list-style-type: circle; line-height: 125%;}
+.toc a {color: #067db7; text-decoration: none;}
+.toc a:hover {background-color: #f8f8f8;}
+.ebnf { margin-left: 4em; text-indent: -4em;}
+.ebnf a {color: #067db7; text-decoration: none;}
+.ebnf a:hover {background-color: #f8f8f8;}
+.nav { margin-bottom: 1em; border-bottom: 1px solid #067db7; text-align: center;}
+.nav a {color: #067db7; text-decoration: none;}
+.nav a:hover {background-color: transparent;}
+.diagram { margin: 2em;}
+.diagram img { padding:2em;}

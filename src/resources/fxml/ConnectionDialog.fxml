@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane padding="$x1" styleClass="itry-dialog" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.ConnectionDialogController">
+<AnchorPane padding="$x1" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.ConnectionDialogController">
   <children>
     <VBox id="" alignment="TOP_CENTER" layoutX="17.0" layoutY="8.0" minWidth="116.0" prefWidth="321.0" spacing="5.0">
       <children>
@@ -41,7 +41,4 @@
       </padding>
     </VBox>
   </children>
-  <stylesheets>
-    <URL value="@itrysql.css" />
-  </stylesheets>
 </AnchorPane>

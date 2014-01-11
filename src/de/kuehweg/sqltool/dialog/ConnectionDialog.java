@@ -25,8 +25,9 @@
  */
 package de.kuehweg.sqltool.dialog;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
 import java.util.ResourceBundle;
-
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -37,8 +38,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
 
 /**
  * Dialog zur Auswahl einer Datenbankverbindung
@@ -58,9 +57,9 @@ public class ConnectionDialog extends Stage {
 							"/resources/fxml/ConnectionDialog.fxml"),
 					ResourceBundle.getBundle("dictionary"));
 			initStyle(StageStyle.UTILITY);
-			root.getStylesheets().add(
-					getClass().getResource("/resources/css/itrysql.css")
-							.toExternalForm());
+//			root.getStylesheets().add(
+//					getClass().getResource("/resources/css/itrysql.css")
+//							.toExternalForm());
 			setScene(new Scene(root));
 			centerOnScreen();
 			setResizable(false);

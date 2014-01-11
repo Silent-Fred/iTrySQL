@@ -25,9 +25,11 @@
  */
 package de.kuehweg.sqltool.dialog;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSettings;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,75 +40,72 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSettings;
 
 /**
  * Controller für den Verbindunsgdialog
- * 
+ *
  * @author Michael Kühweg
  */
 public class ConnectionDialogController implements Initializable {
 
-	@FXML
-	private Button cancel;
-	@FXML
-	private Button connect;
-	@FXML
-	private ComboBox<ConnectionSetting> connectionSettings;
-	@FXML
-	private PasswordField password;
-	@FXML
-	private TextField user;
+    @FXML
+    private Button cancel;
+    @FXML
+    private Button connect;
+    @FXML
+    private ComboBox<ConnectionSetting> connectionSettings;
+    @FXML
+    private PasswordField password;
+    @FXML
+    private TextField user;
 
-	public void cancel(final ActionEvent event) {
-		final Node node = (Node) event.getSource();
-		final Stage stage = (Stage) node.getScene().getWindow();
-		stage.close();
-	}
+    public void cancel(final ActionEvent event) {
+        final Node node = (Node) event.getSource();
+        final Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
+    }
 
-	/**
-	 * Wechsel der ausgewählten Verbindung in der DropDown-Liste
-	 * 
-	 * @param event
-	 */
-	public void changeConnection(final ActionEvent event) {
-		user.setText(connectionSettings.getValue().getUser());
-	}
+    /**
+     * Wechsel der ausgewählten Verbindung in der DropDown-Liste
+     *
+     * @param event
+     */
+    public void changeConnection(final ActionEvent event) {
+        user.setText(connectionSettings.getValue().getUser());
+    }
 
-	public void connect(final ActionEvent event) {
-		final ConnectionSetting selectedSetting = connectionSettings.getValue();
-		if (selectedSetting == null) {
-			final InfoBox info = new InfoBox(
-					DialogDictionary.LABEL_CONNECT.toString(),
-					DialogDictionary.MSG_SELECT_CONNECTION.toString(),
-					DialogDictionary.COMMON_BUTTON_OK.toString());
-			info.askUserFeedback();
-		} else {
-			final ConnectionSetting connectionSetting = new ConnectionSetting(
-					selectedSetting.getName(), selectedSetting.getType(),
-					selectedSetting.getDbPath(), selectedSetting.getDbName(),
-					user.getText(), password.getText());
-			final Node node = (Node) event.getSource();
-			final ConnectionDialog stage = (ConnectionDialog) node.getScene()
-					.getWindow();
-			stage.setConnectionSetting(connectionSetting);
-			stage.close();
-		}
-	}
+    public void connect(final ActionEvent event) {
+        final ConnectionSetting selectedSetting = connectionSettings.getValue();
+        if (selectedSetting == null) {
+            final InfoBox info = new InfoBox(
+                    DialogDictionary.LABEL_CONNECT.toString(),
+                    DialogDictionary.MSG_SELECT_CONNECTION.toString(),
+                    DialogDictionary.COMMON_BUTTON_OK.toString());
+            info.askUserFeedback();
+        } else {
+            final ConnectionSetting connectionSetting = new ConnectionSetting(
+                    selectedSetting.getName(), selectedSetting.getType(),
+                    selectedSetting.getDbPath(), selectedSetting.getDbName(),
+                    user.getText(), password.getText());
+            final Node node = (Node) event.getSource();
+            final ConnectionDialog stage = (ConnectionDialog) node.getScene()
+                    .getWindow();
+            stage.setConnectionSetting(connectionSetting);
+            stage.close();
+        }
+    }
 
-	@Override
-	public void initialize(final URL fxmlFileLocation,
-			final ResourceBundle resources) {
-		assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
-		assert connect != null : "fx:id=\"connect\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
-		assert connectionSettings != null : "fx:id=\"connectionSettings\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
-		assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
-		assert user != null : "fx:id=\"user\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
+    @Override
+    public void initialize(final URL fxmlFileLocation,
+            final ResourceBundle resources) {
+        assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
+        assert connect != null : "fx:id=\"connect\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
+        assert connectionSettings != null : "fx:id=\"connectionSettings\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
+        assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
+        assert user != null : "fx:id=\"user\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
 
-		final ConnectionSettings settings = new ConnectionSettings();
-		connectionSettings.setItems(FXCollections.observableArrayList(settings
-				.getConnectionSettings()));
-	}
+        final ConnectionSettings settings = new ConnectionSettings();
+        connectionSettings.setItems(FXCollections.observableArrayList(settings
+                .getConnectionSettings()));
+    }
 }
