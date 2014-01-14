@@ -25,12 +25,6 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.image.ImageView;
 import de.kuehweg.sqltool.database.metadata.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.ColumnDescription;
 import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
@@ -39,6 +33,12 @@ import de.kuehweg.sqltool.database.metadata.Nullability;
 import de.kuehweg.sqltool.database.metadata.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.TableDescription;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
+import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 
 /**
  * Baumansicht der Datenbankstruktur
@@ -59,7 +59,9 @@ public class SchemaTreeBuilder implements Runnable {
 	@Override
 	public void run() {
 		refreshSchemaTree(db, treeToUpdate);
-	}
+        // FIXME
+        WebViewWithHSQLDBBugfix.fix();
+    }
 
 	private void refreshSchemaTree(final DatabaseDescription db,
 			final TreeView<String> treeToUpdate) {

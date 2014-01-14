@@ -52,6 +52,7 @@ import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
 import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
 import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
 import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
+import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -91,6 +92,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -294,20 +296,33 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert syntaxDefinitionView != null : "fx:id=\"syntaxDefinitionView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 
+        fixWebViewWithHSQLDBBug();
+        
         initializeContinued();
     }
 
-    private void webViewFixWithHSQLDB() {
-        // HSQLDB setzt Log-Level auf ein Niveau, das in JavaFX WebViews
-        // katastrophale Auswirkungen hat - deshalb nach Aufbau einer
-        // Datenbankverbindung den Log-Level für WebViews auf OFF
-        java.util.logging.Logger.getLogger(
-                com.sun.webpane.sg.prism.WCGraphicsPrismContext.class.
-                getName()).setLevel(java.util.logging.Level.OFF);
+    // FIXME Falls noch Fälle offen sein sollten, in denen der Log-Level
+    // umgestellt wird und damit die WebView in den Debugmodus verfällt,
+    // sollte mit wenigen Handgriffen des Anwenders der Normalzustand
+    // wiederhergestellt werden können.
+    private void fixWebViewWithHSQLDBBug() {
+        syntaxDefinitionView.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                WebViewWithHSQLDBBugfix.fix();
+            }
+        });
+        syntaxDefinitionView.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                WebViewWithHSQLDBBugfix.fix();
+            }
+        });
     }
 
     public void about(final ActionEvent event) {
-        webViewFixWithHSQLDB();
+        // FIXME
+        WebViewWithHSQLDBBugfix.fix();
         final License aboutBox = new License();
         aboutBox.showAndWait();
     }
@@ -373,7 +388,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             } else {
                 permanentMessage.visibleProperty().set(false);
             }
-            webViewFixWithHSQLDB();
+            // FIXME
+            WebViewWithHSQLDBBugfix.fix();
         }
     }
 
