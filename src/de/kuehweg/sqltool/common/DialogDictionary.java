@@ -50,8 +50,7 @@ public enum DialogDictionary {
 			"label_error"), COMMON_BUTTON_OK("label_commonButtonOK"), COMMON_BUTTON_CANCEL(
 			"label_commonButtonCancel"), LABEL_EXECUTING("label_executing"), LABEL_EMPTY(
 			"label_empty"), LABEL_RESULT_ERROR("label_resultError"), LABEL_RESULT_EXECUTED(
-			"label_resultExecuted"), LABEL_SEE_SYNTAX_IN_DBOUTPUT(
-			"label_seeSyntaxInDBOutput"), LABEL_DEFAULT_CONNECTION(
+			"label_resultExecuted"), LABEL_DEFAULT_CONNECTION(
 			"label_defaultConnection"), LABEL_OPEN_SCRIPT("label_openScript"), LABEL_SAVE_SCRIPT(
 			"label_saveScript"), LABEL_SAVE_OUTPUT("label_saveOutput"), LABEL_SAVE_OUTPUT_HTML(
 			"label_saveOutputHtml"), LABEL_TITLE_CONNECT(
