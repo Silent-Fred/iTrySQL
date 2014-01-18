@@ -33,12 +33,15 @@ POSSIBILITY OF SUCH DAMAGE.
     <body>
         <div class="nav"><a href="index.html"><img src="home.png" /></a></div>
         <div class="ebnf">
-            drop_table ::=<br />
-            <code>
-                <kbd>DROP</kbd> <kbd>TABLE</kbd> [ </code>schema<code> <kbd>.</kbd> ] 
-            </code>table<code>
-                [ <kbd>RESTRICT</kbd> | <kbd>CASCADE</kbd> ]</code>
+            grant ::=<br />
+            <code><kbd>GRANT</kbd> </code>
+            <a href="object_privileges.html">object_privileges</a>
+            <code> <kbd>ON</kbd> </code>
+            <a href="on_object_clause.html">on_object_clause</a>
+            <code> <kbd>TO</kbd> </code>
+            <a href="grantee_clause.html">grantee_clause</a>
+            <code> [ <kbd>WITH</kbd> <kbd>GRANT</kbd> <kbd>OPTION</kbd> ]</code>
         </div>
-        <div class="diagram"><img src="diagrams/drop_table.png" /></div>
+        <div class="diagram"><img src="diagrams/grant.png" /></div>
     </body>
 </html>

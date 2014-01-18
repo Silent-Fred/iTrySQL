@@ -33,12 +33,16 @@ POSSIBILITY OF SUCH DAMAGE.
     <body>
         <div class="nav"><a href="index.html"><img src="home.png" /></a></div>
         <div class="ebnf">
-            drop_table ::=<br />
+            alter_table ::=<br />
             <code>
-                <kbd>DROP</kbd> <kbd>TABLE</kbd> [ </code>schema<code> <kbd>.</kbd> ] 
-            </code>table<code>
-                [ <kbd>RESTRICT</kbd> | <kbd>CASCADE</kbd> ]</code>
+                <kbd>ALTER</kbd> <kbd>TABLE</kbd> [ </code>schema<code> <kbd>.</kbd> ] 
+            </code>table<br />
+            <code>{
+            </code><a href="alter_table_properties.html">alter_table_properties</a>
+            <code> | </code><a href="column_clauses.html">column_clauses</a>
+            <code> | </code><a href="constraint_clauses.html">constraint_clauses</a>
+            <code>}</code>
         </div>
-        <div class="diagram"><img src="diagrams/drop_table.png" /></div>
+        <div class="diagram"><img src="diagrams/alter_table.png" /></div>
     </body>
 </html>
