@@ -58,29 +58,13 @@
                     </TitledPane>
                     <TitledPane animated="false" text="%label_connections">
                       <content>
-                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="609.0" prefWidth="288.0">
-                          <children>
-                            <VBox alignment="TOP_CENTER" prefHeight="552.0" prefWidth="261.0" spacing="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                        <ScrollPane id="ScrollPane" fitToWidth="true" pannable="true" prefViewportHeight="608.0" prefViewportWidth="287.0">
+                          <content>
+                            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="609.0" prefWidth="288.0">
                               <children>
-                                <ComboBox fx:id="connectionSelection" onAction="#changeConnection" visibleRowCount="7">
-                                  <items>
-                                    <FXCollections fx:factory="observableArrayList">
-                                      <String fx:value="Item 1" />
-                                      <String fx:value="Item 2" />
-                                      <String fx:value="Item 3" />
-                                    </FXCollections>
-                                  </items>
-                                </ComboBox>
-                                <Button fx:id="createConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#createConnection" text="%label_createConnection" />
-                                <Button fx:id="editConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#editConnection" text="%label_editConnection" VBox.vgrow="NEVER" />
-                                <Separator VBox.vgrow="NEVER" />
-                                <Button fx:id="removeConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#removeConnection" text="%label_removeConnection" />
-                                <VBox fx:id="connectionSettings" prefHeight="310.0" prefWidth="261.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                <VBox alignment="TOP_CENTER" prefHeight="552.0" prefWidth="261.0" spacing="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                   <children>
-                                    <Label text="%label_connectionSettings" VBox.vgrow="NEVER" />
-                                    <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
-                                    <TextField fx:id="connectionName" promptText="%prompt_connectionName" VBox.vgrow="NEVER" />
-                                    <ComboBox fx:id="connectionType" disable="true" onAction="#changeConnectionType" VBox.vgrow="NEVER">
+                                    <ComboBox fx:id="connectionSelection" onAction="#changeConnection" visibleRowCount="7">
                                       <items>
                                         <FXCollections fx:factory="observableArrayList">
                                           <String fx:value="Item 1" />
@@ -89,30 +73,50 @@
                                         </FXCollections>
                                       </items>
                                     </ComboBox>
-                                    <TextField fx:id="connectionUrl" disable="true" prefWidth="265.0" promptText="%prompt_connectionUrl" VBox.vgrow="NEVER" />
-                                    <Button fx:id="connectionDirectoryChoice" mnemonicParsing="false" onAction="#chooseDbDirectory" text="%label_connectionDirectoryChoice" VBox.vgrow="ALWAYS" />
-                                    <TextField fx:id="connectionDbName" prefWidth="200.0" promptText="%prompt_dbName" />
-                                    <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
-                                    <TextField fx:id="connectionUser" promptText="%prompt_connectionUser" VBox.vgrow="NEVER" />
+                                    <Button fx:id="createConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#createConnection" text="%label_createConnection" />
+                                    <Button fx:id="editConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#editConnection" text="%label_editConnection" VBox.vgrow="NEVER" />
                                     <Separator VBox.vgrow="NEVER" />
-                                    <HBox alignment="CENTER" spacing="5.0">
+                                    <Button fx:id="removeConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#removeConnection" text="%label_removeConnection" />
+                                    <VBox fx:id="connectionSettings" prefHeight="310.0" prefWidth="261.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                       <children>
-                                        <Button cancelButton="true" mnemonicParsing="false" onAction="#cancelConnectionSettings" text="%label_commonButtonCancel" />
-                                        <Button defaultButton="true" mnemonicParsing="false" onAction="#saveConnectionSettings" text="%label_saveConnection" />
+                                        <Label text="%label_connectionSettings" VBox.vgrow="NEVER" />
+                                        <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
+                                        <TextField fx:id="connectionName" promptText="%prompt_connectionName" VBox.vgrow="NEVER" />
+                                        <ComboBox fx:id="connectionType" disable="true" onAction="#changeConnectionType" VBox.vgrow="NEVER">
+                                          <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                              <String fx:value="Item 1" />
+                                              <String fx:value="Item 2" />
+                                              <String fx:value="Item 3" />
+                                            </FXCollections>
+                                          </items>
+                                        </ComboBox>
+                                        <TextField fx:id="connectionUrl" disable="true" prefWidth="265.0" promptText="%prompt_connectionUrl" VBox.vgrow="NEVER" />
+                                        <Button fx:id="connectionDirectoryChoice" mnemonicParsing="false" onAction="#chooseDbDirectory" text="%label_connectionDirectoryChoice" VBox.vgrow="ALWAYS" />
+                                        <TextField fx:id="connectionDbName" prefWidth="200.0" promptText="%prompt_dbName" />
+                                        <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
+                                        <TextField fx:id="connectionUser" promptText="%prompt_connectionUser" VBox.vgrow="NEVER" />
+                                        <Separator VBox.vgrow="NEVER" />
+                                        <HBox alignment="CENTER" spacing="5.0">
+                                          <children>
+                                            <Button cancelButton="true" mnemonicParsing="false" onAction="#cancelConnectionSettings" text="%label_commonButtonCancel" />
+                                            <Button defaultButton="true" mnemonicParsing="false" onAction="#saveConnectionSettings" text="%label_saveConnection" />
+                                          </children>
+                                        </HBox>
                                       </children>
-                                    </HBox>
+                                      <VBox.margin>
+                                        <Insets top="40.0" />
+                                      </VBox.margin>
+                                    </VBox>
+                                    <Separator />
+                                    <Button fx:id="exportConnections" mnemonicParsing="false" onAction="#exportConnections" text="%label_exportConnections" />
+                                    <Button fx:id="importConnections" mnemonicParsing="false" onAction="#importConnections" text="%label_importConnections" />
                                   </children>
-                                  <VBox.margin>
-                                    <Insets top="40.0" />
-                                  </VBox.margin>
                                 </VBox>
-                                <Separator />
-                                <Button fx:id="exportConnections" mnemonicParsing="false" onAction="#exportConnections" text="%label_exportConnections" />
-                                <Button fx:id="importConnections" mnemonicParsing="false" onAction="#importConnections" text="%label_importConnections" />
                               </children>
-                            </VBox>
-                          </children>
-                        </AnchorPane>
+                            </AnchorPane>
+                          </content>
+                        </ScrollPane>
                       </content>
                     </TitledPane>
                     <TitledPane animated="false" text="%label_server">
