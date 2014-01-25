@@ -30,6 +30,7 @@ import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.common.RomanNumber;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
+import de.kuehweg.sqltool.common.sqlediting.ManagedConnectionSettings;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
@@ -59,6 +60,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -101,6 +103,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import javax.xml.bind.JAXBException;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         EventHandler<WindowEvent> {
@@ -220,6 +223,10 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     @FXML
     private Button removeConnection;
     @FXML
+    private Button exportConnections;
+    @FXML
+    private Button importConnections;
+    @FXML
     private Label permanentMessage;
     @FXML
     private TextField serverAlias;
@@ -295,9 +302,11 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert toolbarZoomIn != null : "fx:id=\"toolbarZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert syntaxDefinitionView != null : "fx:id=\"syntaxDefinitionView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert exportConnections != null : "fx:id=\"exportConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert importConnections != null : "fx:id=\"importConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 
         fixWebViewWithHSQLDBBug();
-        
+
         initializeContinued();
     }
 
@@ -531,6 +540,46 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     public void saveConnectionSettings(final ActionEvent event) {
         connectionComponentController.saveConnectionSettings();
         serverComponentController.refreshServerConnectionSettings();
+    }
+
+    public void exportConnections(ActionEvent event) {
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(DialogDictionary.LABEL_EXPORT_CONNECTIONS.
+                toString());
+        final File file = fileChooser.showSaveDialog(((Node) event.getSource())
+                .getScene().getWindow());
+        if (file != null) {
+            try {
+                new ManagedConnectionSettings().exportToFile(file);
+            } catch (JAXBException ex) {
+                final ErrorMessage msg = new ErrorMessage(
+                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                        DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                msg.askUserFeedback();
+            }
+        }
+    }
+
+    public void importConnections(ActionEvent event) {
+        final FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(DialogDictionary.LABEL_IMPORT_CONNECTIONS.
+                toString());
+        final File file = fileChooser.showOpenDialog(((Node) event.getSource())
+                .getScene().getWindow());
+        if (file != null) {
+            try {
+                new ManagedConnectionSettings().importFromFile(file);
+                connectionComponentController.saveConnectionSettings();
+                serverComponentController.refreshServerConnectionSettings();
+            } catch (JAXBException | BackingStoreException ex) {
+                final ErrorMessage msg = new ErrorMessage(
+                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                        DialogDictionary.ERR_FILE_OPEN_FAILED.toString(),
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                msg.askUserFeedback();
+            }
+        }
     }
 
     public void changeServerConnection(final ActionEvent event) {

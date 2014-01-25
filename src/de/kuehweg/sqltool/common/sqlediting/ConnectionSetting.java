@@ -25,160 +25,168 @@
  */
 package de.kuehweg.sqltool.common.sqlediting;
 
+import de.kuehweg.sqltool.database.JDBCType;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
-import de.kuehweg.sqltool.database.JDBCType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Verbindungsdaten um sich mit einer Datenbank (unterschiedlicher Typen)
  * verbinden zu können.
- * 
+ *
  * @author Michael Kühweg
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class ConnectionSetting implements Serializable,
-		Comparable<ConnectionSetting> {
+        Comparable<ConnectionSetting> {
 
-	private static final long serialVersionUID = -3540291839181124105L;
-	private String name;
-	private JDBCType type;
-	private String dbPath;
-	private String dbName;
-	private String user;
-	private String password;
+    private static final long serialVersionUID = -3540291839181124105L;
+    private String name;
+    private JDBCType type;
+    private String dbPath;
+    private String dbName;
+    private String user;
+    private String password;
 
-	protected ConnectionSetting() {
-	}
+    protected ConnectionSetting() {
+    }
 
-	public ConnectionSetting(final String name, final JDBCType type,
-			final String dbPath, final String dbName, final String user,
-			final String password) {
+    public ConnectionSetting(final String name, final JDBCType type,
+            final String dbPath, final String dbName, final String user,
+            final String password) {
 
-		this.name = name;
-		this.type = type;
-		this.dbPath = dbPath;
-		this.dbName = dbName;
-		this.user = user;
-		this.password = password;
-	}
+        this.name = name;
+        this.type = type;
+        this.dbPath = dbPath;
+        this.dbName = dbName;
+        this.user = user;
+        this.password = password;
+    }
 
-	public String getName() {
-		return name;
-	}
+    @XmlElement(name = "name")
+    public String getName() {
+        return name;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public JDBCType getType() {
-		return type;
-	}
+    @XmlElement(name = "jdbc-type", required = true)
+    public JDBCType getType() {
+        return type;
+    }
 
-	public void setType(final JDBCType type) {
-		this.type = type;
-	}
+    public void setType(final JDBCType type) {
+        this.type = type;
+    }
 
-	public String getDbPath() {
-		return dbPath;
-	}
+    @XmlElement(name = "db-path")
+    public String getDbPath() {
+        return dbPath;
+    }
 
-	public void setDbPath(final String dbPath) {
-		this.dbPath = dbPath;
-	}
+    public void setDbPath(final String dbPath) {
+        this.dbPath = dbPath;
+    }
 
-	public String getDbName() {
-		return dbName;
-	}
+    @XmlElement(name = "db-name")
+    public String getDbName() {
+        return dbName;
+    }
 
-	public void setDbName(final String dbName) {
-		this.dbName = dbName;
-	}
+    public void setDbName(final String dbName) {
+        this.dbName = dbName;
+    }
 
-	public String getUser() {
-		return user;
-	}
+    @XmlElement(name = "username")
+    public String getUser() {
+        return user;
+    }
 
-	public void setUser(final String user) {
-		this.user = user;
-	}
+    public void setUser(final String user) {
+        this.user = user;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(final String password) {
-		this.password = password;
-	}
+    public void setPassword(final String password) {
+        this.password = password;
+    }
 
-	public String getUrl() {
-		String url = type.getUrlPrefix() + type.getDbType() + dbPath;
-		if (!url.endsWith("/")) {
-			url += "/";
-		}
-		try {
-			return url + URLEncoder.encode(dbName, "UTF-8");
-		} catch (final UnsupportedEncodingException ex) {
-			return url + "johndoe";
-		}
-	}
+    public String getUrl() {
+        String url = type.getUrlPrefix() + type.getDbType() + dbPath;
+        if (!url.endsWith("/")) {
+            url += "/";
+        }
+        try {
+            return url + URLEncoder.encode(dbName, "UTF-8");
+        } catch (final UnsupportedEncodingException ex) {
+            return url + "johndoe";
+        }
+    }
 
-	public String getUrlWithoutTypePrefix() {
-		String url = type.getDbType() + dbPath;
-		if (!url.endsWith("/")) {
-			url += "/";
-		}
-		try {
-			return url + URLEncoder.encode(dbName, "UTF-8");
-		} catch (final UnsupportedEncodingException ex) {
-			return url + "johndoe";
-		}
-	}
+    public String getUrlWithoutTypePrefix() {
+        String url = type.getDbType() + dbPath;
+        if (!url.endsWith("/")) {
+            url += "/";
+        }
+        try {
+            return url + URLEncoder.encode(dbName, "UTF-8");
+        } catch (final UnsupportedEncodingException ex) {
+            return url + "johndoe";
+        }
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
 
-		if (!(obj instanceof ConnectionSetting)) {
-			return false;
-		}
+        if (!(obj instanceof ConnectionSetting)) {
+            return false;
+        }
 
-		final ConnectionSetting other = (ConnectionSetting) obj;
+        final ConnectionSetting other = (ConnectionSetting) obj;
 
-		if (getName() == null && other.getName() == null) {
-			return true;
-		}
+        if (getName() == null && other.getName() == null) {
+            return true;
+        }
 
-		if (getName() == null) {
-			return false;
-		}
+        if (getName() == null) {
+            return false;
+        }
 
-		return getName().trim().equals(other.getName().trim());
-	}
+        return getName().trim().equals(other.getName().trim());
+    }
 
-	@Override
-	public int hashCode() {
-		return getName() == null ? 0 : getName().trim().hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return getName() == null ? 0 : getName().trim().hashCode();
+    }
 
-	@Override
-	public int compareTo(final ConnectionSetting other) {
-		if (getName() != null) {
-			if (other.getName() != null) {
-				return getName().compareTo(other.getName());
-			} else {
-				return 1;
-			}
-		} else {
-			if (other.getName() != null) {
-				return -1;
-			} else {
-				return 0;
-			}
-		}
-	}
+    @Override
+    public int compareTo(final ConnectionSetting other) {
+        if (getName() != null) {
+            if (other.getName() != null) {
+                return getName().compareTo(other.getName());
+            } else {
+                return 1;
+            }
+        } else {
+            if (other.getName() != null) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 }

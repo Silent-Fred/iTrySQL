@@ -27,7 +27,7 @@ package de.kuehweg.sqltool.dialog;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSettings;
+import de.kuehweg.sqltool.common.sqlediting.ManagedConnectionSettings;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -104,7 +104,7 @@ public class ConnectionDialogController implements Initializable {
         assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
         assert user != null : "fx:id=\"user\" was not injected: check your FXML file 'ConnectionDialog.fxml'.";
 
-        final ConnectionSettings settings = new ConnectionSettings();
+        final ManagedConnectionSettings settings = new ManagedConnectionSettings();
         connectionSettings.setItems(FXCollections.observableArrayList(settings
                 .getConnectionSettings()));
     }

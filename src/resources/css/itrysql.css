@@ -8,11 +8,17 @@
     -dark-warm-gray: rgb(207, 202, 196);
     -warm-gray: rgb(227, 222, 216);
     -mid-gray: rgb(216, 222, 227);
-    -fx-base: -mid-gray;
     -fx-focus-color: #067db7;
     -fx-accent: #067db7;
-    -scroll-bar-background: #d0d0d0;
+    -fx-base: #e2e6ec;
+    -fx-color: -fx-base;
+    -fx-background-color: -fx-base;
+    -scroll-bar-background: -fx-accent;
     display: block;
+}
+
+.itry-dialog {
+    -fx-background-color: white;
 }
 
 .itry-statement-edit {
@@ -21,11 +27,6 @@
 
 .itry-db-output {
     -fx-font-family: 'Bitstream Vera Sans Mono';
-}
-
-.itry-dialog {
-    -fx-background-color: 
-        linear-gradient(to bottom, derive(-warm-gray,0%), derive(-warm-gray,100%));
 }
 
 .itry-tool-bar {
@@ -122,7 +123,7 @@
 }
 
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: #f0f0f0;
+    -fx-background-color: -fx-color;
 }
 
 .menu-bar {
@@ -182,4 +183,9 @@
 
 .scroll-bar:disabled {
     -fx-opacity: 0.4;
+}
+
+.accordion {
+    -fx-background-color: 
+        linear-gradient(to bottom, derive(-fx-color,0%), derive(-fx-color,100%));
 }

@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="402.0" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.CommonDialogController">
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="402.0" styleClass="itry-dialog" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.CommonDialogController">
   <bottom>
     <HBox fx:id="buttonBox" alignment="CENTER_RIGHT" minHeight="16.0" prefHeight="56.0" prefWidth="402.0" spacing="20.0" style="-fx-background-color: #dfdfdf;">
       <padding>
