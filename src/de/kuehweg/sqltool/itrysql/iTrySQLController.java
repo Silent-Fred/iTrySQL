@@ -207,6 +207,10 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     @FXML
     private Button toolbarTabDbOutputExport;
     @FXML
+    private Button toolbarTabDbOutputZoomIn;
+    @FXML
+    private Button toolbarTabDbOutputZoomOut;
+    @FXML
     private Button toolbarTabTableViewExport;
     @FXML
     private Button toolbarTutorialData;
@@ -300,6 +304,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert toolbarTabTableViewExport != null : "fx:id=\"toolbarTabTableViewExport\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarTutorialData != null : "fx:id=\"toolbarTutorialData\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomIn != null : "fx:id=\"toolbarZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarTabDbOutputZoomOut != null : "fx:id=\"toolbarTabDbOutputZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert toolbarTabDbOutputZoomIn != null : "fx:id=\"toolbarTabDbOutputZoomIn\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert toolbarZoomOut != null : "fx:id=\"toolbarZoomOut\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert syntaxDefinitionView != null : "fx:id=\"syntaxDefinitionView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert exportConnections != null : "fx:id=\"exportConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -600,10 +606,12 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         initializeServerComponentController();
         prepareHistory();
         statementInput.setStyle("-fx-font-size: "
-                + UserPreferencesManager.getSharedInstance().getFontSize()
+                + UserPreferencesManager.getSharedInstance().
+                getFontSizeStatementInput()
                 + ";");
         dbOutput.setStyle("-fx-font-size: "
-                + UserPreferencesManager.getSharedInstance().getFontSize()
+                + UserPreferencesManager.getSharedInstance().
+                getFontSizeDbOutput()
                 + ";");
 
         limitMaxRows.setSelected(UserPreferencesManager.getSharedInstance()
@@ -663,6 +671,10 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 DialogDictionary.TOOLTIP_EXPORT_OUTPUT.toString()));
         Tooltip.install(toolbarTabDbOutputClear, new Tooltip(
                 DialogDictionary.TOOLTIP_CLEAR_OUTPUT.toString()));
+        Tooltip.install(toolbarTabDbOutputZoomOut, new Tooltip(
+                DialogDictionary.TOOLTIP_DECREASE_FONTSIZE.toString()));
+        Tooltip.install(toolbarTabDbOutputZoomIn, new Tooltip(
+                DialogDictionary.TOOLTIP_INCREASE_FONTSIZE.toString()));
     }
 
     private void setupMenu() {

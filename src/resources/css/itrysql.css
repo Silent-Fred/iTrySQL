@@ -113,6 +113,20 @@
     -fx-graphic: url('../images/clear_active.png');
 }
 
+#toolbarTabDbOutputZoomIn {
+    -fx-graphic: url('../images/zoomin.png');
+}
+#toolbarTabDbOutputZoomIn:armed, #toolbarTabDbOutputZoomIn:hover, #toolbarTabDbOutputZoomIn:pressed {
+    -fx-graphic: url('../images/zoomin_active.png');
+}
+
+#toolbarTabDbOutputZoomOut {
+    -fx-graphic: url('../images/zoomout.png');
+}
+#toolbarTabDbOutputZoomOut:armed, #toolbarTabDbOutputZoomOut:hover, #toolbarTabDbOutputZoomOut:pressed {
+    -fx-graphic: url('../images/zoomout_active.png');
+}
+
 #permanentMessage {
     -fx-text-fill: black;
     -fx-padding: 4px 20px 4px 20px;

@@ -262,6 +262,18 @@
                                             <URL value="@../css/itrysql.css" />
                                           </stylesheets>
                                         </Button>
+                                        <Separator prefHeight="20.0" prefWidth="32.0" />
+                                        <Button fx:id="toolbarTabDbOutputZoomOut" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
+                                          <stylesheets>
+                                            <URL value="@../css/itrysql.css" />
+                                          </stylesheets>
+                                        </Button>
+                                        <Button fx:id="toolbarTabDbOutputZoomIn" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
+                                          <stylesheets>
+                                            <URL value="@../css/itrysql.css" />
+                                          </stylesheets>
+                                        </Button>
+                                        <Separator prefHeight="20.0" prefWidth="32.0" />
                                         <Button fx:id="toolbarTabDbOutputClear" mnemonicParsing="false" onAction="#toolbarTabDbOutputClearAction" styleClass="itry-tool-bar-button">
                                           <stylesheets>
                                             <URL value="@../css/itrysql.css" />
