@@ -8,12 +8,12 @@
     -dark-warm-gray: rgb(207, 202, 196);
     -warm-gray: rgb(227, 222, 216);
     -mid-gray: rgb(216, 222, 227);
-    -fx-focus-color: #067db7;
     -fx-accent: #067db7;
+    -fx-focus-color: derive(-fx-accent, 25%);
     -fx-base: #e2e6ec;
     -fx-color: -fx-base;
     -fx-background-color: -fx-base;
-    -scroll-bar-background: -fx-accent;
+    -scroll-bar-background: derive(-fx-accent, 25%);
     display: block;
 }
 
