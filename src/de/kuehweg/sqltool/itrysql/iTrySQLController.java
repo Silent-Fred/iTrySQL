@@ -617,7 +617,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         limitMaxRows.setSelected(UserPreferencesManager.getSharedInstance()
                 .isLimitMaxRows());
 
-        setupToolbar();
+        setupTooltips();
         setupMenu();
 
         controlAutoCommitCheckBoxState();
@@ -654,7 +654,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         serverComponentController.refreshServerConnectionSettings();
     }
 
-    private void setupToolbar() {
+    private void setupTooltips() {
         Tooltip.install(toolbarExecute, new Tooltip(
                 DialogDictionary.TOOLTIP_EXECUTE.toString()));
         Tooltip.install(toolbarCommit, new Tooltip(
@@ -667,6 +667,10 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 DialogDictionary.TOOLTIP_INCREASE_FONTSIZE.toString()));
         Tooltip.install(toolbarTutorialData, new Tooltip(
                 DialogDictionary.TOOLTIP_TUTORIAL_DATA.toString()));
+
+        Tooltip.install(toolbarTabTableViewExport, new Tooltip(
+                DialogDictionary.TOOLTIP_EXPORT_RESULT.toString()));
+
         Tooltip.install(toolbarTabDbOutputExport, new Tooltip(
                 DialogDictionary.TOOLTIP_EXPORT_OUTPUT.toString()));
         Tooltip.install(toolbarTabDbOutputClear, new Tooltip(
