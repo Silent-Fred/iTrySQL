@@ -9,6 +9,13 @@
 body {font-family: Helvetica, sans-serif; background-color: white;}
 code {font-size: larger;}
 kbd {font-weight: bold; font-size: larger;}
+h4 {text-align: center; border: none; border-bottom: 1px solid #067db7;}
+.stretch {float: left; padding: 2em; border: none;}
+.abstract {float: left;}
+.abstract ul {list-style-type: circle; line-height: 125%;}
+.abstract a {color: #067db7; text-decoration: none;}
+.abstract a:hover {background-color: #f8f8f8;}
+.toc {float: left;}
 .toc ul {list-style-type: circle; line-height: 125%;}
 .toc a {color: #067db7; text-decoration: none;}
 .toc a:hover {background-color: #f8f8f8;}
