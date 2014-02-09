@@ -85,9 +85,10 @@ public class ScriptAction {
 				.getWindow());
 		if (file != null) {
 			try {
-				FileUtil.writeFile(file.toURI().toURL(),
-						statementInput.getText());
-			} catch (final IOException ex) {
+                FileUtil.writeFile(FileUtil.enforceExtension(
+                        file.toURI().toURL(), "sql"),
+                        statementInput.getText());
+            } catch (final IOException ex) {
 				final ErrorMessage msg = new ErrorMessage(
 						DialogDictionary.MESSAGEBOX_ERROR.toString(),
 						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
