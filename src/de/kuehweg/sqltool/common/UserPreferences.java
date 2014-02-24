@@ -41,10 +41,14 @@ public class UserPreferences {
     private static final String FONT_SIZE_STATEMENT_INPUT =
             "fontSize.statementInput";
     private static final String FONT_SIZE_DB_OUTPUT = "fontSize.dbOutput";
+    private static final String BEEP_AUDIO_CLIP = "beepAudioClip";
+    private static final String BEEP_VOLUME = "beepVolume";
     // Preferences mit Defaultwerten
     private boolean limitMaxRows = true;
     private int fontSizeStatementInput = 12;
     private int fontSizeDbOutput = 12;
+    private double beepVolume = 0.0;
+    private ProvidedAudioClip beepAudioClip = ProvidedAudioClip.BEEP;
     private final Preferences preferences;
     private boolean initialized;
 
@@ -59,6 +63,14 @@ public class UserPreferences {
             fontSizeStatementInput = preferences.getInt(
                     FONT_SIZE_STATEMENT_INPUT, 12);
             fontSizeDbOutput = preferences.getInt(FONT_SIZE_DB_OUTPUT, 12);
+            beepVolume = preferences.getDouble(BEEP_VOLUME, 0.5);
+            try {
+                String beepAudioClipName = preferences.
+                        get(BEEP_AUDIO_CLIP, "");
+                beepAudioClip = ProvidedAudioClip.valueOf(beepAudioClipName);
+            } catch (IllegalArgumentException ex) {
+                beepAudioClip = ProvidedAudioClip.BEEP;
+            }
             initialized = true;
         }
     }
@@ -138,6 +150,60 @@ public class UserPreferences {
         if (this.fontSizeDbOutput != fontSize) {
             this.fontSizeDbOutput = fontSize;
             preferences.putInt(FONT_SIZE_DB_OUTPUT, fontSize);
+            try {
+                preferences.flush();
+            } catch (final BackingStoreException e) {
+            }
+        }
+    }
+
+    /**
+     * Lautstärke des Benachrichtigungstons wenn Aktionen abgeschlossen sind.
+     *
+     * @return
+     */
+    public double getBeepVolume() {
+        initialize();
+        return beepVolume;
+    }
+
+    /**
+     * Lautstärke des Benachrichtgungstons setzen.
+     *
+     * @param beepVolume
+     */
+    public void setBeepVolume(double beepVolume) {
+        initialize();
+        if (this.beepVolume != beepVolume) {
+            this.beepVolume = beepVolume;
+            preferences.putDouble(BEEP_VOLUME, beepVolume);
+            try {
+                preferences.flush();
+            } catch (final BackingStoreException e) {
+            }
+        }
+    }
+
+    /**
+     * Benachrichtigungston wenn Aktionen abgeschlossen sind.
+     *
+     * @return
+     */
+    public ProvidedAudioClip getBeepAudioClip() {
+        initialize();
+        return beepAudioClip;
+    }
+
+    /**
+     * Benachrichtgungston setzen.
+     *
+     * @param beepAudioClip
+     */
+    public void setBeepAudioClip(ProvidedAudioClip beepAudioClip) {
+        initialize();
+        if (this.beepAudioClip != beepAudioClip) {
+            this.beepAudioClip = beepAudioClip;
+            preferences.put(BEEP_AUDIO_CLIP, beepAudioClip.name());
             try {
                 preferences.flush();
             } catch (final BackingStoreException e) {
