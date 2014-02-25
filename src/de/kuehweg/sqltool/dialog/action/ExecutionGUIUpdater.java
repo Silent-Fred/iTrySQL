@@ -75,14 +75,6 @@ public class ExecutionGUIUpdater implements Runnable {
     @Override
     public void run() {
         updateScene();
-        if (!intermediateUpdate) {
-            ProvidedAudioClip audioClip = UserPreferencesManager.
-                    getSharedInstance().getBeepAudioClip();
-            if (audioClip != null) {
-                audioClip.play(UserPreferencesManager.getSharedInstance().
-                        getBeepVolume());
-            }
-        }
     }
 
     public void setExecutionTimeInMilliseconds(
@@ -150,6 +142,7 @@ public class ExecutionGUIUpdater implements Runnable {
                 }
                 buildTableViewFromResultFormatter();
             }
+            finalBeep();
         } else {
             final ErrorMessage msg = new ErrorMessage(
                     DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -168,5 +161,19 @@ public class ExecutionGUIUpdater implements Runnable {
         dynamicTableView.buildTableView();
         resultTableContainer.getChildren().add(dynamicTableView);
         HBox.setHgrow(dynamicTableView, Priority.ALWAYS);
+    }
+
+    private void finalBeep() {
+        if (!intermediateUpdate) {
+            ProvidedAudioClip audioClip = UserPreferencesManager.
+                    getSharedInstance().getBeepAudioClip();
+            if (audioClip != null) {
+                double volume = UserPreferencesManager.getSharedInstance().
+                        getBeepVolume();
+                if (volume > 0.0) {
+                    audioClip.play(volume);
+                }
+            }
+        }
     }
 }
