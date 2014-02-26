@@ -63,7 +63,7 @@ public class UserPreferences {
             fontSizeStatementInput = preferences.getInt(
                     FONT_SIZE_STATEMENT_INPUT, 12);
             fontSizeDbOutput = preferences.getInt(FONT_SIZE_DB_OUTPUT, 12);
-            beepVolume = preferences.getDouble(BEEP_VOLUME, 0.5);
+            beepVolume = preferences.getDouble(BEEP_VOLUME, 0.0);
             try {
                 String beepAudioClipName = preferences.
                         get(BEEP_AUDIO_CLIP, "");
