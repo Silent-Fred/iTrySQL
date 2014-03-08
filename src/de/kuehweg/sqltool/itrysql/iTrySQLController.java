@@ -109,7 +109,7 @@ import javax.xml.bind.JAXBException;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         EventHandler<WindowEvent> {
-    
+
     @FXML
     private TitledPane accordionPreferences;
     @FXML
@@ -248,7 +248,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     private ConnectionComponentController connectionComponentController;
     private ServerComponentController serverComponentController;
     private static int countWindows = 1;
-    
+
     @Override
     public void initialize(final URL fxmlFileLocation,
             final ResourceBundle resources) {
@@ -318,9 +318,9 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         assert syntaxDefinitionView != null : "fx:id=\"syntaxDefinitionView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert exportConnections != null : "fx:id=\"exportConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert importConnections != null : "fx:id=\"importConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        
+
         fixWebViewWithHSQLDBBug();
-        
+
         initializeContinued();
     }
 
@@ -342,14 +342,14 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         });
     }
-    
+
     public void about(final ActionEvent event) {
         // FIXME
         WebViewWithHSQLDBBugfix.fix();
         final License aboutBox = new License();
         aboutBox.showAndWait();
     }
-    
+
     public void autoCommit(final ActionEvent event) {
         // Auto-Commit ist keine echte Benutzereinstellung sondern wird pro
         // Verbindung gesteuert, z.T. auch durch JDBC-Vorgaben
@@ -372,7 +372,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         }
     }
-    
+
     public void newSession(final ActionEvent event) {
         final String title = DialogDictionary.APPLICATION.toString() + "("
                 + new RomanNumber(countWindows++).toString().toLowerCase()
@@ -381,19 +381,19 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 .getScene().getWindow(), title);
         iTrySQLStage.show();
     }
-    
+
     public void clipboardCopy(final ActionEvent event) {
         // currently no action
     }
-    
+
     public void clipboardCut(final ActionEvent event) {
         // currently no action
     }
-    
+
     public void clipboardPaste(final ActionEvent event) {
         // currently no action
     }
-    
+
     public void connect(final ActionEvent event) {
         final ConnectionDialog connectionDialog = new ConnectionDialog();
         connectionDialog.showAndWait();
@@ -415,13 +415,13 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             WebViewWithHSQLDBBugfix.fix();
         }
     }
-    
+
     public void disconnect(final ActionEvent event) {
         getConnectionHolder().disconnect();
         refreshTree(null);
         permanentMessage.visibleProperty().set(false);
     }
-    
+
     public void execute(final ActionEvent event) {
         // Markierter Text?
         String sql = statementInput.getSelectedText();
@@ -433,48 +433,48 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         }
         createExecuteAction().handleExecuteAction(sql);
     }
-    
+
     public void executeScript(final ActionEvent event) {
         createExecuteAction().handleExecuteAction(statementInput.getText());
     }
-    
+
     public void commit(final ActionEvent event) {
         createExecuteAction().handleExecuteAction("COMMIT");
     }
-    
+
     public void rollback(final ActionEvent event) {
         createExecuteAction().handleExecuteAction("ROLLBACK");
     }
-    
+
     public void fontAction(final ActionEvent event) {
         FontAction.handleFontAction(event);
     }
-    
+
     public void tutorialAction(final ActionEvent event) {
         new TutorialAction().createTutorial(createExecuteAction());
     }
-    
+
     public void fileOpenScriptAction(final ActionEvent event) {
         new ScriptAction(statementInput).loadScript();
     }
-    
+
     public void fileSaveScriptAction(final ActionEvent event) {
         new ScriptAction(statementInput).saveScript();
     }
-    
+
     public void limitMaxRows(final ActionEvent event) {
         UserPreferencesManager.getSharedInstance().setLimitMaxRows(
                 limitMaxRows.isSelected());
     }
-    
+
     public void quit(final ActionEvent event) {
         Platform.exit();
     }
-    
+
     public void toolbarTabDbOutputClearAction(final ActionEvent event) {
         dbOutput.clear();
     }
-    
+
     private void export(final DialogDictionary fileChooserTitle,
             final Window attachChooser, final String filenameExtension,
             final String exportContent) {
@@ -492,16 +492,16 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                         DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
                         DialogDictionary.COMMON_BUTTON_OK.toString());
                 msg.askUserFeedback();
-                
+
             }
         }
     }
-    
+
     public void toolbarTabDbOutputExportAction(final ActionEvent event) {
         export(DialogDictionary.LABEL_SAVE_OUTPUT, ((Node) event.getSource())
                 .getScene().getWindow(), "txt", dbOutput.getText());
     }
-    
+
     public void toolbarTabTableViewExportAction(final ActionEvent event) {
         if (resultTableContainer.getChildren() != null) {
             for (final Node node : resultTableContainer.getChildren()) {
@@ -513,7 +513,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         }
     }
-    
+
     public void refreshTree(final ActionEvent event) {
         final Task<Void> refreshTask = new SchemaTreeBuilderTask(
                 getConnectionHolder().getConnection(), schemaTreeView);
@@ -521,41 +521,41 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         th.setDaemon(true);
         th.start();
     }
-    
+
     public void cancelConnectionSettings(final ActionEvent event) {
         connectionComponentController.cancelEdit();
     }
-    
+
     public void changeConnection(final ActionEvent event) {
         connectionComponentController.changeConnection();
     }
-    
+
     public void changeConnectionType(final ActionEvent event) {
         connectionComponentController.changeConnectionType();
     }
-    
+
     public void chooseDbDirectory(final ActionEvent event) {
         connectionComponentController.chooseDbDirectory();
     }
-    
+
     public void createConnection(final ActionEvent event) {
         connectionComponentController.createConnection();
     }
-    
+
     public void editConnection(final ActionEvent event) {
         connectionComponentController.editConnection();
     }
-    
+
     public void removeConnection(final ActionEvent event) {
         connectionComponentController.removeConnection();
         serverComponentController.refreshServerConnectionSettings();
     }
-    
+
     public void saveConnectionSettings(final ActionEvent event) {
         connectionComponentController.saveConnectionSettings();
         serverComponentController.refreshServerConnectionSettings();
     }
-    
+
     public void exportConnections(ActionEvent event) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(DialogDictionary.LABEL_EXPORT_CONNECTIONS.
@@ -574,7 +574,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         }
     }
-    
+
     public void importConnections(ActionEvent event) {
         final FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(DialogDictionary.LABEL_IMPORT_CONNECTIONS.
@@ -595,15 +595,15 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         }
     }
-    
+
     public void changeServerConnection(final ActionEvent event) {
         serverComponentController.changeServerConnection();
     }
-    
+
     public void startServer(final ActionEvent event) {
         serverComponentController.startServer();
     }
-    
+
     public void shutdownServer(final ActionEvent event) {
         serverComponentController.shutdownServer();
     }
@@ -614,10 +614,10 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         initializeServerComponentController();
         prepareHistory();
         initializeUserPreferences();
-        
+
         setupTooltips();
         setupMenu();
-        
+
         controlAutoCommitCheckBoxState();
         permanentMessage.visibleProperty().set(false);
         refreshTree(null);
@@ -627,7 +627,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 this.getClass().getResource("/resources/syntax/index.html")
                 .toExternalForm());
     }
-    
+
     private void initializeUserPreferences() {
         statementInput.setStyle("-fx-font-size: "
                 + UserPreferencesManager.getSharedInstance().
@@ -637,7 +637,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 + UserPreferencesManager.getSharedInstance().
                 getFontSizeDbOutput()
                 + ";");
-        
+
         limitMaxRows.setSelected(UserPreferencesManager.getSharedInstance()
                 .isLimitMaxRows());
         beepSelection.getItems().clear();
@@ -670,7 +670,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         });
     }
-    
+
     private void initializeConnectionComponentController() {
         final ConnectionComponentController.Builder builder =
                 new ConnectionComponentController.Builder(
@@ -686,7 +686,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         builder.removeButton(removeConnection);
         connectionComponentController = builder.build();
     }
-    
+
     private void initializeServerComponentController() {
         serverComponentController = new ServerComponentController.Builder()
                 .serverConnectionSelection(serverConnectionSelection)
@@ -694,7 +694,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 .serverAlias(serverAlias).build();
         serverComponentController.refreshServerConnectionSettings();
     }
-    
+
     private void setupTooltips() {
         Tooltip.install(toolbarExecute, new Tooltip(
                 DialogDictionary.TOOLTIP_EXECUTE.toString()));
@@ -708,10 +708,10 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 DialogDictionary.TOOLTIP_INCREASE_FONTSIZE.toString()));
         Tooltip.install(toolbarTutorialData, new Tooltip(
                 DialogDictionary.TOOLTIP_TUTORIAL_DATA.toString()));
-        
+
         Tooltip.install(toolbarTabTableViewExport, new Tooltip(
                 DialogDictionary.TOOLTIP_EXPORT_RESULT.toString()));
-        
+
         Tooltip.install(toolbarTabDbOutputExport, new Tooltip(
                 DialogDictionary.TOOLTIP_EXPORT_OUTPUT.toString()));
         Tooltip.install(toolbarTabDbOutputClear, new Tooltip(
@@ -721,7 +721,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         Tooltip.install(toolbarTabDbOutputZoomIn, new Tooltip(
                 DialogDictionary.TOOLTIP_INCREASE_FONTSIZE.toString()));
     }
-    
+
     private void setupMenu() {
         menuItemExecute.setAccelerator(new KeyCodeCombination(KeyCode.ENTER,
                 KeyCombination.SHORTCUT_DOWN));
@@ -734,11 +734,11 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 KeyCombination.SHORTCUT_DOWN));
         menuItemNewSession.setAccelerator(new KeyCodeCombination(KeyCode.N,
                 KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
-        
+
         menuItemDisconnect.disableProperty().bind(
                 Bindings.not(getConnectionHolder().connectedProperty()));
     }
-    
+
     private void controlAutoCommitCheckBoxState() {
         if (getConnectionHolder().getConnection() != null) {
             try {
@@ -749,7 +749,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         }
     }
-    
+
     private void prepareHistory() {
         sqlHistoryItems = FXCollections.observableArrayList();
         sqlHistoryColumnTimestamp
@@ -773,7 +773,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
             }
         });
     }
-    
+
     private ExecuteAction createExecuteAction() {
         final ExecutionInputEnvironment input =
                 new ExecutionInputEnvironment.Builder(
@@ -786,7 +786,11 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 .build();
         final ExecutionResultEnvironment result =
                 new ExecutionResultEnvironment.Builder()
-                .dbOutput(dbOutput).historyKeeper(this)
+                .tabPaneContainingResults(tabPaneProtocols)
+                .tabResult(tabResult)
+                .tabDbOutput(tabDbOutput)
+                .dbOutput(dbOutput)
+                .historyKeeper(this)
                 .resultTableContainer(resultTableContainer).build();
         return new ExecuteAction(input, progress, result);
     }
@@ -796,14 +800,14 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     public void handle(final WindowEvent event) {
         getConnectionHolder().disconnect();
     }
-    
+
     @Override
     public void addExecutedSQLToHistory(final String sql) {
         if (sql != null && sql.trim().length() > 0) {
             sqlHistoryItems.add(0, new SQLHistory(sql));
         }
     }
-    
+
     public ConnectionHolder getConnectionHolder() {
         if (connectionHolder == null) {
             connectionHolder = new ConnectionHolder();

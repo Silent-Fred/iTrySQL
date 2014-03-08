@@ -142,6 +142,7 @@ public class ExecutionGUIUpdater implements Runnable {
                 }
                 buildTableViewFromResultFormatter();
             }
+            result.focusResult();
             finalBeep();
         } else {
             final ErrorMessage msg = new ErrorMessage(

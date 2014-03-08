@@ -25,9 +25,11 @@
  */
 package de.kuehweg.sqltool.dialog.environment;
 
+import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 
 /**
  * Alle "Beteiligten", um im Dialog das Ergebnis einer SQL-Anweisung zu
@@ -37,56 +39,93 @@ import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
  * <li>SQL Verlauf</li>
  * <li>Container (als HBox) in der die Ergebnistabelle aufgebaut wird</li>
  * </ul>
- * 
+ *
  * @author Michael Kühweg
  */
 public class ExecutionResultEnvironment {
-
-	private final TextArea dbOutput;
-	private final SQLHistoryKeeper historyKeeper;
-	private final HBox resultTableContainer;
-
-	public static class Builder {
-
-		private TextArea dbOutput;
-		private SQLHistoryKeeper historyKeeper;
-		private HBox resultTableContainer;
-
-		public Builder dbOutput(final TextArea dbOutput) {
-			this.dbOutput = dbOutput;
-			return this;
-		}
-
-		public Builder historyKeeper(final SQLHistoryKeeper historyKeeper) {
-			this.historyKeeper = historyKeeper;
-			return this;
-		}
-
-		public Builder resultTableContainer(final HBox resultTableContainer) {
-			this.resultTableContainer = resultTableContainer;
-			return this;
-		}
-
-		public ExecutionResultEnvironment build() {
-			return new ExecutionResultEnvironment(this);
-		}
-	}
-
-	private ExecutionResultEnvironment(final Builder builder) {
-		dbOutput = builder.dbOutput;
-		historyKeeper = builder.historyKeeper;
-		resultTableContainer = builder.resultTableContainer;
-	}
-
-	public TextArea getDbOutput() {
-		return dbOutput;
-	}
-
-	public SQLHistoryKeeper getHistoryKeeper() {
-		return historyKeeper;
-	}
-
-	public HBox getResultTableContainer() {
-		return resultTableContainer;
-	}
+    
+    private final TabPane tabPaneContainingResults;
+    private final Tab tabResult;
+    private final Tab tabDbOutput;
+    private final TextArea dbOutput;
+    private final SQLHistoryKeeper historyKeeper;
+    private final HBox resultTableContainer;
+    
+    public static class Builder {
+        
+        private TabPane tabPaneContainingResults;
+        private Tab tabResult;
+        private Tab tabDbOutput;
+        private TextArea dbOutput;
+        private SQLHistoryKeeper historyKeeper;
+        private HBox resultTableContainer;
+        
+        public Builder tabPaneContainingResults(
+                final TabPane tabPaneContainingResults) {
+            this.tabPaneContainingResults = tabPaneContainingResults;
+            return this;
+        }
+        
+        public Builder tabResult(final Tab tabResult) {
+            this.tabResult = tabResult;
+            return this;
+        }
+        
+        public Builder tabDbOutput(final Tab tabDbOutput) {
+            this.tabDbOutput = tabDbOutput;
+            return this;
+        }
+        
+        public Builder dbOutput(final TextArea dbOutput) {
+            this.dbOutput = dbOutput;
+            return this;
+        }
+        
+        public Builder historyKeeper(final SQLHistoryKeeper historyKeeper) {
+            this.historyKeeper = historyKeeper;
+            return this;
+        }
+        
+        public Builder resultTableContainer(final HBox resultTableContainer) {
+            this.resultTableContainer = resultTableContainer;
+            return this;
+        }
+        
+        public ExecutionResultEnvironment build() {
+            return new ExecutionResultEnvironment(this);
+        }
+    }
+    
+    private ExecutionResultEnvironment(final Builder builder) {
+        tabPaneContainingResults = builder.tabPaneContainingResults;
+        tabResult = builder.tabResult;
+        tabDbOutput = builder.tabDbOutput;
+        dbOutput = builder.dbOutput;
+        historyKeeper = builder.historyKeeper;
+        resultTableContainer = builder.resultTableContainer;
+    }
+    
+    public void focusResult() {
+        if (tabPaneContainingResults != null) {
+            final Tab currentlySelectedTab = tabPaneContainingResults.
+                    selectionModelProperty().getValue().getSelectedItem();
+            if (currentlySelectedTab == null || !currentlySelectedTab.equals(
+                    tabResult) && !currentlySelectedTab.equals(tabDbOutput)) {
+                tabPaneContainingResults.selectionModelProperty().getValue().
+                        select(tabResult);
+            }
+        }
+    }
+    
+    public TextArea getDbOutput() {
+        return dbOutput;
+    }
+    
+    public SQLHistoryKeeper getHistoryKeeper() {
+        return historyKeeper;
+    }
+    
+    public HBox getResultTableContainer() {
+        return resultTableContainer;
+    }
 }
