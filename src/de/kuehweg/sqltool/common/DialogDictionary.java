@@ -84,6 +84,7 @@ public enum DialogDictionary {
     PATTERN_EXECUTION_TIMESTAMP("pattern_executionTimestamp"),
     PATTERN_EXECUTION_TIMESTAMP_WITH_USER("pattern_executionTimestampWithUser"),
     PATTERN_ROWCOUNT("pattern_rowcount"),
+    PATTERN_UPDATECOUNT("pattern_updatecount"),
     PATTERN_MAX_ROWS("pattern_maxRows"),
     PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),
     PATTERN_MESSAGE_IN_MEMORY_DATABASE("pattern_messageInMemoryDatabase");

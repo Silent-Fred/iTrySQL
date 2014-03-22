@@ -25,9 +25,12 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.database.HtmlResultFormatter;
+import de.kuehweg.sqltool.database.ResultFormatter;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.List;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -36,64 +39,69 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
-import de.kuehweg.sqltool.database.HtmlResultFormatter;
-import de.kuehweg.sqltool.database.ResultFormatter;
 
 /**
  * Baustein für Ergebnistabelle.
- * 
+ *
  * @author Michael Kühweg
  */
 public class QueryResultTableView extends TableView<ObservableList<String>> {
 
-	private final ResultFormatter resultFormatter;
+    private final ResultFormatter resultFormatter;
 
-	public QueryResultTableView(final ResultFormatter resultFormatter) {
-		super();
-		this.resultFormatter = resultFormatter;
-	}
+    public QueryResultTableView(final ResultFormatter resultFormatter) {
+        super();
+        this.resultFormatter = resultFormatter;
+    }
 
-	public void buildTableView() {
-		int i = 0;
-		for (final String head : resultFormatter.getHeader()) {
-			final TableColumn<ObservableList<String>, String> col = new TableColumn<>(
-					head);
-			col.setMinWidth(100);
-			final int accessIndex = i++;
-			col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
-				@Override
-				public ObservableValue<String> call(
-						final CellDataFeatures<ObservableList<String>, String> param) {
-					return new SimpleStringProperty(param.getValue()
-							.get(accessIndex).toString());
-				}
-			});
-			getColumns().add(col);
-		}
-		final ObservableList<ObservableList<String>> content = FXCollections
-				.observableArrayList();
-		if (!resultFormatter.isHeadOnly()) {
-			for (final List<String> rowFromFormatter : resultFormatter
-					.getRows()) {
-				final ObservableList<String> row = FXCollections
-						.observableArrayList();
-				for (final String column : rowFromFormatter) {
-					row.add(column);
-				}
-				content.add(row);
-			}
-		}
-		setItems(content);
-	}
+    public void buildTableView() {
+        int i = 0;
+        for (final String head : resultFormatter.getHeader()) {
+            final TableColumn<ObservableList<String>, String> col =
+                    new TableColumn<>(
+                    head);
+            col.setMinWidth(100);
+            final int accessIndex = i++;
+            col.setCellValueFactory(
+                    new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
+                @Override
+                public ObservableValue<String> call(
+                        final CellDataFeatures<ObservableList<String>, String> param) {
+                    return new SimpleStringProperty(param.getValue()
+                            .get(accessIndex).toString());
+                }
+            });
+            getColumns().add(col);
+        }
+        final ObservableList<ObservableList<String>> content = FXCollections
+                .observableArrayList();
+        if (resultFormatter.isHeadOnly()) {
+            content.add(FXCollections
+                    .observableArrayList(MessageFormat.format(
+                    DialogDictionary.PATTERN_UPDATECOUNT.toString(),
+                    resultFormatter.getUpdateCount())));
+        } else {
+            for (final List<String> rowFromFormatter : resultFormatter
+                    .getRows()) {
+                final ObservableList<String> row = FXCollections
+                        .observableArrayList();
+                for (final String column : rowFromFormatter) {
+                    row.add(column);
+                }
+                content.add(row);
+            }
+        }
+        setItems(content);
+    }
 
-	public String toHtml() {
-		if (resultFormatter != null) {
-			try {
-				return new HtmlResultFormatter(resultFormatter).formatAsHtml();
-			} catch (final IOException ex) {
-				return ex.toString();
-			}
-		}
-		return "";
-	}
+    public String toHtml() {
+        if (resultFormatter != null) {
+            try {
+                return new HtmlResultFormatter(resultFormatter).formatAsHtml();
+            } catch (final IOException ex) {
+                return ex.toString();
+            }
+        }
+        return "";
+    }
 }
