@@ -65,6 +65,8 @@ public class SchemaTreeBuilder implements Runnable {
 
     private void refreshSchemaTree(final DatabaseDescription db,
             final TreeView<String> treeToUpdate) {
+        final SchemaTreeExpandedStateSaver stateSaver = new SchemaTreeExpandedStateSaver();
+        stateSaver.readExpandedStateFrom(treeToUpdate);
         final TreeItem<String> root = new TreeItem<String>();
         treeToUpdate.setRoot(root);
         if (db != null) {
@@ -78,6 +80,7 @@ public class SchemaTreeBuilder implements Runnable {
                 root.getChildren().add(catalogItem);
             }
         }
+        stateSaver.expandFromSavedState(treeToUpdate);
     }
 
     private List<TreeItem<String>> getSchemas(final CatalogDescription catalog) {
