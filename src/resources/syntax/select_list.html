@@ -36,8 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
             select_list ::= <br />
             <code> { <br/>
                 <kbd>*</kbd><br/>
-                | { [ </code>schema<code><kbd>.</kbd> ] { </code>table<code> | </code>view<code> } <kbd>.*</kbd> | </code>expr
-            <code> } [ <kbd>,</kbd> { [ </code>schema<code><kbd>.</kbd> ] { </code>table<code> | </code>view<code> } <kbd>.*</kbd> | </code>expr<code> } ]...<br />
+                | { [ </code>schema<code><kbd>.</kbd> ] { </code>table<code> | </code>view<code> } <kbd>.*</kbd> | </code>expr <code> } [ [ <kbd>AS</kbd> ] </code>c_alias<code> ]<br/> 
+   [ <kbd>,</kbd> { [ </code>schema<code><kbd>.</kbd> ] { </code>table<code> | </code>view<code> } <kbd>.*</kbd> | </code>expr<code> } [ [ <kbd>AS</kbd> ] </code>c_alias<code> ] ]...<br />
                 }</code>
         </div>
         <div class="diagram"><img src="diagrams/select_list.png" /></div>

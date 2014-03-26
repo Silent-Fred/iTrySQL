@@ -33,12 +33,15 @@ POSSIBILITY OF SUCH DAMAGE.
     <body>
         <div class="nav"><a href="index.html"><img src="home.png" /></a></div>
         <div class="ebnf">
-            constraint_clauses ::=<br />
-            <code>{<br />
-                <kbd>ADD</kbd> </code><a href="table_constraint_definition.html">table_constraint_definition</a><br />
-            <code>| <kbd>DROP</kbd> <kbd>CONSTRAINT</kbd> </code>constraint_name<br />
-            <code>}</code>
+            table_constraint_definition ::=<br />
+            <code>[ <kbd>CONSTRAINT</kbd> </code>constraint_name<code> ]<br />
+                {<br />
+                <kbd>UNIQUE</kbd> </code><a href="column_name_list.html">column_name_list</a><code><br />
+                | <kbd>PRIMARY</kbd> <kbd>KEY</kbd> </code><a href="column_name_list.html">column_name_list</a><code><br />
+                | <kbd>FOREIGN</kbd> <kbd>KEY</kbd> </code><a href="column_name_list.html">column_name_list</a><code> </code><a href="references_clause.html">references_clause</a><code><br />
+                | <kbd>CHECK</kbd> <kbd>(</kbd> </code>condition<code> <kbd>)</kbd><br />
+                }</code>
         </div>
-        <div class="diagram"><img src="diagrams/constraint_clauses.png" /></div>
+        <div class="diagram"><img src="diagrams/table_constraint_definition.png" /></div>
     </body>
 </html>

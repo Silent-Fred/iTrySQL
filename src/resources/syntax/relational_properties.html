@@ -34,13 +34,10 @@ POSSIBILITY OF SUCH DAMAGE.
         <div class="nav"><a href="index.html"><img src="home.png" /></a></div>
         <div class="ebnf">
             relational_properties ::=<br />
-            column_name
-            datatype
-            <code> [ <kbd>DEFAULT</kbd> </code>
-            expr
-            <code> ] [ </code>
-            <a href="inline_constraint.html">inline_constraint</a>
-            <code> ]...</code>
+            <code>{<br/>
+            </code>column_name datatype<code> [ <kbd>DEFAULT</kbd> </code>expr<code> ] [ </code><a href="inline_constraint.html">inline_constraint</a><code> ]...<br/>
+                | </code><a href="table_constraint_definition.html">table_constraint_definition</a><br/>
+            <code>}</code>
         </div>
         <div class="diagram"><img src="diagrams/relational_properties.png" /></div>
     </body>

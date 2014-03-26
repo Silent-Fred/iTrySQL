@@ -33,15 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
     <body>
         <div class="nav"><a href="index.html"><img src="home.png" /></a></div>
         <div class="ebnf">
-            out_of_line_constraint ::=<br />
-            <code>[ <kbd>CONSTRAINT</kbd> </code>constraint_name<code> ]<br />
-                {<br />
-                <kbd>UNIQUE</kbd> <kbd>(</kbd> </code>column<code> [<kbd>,</kbd> </code>column<code>]... <kbd>)</kbd><br />
-                | <kbd>PRIMARY</kbd> <kbd>KEY</kbd> <kbd>(</kbd> </code>column<code> [<kbd>,</kbd> </code>column<code>]... <kbd>)</kbd><br />
-                | <kbd>FOREIGN</kbd> <kbd>KEY</kbd> <kbd>(</kbd> </code>column<code> [<kbd>,</kbd> </code>column<code>]... <kbd>)</kbd> </code><a href="references_clause.html">references_clause</a><code><br />
-                | <kbd>CHECK</kbd> <kbd>(</kbd> </code>condition<code> <kbd>)</kbd><br />
-                }</code>
+            column_name_list ::=<br />
+            <code><kbd>(</kbd> </code>column<code> [<kbd>,</kbd> </code>column<code>]... <kbd>)</kbd></code>
         </div>
-        <div class="diagram"><img src="diagrams/out_of_line_constraint.png" /></div>
+        <div class="diagram"><img src="diagrams/column_name_list.png" /></div>
     </body>
 </html>
