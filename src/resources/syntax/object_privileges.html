@@ -35,8 +35,8 @@ POSSIBILITY OF SUCH DAMAGE.
         <div class="ebnf">
             object_privileges ::=<br />
             <code>
-                { </code>object_privilege<code> | <kbd>ALL</kbd> [ <kbd>PRIVILEGES</kbd> ] } [ <kbd>(</kbd> </code>column<code> [<kbd>,</kbd> </code>column<code>]... <kbd>)</kbd> ]<br />
-                [ <kbd>,</kbd> { </code>object_privilege<code> | <kbd>ALL</kbd> [ <kbd>PRIVILEGES</kbd> ] } [ <kbd>(</kbd> </code>column<code> [<kbd>,</kbd> </code>column<code>]... <kbd>)</kbd> ] ]...
+                { </code>object_privilege<code> | <kbd>ALL</kbd> [ <kbd>PRIVILEGES</kbd> ] } [ </code><a href="column_name_list.html">column_name_list</a><code> ]<br />
+                [ <kbd>,</kbd> { </code>object_privilege<code> | <kbd>ALL</kbd> [ <kbd>PRIVILEGES</kbd> ] } [ </code><a href="column_name_list.html">column_name_list</a><code> ] ]...
             </code>
         </div>
         <div class="diagram"><img src="diagrams/object_privileges.png" /></div>
