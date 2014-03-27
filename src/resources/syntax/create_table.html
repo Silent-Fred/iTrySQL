@@ -36,7 +36,9 @@ POSSIBILITY OF SUCH DAMAGE.
             create_table ::=<br />
             <code><kbd>CREATE</kbd> <kbd>TABLE</kbd> [ </code>schema<code> <kbd>.</kbd> ] </code>table<code><br />
                 {<br />
-                <kbd>(</kbd> </code><a href="relational_properties.html">relational_properties</a><code> [ <kbd>,</kbd> </code><a href="relational_properties.html">relational_properties</a><code> ]... <kbd>)</kbd><br />
+                <kbd>(</kbd> { </code>column_name <a href="relational_properties.html">relational_properties</a><code> | </code><a href="table_constraint_definition.html">table_constraint_definition</a><code> }<br/>
+                    [ <kbd>,</kbd> { </code>column_name <a href="relational_properties.html">relational_properties</a><code> | </code><a href="table_constraint_definition.html">table_constraint_definition</a><code> } ]...<br/>
+                <kbd>)</kbd><br />
                 | <kbd>AS</kbd> <kbd>(</kbd> </code><a href="subquery.html">subquery</a><code> <kbd>)</kbd> <kbd>WITH</kbd> [ <kbd>NO</kbd> ] <kbd>DATA</kbd><br />
                 }</code>
         </div>
