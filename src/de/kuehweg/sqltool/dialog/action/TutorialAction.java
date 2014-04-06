@@ -25,51 +25,51 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import java.io.IOException;
-
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
+import java.io.IOException;
 
 /**
  * Aufbau der Tutorialdaten
- * 
+ *
  * @author Michael Kühweg
  */
 public class TutorialAction {
 
-	public TutorialAction() {
-	}
+    public TutorialAction() {
+    }
 
-	public void createTutorial(final ExecuteAction executeAction) {
-		final ConfirmDialog confirm = new ConfirmDialog(
-				DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
-				DialogDictionary.MSG_REALLY_CREATE_TUTORIAL_DATA.toString(),
-				DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString(),
-				DialogDictionary.COMMON_BUTTON_CANCEL.toString());
-		if (DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString().equals(
-				confirm.askUserFeedback())) {
-			final StringBuilder completeSql = new StringBuilder();
-			try {
-				// Daten für die Beispiele
-				completeSql.append(FileUtil
-						.readResourceFile("/resources/sql/examples.sql"));
-				completeSql.append("\n");
-				// Daten für die Übungen
-				completeSql.append(FileUtil
-						.readResourceFile("/resources/sql/tutorial.sql"));
-				// beide gemeinsam in einer Aktion anlegen
-				executeAction.handleExecuteActionSilently(completeSql
-						.toString());
-			} catch (final IOException ex) {
-				final ErrorMessage msg = new ErrorMessage(
-						DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_TUTORIAL_CREATION_FAILED + " ("
-								+ ex.getLocalizedMessage() + ")",
-						DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
-			}
-		}
-	}
+    public void createTutorial(final ExecuteAction executeAction) {
+        final ConfirmDialog confirm = new ConfirmDialog(
+                DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
+                DialogDictionary.MSG_REALLY_CREATE_TUTORIAL_DATA.toString(),
+                DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString(),
+                DialogDictionary.COMMON_BUTTON_CANCEL.toString());
+        if (DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString().equals(
+                confirm.askUserFeedback())) {
+            final StringBuilder completeSql = new StringBuilder();
+            try {
+                // Daten für die Beispiele
+                completeSql.append(FileUtil
+                        .readResourceFile("/resources/sql/examples.sql"));
+                completeSql.append("\n");
+                // Daten für die Übungen
+                completeSql.append(FileUtil
+                        .readResourceFile("/resources/sql/tutorial.sql"));
+                // beide gemeinsam in einer Aktion anlegen und mit CHECKPOINT abschließen
+                completeSql.append("\nCHECKPOINT;\n");
+                executeAction.handleExecuteActionSilently(completeSql
+                        .toString());
+            } catch (final IOException ex) {
+                final ErrorMessage msg = new ErrorMessage(
+                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                        DialogDictionary.ERR_TUTORIAL_CREATION_FAILED + " ("
+                        + ex.getLocalizedMessage() + ")",
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                msg.askUserFeedback();
+            }
+        }
+    }
 }

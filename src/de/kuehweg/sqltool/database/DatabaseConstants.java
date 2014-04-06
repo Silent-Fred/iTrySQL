@@ -32,10 +32,16 @@ package de.kuehweg.sqltool.database;
  */
 public class DatabaseConstants {
 
-	public static final int MAX_ROWS = 2500;
-	public static final String DEFAULT_TRANSACTION_CONTROL = "MVCC";
+    public static final String HSQLDB_PROPERTY_TX_CONTROL = "hsqldb.tx";
+    public static final String HSQLDB_PROPERTY_LOG_SIZE_MB = "hsqldb.log_size";
+    public static final String HSQLDB_PROPERTY_SHUTDOWN = "shutdown";
 
-	private DatabaseConstants() {
+    public static final int MAX_ROWS = 2500;
+	public static final String DEFAULT_TRANSACTION_CONTROL = "MVCC";
+	public static final String DEFAULT_LOG_SIZE_MB = "20";
+	public static final String DEFAULT_SHUTDOWN_STANDALONE_DB = "true";
+
+    private DatabaseConstants() {
 		// no instances
 	}
 }
