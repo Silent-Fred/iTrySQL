@@ -87,17 +87,23 @@ public class ConnectionHolder {
             // in den Schulungsunterlagen wird das Verhalten des DBMS
             // auf Grundlage eines bestimmten Transaktionsmanagements
             // beschrieben - dieses wird daher explizit gesetzt
-            properties.setProperty(DatabaseConstants.HSQLDB_PROPERTY_TX_CONTROL,
+            properties.setProperty(
+                    DatabaseConstants.HSQLDB_PROPERTY_TX_CONTROL,
                     DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
-            // als Schulungsclient wird mit kleinen Datenbanken gearbeitet, den
-            // automatischen Checkpoint daher recht niedrig ansetzen
-            properties.
-                    setProperty(DatabaseConstants.HSQLDB_PROPERTY_LOG_SIZE_MB,
-                    DatabaseConstants.DEFAULT_LOG_SIZE_MB);
-            // der automatische Shutdown ist zwar für "echte" DB-Clients nicht
-            // wirklich empfehlenswert, aber für die Zwecke der Schulung
-            // eigentlich genau das richtige Verhalten
             if (connectionSetting.getType() == JDBCType.HSQL_STANDALONE) {
+                // TODO von den beiden folgenden Properties wird eigentlich nur
+                // eines benötigt. Bei Gelegenheit mal ein bisschen genauer
+                // untersuchen, welcher Ansatz der bessere ist.
+
+                // als Schulungsclient wird mit kleinen Datenbanken gearbeitet, den
+                // automatischen Checkpoint daher recht niedrig ansetzen
+                properties.
+                        setProperty(
+                        DatabaseConstants.HSQLDB_PROPERTY_LOG_SIZE_MB,
+                        DatabaseConstants.DEFAULT_LOG_SIZE_MB);
+                // der automatische Shutdown ist zwar für "echte" DB-Clients nicht
+                // wirklich empfehlenswert, aber für die Zwecke der Schulung
+                // eigentlich genau das richtige Verhalten
                 properties.
                         setProperty(DatabaseConstants.HSQLDB_PROPERTY_SHUTDOWN,
                         DatabaseConstants.DEFAULT_SHUTDOWN_STANDALONE_DB);
