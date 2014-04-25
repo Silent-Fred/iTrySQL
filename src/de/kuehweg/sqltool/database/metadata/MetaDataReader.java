@@ -88,6 +88,7 @@ public class MetaDataReader {
             tables.close();
             readColumnsForGivenTables(metaData, tableDescriptions);
             readIndicesForGivenTables(metaData, tableDescriptions);
+            readReferencedByForGivenTables(metaData, tableDescriptions);
             readPrimaryKeysForGivenTables(metaData, tableDescriptions);
         } catch (final SQLException ex) {
             Logger.getLogger(MetaDataReader.class.getName()).log(Level.SEVERE,
@@ -143,6 +144,44 @@ public class MetaDataReader {
                     table.addIndices(indexDescription);
                 }
                 indices.close();
+            } catch (final SQLException ex) {
+                Logger.getLogger(MetaDataReader.class.getName()).log(
+                        Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Liest die Fremdschlüssel nach, die auf die Tabelle(n) verweisen und trägt
+     * die Informationen in den Tabellenbeschreibungen ein.
+     *
+     * @param metaData
+     * @param tables
+     */
+    private static void readReferencedByForGivenTables(
+            final DatabaseMetaData metaData,
+            final Collection<TableDescription> tables) {
+        for (final TableDescription table : tables) {
+            ResultSet referencedBy;
+            try {
+                referencedBy = metaData.
+                        getExportedKeys(table.getCatalog(), table.getSchema(),
+                        table.getTableName());
+                while (referencedBy.next()) {
+                    ReferencedByDescription referencedByDescription =
+                            new ReferencedByDescription(
+                            referencedBy.getString("FKTABLE_CAT"),
+                            referencedBy.getString("FKTABLE_SCHEM"),
+                            referencedBy.getString("FK_NAME"),
+                            referencedBy.getString("PKTABLE_CAT"),
+                            referencedBy.getString("PKTABLE_SCHEM"),
+                            referencedBy.getString("PKTABLE_NAME"),
+                            referencedBy.getString("PKCOLUMN_NAME"),
+                            referencedBy.getString("FKTABLE_NAME"),
+                            referencedBy.getString("FKCOLUMN_NAME"));
+                    table.addReferencedBy(referencedByDescription);
+                }
+                referencedBy.close();
             } catch (final SQLException ex) {
                 Logger.getLogger(MetaDataReader.class.getName()).log(
                         Level.SEVERE, null, ex);

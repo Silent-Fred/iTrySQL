@@ -25,17 +25,24 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.metadata.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.ColumnDescription;
 import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
 import de.kuehweg.sqltool.database.metadata.IndexDescription;
 import de.kuehweg.sqltool.database.metadata.Nullability;
+import de.kuehweg.sqltool.database.metadata.ReferencedByDescription;
 import de.kuehweg.sqltool.database.metadata.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.TableDescription;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -65,7 +72,8 @@ public class SchemaTreeBuilder implements Runnable {
 
     private void refreshSchemaTree(final DatabaseDescription db,
             final TreeView<String> treeToUpdate) {
-        final SchemaTreeExpandedStateSaver stateSaver = new SchemaTreeExpandedStateSaver();
+        final SchemaTreeExpandedStateSaver stateSaver =
+                new SchemaTreeExpandedStateSaver();
         stateSaver.readExpandedStateFrom(treeToUpdate);
         final TreeItem<String> root = new TreeItem<String>();
         treeToUpdate.setRoot(root);
@@ -109,6 +117,7 @@ public class SchemaTreeBuilder implements Runnable {
                             new TreeItem<String>(table.getRemarks()));
                 }
                 tableItem.getChildren().addAll(getColumns(table));
+                tableItem.getChildren().addAll(getReferencedBy(table));
                 tableItem.getChildren().addAll(getIndices(table));
                 typeItem.getChildren().add(tableItem);
             }
@@ -151,6 +160,88 @@ public class SchemaTreeBuilder implements Runnable {
             }
             indexItems.add(indexItem);
         }
-        return indexItems;
+        if (indexItems.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<TreeItem<String>> indexCollection = new ArrayList<>(1);
+        final TreeItem<String> indexTitle = new TreeItem<String>(
+                DialogDictionary.LABEL_TREE_INDICES.toString(), new ImageView(
+                ImagePack.TREE_INDEX.getAsImage()));
+        indexCollection.add(indexTitle);
+        indexTitle.getChildren().addAll(indexItems);
+        return indexCollection;
+    }
+
+    private String getReferencedByTableColumnNameQualified(
+            final ReferencedByDescription referencedByDescription) {
+        final StringBuilder qualifiedNameBuilder = new StringBuilder();
+        if (referencedByDescription.isOutside()) {
+            qualifiedNameBuilder.append(referencedByDescription.getFkCatalog()).
+                    append(".").append(referencedByDescription.getFkSchema()).
+                    append(".");
+        }
+        qualifiedNameBuilder.append(referencedByDescription.getFkTableName()).
+                append(".").append(referencedByDescription.getFkColumnName());
+        return qualifiedNameBuilder.toString();
+    }
+
+    private String getReferencedByForeignKeyNameQualified(
+            final ReferencedByDescription referencedByDescription) {
+        final StringBuilder qualifiedNameBuilder = new StringBuilder();
+        if (referencedByDescription.isOutside()) {
+            qualifiedNameBuilder.append(referencedByDescription.getFkCatalog()).
+                    append(".").append(referencedByDescription.getFkSchema()).
+                    append(".");
+        }
+        qualifiedNameBuilder.append(referencedByDescription.getForeignKeyName());
+        return qualifiedNameBuilder.toString();
+    }
+
+    private Map<String, Collection<String>> buildFkColumnByForeignKeyNameMap(
+            final TableDescription table) {
+        final Map<String, Collection<String>> fkColumnsByFK = new HashMap<>();
+        for (final ReferencedByDescription referencedBy : table.
+                getReferencedBy()) {
+            final String foreignKeyName =
+                    getReferencedByForeignKeyNameQualified(referencedBy);
+            final String foreignKeyColumn =
+                    getReferencedByTableColumnNameQualified(referencedBy);
+            Collection<String> fkColumns = fkColumnsByFK.get(foreignKeyName);
+            if (fkColumns == null) {
+                fkColumns = new HashSet<>();
+                fkColumnsByFK.put(foreignKeyName, fkColumns);
+            }
+            fkColumns.add(foreignKeyColumn);
+        }
+        return fkColumnsByFK;
+    }
+
+    private List<TreeItem<String>> getReferencedBy(final TableDescription table) {
+        final List<TreeItem<String>> referencedByItems = new ArrayList<>(table
+                .getReferencedBy().size());
+        for (final Map.Entry<String, Collection<String>> fk
+                : buildFkColumnByForeignKeyNameMap(table).
+                entrySet()) {
+            final TreeItem<String> referencedByItem = new TreeItem<String>(
+                    fk.getKey(), new ImageView(
+                    ImagePack.TREE_REFERENCED_BY.getAsImage()));
+            final List<String> fkColumns = new ArrayList<>(fk.getValue());
+            Collections.sort(fkColumns);
+            for (final String column : fkColumns) {
+                referencedByItem.getChildren().add(new TreeItem<String>(column));
+            }
+            referencedByItems.add(referencedByItem);
+        }
+        if (referencedByItems.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<TreeItem<String>> referencedByCollection = new ArrayList<>(1);
+        final TreeItem<String> referencedByTitle = new TreeItem<String>(
+                DialogDictionary.LABEL_TREE_REFERENCED_BY.toString(),
+                new ImageView(
+                ImagePack.TREE_REFERENCED_BY.getAsImage()));
+        referencedByCollection.add(referencedByTitle);
+        referencedByTitle.getChildren().addAll(referencedByItems);
+        return referencedByCollection;
     }
 }

@@ -48,6 +48,7 @@ public class TableDescription implements Comparable<TableDescription> {
 	private final String remarks;
 	private final Set<ColumnDescription> columns;
 	private final Set<IndexDescription> indices;
+	private final Set<ReferencedByDescription> referencedBy;
     private final List<String> primaryKey;
 
 	public TableDescription(final String catalog, final String schema,
@@ -59,6 +60,7 @@ public class TableDescription implements Comparable<TableDescription> {
 		this.remarks = remarks;
 		columns = new HashSet<>(32);
 		indices = new HashSet<>(32);
+        referencedBy = new HashSet<>(32);
         primaryKey = new LinkedList<>();
 	}
 
@@ -103,6 +105,18 @@ public class TableDescription implements Comparable<TableDescription> {
 	public void addIndices(final IndexDescription... inds) {
 		for (final IndexDescription index : inds) {
 			indices.add(index);
+		}
+	}
+
+	public List<ReferencedByDescription> getReferencedBy() {
+		final List<ReferencedByDescription> result = new ArrayList<>(referencedBy);
+		Collections.sort(result);
+		return result;
+	}
+
+	public void addReferencedBy(final ReferencedByDescription... refs) {
+		for (final ReferencedByDescription ref : refs) {
+			referencedBy.add(ref);
 		}
 	}
 
