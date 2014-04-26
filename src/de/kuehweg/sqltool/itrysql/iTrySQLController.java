@@ -734,6 +734,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 KeyCombination.SHORTCUT_DOWN));
         menuItemNewSession.setAccelerator(new KeyCodeCombination(KeyCode.N,
                 KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+        menuItemConnect.setAccelerator(new KeyCodeCombination(KeyCode.L,
+                KeyCombination.SHORTCUT_DOWN));
 
         menuItemDisconnect.disableProperty().bind(
                 Bindings.not(getConnectionHolder().connectedProperty()));
