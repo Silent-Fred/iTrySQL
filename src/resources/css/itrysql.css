@@ -233,3 +233,8 @@
     -fx-background-insets: 1 0 -1 0, 0;
     -fx-shape: "M0 0 L0 0 L2 0 L2 2 L0 2 Z";
 }
+
+#schemaTreeView .tree-cell {
+    /* slightly higher indent for the schema tree */
+    -fx-indent: 20;
+}
