@@ -47,7 +47,7 @@ public class SchemaDescription implements Comparable<SchemaDescription> {
 	public SchemaDescription(final String catalog, final String schema) {
 		this.catalog = catalog == null ? "" : catalog;
 		this.schema = schema == null ? "" : schema;
-		tables = new HashSet<>(32);
+		tables = new HashSet<>();
 
 	}
 

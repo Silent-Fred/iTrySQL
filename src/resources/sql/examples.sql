@@ -43,7 +43,7 @@ INSERT INTO ort (ort, name, alt_min, alt_max, koordinaten) VALUES ('FR94068', 'S
 --
 -- person
 --
-CREATE TABLE person (persnr INTEGER PRIMARY KEY, vorname VARCHAR(80), name VARCHAR(80), wohnort VARCHAR(20) REFERENCES ort(ort), geburtsort VARCHAR(20) REFERENCES ort(ort), geburtsdatum DATE, mutter_persnr INTEGER REFERENCES person(persnr));
+CREATE TABLE person (persnr INTEGER PRIMARY KEY, vorname VARCHAR(80), name VARCHAR(80), wohnort VARCHAR(20) CONSTRAINT person_wohnort_fk REFERENCES ort(ort), geburtsort VARCHAR(20) CONSTRAINT person_geburtsort_fk REFERENCES ort(ort), geburtsdatum DATE, mutter_persnr INTEGER CONSTRAINT person_mutter_fk REFERENCES person(persnr));
 COMMENT ON TABLE person IS 'Personen (Beispieldaten)';
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1622, 'Jean-Baptiste', 'Poquelin', 'FR00001', 'FR00001', '1622-01-15', NULL);
 INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mutter_persnr) VALUES (1694, 'François-Marie', 'Arouet', 'FR00001', 'FR00001', '1694-11-21', NULL);
@@ -56,7 +56,7 @@ INSERT INTO person (persnr, vorname, name, wohnort, geburtsort, geburtsdatum, mu
 --
 -- werk
 --
-CREATE TABLE werk (werk INTEGER PRIMARY KEY, titel VARCHAR(80), untertitel VARCHAR(80), autor INTEGER REFERENCES person(persnr), sprache VARCHAR(2), veroeffentlichung DATE);
+CREATE TABLE werk (werk INTEGER PRIMARY KEY, titel VARCHAR(80), untertitel VARCHAR(80), autor INTEGER CONSTRAINT werk_autor_fk REFERENCES person(persnr), sprache VARCHAR(2), veroeffentlichung DATE);
 COMMENT ON TABLE werk IS 'Werke - Literatur, Musik,... (Beispieldaten)';
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (1, 'The Taming of the Shrew', NULL, 1564,'EN', '1594-01-01');
 INSERT INTO werk (werk, titel, untertitel, autor, sprache, veroeffentlichung) VALUES (2, 'Romeo and Juliet', 'The Most Excellent and Lamentable Tragedy Of Romeo and Juliet', 1564,'EN', '1597-01-01');

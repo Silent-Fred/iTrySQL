@@ -48,7 +48,8 @@ public class TableDescription implements Comparable<TableDescription> {
 	private final String remarks;
 	private final Set<ColumnDescription> columns;
 	private final Set<IndexDescription> indices;
-	private final Set<ReferencedByDescription> referencedBy;
+	private final Set<ForeignKeyDescription> foreignKeys;
+	private final Set<ForeignKeyDescription> referencedBy;
     private final List<String> primaryKey;
 
 	public TableDescription(final String catalog, final String schema,
@@ -58,9 +59,10 @@ public class TableDescription implements Comparable<TableDescription> {
 		this.tableName = tableName == null ? "" : tableName;
 		this.tableType = tableType;
 		this.remarks = remarks;
-		columns = new HashSet<>(32);
-		indices = new HashSet<>(32);
-        referencedBy = new HashSet<>(32);
+		columns = new HashSet<>();
+		indices = new HashSet<>();
+        foreignKeys = new HashSet<>();
+        referencedBy = new HashSet<>();
         primaryKey = new LinkedList<>();
 	}
 
@@ -108,14 +110,26 @@ public class TableDescription implements Comparable<TableDescription> {
 		}
 	}
 
-	public List<ReferencedByDescription> getReferencedBy() {
-		final List<ReferencedByDescription> result = new ArrayList<>(referencedBy);
+	public List<ForeignKeyDescription> getForeignKeys() {
+		final List<ForeignKeyDescription> result = new ArrayList<>(foreignKeys);
 		Collections.sort(result);
 		return result;
 	}
 
-	public void addReferencedBy(final ReferencedByDescription... refs) {
-		for (final ReferencedByDescription ref : refs) {
+	public void addForeignKeys(final ForeignKeyDescription... fks) {
+		for (final ForeignKeyDescription fk : fks) {
+			foreignKeys.add(fk);
+		}
+	}
+
+	public List<ForeignKeyDescription> getReferencedBy() {
+		final List<ForeignKeyDescription> result = new ArrayList<>(referencedBy);
+		Collections.sort(result);
+		return result;
+	}
+
+	public void addReferencedBy(final ForeignKeyDescription... refs) {
+		for (final ForeignKeyDescription ref : refs) {
 			referencedBy.add(ref);
 		}
 	}

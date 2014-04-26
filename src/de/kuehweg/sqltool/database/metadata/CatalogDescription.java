@@ -44,7 +44,7 @@ public class CatalogDescription implements Comparable<CatalogDescription> {
 
 	public CatalogDescription(final String catalog) {
 		this.catalog = catalog == null ? "" : catalog;
-		schemas = new HashSet<>(32);
+		schemas = new HashSet<>();
 	}
 
 	public String getCatalog() {

@@ -43,7 +43,7 @@ public class DatabaseDescription {
 
 	public DatabaseDescription(final String name) {
 		this.name = name == null ? "" : name;
-		catalogs = new HashSet<>(32);
+		catalogs = new HashSet<>();
 	}
 
 	public String getName() {

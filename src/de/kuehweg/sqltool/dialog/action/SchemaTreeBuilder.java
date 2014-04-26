@@ -29,9 +29,9 @@ import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.metadata.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.ColumnDescription;
 import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.ForeignKeyDescription;
 import de.kuehweg.sqltool.database.metadata.IndexDescription;
 import de.kuehweg.sqltool.database.metadata.Nullability;
-import de.kuehweg.sqltool.database.metadata.ReferencedByDescription;
 import de.kuehweg.sqltool.database.metadata.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.TableDescription;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
@@ -53,23 +53,23 @@ import javafx.scene.image.ImageView;
  * @author Michael Kühweg
  */
 public class SchemaTreeBuilder implements Runnable {
-
+    
     private final DatabaseDescription db;
     private final TreeView<String> treeToUpdate;
-
+    
     public SchemaTreeBuilder(final DatabaseDescription db,
             final TreeView<String> treeToUpdate) {
         this.db = db;
         this.treeToUpdate = treeToUpdate;
     }
-
+    
     @Override
     public void run() {
         refreshSchemaTree(db, treeToUpdate);
         // FIXME
         WebViewWithHSQLDBBugfix.fix();
     }
-
+    
     private void refreshSchemaTree(final DatabaseDescription db,
             final TreeView<String> treeToUpdate) {
         final SchemaTreeExpandedStateSaver stateSaver =
@@ -90,7 +90,7 @@ public class SchemaTreeBuilder implements Runnable {
         }
         stateSaver.expandFromSavedState(treeToUpdate);
     }
-
+    
     private List<TreeItem<String>> getSchemas(final CatalogDescription catalog) {
         final List<TreeItem<String>> schemaItems = new ArrayList<>();
         for (final SchemaDescription schema : catalog.getSchemas()) {
@@ -102,7 +102,7 @@ public class SchemaTreeBuilder implements Runnable {
         }
         return schemaItems;
     }
-
+    
     private List<TreeItem<String>> getTables(final SchemaDescription schema) {
         final List<TreeItem<String>> typeItems = new ArrayList<>();
         for (final String type : schema.getTableTypes()) {
@@ -117,6 +117,7 @@ public class SchemaTreeBuilder implements Runnable {
                             new TreeItem<String>(table.getRemarks()));
                 }
                 tableItem.getChildren().addAll(getColumns(table));
+                tableItem.getChildren().addAll(getForeignKeys(table));
                 tableItem.getChildren().addAll(getReferencedBy(table));
                 tableItem.getChildren().addAll(getIndices(table));
                 typeItem.getChildren().add(tableItem);
@@ -125,7 +126,7 @@ public class SchemaTreeBuilder implements Runnable {
         }
         return typeItems;
     }
-
+    
     private List<TreeItem<String>> getColumns(final TableDescription table) {
         final List<TreeItem<String>> columnItems = new ArrayList<>(table
                 .getColumns().size());
@@ -145,7 +146,7 @@ public class SchemaTreeBuilder implements Runnable {
         }
         return columnItems;
     }
-
+    
     private List<TreeItem<String>> getIndices(final TableDescription table) {
         final List<TreeItem<String>> indexItems = new ArrayList<>(table
                 .getIndices().size());
@@ -171,57 +172,42 @@ public class SchemaTreeBuilder implements Runnable {
         indexTitle.getChildren().addAll(indexItems);
         return indexCollection;
     }
-
-    private String getReferencedByTableColumnNameQualified(
-            final ReferencedByDescription referencedByDescription) {
-        final StringBuilder qualifiedNameBuilder = new StringBuilder();
-        if (referencedByDescription.isOutside()) {
-            qualifiedNameBuilder.append(referencedByDescription.getFkCatalog()).
-                    append(".").append(referencedByDescription.getFkSchema()).
-                    append(".");
-        }
-        qualifiedNameBuilder.append(referencedByDescription.getFkTableName()).
-                append(".").append(referencedByDescription.getFkColumnName());
-        return qualifiedNameBuilder.toString();
-    }
-
-    private String getReferencedByForeignKeyNameQualified(
-            final ReferencedByDescription referencedByDescription) {
-        final StringBuilder qualifiedNameBuilder = new StringBuilder();
-        if (referencedByDescription.isOutside()) {
-            qualifiedNameBuilder.append(referencedByDescription.getFkCatalog()).
-                    append(".").append(referencedByDescription.getFkSchema()).
-                    append(".");
-        }
-        qualifiedNameBuilder.append(referencedByDescription.getForeignKeyName());
-        return qualifiedNameBuilder.toString();
-    }
-
-    private Map<String, Collection<String>> buildFkColumnByForeignKeyNameMap(
-            final TableDescription table) {
-        final Map<String, Collection<String>> fkColumnsByFK = new HashMap<>();
-        for (final ReferencedByDescription referencedBy : table.
-                getReferencedBy()) {
-            final String foreignKeyName =
-                    getReferencedByForeignKeyNameQualified(referencedBy);
-            final String foreignKeyColumn =
-                    getReferencedByTableColumnNameQualified(referencedBy);
-            Collection<String> fkColumns = fkColumnsByFK.get(foreignKeyName);
-            if (fkColumns == null) {
-                fkColumns = new HashSet<>();
-                fkColumnsByFK.put(foreignKeyName, fkColumns);
+    
+    private List<TreeItem<String>> getForeignKeys(final TableDescription table) {
+        final List<TreeItem<String>> foreignKeyItems = new ArrayList<>(table
+                .getForeignKeys().size());
+        for (final Map.Entry<String, Collection<String>> fk
+                : buildForeignKeyColumnsByForeignKeyNameMap(table.
+                getForeignKeys(), true).entrySet()) {
+            final TreeItem<String> foreignKeyItem = new TreeItem<String>(
+                    fk.getKey(), new ImageView(
+                    ImagePack.TREE_REFERENCES.getAsImage()));
+            final List<String> fkColumns = new ArrayList<>(fk.getValue());
+            Collections.sort(fkColumns);
+            for (final String column : fkColumns) {
+                foreignKeyItem.getChildren().add(new TreeItem<String>(column));
             }
-            fkColumns.add(foreignKeyColumn);
+            foreignKeyItems.add(foreignKeyItem);
         }
-        return fkColumnsByFK;
+        if (foreignKeyItems.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final List<TreeItem<String>> foreignKeyCollection = new ArrayList<>(1);
+        final TreeItem<String> referencedByTitle = new TreeItem<String>(
+                DialogDictionary.LABEL_TREE_REFERENCES.toString(),
+                new ImageView(
+                ImagePack.TREE_REFERENCES.getAsImage()));
+        foreignKeyCollection.add(referencedByTitle);
+        referencedByTitle.getChildren().addAll(foreignKeyItems);
+        return foreignKeyCollection;
     }
-
+    
     private List<TreeItem<String>> getReferencedBy(final TableDescription table) {
         final List<TreeItem<String>> referencedByItems = new ArrayList<>(table
                 .getReferencedBy().size());
         for (final Map.Entry<String, Collection<String>> fk
-                : buildFkColumnByForeignKeyNameMap(table).
-                entrySet()) {
+                : buildForeignKeyColumnsByForeignKeyNameMap(table.
+                getReferencedBy(), false).entrySet()) {
             final TreeItem<String> referencedByItem = new TreeItem<String>(
                     fk.getKey(), new ImageView(
                     ImagePack.TREE_REFERENCED_BY.getAsImage()));
@@ -243,5 +229,73 @@ public class SchemaTreeBuilder implements Runnable {
         referencedByCollection.add(referencedByTitle);
         referencedByTitle.getChildren().addAll(referencedByItems);
         return referencedByCollection;
+    }
+    
+    private String getForeignKeyFKTableColumnNameQualified(
+            final ForeignKeyDescription foreignKeyDescription) {
+        final StringBuilder qualifiedNameBuilder = new StringBuilder();
+        if (foreignKeyDescription.isOutside()) {
+            qualifiedNameBuilder.append(foreignKeyDescription.getFkCatalog()).
+                    append(".").append(foreignKeyDescription.getFkSchema()).
+                    append(".");
+        }
+        qualifiedNameBuilder.append(foreignKeyDescription.getFkTableName()).
+                append(".").append(foreignKeyDescription.getFkColumnName());
+        return qualifiedNameBuilder.toString();
+    }
+    
+    private String getForeignKeyPKTableColumnNameQualified(
+            final ForeignKeyDescription foreignKeyDescription) {
+        final StringBuilder qualifiedNameBuilder = new StringBuilder();
+        if (foreignKeyDescription.isOutside()) {
+            qualifiedNameBuilder.append(foreignKeyDescription.getPkCatalog()).
+                    append(".").append(foreignKeyDescription.getPkSchema()).
+                    append(".");
+        }
+        qualifiedNameBuilder.append(foreignKeyDescription.getPkTableName()).
+                append(".").append(foreignKeyDescription.getPkColumnName());
+        return qualifiedNameBuilder.toString();
+    }
+    
+    private String getForeignKeyNameQualified(
+            final ForeignKeyDescription referencedByDescription) {
+        final StringBuilder qualifiedNameBuilder = new StringBuilder();
+        if (referencedByDescription.isOutside()) {
+            qualifiedNameBuilder.append(referencedByDescription.getFkCatalog()).
+                    append(".").append(referencedByDescription.getFkSchema()).
+                    append(".");
+        }
+        qualifiedNameBuilder.append(referencedByDescription.getForeignKeyName());
+        return qualifiedNameBuilder.toString();
+    }
+    
+    private String getForeignKeyColumn(final ForeignKeyDescription foreignKey,
+            final boolean owningTable) {
+        if (foreignKey == null) {
+            return "";
+        }
+        return owningTable
+                ? foreignKey.getFkColumnName() + " -> "
+                + getForeignKeyPKTableColumnNameQualified(
+                foreignKey)
+                : getForeignKeyFKTableColumnNameQualified(
+                foreignKey);
+    }
+    
+    private Map<String, Collection<String>> buildForeignKeyColumnsByForeignKeyNameMap(
+            final Collection<ForeignKeyDescription> foreignKeyDescriptions,
+            final boolean owningTable) {
+        final Map<String, Collection<String>> fkColumnsByFK = new HashMap<>();
+        for (final ForeignKeyDescription foreignKey : foreignKeyDescriptions) {
+            final String foreignKeyName =
+                    getForeignKeyNameQualified(foreignKey);
+            Collection<String> fkColumns = fkColumnsByFK.get(foreignKeyName);
+            if (fkColumns == null) {
+                fkColumns = new HashSet<>();
+                fkColumnsByFK.put(foreignKeyName, fkColumns);
+            }
+            fkColumns.add(getForeignKeyColumn(foreignKey, owningTable));
+        }
+        return fkColumnsByFK;
     }
 }

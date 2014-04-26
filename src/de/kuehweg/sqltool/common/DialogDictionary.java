@@ -72,6 +72,7 @@ public enum DialogDictionary {
     LABEL_EXPORT_CONNECTIONS("label_exportConnections"),
     LABEL_IMPORT_CONNECTIONS("label_importConnections"),
     LABEL_TREE_INDICES("label_treeIndices"),
+    LABEL_TREE_REFERENCES("label_treeReferences"),
     LABEL_TREE_REFERENCED_BY("label_treeReferencedBy"),
     TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
     TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),

@@ -88,6 +88,7 @@ public class MetaDataReader {
             tables.close();
             readColumnsForGivenTables(metaData, tableDescriptions);
             readIndicesForGivenTables(metaData, tableDescriptions);
+            readForeignKeysForGivenTables(metaData, tableDescriptions);
             readReferencedByForGivenTables(metaData, tableDescriptions);
             readPrimaryKeysForGivenTables(metaData, tableDescriptions);
         } catch (final SQLException ex) {
@@ -168,8 +169,8 @@ public class MetaDataReader {
                         getExportedKeys(table.getCatalog(), table.getSchema(),
                         table.getTableName());
                 while (referencedBy.next()) {
-                    ReferencedByDescription referencedByDescription =
-                            new ReferencedByDescription(
+                    ForeignKeyDescription referencedByDescription =
+                            new ForeignKeyDescription(
                             referencedBy.getString("FKTABLE_CAT"),
                             referencedBy.getString("FKTABLE_SCHEM"),
                             referencedBy.getString("FK_NAME"),
@@ -182,6 +183,44 @@ public class MetaDataReader {
                     table.addReferencedBy(referencedByDescription);
                 }
                 referencedBy.close();
+            } catch (final SQLException ex) {
+                Logger.getLogger(MetaDataReader.class.getName()).log(
+                        Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    /**
+     * Liest die Fremdschlüssel nach, die auf den Tabelle(n) angelegt sind und
+     * trägt die Informationen in den Tabellenbeschreibungen ein.
+     *
+     * @param metaData
+     * @param tables
+     */
+    private static void readForeignKeysForGivenTables(
+            final DatabaseMetaData metaData,
+            final Collection<TableDescription> tables) {
+        for (final TableDescription table : tables) {
+            ResultSet foreignKey;
+            try {
+                foreignKey = metaData.
+                        getImportedKeys(table.getCatalog(), table.getSchema(),
+                        table.getTableName());
+                while (foreignKey.next()) {
+                    ForeignKeyDescription foreignKeyDescription =
+                            new ForeignKeyDescription(
+                            foreignKey.getString("FKTABLE_CAT"),
+                            foreignKey.getString("FKTABLE_SCHEM"),
+                            foreignKey.getString("FK_NAME"),
+                            foreignKey.getString("PKTABLE_CAT"),
+                            foreignKey.getString("PKTABLE_SCHEM"),
+                            foreignKey.getString("PKTABLE_NAME"),
+                            foreignKey.getString("PKCOLUMN_NAME"),
+                            foreignKey.getString("FKTABLE_NAME"),
+                            foreignKey.getString("FKCOLUMN_NAME"));
+                    table.addForeignKeys(foreignKeyDescription);
+                }
+                foreignKey.close();
             } catch (final SQLException ex) {
                 Logger.getLogger(MetaDataReader.class.getName()).log(
                         Level.SEVERE, null, ex);

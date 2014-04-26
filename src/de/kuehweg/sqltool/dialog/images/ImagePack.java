@@ -38,7 +38,8 @@ public enum ImagePack {
     "tree_database.png"), TREE_SCHEMA("tree_schema.png"), TREE_TABLE(
     "tree_table.png"), TREE_COLUMN("tree_column.png"), TREE_INDEX(
     "tree_index.png"), TREE_PRIMARY_KEY(
-    "tree_pk.png"), TREE_REFERENCED_BY("tree_ref_by.png"), MSG_ERROR(
+    "tree_pk.png"), TREE_REFERENCES("tree_ref.png"), TREE_REFERENCED_BY(
+    "tree_ref_by.png"), MSG_ERROR(
     "msg_error.png"), MSG_INFO(
     "msg_info.png"), MSG_QUESTION("msg_question.png"), MSG_WARNING(
     "msg_warning.png");
