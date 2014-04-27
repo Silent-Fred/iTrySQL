@@ -35,7 +35,7 @@ import javafx.concurrent.Task;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.DatabaseConstants;
-import de.kuehweg.sqltool.database.ResultFormatter;
+import de.kuehweg.sqltool.database.formatter.ResultFormatter;
 
 /**
  * Task zur Ausführung von SQL-Anweisungen und Aktualisierung der Oberfläche

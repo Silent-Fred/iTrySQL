@@ -44,7 +44,7 @@ import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
 import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
 import de.kuehweg.sqltool.dialog.action.FontAction;
-import de.kuehweg.sqltool.dialog.action.SchemaTreeBuilderTask;
+import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;

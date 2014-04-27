@@ -26,8 +26,8 @@
 package de.kuehweg.sqltool.dialog.component;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.database.HtmlResultFormatter;
-import de.kuehweg.sqltool.database.ResultFormatter;
+import de.kuehweg.sqltool.database.formatter.HtmlResultFormatter;
+import de.kuehweg.sqltool.database.formatter.ResultFormatter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
