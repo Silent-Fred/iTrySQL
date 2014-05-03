@@ -36,10 +36,11 @@ POSSIBILITY OF SUCH DAMAGE.
             references_clause ::=<br />
             <code>
                 <kbd>REFERENCES</kbd> [ </code>schema<code> <kbd>.</kbd> ] 
-            </code>object<code> </code><a href="column_name_list.html">column_name_list</a><code> 
-                [ <kbd>ON</kbd> <kbd>DELETE</kbd>
+            </code>object <code> [ </code><a href="column_name_list.html">column_name_list</a><code> ] <br />
+                [ <kbd>ON</kbd> { <kbd>DELETE</kbd> | <kbd>UPDATE</kbd> }
                 { <kbd>CASCADE</kbd>
                 | <kbd>SET</kbd> <kbd>NULL</kbd>
+                | <kbd>SET</kbd> <kbd>DEFAULT</kbd>
                 }
                 ]</code>
         </div>
