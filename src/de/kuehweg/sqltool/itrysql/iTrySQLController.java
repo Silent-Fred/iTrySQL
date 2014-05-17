@@ -44,13 +44,13 @@ import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
 import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
 import de.kuehweg.sqltool.dialog.action.FontAction;
-import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.ServerComponentController;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
+import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
 import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
 import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
@@ -653,6 +653,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 if (newValue != null) {
                     UserPreferencesManager.getSharedInstance().setBeepAudioClip(
                             newValue);
+                    newValue.play(UserPreferencesManager.getSharedInstance().getBeepVolume());
                 }
             }
         });
