@@ -82,6 +82,7 @@ public class SchemaTreeBuilder implements Runnable {
             root.setValue(db.getName());
             root.setGraphic(new ImageView(ImagePack.TREE_DATABASE.getAsImage()));
             root.getChildren().clear();
+            root.getChildren().add(getDbProductInfo(db));
             for (final CatalogDescription catalog : db.getCatalogs()) {
                 final TreeItem<String> catalogItem = new TreeItem<>(
                         catalog.getCatalog());
@@ -90,6 +91,11 @@ public class SchemaTreeBuilder implements Runnable {
             }
         }
         stateSaver.expandFromSavedState(treeToUpdate);
+    }
+
+    private TreeItem<String> getDbProductInfo(final DatabaseDescription db) {
+        return new TreeItem<>(db.getDbProductName() + " " + db.
+                getDbProductVersion());
     }
 
     private List<TreeItem<String>> getSchemas(final CatalogDescription catalog) {

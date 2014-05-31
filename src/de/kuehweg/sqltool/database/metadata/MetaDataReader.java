@@ -55,37 +55,43 @@ public class MetaDataReader {
      * @return
      */
     public static DatabaseDescription readMetaData(final Connection connection) {
-        String dbName = "DB";
         DatabaseDescription db = null;
         final Map<SchemaDescription, SchemaDescription> schemas =
                 new HashMap<>();
         try {
             final DatabaseMetaData metaData = connection.getMetaData();
-            dbName = metaData.getUserName() + "@" + metaData.getURL();
-            db = new DatabaseDescription(dbName);
+            final String dbName = metaData.getUserName() + "@" + metaData.
+                    getURL();
+            final String dbProductName = metaData.getDatabaseProductName();
+            final String dbProductVersion = metaData.getDatabaseProductVersion();
+            db =
+                    new DatabaseDescription(dbName, dbProductName,
+                    dbProductVersion);
             final Collection<TableDescription> tableDescriptions =
                     new HashSet<>();
-            final ResultSet tables = connection.getMetaData().getTables(null,
-                    null, null, null);
-            while (tables.next()) {
-                final TableDescription tableDescription = new TableDescription(
-                        tables.getString("TABLE_CAT"),
-                        tables.getString("TABLE_SCHEM"),
-                        tables.getString("TABLE_NAME"),
-                        tables.getString("TABLE_TYPE"),
-                        tables.getString("REMARKS"));
-                tableDescriptions.add(tableDescription);
-                final SchemaDescription key = new SchemaDescription(
-                        tableDescription.getCatalog(),
-                        tableDescription.getSchema());
-                SchemaDescription value = schemas.get(key);
-                if (value == null) {
-                    value = key;
-                    schemas.put(key, key);
+            try (ResultSet tables =
+                    connection.getMetaData().getTables(null,
+                    null, null, null)) {
+                while (tables.next()) {
+                    final TableDescription tableDescription =
+                            new TableDescription(
+                            tables.getString("TABLE_CAT"),
+                            tables.getString("TABLE_SCHEM"),
+                            tables.getString("TABLE_NAME"),
+                            tables.getString("TABLE_TYPE"),
+                            tables.getString("REMARKS"));
+                    tableDescriptions.add(tableDescription);
+                    final SchemaDescription key = new SchemaDescription(
+                            tableDescription.getCatalog(),
+                            tableDescription.getSchema());
+                    SchemaDescription value = schemas.get(key);
+                    if (value == null) {
+                        value = key;
+                        schemas.put(key, key);
+                    }
+                    value.addTables(tableDescription);
                 }
-                value.addTables(tableDescription);
             }
-            tables.close();
             readColumnsForGivenTables(metaData, tableDescriptions);
             readIndicesForGivenTables(metaData, tableDescriptions);
             readForeignKeysForGivenTables(metaData, tableDescriptions);
@@ -94,7 +100,7 @@ public class MetaDataReader {
         } catch (final SQLException ex) {
             Logger.getLogger(MetaDataReader.class.getName()).log(Level.SEVERE,
                     null, ex);
-            db = new DatabaseDescription(dbName);
+            db = new DatabaseDescription();
         } finally {
             final Map<CatalogDescription, CatalogDescription> catalogs =
                     new HashMap<>();
@@ -128,10 +134,9 @@ public class MetaDataReader {
             final DatabaseMetaData metaData,
             final Collection<TableDescription> tables) {
         for (final TableDescription table : tables) {
-            ResultSet indices;
-            try {
-                indices = metaData.getIndexInfo(table.getCatalog(),
-                        table.getSchema(), table.getTableName(), false, false);
+            try (ResultSet indices =
+                    metaData.getIndexInfo(table.getCatalog(),
+                    table.getSchema(), table.getTableName(), false, false)) {
                 while (indices.next()) {
                     final IndexDescription indexDescription =
                             new IndexDescription(
@@ -144,7 +149,6 @@ public class MetaDataReader {
                             indices.getBoolean("NON_UNIQUE"));
                     table.addIndices(indexDescription);
                 }
-                indices.close();
             } catch (final SQLException ex) {
                 Logger.getLogger(MetaDataReader.class.getName()).log(
                         Level.SEVERE, null, ex);
@@ -163,11 +167,10 @@ public class MetaDataReader {
             final DatabaseMetaData metaData,
             final Collection<TableDescription> tables) {
         for (final TableDescription table : tables) {
-            ResultSet referencedBy;
-            try {
-                referencedBy = metaData.
-                        getExportedKeys(table.getCatalog(), table.getSchema(),
-                        table.getTableName());
+            try (ResultSet referencedBy =
+                    metaData.
+                    getExportedKeys(table.getCatalog(), table.getSchema(),
+                    table.getTableName())) {
                 while (referencedBy.next()) {
                     ForeignKeyDescription referencedByDescription =
                             new ForeignKeyDescription(
@@ -182,7 +185,6 @@ public class MetaDataReader {
                             referencedBy.getString("FKCOLUMN_NAME"));
                     table.addReferencedBy(referencedByDescription);
                 }
-                referencedBy.close();
             } catch (final SQLException ex) {
                 Logger.getLogger(MetaDataReader.class.getName()).log(
                         Level.SEVERE, null, ex);
@@ -201,11 +203,10 @@ public class MetaDataReader {
             final DatabaseMetaData metaData,
             final Collection<TableDescription> tables) {
         for (final TableDescription table : tables) {
-            ResultSet foreignKey;
-            try {
-                foreignKey = metaData.
-                        getImportedKeys(table.getCatalog(), table.getSchema(),
-                        table.getTableName());
+            try (ResultSet foreignKey =
+                    metaData.
+                    getImportedKeys(table.getCatalog(), table.getSchema(),
+                    table.getTableName())) {
                 while (foreignKey.next()) {
                     ForeignKeyDescription foreignKeyDescription =
                             new ForeignKeyDescription(
@@ -220,7 +221,6 @@ public class MetaDataReader {
                             foreignKey.getString("FKCOLUMN_NAME"));
                     table.addForeignKeys(foreignKeyDescription);
                 }
-                foreignKey.close();
             } catch (final SQLException ex) {
                 Logger.getLogger(MetaDataReader.class.getName()).log(
                         Level.SEVERE, null, ex);
@@ -243,9 +243,9 @@ public class MetaDataReader {
         for (final TableDescription table : tables) {
             tablesMapping.put(table, table);
         }
-        try {
-            final ResultSet columns = metaData.getColumns(null, null, null,
-                    null);
+        try (ResultSet columns =
+                metaData.getColumns(null, null, null,
+                null)) {
             while (columns.next()) {
 
                 final String nullableMeta = columns.getString("IS_NULLABLE");
@@ -279,7 +279,6 @@ public class MetaDataReader {
                     value.addColumns(columnDescription);
                 }
             }
-            columns.close();
         } catch (final SQLException ex) {
             Logger.getLogger(MetaDataReader.class.getName()).log(Level.SEVERE,
                     null, ex);
@@ -297,13 +296,12 @@ public class MetaDataReader {
             final DatabaseMetaData metaData,
             final Collection<TableDescription> tables) {
         for (final TableDescription table : tables) {
-            try {
-                final ResultSet pk = metaData.getPrimaryKeys(table.getCatalog(),
-                        table.getSchema(), table.getTableName());
+            try (ResultSet pk =
+                    metaData.getPrimaryKeys(table.getCatalog(),
+                    table.getSchema(), table.getTableName())) {
                 while (pk.next()) {
                     table.addPrimaryKeyColumn(pk.getString("COLUMN_NAME"));
                 }
-                pk.close();
             } catch (final SQLException ex) {
                 Logger.getLogger(MetaDataReader.class.getName()).log(
                         Level.SEVERE,
