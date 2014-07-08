@@ -50,7 +50,7 @@ public class TableDescription implements Comparable<TableDescription> {
 	private final Set<IndexDescription> indices;
 	private final Set<ForeignKeyDescription> foreignKeys;
 	private final Set<ForeignKeyDescription> referencedBy;
-    private final List<String> primaryKey;
+	private final List<String> primaryKey;
 
 	public TableDescription(final String catalog, final String schema,
 			final String tableName, final String tableType, final String remarks) {
@@ -61,9 +61,9 @@ public class TableDescription implements Comparable<TableDescription> {
 		this.remarks = remarks;
 		columns = new HashSet<>();
 		indices = new HashSet<>();
-        foreignKeys = new HashSet<>();
-        referencedBy = new HashSet<>();
-        primaryKey = new LinkedList<>();
+		foreignKeys = new HashSet<>();
+		referencedBy = new HashSet<>();
+		primaryKey = new LinkedList<>();
 	}
 
 	public String getCatalog() {
@@ -134,23 +134,23 @@ public class TableDescription implements Comparable<TableDescription> {
 		}
 	}
 
-    public List<String> getPrimaryKey() {
-        return primaryKey;
-    }
-    
-    public void setPrimaryKey(final String... primaryKeyColumn) {
-        primaryKey.clear();
-        for (final String pkCol : primaryKeyColumn) {
-            primaryKey.add(pkCol);
-        }
-    }
-    
-    public void addPrimaryKeyColumn(final String primaryKeyColumn) {
-        if (!primaryKey.contains(primaryKeyColumn)) {
-            primaryKey.add(primaryKeyColumn);
-        }
-    }
-    
+	public List<String> getPrimaryKey() {
+		return primaryKey;
+	}
+
+	public void setPrimaryKey(final String... primaryKeyColumn) {
+		primaryKey.clear();
+		for (final String pkCol : primaryKeyColumn) {
+			primaryKey.add(pkCol);
+		}
+	}
+
+	public void addPrimaryKeyColumn(final String primaryKeyColumn) {
+		if (!primaryKey.contains(primaryKeyColumn)) {
+			primaryKey.add(primaryKeyColumn);
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 3;
