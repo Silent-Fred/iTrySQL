@@ -9,36 +9,25 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="402.0" styleClass="itry-dialog" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.CommonDialogController">
-  <bottom>
-    <HBox fx:id="buttonBox" alignment="CENTER_RIGHT" minHeight="16.0" prefHeight="56.0" prefWidth="402.0" spacing="20.0" style="-fx-background-color: #dfdfdf;">
-      <padding>
-        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-      </padding>
-    </HBox>
-  </bottom>
-  <center>
-    <Label fx:id="message" contentDisplay="TOP" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="304.0" text="Label" wrapText="true" BorderPane.alignment="CENTER_LEFT">
-      <BorderPane.margin>
-        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
-      </BorderPane.margin>
-    </Label>
-  </center>
-  <left>
-    <ImageView fx:id="icon" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER_LEFT">
-      <image>
-        <Image url="@../images/msg_error.png" preserveRatio="false" smooth="false" />
-      </image>
-      <BorderPane.margin>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-      </BorderPane.margin>
-    </ImageView>
-  </left>
-  <top>
-    <Label fx:id="title" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="402.0" style="-fx-background-color: #dfdfdf;" text="Alert" textAlignment="CENTER">
-      <font>
-        <Font name="System Bold" size="16.0" />
-      </font>
-    </Label>
-  </top>
-</BorderPane>
+<AnchorPane id="AnchorPane" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="413.0" styleClass="itry-dialog" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.CommonDialogController">
+  <children>
+    <VBox alignment="TOP_CENTER" prefHeight="103.0" prefWidth="461.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <children>
+        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+          <children>
+            <ImageView fx:id="icon" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="message" alignment="TOP_LEFT" text="Label" wrapText="true">
+              <font>
+                <Font name="System Bold" size="13.0" />
+              </font>
+            </Label>
+          </children>
+          <VBox.margin>
+            <Insets fx:id="x1" />
+          </VBox.margin>
+        </HBox>
+        <HBox fx:id="buttonBox" alignment="BOTTOM_CENTER" prefHeight="28.0" prefWidth="393.0" spacing="10.0" VBox.margin="$x1" VBox.vgrow="SOMETIMES" />
+      </children>
+    </VBox>
+  </children>
+</AnchorPane>

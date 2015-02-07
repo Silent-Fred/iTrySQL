@@ -29,45 +29,46 @@ import javafx.scene.media.AudioClip;
 
 /**
  * AudioClips, die die Anwendung selbst mitbringt
- *
+ * 
  * @author Michael Kühweg
  */
 public enum ProvidedAudioClip {
 
-    ACOUSTIC("Acoustic", "acoustic.mp3"),
-    BEEP("Beep", "beep.mp3"),
-    BELL("Bell", "bell.mp3"),
-    BONGO("Bongo", "bongo.mp3"),
-    ELECTRIC("Electric", "electric.mp3"),
-    PLING("Pling", "pling.mp3"),
-    PLONG("Plong", "plong.mp3"),
-    PLOP("Plop", "plop.mp3"),
-    SHIMMER("Shimmer", "shimmer.mp3"),
-    STEELSTRING("Steel Strings", "steelstring.mp3"),
-    WHIRLY("Whirly", "whirly.mp3");
-    private final String uiName;
-    private final String resource;
+	ACOUSTIC("Acoustic", "acoustic.mp3"),
+	BEEP("Beep", "beep.mp3"),
+	BELL("Bell", "bell.mp3"),
+	BONGO("Bongo", "bongo.mp3"),
+	ELECTRIC("Electric", "electric.mp3"),
+	PLING("Pling", "pling.mp3"),
+	PLONG("Plong", "plong.mp3"),
+	PLOP("Plop", "plop.mp3"),
+	SHIMMER("Shimmer", "shimmer.mp3"),
+	STEELSTRING("Steel Strings", "steelstring.mp3"),
+	WHIRLY("Whirly", "whirly.mp3");
+	private final String uiName;
+	private final String resource;
 
-    private ProvidedAudioClip(final String uiName, final String resource) {
-        this.uiName = uiName;
-        this.resource = resource;
-    }
+	private ProvidedAudioClip(final String uiName, final String resource) {
+		this.uiName = uiName;
+		this.resource = resource;
+	}
 
-    public void play() {
-        new AudioClip(this.getClass().getResource(
-                "/resources/audio/" + resource).toExternalForm()).play();
-    }
+	public void play() {
+		new AudioClip(this.getClass()
+				.getResource("/resources/audio/" + resource).toExternalForm())
+				.play();
+	}
 
-    public void play(final double volume) {
-        if (volume > 0.0) {
-            new AudioClip(this.getClass().getResource(
-                    "/resources/audio/" + resource).toExternalForm()).play(
-                    volume);
-        }
-    }
+	public void play(final double volume) {
+		if (volume > 0.0) {
+			new AudioClip(this.getClass()
+					.getResource("/resources/audio/" + resource)
+					.toExternalForm()).play(volume);
+		}
+	}
 
-    @Override
-    public String toString() {
-        return uiName;
-    }
+	@Override
+	public String toString() {
+		return uiName;
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,40 +23,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.images;
+package de.kuehweg.sqltool.dialog;
 
-import javafx.scene.image.Image;
+import de.kuehweg.sqltool.common.DialogDictionary;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 /**
- * Bilder, Icons,... ansprechbar machen
- * 
+ * Dialoginhalt wenn der normale Dialogaufbau scheitert
+ *
  * @author Michael Kühweg
  */
-public enum ImagePack {
+public class FallbackSceneFactory {
 
-	APP_ICON("AppIcon.png"),
-	TUTORIAL_DATA("tutorialdata.png"),
-	TREE_DATABASE("tree_database.png"),
-	TREE_SCHEMA("tree_schema.png"),
-	TREE_TABLE("tree_table.png"),
-	TREE_COLUMN("tree_column.png"),
-	TREE_INDEX("tree_index.png"),
-	TREE_PRIMARY_KEY("tree_pk.png"),
-	TREE_REFERENCES("tree_ref.png"),
-	TREE_REFERENCED_BY("tree_ref_by.png"),
-	MSG_ERROR("msg_error.png"),
-	MSG_INFO("msg_info.png"),
-	MSG_QUESTION("msg_question.png"),
-	MSG_WARNING("msg_warning.png");
-	private static final String resourcePath = "/resources/images/";
-	private final String imageName;
+    private FallbackSceneFactory() {
+    }
 
-	private ImagePack(final String imageName) {
-		this.imageName = imageName;
-	}
+    public static Scene createNewInstance() {
+        VBox vBox = new VBox();
+        vBox.getChildren().add(new Text(
+                DialogDictionary.APPLICATION
+                .toString()));
+        vBox.getChildren().add(new Text(DialogDictionary.ERR_LOAD_FXML
+                .toString()));
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setPadding(new Insets(50));
+        return new Scene(vBox);
+    }
 
-	public Image getAsImage() {
-		return new Image(this.getClass().getResourceAsStream(
-				resourcePath + imageName));
-	}
 }

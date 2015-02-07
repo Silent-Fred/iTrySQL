@@ -427,9 +427,9 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         String sql = statementInput.getSelectedText();
         // sonst die Anweisung, in der sich die Eingabemarkierung befindet
         if (sql.trim().length() == 0) {
-            sql = StatementExtractor
+            sql = new StatementExtractor()
                     .extractStatementAtCaretPosition(statementInput.getText(),
-                    statementInput.getCaretPosition());
+                            statementInput.getCaretPosition());
         }
         createExecuteAction().handleExecuteAction(sql);
     }
@@ -646,17 +646,20 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 getBeepAudioClip());
         beepSelection.valueProperty().addListener(
                 new ChangeListener<ProvidedAudioClip>() {
-            @Override
-            public void changed(
-                    ObservableValue<? extends ProvidedAudioClip> ov,
-                    ProvidedAudioClip oldValue, ProvidedAudioClip newValue) {
-                if (newValue != null) {
-                    UserPreferencesManager.getSharedInstance().setBeepAudioClip(
-                            newValue);
-                    newValue.play(UserPreferencesManager.getSharedInstance().getBeepVolume());
-                }
-            }
-        });
+                    @Override
+                    public void changed(
+                            ObservableValue<? extends ProvidedAudioClip> ov,
+                            ProvidedAudioClip oldValue,
+                            ProvidedAudioClip newValue) {
+                                if (newValue != null) {
+                                    UserPreferencesManager.getSharedInstance().
+                                    setBeepAudioClip(
+                                            newValue);
+                                    newValue.play(UserPreferencesManager.
+                                            getSharedInstance().getBeepVolume());
+                                }
+                            }
+                });
         beepVolume.valueProperty().set(UserPreferencesManager.
                 getSharedInstance().getBeepVolume());
         beepVolume.valueProperty().addListener(new ChangeListener<Number>() {
@@ -673,9 +676,9 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     }
 
     private void initializeConnectionComponentController() {
-        final ConnectionComponentController.Builder builder =
-                new ConnectionComponentController.Builder(
-                connectionSettings);
+        final ConnectionComponentController.Builder builder
+                = new ConnectionComponentController.Builder(
+                        connectionSettings);
         builder.connectionName(connectionName);
         builder.connectionSelection(connectionSelection);
         builder.connectionType(connectionType);
@@ -757,38 +760,40 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         sqlHistoryItems = FXCollections.observableArrayList();
         sqlHistoryColumnTimestamp
                 .setCellValueFactory(
-                new PropertyValueFactory<SQLHistory, String>(
-                "timestamp"));
+                        new PropertyValueFactory<SQLHistory, String>(
+                                "timestamp"));
         sqlHistoryColumnStatement
                 .setCellValueFactory(
-                new PropertyValueFactory<SQLHistory, String>(
-                "sqlForDisplay"));
+                        new PropertyValueFactory<SQLHistory, String>(
+                                "sqlForDisplay"));
         sqlHistory.setItems(sqlHistoryItems);
         sqlHistory.getSelectionModel().selectedItemProperty()
                 .addListener(new ChangeListener<SQLHistory>() {
-            @Override
-            public void changed(
-                    final ObservableValue<? extends SQLHistory> ov,
-                    final SQLHistory oldValue, final SQLHistory newValue) {
-                if (newValue != null) {
-                    statementInput.appendText(newValue.getOriginalSQL());
-                }
-            }
-        });
+                    @Override
+                    public void changed(
+                            final ObservableValue<? extends SQLHistory> ov,
+                            final SQLHistory oldValue, final SQLHistory newValue) {
+                                if (newValue != null) {
+                                    statementInput.appendText(newValue.
+                                            getOriginalSQL());
+                                }
+                            }
+                });
     }
 
     private ExecuteAction createExecuteAction() {
-        final ExecutionInputEnvironment input =
-                new ExecutionInputEnvironment.Builder(
-                getConnectionHolder()).limitMaxRows(
-                UserPreferencesManager.getSharedInstance().isLimitMaxRows())
+        final ExecutionInputEnvironment input
+                = new ExecutionInputEnvironment.Builder(
+                        getConnectionHolder()).limitMaxRows(
+                        UserPreferencesManager.getSharedInstance().
+                        isLimitMaxRows())
                 .build();
-        final ExecutionProgressEnvironment progress =
-                new ExecutionProgressEnvironment.Builder(
-                executionProgressIndicator).executionTime(executionTime)
+        final ExecutionProgressEnvironment progress
+                = new ExecutionProgressEnvironment.Builder(
+                        executionProgressIndicator).executionTime(executionTime)
                 .build();
-        final ExecutionResultEnvironment result =
-                new ExecutionResultEnvironment.Builder()
+        final ExecutionResultEnvironment result
+                = new ExecutionResultEnvironment.Builder()
                 .tabPaneContainingResults(tabPaneProtocols)
                 .tabResult(tabResult)
                 .tabDbOutput(tabDbOutput)
@@ -817,4 +822,5 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         }
         return connectionHolder;
     }
+
 }

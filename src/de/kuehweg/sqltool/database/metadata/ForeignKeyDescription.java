@@ -30,169 +30,168 @@ import java.util.Objects;
 /**
  * @author Michael Kühweg
  */
-public class ForeignKeyDescription implements
-        Comparable<ForeignKeyDescription> {
+public class ForeignKeyDescription implements Comparable<ForeignKeyDescription> {
 
-    private final String fkCatalog;
-    private final String fkSchema;
-    private final String foreignKeyName;
-    private final String pkCatalog;
-    private final String pkSchema;
-    private final String pkTableName;
-    private final String pkColumnName;
-    private final String fkTableName;
-    private final String fkColumnName;
+	private final String fkCatalog;
+	private final String fkSchema;
+	private final String foreignKeyName;
+	private final String pkCatalog;
+	private final String pkSchema;
+	private final String pkTableName;
+	private final String pkColumnName;
+	private final String fkTableName;
+	private final String fkColumnName;
 
-    public ForeignKeyDescription(String fkCatalog, String fkSchema,
-            String foreignKeyName, String pkCatalog, String pkSchema,
-            String pkTableName, String pkColumnName, String fkTableName,
-            String fkColumnName) {
-        this.fkCatalog = fkCatalog;
-        this.fkSchema = fkSchema;
-        this.foreignKeyName = foreignKeyName;
-        this.pkCatalog = pkCatalog;
-        this.pkSchema = pkSchema;
-        this.pkTableName = pkTableName;
-        this.pkColumnName = pkColumnName;
-        this.fkTableName = fkTableName;
-        this.fkColumnName = fkColumnName;
-    }
+	public ForeignKeyDescription(String fkCatalog, String fkSchema,
+			String foreignKeyName, String pkCatalog, String pkSchema,
+			String pkTableName, String pkColumnName, String fkTableName,
+			String fkColumnName) {
+		this.fkCatalog = fkCatalog;
+		this.fkSchema = fkSchema;
+		this.foreignKeyName = foreignKeyName;
+		this.pkCatalog = pkCatalog;
+		this.pkSchema = pkSchema;
+		this.pkTableName = pkTableName;
+		this.pkColumnName = pkColumnName;
+		this.fkTableName = fkTableName;
+		this.fkColumnName = fkColumnName;
+	}
 
-    public String getFkCatalog() {
-        return fkCatalog;
-    }
+	public String getFkCatalog() {
+		return fkCatalog;
+	}
 
-    public String getFkSchema() {
-        return fkSchema;
-    }
+	public String getFkSchema() {
+		return fkSchema;
+	}
 
-    public String getForeignKeyName() {
-        return foreignKeyName;
-    }
+	public String getForeignKeyName() {
+		return foreignKeyName;
+	}
 
-    public String getPkCatalog() {
-        return pkCatalog;
-    }
+	public String getPkCatalog() {
+		return pkCatalog;
+	}
 
-    public String getPkSchema() {
-        return pkSchema;
-    }
+	public String getPkSchema() {
+		return pkSchema;
+	}
 
-    public String getPkTableName() {
-        return pkTableName;
-    }
+	public String getPkTableName() {
+		return pkTableName;
+	}
 
-    public String getPkColumnName() {
-        return pkColumnName;
-    }
+	public String getPkColumnName() {
+		return pkColumnName;
+	}
 
-    public String getFkTableName() {
-        return fkTableName;
-    }
+	public String getFkTableName() {
+		return fkTableName;
+	}
 
-    public String getFkColumnName() {
-        return fkColumnName;
-    }
+	public String getFkColumnName() {
+		return fkColumnName;
+	}
 
-    private boolean isDifferentCatalog() {
-        if (fkCatalog == null || pkCatalog != null) {
-            return fkCatalog == null && pkCatalog == null;
-        }
-        return !fkCatalog.equals(pkCatalog);
-    }
-    
-    private boolean isDifferentSchema() {
-        if (fkSchema == null || pkSchema != null) {
-            return fkSchema == null && pkSchema == null;
-        }
-        return !fkSchema.equals(pkSchema);
-    }
-    
-    public boolean isOutside() {
-        return isDifferentCatalog() || isDifferentSchema();
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.fkCatalog);
-        hash = 89 * hash + Objects.hashCode(this.fkSchema);
-        hash = 89 * hash + Objects.hashCode(this.foreignKeyName);
-        hash = 89 * hash + Objects.hashCode(this.pkCatalog);
-        hash = 89 * hash + Objects.hashCode(this.pkSchema);
-        hash = 89 * hash + Objects.hashCode(this.pkTableName);
-        hash = 89 * hash + Objects.hashCode(this.pkColumnName);
-        hash = 89 * hash + Objects.hashCode(this.fkTableName);
-        hash = 89 * hash + Objects.hashCode(this.fkColumnName);
-        return hash;
-    }
+	private boolean isDifferentCatalog() {
+		if (fkCatalog == null || pkCatalog != null) {
+			return fkCatalog == null && pkCatalog == null;
+		}
+		return !fkCatalog.equals(pkCatalog);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ForeignKeyDescription other = (ForeignKeyDescription) obj;
-        if (!Objects.equals(this.fkCatalog, other.fkCatalog)) {
-            return false;
-        }
-        if (!Objects.equals(this.fkSchema, other.fkSchema)) {
-            return false;
-        }
-        if (!Objects.equals(this.foreignKeyName, other.foreignKeyName)) {
-            return false;
-        }
-        if (!Objects.equals(this.pkCatalog, other.pkCatalog)) {
-            return false;
-        }
-        if (!Objects.equals(this.pkSchema, other.pkSchema)) {
-            return false;
-        }
-        if (!Objects.equals(this.pkTableName, other.pkTableName)) {
-            return false;
-        }
-        if (!Objects.equals(this.pkColumnName, other.pkColumnName)) {
-            return false;
-        }
-        if (!Objects.equals(this.fkTableName, other.fkTableName)) {
-            return false;
-        }
-        if (!Objects.equals(this.fkColumnName, other.fkColumnName)) {
-            return false;
-        }
-        return true;
-    }
+	private boolean isDifferentSchema() {
+		if (fkSchema == null || pkSchema != null) {
+			return fkSchema == null && pkSchema == null;
+		}
+		return !fkSchema.equals(pkSchema);
+	}
 
-    @Override
-    public int compareTo(final ForeignKeyDescription other) {
-        int result = fkCatalog.compareTo(other.fkCatalog);
-        if (result == 0) {
-            result = fkSchema.compareTo(other.fkSchema);
-        }
-        if (result == 0) {
-            result = foreignKeyName.compareTo(other.foreignKeyName);
-        }
-        if (result == 0) {
-            result = pkCatalog.compareTo(other.pkCatalog);
-        }
-        if (result == 0) {
-            result = pkSchema.compareTo(other.pkSchema);
-        }
-        if (result == 0) {
-            result = pkTableName.compareTo(other.pkTableName);
-        }
-        if (result == 0) {
-            result = pkColumnName.compareTo(other.pkColumnName);
-        }
-        if (result == 0) {
-            result = fkTableName.compareTo(other.fkTableName);
-        }
-        if (result == 0) {
-            result = fkColumnName.compareTo(other.fkColumnName);
-        }
-        return result;
-    }
+	public boolean isOutside() {
+		return isDifferentCatalog() || isDifferentSchema();
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 89 * hash + Objects.hashCode(this.fkCatalog);
+		hash = 89 * hash + Objects.hashCode(this.fkSchema);
+		hash = 89 * hash + Objects.hashCode(this.foreignKeyName);
+		hash = 89 * hash + Objects.hashCode(this.pkCatalog);
+		hash = 89 * hash + Objects.hashCode(this.pkSchema);
+		hash = 89 * hash + Objects.hashCode(this.pkTableName);
+		hash = 89 * hash + Objects.hashCode(this.pkColumnName);
+		hash = 89 * hash + Objects.hashCode(this.fkTableName);
+		hash = 89 * hash + Objects.hashCode(this.fkColumnName);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ForeignKeyDescription other = (ForeignKeyDescription) obj;
+		if (!Objects.equals(this.fkCatalog, other.fkCatalog)) {
+			return false;
+		}
+		if (!Objects.equals(this.fkSchema, other.fkSchema)) {
+			return false;
+		}
+		if (!Objects.equals(this.foreignKeyName, other.foreignKeyName)) {
+			return false;
+		}
+		if (!Objects.equals(this.pkCatalog, other.pkCatalog)) {
+			return false;
+		}
+		if (!Objects.equals(this.pkSchema, other.pkSchema)) {
+			return false;
+		}
+		if (!Objects.equals(this.pkTableName, other.pkTableName)) {
+			return false;
+		}
+		if (!Objects.equals(this.pkColumnName, other.pkColumnName)) {
+			return false;
+		}
+		if (!Objects.equals(this.fkTableName, other.fkTableName)) {
+			return false;
+		}
+		if (!Objects.equals(this.fkColumnName, other.fkColumnName)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int compareTo(final ForeignKeyDescription other) {
+		int result = fkCatalog.compareTo(other.fkCatalog);
+		if (result == 0) {
+			result = fkSchema.compareTo(other.fkSchema);
+		}
+		if (result == 0) {
+			result = foreignKeyName.compareTo(other.foreignKeyName);
+		}
+		if (result == 0) {
+			result = pkCatalog.compareTo(other.pkCatalog);
+		}
+		if (result == 0) {
+			result = pkSchema.compareTo(other.pkSchema);
+		}
+		if (result == 0) {
+			result = pkTableName.compareTo(other.pkTableName);
+		}
+		if (result == 0) {
+			result = pkColumnName.compareTo(other.pkColumnName);
+		}
+		if (result == 0) {
+			result = fkTableName.compareTo(other.fkTableName);
+		}
+		if (result == 0) {
+			result = fkColumnName.compareTo(other.fkColumnName);
+		}
+		return result;
+	}
 }

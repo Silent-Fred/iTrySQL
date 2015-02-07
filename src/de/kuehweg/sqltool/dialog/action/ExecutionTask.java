@@ -25,92 +25,93 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Iterator;
-import java.util.List;
-
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.database.formatter.ResultFormatter;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Iterator;
+import java.util.List;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 
 /**
  * Task zur Ausführung von SQL-Anweisungen und Aktualisierung der Oberfläche
- * 
+ *
  * @author Michael Kühweg
  */
 public class ExecutionTask extends Task<Void> {
 
-	private final Statement statement;
-	private final String sql;
-	private final ExecutionGUIUpdater guiUpdater;
-	private final boolean silent;
+    private final Statement statement;
+    private final String sql;
+    private final ExecutionGUIUpdater guiUpdater;
+    private final boolean silent;
 
-	public ExecutionTask(final Statement statement, final String sql,
-			final ExecutionGUIUpdater guiUpdater, final boolean silent) {
-		this.statement = statement;
-		this.sql = sql;
-		this.guiUpdater = guiUpdater;
-		this.silent = silent;
-	}
+    public ExecutionTask(final Statement statement, final String sql,
+            final ExecutionGUIUpdater guiUpdater, final boolean silent) {
+        this.statement = statement;
+        this.sql = sql;
+        this.guiUpdater = guiUpdater;
+        this.silent = silent;
+    }
 
-	@Override
-	protected Void call() throws Exception {
-		try {
-			final long timing = System.currentTimeMillis();
-			final List<String> statements = StatementExtractor
-					.getStatementsFromScript(sql);
-			if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
-				statement.setMaxRows(DatabaseConstants.MAX_ROWS);
-			}
-			final Iterator<String> queryIterator = statements.iterator();
-			while (queryIterator.hasNext() && !isCancelled()) {
-				final String singleQuery = queryIterator.next();
-				statement.execute(singleQuery);
-				if (!silent) {
-					final ResultFormatter resultFormatter = new ResultFormatter();
-					resultFormatter.fillFromStatementResult(statement);
-					// Datenbankzugriff und Aufbereitung der Daten werden
-					// zusammen
-					// in die Laufzeit eingerechnet
-					// Zwischenstand ausgeben
-					if (guiUpdater != null) {
-						final ExecutionGUIUpdater intermediateResultUpdater = new ExecutionGUIUpdater(
-								guiUpdater.getProgress(),
-								guiUpdater.getResult());
-						intermediateResultUpdater
-								.setExecutionTimeInMilliseconds(System
-										.currentTimeMillis() - timing);
-						intermediateResultUpdater
-								.setResultFormatter(resultFormatter);
-						intermediateResultUpdater.setIntermediateUpdate(true);
-						intermediateResultUpdater.setSqlForHistory(singleQuery);
-						// bei nächster Gelegenheit die Oberfläche aktualisieren
-						Platform.runLater(intermediateResultUpdater);
-					}
-				}
-			}
-		} catch (final SQLException ex) {
-			final String msg = ex.getLocalizedMessage() + " (SQL-State: "
-					+ ex.getSQLState() + ")";
-			if (guiUpdater != null) {
-				guiUpdater.setErrorThatOccurred(msg);
-			}
-		} finally {
-			if (guiUpdater != null) {
-				if (silent) {
-					guiUpdater.setSqlForHistory(null);
-					final ResultFormatter resultFormatter = new ResultFormatter();
-					resultFormatter.fillFromStatementResult(null);
-					guiUpdater.setResultFormatter(resultFormatter);
-				}
-				guiUpdater.setIntermediateUpdate(false);
-				Platform.runLater(guiUpdater);
-			}
-		}
-		return null;
-	}
+    @Override
+    protected Void call() throws Exception {
+        try {
+            final long timing = System.currentTimeMillis();
+            final List<String> statements = new StatementExtractor()
+                    .getStatementsFromScript(sql);
+            if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
+                statement.setMaxRows(DatabaseConstants.MAX_ROWS);
+            }
+            final Iterator<String> queryIterator = statements.iterator();
+            while (queryIterator.hasNext() && !isCancelled()) {
+                final String singleQuery = queryIterator.next();
+                statement.execute(singleQuery);
+                if (!silent) {
+                    final ResultFormatter resultFormatter
+                            = new ResultFormatter();
+                    resultFormatter.fillFromStatementResult(statement);
+                    // Datenbankzugriff und Aufbereitung der Daten werden
+                    // zusammen in die Laufzeit eingerechnet
+                    // Zwischenstand ausgeben
+                    if (guiUpdater != null) {
+                        final ExecutionGUIUpdater intermediateResultUpdater
+                                = new ExecutionGUIUpdater(
+                                        guiUpdater.getProgress(),
+                                        guiUpdater.getResult());
+                        intermediateResultUpdater
+                                .setExecutionTimeInMilliseconds(System
+                                        .currentTimeMillis() - timing);
+                        intermediateResultUpdater
+                                .setResultFormatter(resultFormatter);
+                        intermediateResultUpdater.setIntermediateUpdate(true);
+                        intermediateResultUpdater.setSqlForHistory(singleQuery);
+                        // bei nächster Gelegenheit die Oberfläche aktualisieren
+                        Platform.runLater(intermediateResultUpdater);
+                    }
+                }
+            }
+        } catch (final SQLException ex) {
+            final String msg = ex.getLocalizedMessage() + " (SQL-State: "
+                    + ex.getSQLState() + ")";
+            if (guiUpdater != null) {
+                guiUpdater.setErrorThatOccurred(msg);
+            }
+        } finally {
+            if (guiUpdater != null) {
+                if (silent) {
+                    guiUpdater.setSqlForHistory(null);
+                    final ResultFormatter resultFormatter
+                            = new ResultFormatter();
+                    resultFormatter.fillFromStatementResult(null);
+                    guiUpdater.setResultFormatter(resultFormatter);
+                }
+                guiUpdater.setIntermediateUpdate(false);
+                Platform.runLater(guiUpdater);
+            }
+        }
+        return null;
+    }
 }

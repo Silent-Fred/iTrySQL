@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,138 +25,118 @@
  */
 package de.kuehweg.sqltool.dialog;
 
+import de.kuehweg.sqltool.dialog.images.ImagePack;
 import java.util.ResourceBundle;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.dialog.images.ImagePack;
 
 /**
  * Allgemeine Dialogboxen mit Standardaufbau
- * 
+ *
  * @author Michael Kühweg
  */
 public abstract class CommonDialog extends Stage {
 
-	private String activatedButton;
+    private String activatedButton;
 
-	/**
-	 * Dialog enthält grundsätzlich einen Meldungstext
-	 * 
-	 * @param message
-	 */
-	public CommonDialog(final String message) {
-		super();
-		try {
-			final Parent root = FXMLLoader
-					.load(getClass().getResource(
-							"/resources/fxml/CommonDialog.fxml"),
-							ResourceBundle.getBundle("dictionary"));
-			initStyle(StageStyle.UTILITY);
-			root.getStylesheets().add(
-					getClass().getResource("/resources/css/itrysql.css")
-							.toExternalForm());
-			setScene(new Scene(root));
-			final Label messageLabel = (Label) getScene().lookup("#message");
-			if (messageLabel != null) {
-				messageLabel.setText(message);
-			}
-			centerOnScreen();
-			setResizable(false);
-			initModality(Modality.APPLICATION_MODAL);
-		} catch (final Exception ex) {
-			initStyle(StageStyle.UTILITY);
-			initModality(Modality.APPLICATION_MODAL);
-			setScene(new Scene(
-					VBoxBuilder
-							.create()
-							.children(
-									new Text(
-											DialogDictionary.APPLICATION
-													.toString()),
-									new Text(DialogDictionary.ERR_LOAD_FXML
-											.toString())).alignment(Pos.CENTER)
-							.padding(new Insets(50)).build()));
-			centerOnScreen();
-			setResizable(false);
-			setTitle("Alert");
-		}
-	}
+    /**
+     * Dialog enthält grundsätzlich einen Meldungstext
+     *
+     * @param message
+     */
+    public CommonDialog(final String message) {
+        super();
+        Scene scene;
+        try {
+            final Parent root = FXMLLoader
+                    .load(getClass().getResource(
+                                    "/resources/fxml/CommonDialog.fxml"),
+                            ResourceBundle.getBundle("dictionary"));
+            root.getStylesheets().add(
+                    getClass().getResource("/resources/css/itrysql.css")
+                    .toExternalForm());
+            scene = new Scene(root);
+        } catch (final Exception ex) {
+            scene = FallbackSceneFactory.createNewInstance();
+        }
+        final Label messageLabel = (Label) scene.lookup("#message");
+        if (messageLabel != null) {
+            messageLabel.setText(message);
+        }
+        setScene(scene);
+        initStyle(StageStyle.UTILITY);
+        initModality(Modality.APPLICATION_MODAL);
 
-	/**
-	 * Dialogtitel setzen
-	 * 
-	 * @param titleText
-	 */
-	public void specializeDialogTitle(final String titleText) {
-		final Label titleLabel = (Label) getScene().lookup("#title");
-		if (titleLabel != null) {
-			titleLabel.setText(titleText);
-		}
-	}
+        centerOnScreen();
+        setResizable(false);
+    }
 
-	/**
-	 * Dialogicon setzen
-	 * 
-	 * @param image
-	 */
-	public void specializeDialogIcon(final ImagePack image) {
-		final ImageView icon = (ImageView) getScene().lookup("#icon");
-		if (icon != null) {
-			icon.setImage(image.getAsImage());
-		}
-	}
+    /**
+     * Dialogtitel setzen
+     *
+     * @param titleText
+     */
+    public void specializeDialogTitle(final String titleText) {
+        setTitle(titleText);
+    }
 
-	/**
-	 * Buttons hinzufügen. Die Anzeige erfolgt "von rechts nach links". Der
-	 * erste Button in der Parameterliste wird links außen als Defaultbutton
-	 * angezeigt, weitere Buttons werden der Reihe nach links davor einsortiert.
-	 * 
-	 * @param buttons
-	 */
-	public void addDialogButtons(final String... buttons) {
-		final HBox buttonBox = (HBox) getScene().lookup("#buttonBox");
-		if (buttonBox != null) {
-			boolean first = true;
-			for (final String button : buttons) {
-				final Button buttonNode = new Button(button);
-				buttonNode.setDefaultButton(first);
-				first = false;
-				buttonNode.setOnAction(new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(final ActionEvent event) {
-						activatedButton = button;
-						close();
-					}
-				});
-				buttonBox.getChildren().add(0, buttonNode);
-			}
-		}
-	}
+    /**
+     * Dialogicon setzen
+     *
+     * @param image
+     */
+    public void specializeDialogIcon(final ImagePack image) {
+        final ImageView icon = (ImageView) getScene().lookup("#icon");
+        if (icon != null) {
+            icon.setImage(image.getAsImage());
+        }
+    }
 
-	/**
-	 * Dialog anzeigen und auf Anwenderaktion warten.
-	 * 
-	 * @return Buttontext des angeklickten Buttons, wie er beim Aufbau mit
-	 *         addDialogButtons() angegeben wurde
-	 */
-	public String askUserFeedback() {
-		showAndWait();
-		return activatedButton;
-	}
+    /**
+     * Buttons hinzufügen. Die Anzeige erfolgt "von rechts nach links". Der
+     * erste Button in der Parameterliste wird links außen als Defaultbutton
+     * angezeigt, weitere Buttons werden der Reihe nach links davor einsortiert.
+     *
+     * @param buttons
+     */
+    public void addDialogButtons(final String... buttons) {
+        final HBox buttonBox = (HBox) getScene().lookup("#buttonBox");
+        if (buttonBox != null) {
+            boolean first = true;
+            for (final String button : buttons) {
+                final Button buttonNode = new Button(button);
+                buttonNode.setDefaultButton(first);
+                first = false;
+                buttonNode.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(final ActionEvent event) {
+                        activatedButton = button;
+                        close();
+                    }
+                });
+                buttonBox.getChildren().add(0, buttonNode);
+            }
+        }
+    }
+
+    /**
+     * Dialog anzeigen und auf Anwenderaktion warten.
+     *
+     * @return Buttontext des angeklickten Buttons, wie er beim Aufbau mit
+     * addDialogButtons() angegeben wurde
+     */
+    public String askUserFeedback() {
+        showAndWait();
+        return activatedButton;
+    }
 }

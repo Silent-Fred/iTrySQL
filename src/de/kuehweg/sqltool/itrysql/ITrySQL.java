@@ -52,34 +52,35 @@ public class ITrySQL extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMono.ttf").
-                toExternalForm(), 12);
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoIt.ttf").
-                toExternalForm(), 12);
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBd.ttf").
-                toExternalForm(), 12);
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBI.ttf").
-                toExternalForm(), 12);
+        Font.loadFont(getClass().getResource("/resources/fonts/VeraMono.ttf")
+                .toExternalForm(), 12);
+        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoIt.ttf")
+                .toExternalForm(), 12);
+        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBd.ttf")
+                .toExternalForm(), 12);
+        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBI.ttf")
+                .toExternalForm(), 12);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader();
+    public void start(final Stage primaryStage) throws Exception {
+        final FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setResources(ResourceBundle.getBundle("dictionary"));
         fxmlLoader.setLocation(getClass().getResource(
                 "/resources/fxml/iTrySQL.fxml"));
-        Parent root = (Parent) fxmlLoader.load();
+        final Parent root = (Parent) fxmlLoader.load();
 
         controller = (iTrySQLController) fxmlLoader.getController();
 
-        Scene scene = new Scene(root);
+        final Scene scene = new Scene(root);
 
-        scene.getStylesheets().add(getClass().getResource(
-                "/resources/css/itrysql.css").toExternalForm());
+        scene.getStylesheets().add(
+                getClass().getResource("/resources/css/itrysql.css")
+                .toExternalForm());
 
         primaryStage.setScene(scene);
-        Rectangle2D calculatedSize = StageSizerUtil.
-                calculateSizeDependingOnScreenSize();
+        final Rectangle2D calculatedSize = StageSizerUtil
+                .calculateSizeDependingOnScreenSize();
         primaryStage.setX(calculatedSize.getMinX());
         primaryStage.setY(calculatedSize.getMinY());
         primaryStage.setWidth(calculatedSize.getWidth());
@@ -96,9 +97,9 @@ public class ITrySQL extends Application {
                 controller.getConnectionHolder().disconnect();
             }
             ServerManager.getSharedInstance().shutdownServer();
-        } catch (Throwable ex) {
-            Logger.getLogger(ITrySQL.class.getName()).
-                    log(Level.SEVERE, null, ex);
+        } catch (final Throwable ex) {
+            Logger.getLogger(ITrySQL.class.getName()).log(Level.SEVERE, null,
+                    ex);
         }
     }
 

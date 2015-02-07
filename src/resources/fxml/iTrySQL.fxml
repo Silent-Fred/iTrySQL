@@ -12,7 +12,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="1200.0" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.itrysql.iTrySQLController">
+<AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="1200.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.kuehweg.sqltool.itrysql.iTrySQLController">
   <children>
     <AnchorPane id="AnchorPane" prefHeight="576.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="24.0">
       <children>
@@ -215,8 +215,8 @@
                             </TextArea>
                           </children>
                         </AnchorPane>
-                        <ProgressBar fx:id="executionProgressIndicator" layoutX="323.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="5.0" />
-                        <Label fx:id="executionTime" prefWidth="295.0" text="0ms" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="529.0">
+                        <ProgressBar fx:id="executionProgressIndicator" layoutX="45.0" layoutY="325.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" />
+                        <Label fx:id="executionTime" layoutX="251.0" layoutY="327.0" prefWidth="295.0" text="0ms" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="251.0">
                           <font>
                             <Font size="11.0" fx:id="x2" />
                           </font>
@@ -303,8 +303,8 @@
                                   <children>
                                     <TableView fx:id="sqlHistory" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columns>
-                                        <TableColumn editable="false" prefWidth="75.0" text="%label_timestamp" fx:id="sqlHistoryColumnTimestamp" />
-                                        <TableColumn prefWidth="200.0" text="%label_sqlHistoryItem" fx:id="sqlHistoryColumnStatement" />
+                                        <TableColumn fx:id="sqlHistoryColumnTimestamp" editable="false" prefWidth="75.0" text="%label_timestamp" />
+                                        <TableColumn fx:id="sqlHistoryColumnStatement" prefWidth="200.0" text="%label_sqlHistoryItem" />
                                       </columns>
                                     </TableView>
                                   </children>
@@ -339,35 +339,35 @@
       <menus>
         <Menu mnemonicParsing="false" style="" text="%menu_file">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#connect" text="%menu_item_connect" fx:id="menuItemConnect" />
-            <MenuItem id="menuItemDisconnect" mnemonicParsing="false" onAction="#disconnect" text="%menu_item_disconnect" fx:id="menuItemDisconnect" />
+            <MenuItem fx:id="menuItemConnect" mnemonicParsing="false" onAction="#connect" text="%menu_item_connect" />
+            <MenuItem id="menuItemDisconnect" fx:id="menuItemDisconnect" mnemonicParsing="false" onAction="#disconnect" text="%menu_item_disconnect" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#fileOpenScriptAction" text="%menu_item_openScript" fx:id="menuItemFileOpenScript" />
-            <MenuItem mnemonicParsing="false" onAction="#fileSaveScriptAction" text="%menu_item_saveScript" fx:id="menuItemFileSaveScript" />
+            <MenuItem fx:id="menuItemFileOpenScript" mnemonicParsing="false" onAction="#fileOpenScriptAction" text="%menu_item_openScript" />
+            <MenuItem fx:id="menuItemFileSaveScript" mnemonicParsing="false" onAction="#fileSaveScriptAction" text="%menu_item_saveScript" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#quit" text="%menu_item_quit" fx:id="menuItemClose" />
+            <MenuItem fx:id="menuItemClose" mnemonicParsing="false" onAction="#quit" text="%menu_item_quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu_edit">
           <items>
-            <MenuItem disable="true" mnemonicParsing="false" onAction="#clipboardCut" text="%menu_item_cut" fx:id="menuItemCut" />
-            <MenuItem disable="true" mnemonicParsing="false" onAction="#clipboardCopy" text="%menu_item_copy" fx:id="menuItemCopy" />
-            <MenuItem disable="true" mnemonicParsing="false" onAction="#clipboardPaste" text="%menu_item_paste" fx:id="menuItemPaste" />
+            <MenuItem fx:id="menuItemCut" disable="true" mnemonicParsing="false" onAction="#clipboardCut" text="%menu_item_cut" />
+            <MenuItem fx:id="menuItemCopy" disable="true" mnemonicParsing="false" onAction="#clipboardCopy" text="%menu_item_copy" />
+            <MenuItem fx:id="menuItemPaste" disable="true" mnemonicParsing="false" onAction="#clipboardPaste" text="%menu_item_paste" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu_execute">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#execute" text="%menu_item_execute" fx:id="menuItemExecute" />
-            <MenuItem mnemonicParsing="false" onAction="#executeScript" text="%menu_item_executeScript" fx:id="menuItemExecuteScript" />
+            <MenuItem fx:id="menuItemExecute" mnemonicParsing="false" onAction="#execute" text="%menu_item_execute" />
+            <MenuItem fx:id="menuItemExecuteScript" mnemonicParsing="false" onAction="#executeScript" text="%menu_item_executeScript" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#commit" text="%menu_item_commit" fx:id="menuItemCommit" />
+            <MenuItem fx:id="menuItemCommit" mnemonicParsing="false" onAction="#commit" text="%menu_item_commit" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#rollback" text="%menu_item_rollback" fx:id="menuItemRollback" />
+            <MenuItem fx:id="menuItemRollback" mnemonicParsing="false" onAction="#rollback" text="%menu_item_rollback" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu_window">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#newSession" text="%menu_item_newSession" fx:id="menuItemNewSession" />
+            <MenuItem fx:id="menuItemNewSession" mnemonicParsing="false" onAction="#newSession" text="%menu_item_newSession" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu_help">

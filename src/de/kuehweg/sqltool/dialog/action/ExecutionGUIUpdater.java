@@ -28,6 +28,7 @@ package de.kuehweg.sqltool.dialog.action;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.ProvidedAudioClip;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
+import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.formatter.ResultFormatter;
 import de.kuehweg.sqltool.database.formatter.TextResultFormatter;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
@@ -45,8 +46,8 @@ import javafx.scene.layout.Priority;
  */
 public class ExecutionGUIUpdater implements Runnable {
 
-    public static final String RESULT_TABLE_ID =
-            "useMeToFetchTheResultFormatter";
+    public static final String RESULT_TABLE_ID
+            = "useMeToFetchTheResultFormatter";
     private static final int MAX_DBOUTPUT = 1024 * 1024;
     private final ExecutionProgressEnvironment progress;
     private final ExecutionResultEnvironment result;
@@ -117,7 +118,8 @@ public class ExecutionGUIUpdater implements Runnable {
             progress.showFinished(executionTimeInMilliseconds);
         }
         if (errorThatOccurred == null) {
-            result.getHistoryKeeper().addExecutedSQLToHistory(sqlForHistory);
+            result.getHistoryKeeper().addExecutedSQLToHistory(
+                    new StatementExtractor().removeComments(sqlForHistory));
             if (resultFormatter != null) {
                 final TextArea dbOutput = result.getDbOutput();
                 if (dbOutput != null) {

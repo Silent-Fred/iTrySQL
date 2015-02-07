@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,40 +23,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.images;
-
-import javafx.scene.image.Image;
+package de.kuehweg.sqltool.common.sqlediting;
 
 /**
- * Bilder, Icons,... ansprechbar machen
- * 
+ * Klasse dient dazu, DDL-Statements zu erkennen (z.B. für abhängigen Refresh
+ * der Schemaansicht)
+ *
  * @author Michael Kühweg
  */
-public enum ImagePack {
+public class DataDefinitionDetector {
 
-	APP_ICON("AppIcon.png"),
-	TUTORIAL_DATA("tutorialdata.png"),
-	TREE_DATABASE("tree_database.png"),
-	TREE_SCHEMA("tree_schema.png"),
-	TREE_TABLE("tree_table.png"),
-	TREE_COLUMN("tree_column.png"),
-	TREE_INDEX("tree_index.png"),
-	TREE_PRIMARY_KEY("tree_pk.png"),
-	TREE_REFERENCES("tree_ref.png"),
-	TREE_REFERENCED_BY("tree_ref_by.png"),
-	MSG_ERROR("msg_error.png"),
-	MSG_INFO("msg_info.png"),
-	MSG_QUESTION("msg_question.png"),
-	MSG_WARNING("msg_warning.png");
-	private static final String resourcePath = "/resources/images/";
-	private final String imageName;
+    private static final String[] DDL_COMMANDS = new String[]{"CREATE",
+        "ALTER", "DROP"};
 
-	private ImagePack(final String imageName) {
-		this.imageName = imageName;
-	}
+    private final StatementExtractor extractor = new StatementExtractor();
 
-	public Image getAsImage() {
-		return new Image(this.getClass().getResourceAsStream(
-				resourcePath + imageName));
-	}
+    public boolean containsDataDefinition(final String script) {
+        if (script == null || script.trim().length() == 0) {
+            return false;
+        }
+        boolean containsDataDefinition = false;
+        for (final String statement : extractor
+                .getStatementsFromScript(script)) {
+            containsDataDefinition = containsDataDefinition
+                    || isDataDefinition(statement);
+        }
+        return containsDataDefinition;
+    }
+
+    private boolean isDataDefinition(final String statement) {
+        final String uncommentedStatement = extractor.
+                removeComments(
+                        statement).toUpperCase();
+        for (final String ddl : DDL_COMMANDS) {
+            if (uncommentedStatement.startsWith(ddl)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

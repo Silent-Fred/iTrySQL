@@ -39,37 +39,39 @@ import java.util.Set;
 public class DatabaseDescription {
 
 	private final String name;
-    private final String dbProductName;
-    private final String dbProductVersion;
+	private final String dbProductName;
+	private final String dbProductVersion;
 	private final Set<CatalogDescription> catalogs;
 
 	public DatabaseDescription() {
 		this.name = "Not connected";
-        this.dbProductName = "";
-        this.dbProductVersion = "";
-        catalogs = new HashSet<>();
+		this.dbProductName = "";
+		this.dbProductVersion = "";
+		catalogs = new HashSet<>();
 	}
 
-	public DatabaseDescription(final String name, final String dbProductName, final String dbProductVersion) {
+	public DatabaseDescription(final String name, final String dbProductName,
+			final String dbProductVersion) {
 		this.name = name == null ? "" : name;
-        this.dbProductName = dbProductName == null ? "" : dbProductName;
-        this.dbProductVersion = dbProductVersion == null ? "" : dbProductVersion;
-        catalogs = new HashSet<>();
+		this.dbProductName = dbProductName == null ? "" : dbProductName;
+		this.dbProductVersion = dbProductVersion == null ? ""
+				: dbProductVersion;
+		catalogs = new HashSet<>();
 	}
 
 	public String getName() {
 		return name;
 	}
 
-    public String getDbProductName() {
-        return dbProductName;
-    }
+	public String getDbProductName() {
+		return dbProductName;
+	}
 
-    public String getDbProductVersion() {
-        return dbProductVersion;
-    }
+	public String getDbProductVersion() {
+		return dbProductVersion;
+	}
 
-    public List<CatalogDescription> getCatalogs() {
+	public List<CatalogDescription> getCatalogs() {
 		final List<CatalogDescription> result = new ArrayList<>(catalogs);
 		Collections.sort(result);
 		return result;

@@ -25,6 +25,9 @@
  */
 package de.kuehweg.sqltool.dialog.util;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Bugfix für die in der Kombination von HSQLDB mit WebViews auftretenden
  * Probleme, dass wegen des von HSQLDB umgestellten Log-Levels die WebViews in
@@ -35,8 +38,7 @@ package de.kuehweg.sqltool.dialog.util;
 public class WebViewWithHSQLDBBugfix {
 
     public static void fix() {
-        java.util.logging.Logger.getLogger(
-                com.sun.webpane.sg.prism.WCGraphicsPrismContext.class.
-                getName()).setLevel(java.util.logging.Level.OFF);
+        Logger.getLogger("com.sun.javafx.webkit.prism.WCGraphicsPrismContext").
+                setLevel(Level.OFF);
     }
 }
