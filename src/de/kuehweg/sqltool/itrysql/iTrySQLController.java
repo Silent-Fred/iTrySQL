@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,36 @@
  */
 package de.kuehweg.sqltool.itrysql;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.FileUtil;
+import de.kuehweg.sqltool.common.ProvidedAudioClip;
+import de.kuehweg.sqltool.common.RomanNumber;
+import de.kuehweg.sqltool.common.UserPreferencesManager;
+import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
+import de.kuehweg.sqltool.common.sqlediting.ManagedConnectionSettings;
+import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
+import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
+import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
+import de.kuehweg.sqltool.database.ConnectionHolder;
+import de.kuehweg.sqltool.database.JDBCType;
+import de.kuehweg.sqltool.dialog.AlertBox;
+import de.kuehweg.sqltool.dialog.ConnectionDialog;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
+import de.kuehweg.sqltool.dialog.License;
+import de.kuehweg.sqltool.dialog.action.ExecuteAction;
+import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
+import de.kuehweg.sqltool.dialog.action.FontAction;
+import de.kuehweg.sqltool.dialog.action.ScriptAction;
+import de.kuehweg.sqltool.dialog.action.TutorialAction;
+import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
+import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
+import de.kuehweg.sqltool.dialog.component.ServerComponentController;
+import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
+import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
+import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
+import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
+import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -32,7 +62,6 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
-
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -76,39 +105,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-
 import javax.xml.bind.JAXBException;
-
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.FileUtil;
-import de.kuehweg.sqltool.common.ProvidedAudioClip;
-import de.kuehweg.sqltool.common.RomanNumber;
-import de.kuehweg.sqltool.common.UserPreferencesManager;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.ManagedConnectionSettings;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
-import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
-import de.kuehweg.sqltool.database.ConnectionHolder;
-import de.kuehweg.sqltool.database.JDBCType;
-import de.kuehweg.sqltool.dialog.AlertBox;
-import de.kuehweg.sqltool.dialog.ConnectionDialog;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.License;
-import de.kuehweg.sqltool.dialog.action.ExecuteAction;
-import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
-import de.kuehweg.sqltool.dialog.action.FontAction;
-import de.kuehweg.sqltool.dialog.action.ScriptAction;
-import de.kuehweg.sqltool.dialog.action.TutorialAction;
-import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
-import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
-import de.kuehweg.sqltool.dialog.component.ServerComponentController;
-import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
-import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
-import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
-import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 
 public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         EventHandler<WindowEvent> {
