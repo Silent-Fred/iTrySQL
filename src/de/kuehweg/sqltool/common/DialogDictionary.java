@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.common;
 
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -44,6 +45,8 @@ public enum DialogDictionary {
 	ERR_FILE_SAVE_FAILED("err_fileSaveFailed"),
 	ERR_CONNECTION_SETTING_SAVE_FAILED("err_connectionSettingSaveFailed"),
 	ERR_SERVER_START_FAILED("err_serverStartFailed"),
+    ERR_HTML_EXPORT_FAILED("err_htmlExportFailed"),
+    ERR_UNKNOWN_ERROR("err_unknownError"),
 	MSG_NO_DB_CONNECTION("msg_noDbConnection"),
 	MSG_NO_STATEMENT_TO_EXECUTE("msg_noStatementToExecute"),
 	MSG_REALLY_REMOVE_CONNECTION("msg_reallyRemoveConnection"),
@@ -74,6 +77,7 @@ public enum DialogDictionary {
 	LABEL_TREE_INDICES("label_treeIndices"),
 	LABEL_TREE_REFERENCES("label_treeReferences"),
 	LABEL_TREE_REFERENCED_BY("label_treeReferencedBy"),
+    LABEL_UNKNOWN_USER("label_unknownUser"),
 	TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
 	TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
 	TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),
@@ -99,6 +103,10 @@ public enum DialogDictionary {
 
 	@Override
 	public String toString() {
-		return ResourceBundle.getBundle("dictionary").getString(key);
+        try {
+            return ResourceBundle.getBundle("dictionary").getString(key);
+        } catch (final MissingResourceException mre) {
+            return name();
+        }
 	}
 }

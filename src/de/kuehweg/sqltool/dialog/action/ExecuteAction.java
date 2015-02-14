@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,99 +25,82 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javafx.concurrent.Task;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
+import de.kuehweg.sqltool.dialog.component.UpdateableOnStatementExecution;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Dialogaktion: SQL-Anweisung(en) ausführen
- * 
+ *
  * @author Michael Kühweg
  */
 public class ExecuteAction {
 
-	private final ExecutionInputEnvironment input;
-	private final ExecutionProgressEnvironment progress;
-	private final ExecutionResultEnvironment result;
+    private final Collection<UpdateableOnStatementExecution> updateableComponents
+            = new HashSet<>();
 
-	public ExecuteAction(final ExecutionInputEnvironment input,
-			final ExecutionProgressEnvironment progress,
-			final ExecutionResultEnvironment result) {
-		this.input = input;
-		this.progress = progress;
-		this.result = result;
-	}
+    public ExecuteAction() {
+    }
 
-	/**
-	 * SQL ausführen und Dialog aktualisieren
-	 * 
-	 * @param sql
-	 */
-	public void handleExecuteAction(final String sql) {
-		handleExecuteAction(sql, false);
-	}
+    public void addUpdateableComponents(
+            final UpdateableOnStatementExecution... updateables) {
+        if (updateables != null) {
+            for (UpdateableOnStatementExecution updateable : updateables) {
+                updateableComponents.add(updateable);
+            }
+        }
+    }
 
-	/**
-	 * "Stille" Ausführung einer SQL-Anweisung, d.h. der Dialog wird nicht
-	 * aktualisiert (z.B. für Aufbau der Tutorialdaten aus Skript))
-	 * 
-	 * @param sql
-	 */
-	public void handleExecuteActionSilently(final String sql) {
-		handleExecuteAction(sql, true);
-	}
-
-	private void handleExecuteAction(final String sql, final boolean silent) {
-		if (sql == null || sql.trim().length() == 0) {
-			final AlertBox msg = new AlertBox(
-					DialogDictionary.MESSAGEBOX_WARNING.toString(),
-					DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE.toString(),
-					DialogDictionary.COMMON_BUTTON_OK.toString());
-			msg.askUserFeedback();
-		} else {
-			final Connection connection = input.getConnectionHolder() != null ? input
-					.getConnectionHolder().getConnection() : null;
-			if (connection == null) {
-				final AlertBox msg = new AlertBox(
-						DialogDictionary.MESSAGEBOX_WARNING.toString(),
-						DialogDictionary.MSG_NO_DB_CONNECTION.toString(),
-						DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
-			} else {
-				progress.prepareSceneRunning();
-				try {
-					// die eigentliche Ausführung wird im Hintergrund gestartet
-					// und bekommt alle Informationen mit auf den Weg, um
-					// während und zum Abschluss der Ausführung die Oberfläche
-					// aktualisieren zu können.
-					final ExecutionGUIUpdater guiUpdater = new ExecutionGUIUpdater(
-							progress, result);
-					final Task<Void> executionTask = new ExecutionTask(input
-							.getConnectionHolder().getStatement(), sql,
-							guiUpdater, silent);
-					final Thread th = new Thread(executionTask);
-					th.setDaemon(true);
-					th.start();
-				} catch (final SQLException ex) {
-					// falls kein Statement erzeugt werden kann, landen wir
-					// schon vor der eigentlichen Ausführung in einer
-					// SQL-Exception
-					final ErrorMessage msg = new ErrorMessage(
-							DialogDictionary.MESSAGEBOX_ERROR.toString(),
-							ex.getLocalizedMessage() + " (" + ex.getSQLState()
-									+ ")",
-							DialogDictionary.COMMON_BUTTON_OK.toString());
-					msg.askUserFeedback();
-					progress.showFinished(0);
-				}
-			}
-		}
-	}
+    /**
+     * SQL ausführen und Dialog aktualisieren
+     *
+     * @param sql
+     * @param connection
+     */
+    public void handleExecuteAction(final String sql,
+            final Connection connection) {
+        if (sql == null || sql.trim().length() == 0) {
+            final AlertBox msg = new AlertBox(
+                    DialogDictionary.MESSAGEBOX_WARNING.toString(),
+                    DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE.toString(),
+                    DialogDictionary.COMMON_BUTTON_OK.toString());
+            msg.askUserFeedback();
+        } else {
+            if (connection == null) {
+                final AlertBox msg = new AlertBox(
+                        DialogDictionary.MESSAGEBOX_WARNING.toString(),
+                        DialogDictionary.MSG_NO_DB_CONNECTION.toString(),
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                msg.askUserFeedback();
+            } else {
+                try {
+                    // die eigentliche Ausführung wird im Hintergrund gestartet
+                    // und bekommt alle Informationen mit auf den Weg, um
+                    // während und zum Abschluss der Ausführung die Oberfläche
+                    // aktualisieren zu können.
+                    final ExecutionTask executionTask = new ExecutionTask(
+                            connection.createStatement(), sql);
+                    executionTask.addUpdateableComponents(updateableComponents);
+                    final Thread th = new Thread(executionTask);
+                    th.setDaemon(true);
+                    th.start();
+                } catch (final SQLException ex) {
+                    // falls kein Statement erzeugt werden kann, landen wir
+                    // schon vor der eigentlichen Ausführung in einer
+                    // SQL-Exception
+                    final ErrorMessage msg = new ErrorMessage(
+                            DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                            ex.getLocalizedMessage() + " (" + ex.getSQLState()
+                            + ")",
+                            DialogDictionary.COMMON_BUTTON_OK.toString());
+                    msg.askUserFeedback();
+                }
+            }
+        }
+    }
 }

@@ -23,44 +23,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common.sqlediting;
+package de.kuehweg.sqltool.dialog.action;
+
+import de.kuehweg.sqltool.dialog.component.UpdateableOnStatementExecution;
+import java.util.Collection;
 
 /**
- * Klasse dient dazu, DDL-Statements zu erkennen (z.B. für abhängigen Refresh
- * der Schemaansicht)
+ * Vor Ausführung einer SQL-Anweisung die Oberfläche auf den aktuellen Stand
+ * bringen
  *
  * @author Michael Kühweg
  */
-public class DataDefinitionDetector {
+public class BeforeExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
 
-    private static final String[] DDL_COMMANDS = new String[]{"CREATE",
-        "ALTER", "DROP"};
-
-    private final StatementExtractor extractor = new StatementExtractor();
-
-    public boolean containsDataDefinition(final String script) {
-        if (script == null || script.trim().length() == 0) {
-            return false;
-        }
-        boolean containsDataDefinition = false;
-        for (final String statement : extractor
-                .getStatementsFromScript(script)) {
-            containsDataDefinition = containsDataDefinition
-                    || isDataDefinition(statement);
-        }
-        return containsDataDefinition;
+    public BeforeExecutionGuiUpdater(
+            final Collection<UpdateableOnStatementExecution> updateables) {
+        super(updateables);
     }
 
-    private boolean isDataDefinition(final String statement) {
-        final String uncommentedStatement = extractor.
-                removeComments(
-                        statement).toUpperCase();
-        for (final String ddl : DDL_COMMANDS) {
-            if (uncommentedStatement.startsWith(ddl)) {
-                return true;
-            }
+    @Override
+    public void update() {
+        for (UpdateableOnStatementExecution updateable
+                : getUpdateableComponents()) {
+            updateable.beforeExecution();
         }
-        return false;
     }
 
 }

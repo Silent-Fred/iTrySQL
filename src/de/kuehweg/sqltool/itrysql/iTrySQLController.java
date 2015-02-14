@@ -33,7 +33,6 @@ import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
 import de.kuehweg.sqltool.common.sqlediting.ManagedConnectionSettings;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistoryKeeper;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.ConnectionHolder;
 import de.kuehweg.sqltool.database.JDBCType;
@@ -42,18 +41,19 @@ import de.kuehweg.sqltool.dialog.ConnectionDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
-import de.kuehweg.sqltool.dialog.action.ExecutionGUIUpdater;
 import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
+import de.kuehweg.sqltool.dialog.component.AudioFeedback;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
+import de.kuehweg.sqltool.dialog.component.ExecutionProgressComponent;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
+import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
+import de.kuehweg.sqltool.dialog.component.SQLHistoryComponent;
+import de.kuehweg.sqltool.dialog.component.SchemaTreeModificationDetector;
 import de.kuehweg.sqltool.dialog.component.ServerComponentController;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
-import de.kuehweg.sqltool.dialog.environment.ExecutionInputEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionProgressEnvironment;
-import de.kuehweg.sqltool.dialog.environment.ExecutionResultEnvironment;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import java.io.File;
 import java.io.IOException;
@@ -107,7 +107,7 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javax.xml.bind.JAXBException;
 
-public class iTrySQLController implements Initializable, SQLHistoryKeeper,
+public class iTrySQLController implements Initializable,
         EventHandler<WindowEvent> {
 
     @FXML
@@ -242,9 +242,11 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     private TextField serverAlias;
     @FXML
     private WebView syntaxDefinitionView;
+
     // my own special creation
+    private QueryResultTableView queryResultTableView;
+
     private ConnectionHolder connectionHolder;
-    private ObservableList<SQLHistory> sqlHistoryItems;
     private ConnectionComponentController connectionComponentController;
     private ServerComponentController serverComponentController;
     private static int countWindows = 1;
@@ -322,6 +324,15 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
         fixWebViewWithHSQLDBBug();
 
         initializeContinued();
+
+        buildComponents();
+    }
+
+    private void buildComponents() {
+        // "Dumme" Komponenten werden nur jeweils zur Ausführung erzeugt.
+        // Komponenten, die mehr Informationen enthalten, als sie anzeigen (z.B. HTML-Export aus Tabellensicht)
+        // werden dagegen einmal pro Fenster angelegt.
+        queryResultTableView = new QueryResultTableView(resultTableContainer);
     }
 
     // FIXME Falls noch Fälle offen sein sollten, in denen der Log-Level
@@ -431,19 +442,25 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                     .extractStatementAtCaretPosition(statementInput.getText(),
                             statementInput.getCaretPosition());
         }
-        createExecuteAction().handleExecuteAction(sql);
+        focusResult();
+        createExecuteAction().handleExecuteAction(sql, getConnectionHolder().
+                getConnection());
     }
 
     public void executeScript(final ActionEvent event) {
-        createExecuteAction().handleExecuteAction(statementInput.getText());
+        focusResult();
+        createExecuteAction().handleExecuteAction(statementInput.getText(),
+                getConnectionHolder().getConnection());
     }
 
     public void commit(final ActionEvent event) {
-        createExecuteAction().handleExecuteAction("COMMIT");
+        createExecuteAction().handleExecuteAction("COMMIT",
+                getConnectionHolder().getConnection());
     }
 
     public void rollback(final ActionEvent event) {
-        createExecuteAction().handleExecuteAction("ROLLBACK");
+        createExecuteAction().handleExecuteAction("ROLLBACK",
+                getConnectionHolder().getConnection());
     }
 
     public void fontAction(final ActionEvent event) {
@@ -451,7 +468,8 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     }
 
     public void tutorialAction(final ActionEvent event) {
-        new TutorialAction().createTutorial(createExecuteAction());
+        new TutorialAction().createTutorial(createExecuteAction(),
+                getConnectionHolder().getConnection());
     }
 
     public void fileOpenScriptAction(final ActionEvent event) {
@@ -503,15 +521,9 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     }
 
     public void toolbarTabTableViewExportAction(final ActionEvent event) {
-        if (resultTableContainer.getChildren() != null) {
-            for (final Node node : resultTableContainer.getChildren()) {
-                if (ExecutionGUIUpdater.RESULT_TABLE_ID.equals(node.getId())) {
-                    export(DialogDictionary.LABEL_SAVE_OUTPUT_HTML,
-                            ((Node) event.getSource()).getScene().getWindow(),
-                            "html", ((QueryResultTableView) node).toHtml());
-                }
-            }
-        }
+        export(DialogDictionary.LABEL_SAVE_OUTPUT_HTML,
+                ((Node) event.getSource()).getScene().getWindow(),
+                "html", queryResultTableView.toHtml());
     }
 
     public void refreshTree(final ActionEvent event) {
@@ -757,7 +769,7 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     }
 
     private void prepareHistory() {
-        sqlHistoryItems = FXCollections.observableArrayList();
+        ObservableList<SQLHistory> sqlHistoryItems = FXCollections.observableArrayList();
         sqlHistoryColumnTimestamp
                 .setCellValueFactory(
                         new PropertyValueFactory<SQLHistory, String>(
@@ -766,7 +778,6 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
                 .setCellValueFactory(
                         new PropertyValueFactory<SQLHistory, String>(
                                 "sqlForDisplay"));
-        sqlHistory.setItems(sqlHistoryItems);
         sqlHistory.getSelectionModel().selectedItemProperty()
                 .addListener(new ChangeListener<SQLHistory>() {
                     @Override
@@ -782,38 +793,34 @@ public class iTrySQLController implements Initializable, SQLHistoryKeeper,
     }
 
     private ExecuteAction createExecuteAction() {
-        final ExecutionInputEnvironment input
-                = new ExecutionInputEnvironment.Builder(
-                        getConnectionHolder()).limitMaxRows(
-                        UserPreferencesManager.getSharedInstance().
-                        isLimitMaxRows())
-                .build();
-        final ExecutionProgressEnvironment progress
-                = new ExecutionProgressEnvironment.Builder(
-                        executionProgressIndicator).executionTime(executionTime)
-                .build();
-        final ExecutionResultEnvironment result
-                = new ExecutionResultEnvironment.Builder()
-                .tabPaneContainingResults(tabPaneProtocols)
-                .tabResult(tabResult)
-                .tabDbOutput(tabDbOutput)
-                .dbOutput(dbOutput)
-                .historyKeeper(this)
-                .resultTableContainer(resultTableContainer).build();
-        return new ExecuteAction(input, progress, result);
+        ExecuteAction executeAction = new ExecuteAction();
+
+        executeAction.addUpdateableComponents(queryResultTableView,
+                new SQLHistoryComponent(sqlHistory),
+                new QueryResultTextView(dbOutput),
+                new ExecutionProgressComponent(
+                        executionProgressIndicator, executionTime),
+                new AudioFeedback(),
+                new SchemaTreeModificationDetector(schemaTreeView,
+                        getConnectionHolder().getConnection()));
+
+        return executeAction;
+    }
+
+    public void focusResult() {
+        final Tab currentlySelectedTab = tabPaneProtocols.
+                selectionModelProperty().getValue().getSelectedItem();
+        if (currentlySelectedTab == null || !currentlySelectedTab.equals(
+                tabResult) && !currentlySelectedTab.equals(tabDbOutput)) {
+            tabPaneProtocols.selectionModelProperty().getValue().
+                    select(tabResult);
+        }
     }
 
     // --- implementierte Interfaces und weitere Spezialitäten
     @Override
     public void handle(final WindowEvent event) {
         getConnectionHolder().disconnect();
-    }
-
-    @Override
-    public void addExecutedSQLToHistory(final String sql) {
-        if (sql != null && sql.trim().length() > 0) {
-            sqlHistoryItems.add(0, new SQLHistory(sql));
-        }
     }
 
     public ConnectionHolder getConnectionHolder() {

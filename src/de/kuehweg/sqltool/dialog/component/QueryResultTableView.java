@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,11 @@
 package de.kuehweg.sqltool.dialog.component;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.database.execution.ResultHeader;
+import de.kuehweg.sqltool.database.execution.ResultRow;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.database.execution.StatementResult;
 import de.kuehweg.sqltool.database.formatter.HtmlResultFormatter;
-import de.kuehweg.sqltool.database.formatter.ResultFormatter;
-import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -38,6 +39,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.util.Callback;
 
 /**
@@ -45,63 +48,141 @@ import javafx.util.Callback;
  *
  * @author Michael Kühweg
  */
-public class QueryResultTableView extends TableView<ObservableList<String>> {
+public class QueryResultTableView implements UpdateableOnStatementExecution {
 
-    private final ResultFormatter resultFormatter;
+    public static final String RESULT_TABLE_ID
+            = "useMeToFetchTheResultFormatter";
 
-    public QueryResultTableView(final ResultFormatter resultFormatter) {
+    private final HBox parentContainer;
+    private TableView<ObservableList<String>> tableView;
+    private StatementExecutionInformation infoToView;
+
+    public QueryResultTableView(final HBox parentContainer) {
         super();
-        this.resultFormatter = resultFormatter;
+        this.parentContainer = parentContainer;
     }
 
-    public void buildTableView() {
-        int i = 0;
-        for (final String head : resultFormatter.getHeader()) {
-            final TableColumn<ObservableList<String>, String> col =
-                    new TableColumn<>(
-                    head);
-            col.setMinWidth(100);
-            final int accessIndex = i++;
+    public String toHtml() {
+        if (infoToView == null) {
+            return "";
+        }
+        return new HtmlResultFormatter(infoToView).formatAsHtml();
+    }
+
+    private void buildViewWithoutResultSet(
+            final StatementExecutionInformation info) {
+        if (info != null && info.getStatementResult() == null) {
+            tableView.getColumns().clear();
+            tableView.getItems().clear();
+            final TableColumn<ObservableList<String>, String> col
+                    = new TableColumn<>(
+                            DialogDictionary.LABEL_RESULT_EXECUTED.toString());
+            col.setMinWidth(200);
             col.setCellValueFactory(
                     new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(
-                        final CellDataFeatures<ObservableList<String>, String> param) {
-                    return new SimpleStringProperty(param.getValue()
-                            .get(accessIndex).toString());
-                }
-            });
-            getColumns().add(col);
+                        @Override
+                        public ObservableValue<String> call(
+                                final CellDataFeatures<ObservableList<String>, String> param) {
+                                    return new SimpleStringProperty(param.
+                                            getValue()
+                                            .get(0).toString());
+                                }
+                    });
+            tableView.getColumns().add(col);
+
+            final ObservableList<ObservableList<String>> content = FXCollections
+                    .observableArrayList();
+            final ObservableList<String> row = FXCollections
+                    .observableArrayList();
+            row.add(info.getSummary());
+            content.add(row);
+            tableView.setItems(content);
         }
-        final ObservableList<ObservableList<String>> content = FXCollections
-                .observableArrayList();
-        if (resultFormatter.isHeadOnly()) {
-            content.add(FXCollections
-                    .observableArrayList(MessageFormat.format(
-                    DialogDictionary.PATTERN_UPDATECOUNT.toString(),
-                    resultFormatter.getUpdateCount())));
-        } else {
-            for (final List<String> rowFromFormatter : resultFormatter
-                    .getRows()) {
+    }
+
+    private void buildViewWithResultSet(final StatementExecutionInformation info) {
+        if (info != null && info.getStatementResult() != null) {
+            tableView.getColumns().clear();
+            tableView.getItems().clear();
+            int i = 0;
+            for (final String head : info.getStatementResult().getHeader().
+                    getColumnHeaders()) {
+                final TableColumn<ObservableList<String>, String> col
+                        = new TableColumn<>(
+                                head);
+                col.setMinWidth(100);
+                final int accessIndex = i++;
+                col.setCellValueFactory(
+                        new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
+                            @Override
+                            public ObservableValue<String> call(
+                                    final CellDataFeatures<ObservableList<String>, String> param) {
+                                        return new SimpleStringProperty(param.
+                                                getValue()
+                                                .get(accessIndex).toString());
+                                    }
+                        });
+                tableView.getColumns().add(col);
+            }
+            final ObservableList<ObservableList<String>> content = FXCollections
+                    .observableArrayList();
+            for (final ResultRow resultRow : info.getStatementResult().getRows()) {
                 final ObservableList<String> row = FXCollections
                         .observableArrayList();
-                for (final String column : rowFromFormatter) {
+                for (final String column : resultRow.columnsAsString()) {
                     row.add(column);
                 }
                 content.add(row);
             }
+            tableView.setItems(content);
         }
-        setItems(content);
     }
 
-    public String toHtml() {
-        if (resultFormatter != null) {
-            try {
-                return new HtmlResultFormatter(resultFormatter).formatAsHtml();
-            } catch (final IOException ex) {
-                return ex.toString();
+    private void buildView(final StatementExecutionInformation info) {
+        tableView = new TableView<>();
+        tableView.setId(RESULT_TABLE_ID);
+        HBox.setHgrow(tableView, Priority.ALWAYS);
+
+        if (info != null) {
+            if (info.getStatementResult() != null) {
+                buildViewWithResultSet(info);
+            } else {
+                buildViewWithoutResultSet(info);
             }
         }
-        return "";
+        parentContainer.getChildren().clear();
+        parentContainer.getChildren().add(tableView);
+    }
+
+    @Override
+    public void beforeExecution() {
+        StatementExecutionInformation info = new StatementExecutionInformation();
+        info.setStatementResult(new StatementResult());
+        info.getStatementResult().setHeader(new ResultHeader(
+                DialogDictionary.LABEL_EXECUTING.
+                toString()));
+        buildView(info);
+        // eventuellen alten Inhalt verwerfen
+        infoToView = null;
+    }
+
+    @Override
+    public void intermediateUpdate(
+            final List<StatementExecutionInformation> executionInfos) {
+        if (executionInfos != null && !executionInfos.isEmpty()) {
+            infoToView = executionInfos.get(executionInfos.size() - 1);
+        }
+    }
+
+    @Override
+    public void afterExecution() {
+        if (infoToView == null) {
+            infoToView = new StatementExecutionInformation();
+            infoToView.setStatementResult(new StatementResult());
+            infoToView.getStatementResult().setHeader(new ResultHeader(
+                    DialogDictionary.LABEL_RESULT_EXECUTED.
+                    toString()));
+        }
+        buildView(infoToView);
     }
 }

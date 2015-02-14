@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,10 +27,16 @@ package de.kuehweg.sqltool.dialog.action;
 
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
+import de.kuehweg.sqltool.common.sqlediting.StatementString;
 import de.kuehweg.sqltool.database.DatabaseConstants;
-import de.kuehweg.sqltool.database.formatter.ResultFormatter;
+import de.kuehweg.sqltool.database.execution.StatementExecution;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.component.UpdateableOnStatementExecution;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import javafx.application.Platform;
@@ -43,75 +49,93 @@ import javafx.concurrent.Task;
  */
 public class ExecutionTask extends Task<Void> {
 
+    private final static long UI_UPDATE_INTERVAL_MILLISECONDS = 500;
+
     private final Statement statement;
     private final String sql;
-    private final ExecutionGUIUpdater guiUpdater;
-    private final boolean silent;
+    private final Collection<UpdateableOnStatementExecution> updateableComponents;
+    private long lastTimeUIWasUpdated;
 
-    public ExecutionTask(final Statement statement, final String sql,
-            final ExecutionGUIUpdater guiUpdater, final boolean silent) {
+    public ExecutionTask(final Statement statement, final String sql) {
         this.statement = statement;
         this.sql = sql;
-        this.guiUpdater = guiUpdater;
-        this.silent = silent;
+        this.updateableComponents = new HashSet<>();
+    }
+
+    public void addUpdateableComponents(
+            final UpdateableOnStatementExecution... updateables) {
+        if (updateables != null) {
+            for (UpdateableOnStatementExecution updateable : updateables) {
+                updateableComponents.add(updateable);
+            }
+        }
+    }
+
+    public void addUpdateableComponents(
+            final Collection<UpdateableOnStatementExecution> updateables) {
+        if (updateables != null) {
+            updateableComponents.addAll(updateables);
+        }
+    }
+
+    private void beforeExecution() {
+        final BeforeExecutionGuiUpdater updater
+                = new BeforeExecutionGuiUpdater(updateableComponents);
+        Platform.runLater(updater);
+    }
+
+    private void intermediateUpdate(
+            final List<StatementExecutionInformation> executionInfos) {
+        final IntermediateExecutionGuiUpdater updater
+                = new IntermediateExecutionGuiUpdater(executionInfos,
+                        updateableComponents);
+        Platform.runLater(updater);
+    }
+
+    private void afterExecution() {
+        final AfterExecutionGuiUpdater updater
+                = new AfterExecutionGuiUpdater(updateableComponents);
+        Platform.runLater(updater);
     }
 
     @Override
     protected Void call() throws Exception {
         try {
-            final long timing = System.currentTimeMillis();
-            final List<String> statements = new StatementExtractor()
+            final List<StatementString> statements = new StatementExtractor()
                     .getStatementsFromScript(sql);
             if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
                 statement.setMaxRows(DatabaseConstants.MAX_ROWS);
             }
-            final Iterator<String> queryIterator = statements.iterator();
+            beforeExecution();
+            List<StatementExecutionInformation> executionInfos
+                    = new ArrayList<>();
+            final Iterator<StatementString> queryIterator = statements.
+                    iterator();
             while (queryIterator.hasNext() && !isCancelled()) {
-                final String singleQuery = queryIterator.next();
-                statement.execute(singleQuery);
-                if (!silent) {
-                    final ResultFormatter resultFormatter
-                            = new ResultFormatter();
-                    resultFormatter.fillFromStatementResult(statement);
-                    // Datenbankzugriff und Aufbereitung der Daten werden
-                    // zusammen in die Laufzeit eingerechnet
-                    // Zwischenstand ausgeben
-                    if (guiUpdater != null) {
-                        final ExecutionGUIUpdater intermediateResultUpdater
-                                = new ExecutionGUIUpdater(
-                                        guiUpdater.getProgress(),
-                                        guiUpdater.getResult());
-                        intermediateResultUpdater
-                                .setExecutionTimeInMilliseconds(System
-                                        .currentTimeMillis() - timing);
-                        intermediateResultUpdater
-                                .setResultFormatter(resultFormatter);
-                        intermediateResultUpdater.setIntermediateUpdate(true);
-                        intermediateResultUpdater.setSqlForHistory(singleQuery);
-                        // bei nächster Gelegenheit die Oberfläche aktualisieren
-                        Platform.runLater(intermediateResultUpdater);
-                    }
+                final StatementString singleQuery = queryIterator.next();
+
+                executionInfos.add(new StatementExecution(singleQuery).execute(
+                        statement));
+
+                if (System.currentTimeMillis() - lastTimeUIWasUpdated
+                        > UI_UPDATE_INTERVAL_MILLISECONDS) {
+                    intermediateUpdate(executionInfos);
+                    executionInfos.clear();
+                    lastTimeUIWasUpdated = System.currentTimeMillis();
                 }
             }
+            // falls noch Zwischenupdates ausstehen sollten, diese erst abarbeiten
+            intermediateUpdate(executionInfos);
+            afterExecution();
         } catch (final SQLException ex) {
             final String msg = ex.getLocalizedMessage() + " (SQL-State: "
                     + ex.getSQLState() + ")";
-            if (guiUpdater != null) {
-                guiUpdater.setErrorThatOccurred(msg);
-            }
-        } finally {
-            if (guiUpdater != null) {
-                if (silent) {
-                    guiUpdater.setSqlForHistory(null);
-                    final ResultFormatter resultFormatter
-                            = new ResultFormatter();
-                    resultFormatter.fillFromStatementResult(null);
-                    guiUpdater.setResultFormatter(resultFormatter);
-                }
-                guiUpdater.setIntermediateUpdate(false);
-                Platform.runLater(guiUpdater);
-            }
+            final ErrorExecutionGuiUpdater updater
+                    = new ErrorExecutionGuiUpdater(updateableComponents);
+            updater.setErrormessage(msg);
+            Platform.runLater(updater);
         }
         return null;
     }
+
 }

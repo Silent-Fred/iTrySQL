@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,7 @@ import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.io.IOException;
+import java.sql.Connection;
 
 /**
  * Aufbau der Tutorialdaten
@@ -38,10 +39,8 @@ import java.io.IOException;
  */
 public class TutorialAction {
 
-    public TutorialAction() {
-    }
-
-    public void createTutorial(final ExecuteAction executeAction) {
+    public void createTutorial(final ExecuteAction executeAction,
+            final Connection connection) {
         final ConfirmDialog confirm = new ConfirmDialog(
                 DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
                 DialogDictionary.MSG_REALLY_CREATE_TUTORIAL_DATA.toString(),
@@ -60,8 +59,8 @@ public class TutorialAction {
                         .readResourceFile("/resources/sql/tutorial.sql"));
                 // beide gemeinsam in einer Aktion anlegen und mit CHECKPOINT abschließen
                 completeSql.append("\nCHECKPOINT;\n");
-                executeAction.handleExecuteActionSilently(completeSql
-                        .toString());
+                executeAction.handleExecuteAction(completeSql.toString(),
+                        connection);
             } catch (final IOException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),

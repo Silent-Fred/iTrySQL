@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,58 +23,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.environment;
+package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.database.ConnectionHolder;
+import de.kuehweg.sqltool.dialog.component.UpdateableOnStatementExecution;
+import java.util.Collection;
 
 /**
- * Sammlung aller "Beteiligten", die eine Ausführung einer SQL-Anweisung
- * beeinflussen.
- * <ul>
- * <li>Flag, ob die Ergebnismenge begrenzt werden soll</li>
- * <li>ConnectionHolder für die Datenbankverbindung</li>
- * </ul>
- * 
+ * Nach Ausführung einer SQL-Anweisung die Oberfläche auf den aktuellen Stand
+ * bringen
+ *
  * @author Michael Kühweg
  */
-public class ExecutionInputEnvironment {
+public class AfterExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
 
-	private final boolean limitMaxRows;
-	private final ConnectionHolder connectionHolder;
+    public AfterExecutionGuiUpdater(
+            final Collection<UpdateableOnStatementExecution> updateables) {
+        super(updateables);
+    }
 
-	/**
-	 * Builder-Pattern
-	 */
-	public static class Builder {
-
-		private boolean limitMaxRows = true;
-		private final ConnectionHolder connectionHolder;
-
-		public Builder(final ConnectionHolder connectionHolder) {
-			this.connectionHolder = connectionHolder;
-		}
-
-		public Builder limitMaxRows(final boolean limitMaxRows) {
-			this.limitMaxRows = limitMaxRows;
-			return this;
-		}
-
-		public ExecutionInputEnvironment build() {
-			return new ExecutionInputEnvironment(this);
-		}
-	}
-
-	private ExecutionInputEnvironment(final Builder builder) {
-		limitMaxRows = builder.limitMaxRows;
-		connectionHolder = builder.connectionHolder;
-	}
-
-	public boolean isLimitMaxRows() {
-		return limitMaxRows;
-	}
-
-	public ConnectionHolder getConnectionHolder() {
-		return connectionHolder;
-	}
+    @Override
+    public void update() {
+        for (UpdateableOnStatementExecution updateable
+                : getUpdateableComponents()) {
+            updateable.afterExecution();
+        }
+    }
 
 }

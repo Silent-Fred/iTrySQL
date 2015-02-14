@@ -65,12 +65,12 @@ public class StatementExtractor {
      * @param script SQL-Skript
      * @return Liste der enthaltenen SQL-Anweisungen
      */
-    public List<String> getStatementsFromScript(final String script) {
-        final List<String> statements = new LinkedList<>();
+    public List<StatementString> getStatementsFromScript(final String script) {
+        final List<StatementString> statements = new LinkedList<>();
         for (String statement : splitIntoRawStatements(script)) {
             String trimmed = statement.trim();
             if (trimmed.length() > 0) {
-                statements.add(statement.trim());
+                statements.add(new StatementString(statement));
             }
         }
         return statements;
@@ -100,86 +100,4 @@ public class StatementExtractor {
         return statements;
     }
 
-    private int findFirstCommentStartIndex(final String statement) {
-        if (statement == null || statement.trim().length() == 0) {
-            return -1;
-        }
-        final char[] input = statement.toCharArray();
-        StatementExtractionStates state = StatementExtractionStates.START;
-        int pos = 0;
-        while (pos < input.length) {
-            state = state.evaluate(input[pos++]);
-            switch (state) {
-                case INSIDE_BLOCK_COMMENT:
-                case INSIDE_LINE_COMMENT:
-                    return pos - 2;
-                default:
-                    break;
-            }
-        }
-        return -1;
-    }
-
-    private int findFirstCommentEndIndex(final String statement) {
-        if (statement == null || statement.trim().length() == 0) {
-            return -1;
-        }
-        final char[] input = statement.toCharArray();
-        StatementExtractionStates state = StatementExtractionStates.START;
-        int pos = 0;
-        boolean inside = false;
-        while (pos < input.length) {
-            state = state.evaluate(input[pos++]);
-            switch (state) {
-                case INSIDE_BLOCK_COMMENT:
-                case INSIDE_LINE_COMMENT:
-                    inside = true;
-                    break;
-                case START:
-                    if (inside) {
-                        return pos - 1;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        return inside ? statement.length() - 1 : -1;
-    }
-
-    private String removeFirstComment(final String statement) {
-        if (statement == null || statement.trim().length() == 0) {
-            return "";
-        }
-        final StringBuilder builder = new StringBuilder();
-        final int firstCommentStartIndex = findFirstCommentStartIndex(statement);
-        if (firstCommentStartIndex < 0) {
-            builder.append(statement);
-        } else {
-            builder.append(statement.substring(0, firstCommentStartIndex)
-                    .trim());
-            final int firstCommentEndIndex = findFirstCommentEndIndex(statement);
-            if (firstCommentEndIndex < statement.length() - 1) {
-                // Kommentar ist ein Trennelement - wird ersetzt durch einen
-                // anderen Trenner, damit nicht evtl. die Syntax zerstört wird
-                builder.append(" ");
-                builder.append(statement.substring(firstCommentEndIndex + 1)
-                        .trim());
-            }
-        }
-        return builder.toString().trim();
-    }
-
-    public String removeComments(final String statement) {
-        if (statement == null || statement.trim().length() == 0) {
-            return "";
-        }
-        String trimmedStatement = statement;
-        int oldLength;
-        do {
-            oldLength = trimmedStatement.length();
-            trimmedStatement = removeFirstComment(trimmedStatement);
-        } while (oldLength > trimmedStatement.length());
-        return trimmedStatement;
-    }
 }

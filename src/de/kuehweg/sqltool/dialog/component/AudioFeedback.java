@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,14 +23,40 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common.sqlediting;
+package de.kuehweg.sqltool.dialog.component;
+
+import de.kuehweg.sqltool.common.ProvidedAudioClip;
+import de.kuehweg.sqltool.common.UserPreferencesManager;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import java.util.List;
 
 /**
- * Interface für z.B. einen Controller, der eine SQL-Historie führt
- * 
+ * Akustische Rückmeldung zu SQL-Anweisungen
+ *
  * @author Michael Kühweg
  */
-public interface SQLHistoryKeeper {
+public class AudioFeedback implements UpdateableOnStatementExecution {
 
-	void addExecutedSQLToHistory(final String sql);
+    @Override
+    public void beforeExecution() {
+    }
+
+    @Override
+    public void intermediateUpdate(
+            final List<StatementExecutionInformation> executionInfos) {
+    }
+
+    @Override
+    public void afterExecution() {
+        ProvidedAudioClip audioClip = UserPreferencesManager.
+                getSharedInstance().getBeepAudioClip();
+        if (audioClip != null) {
+            double volume = UserPreferencesManager.getSharedInstance().
+                    getBeepVolume();
+            if (volume > 0.0) {
+                audioClip.play(volume);
+            }
+        }
+    }
+
 }
