@@ -39,8 +39,8 @@ public class ErrorExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
     private String errorThatOccurred;
 
     public ErrorExecutionGuiUpdater(
-            final Collection<ExecutionObserver> observers) {
-        super(observers);
+            final Collection<ExecutionTracker> trackers) {
+        super(trackers);
         errorThatOccurred = DialogDictionary.ERR_UNKNOWN_ERROR.toString();
     }
 
@@ -52,9 +52,9 @@ public class ErrorExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
 
     @Override
     public void update() {
-        for (ExecutionObserver observer : getObservers()) {
+        for (ExecutionTracker tracker : getTrackers()) {
             // Bearbeitung auf beendet setzen
-            observer.afterExecution();
+            tracker.afterExecution();
         }
         // und danach eine Fehlermeldung ausgeben
         final ErrorMessage msg = new ErrorMessage(

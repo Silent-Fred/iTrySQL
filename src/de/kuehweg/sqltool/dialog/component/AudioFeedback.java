@@ -25,7 +25,7 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.ProvidedAudioClip;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @author Michael Kühweg
  */
-public class AudioFeedback implements ExecutionObserver {
+public class AudioFeedback implements ExecutionTracker {
 
     @Override
     public void beforeExecution() {

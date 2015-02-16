@@ -25,7 +25,7 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import java.math.BigDecimal;
@@ -40,7 +40,7 @@ import javafx.scene.control.ProgressBar;
  * @author Michael Kühweg
  */
 public class ExecutionProgressComponent implements
-        ExecutionObserver {
+        ExecutionTracker {
 
     private static final double PROGRESS_RUNNING = -1;
     private static final double PROGRESS_FINISHED = 1;

@@ -34,7 +34,7 @@ import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.updater.AfterExecutionGuiUpdater;
 import de.kuehweg.sqltool.dialog.updater.BeforeExecutionGuiUpdater;
 import de.kuehweg.sqltool.dialog.updater.ErrorExecutionGuiUpdater;
-import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.dialog.updater.IntermediateExecutionGuiUpdater;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -57,45 +57,45 @@ public class ExecutionTask extends Task<Void> {
 
     private final Statement statement;
     private final String sql;
-    private final Collection<ExecutionObserver> observers;
+    private final Collection<ExecutionTracker> trackers;
     private long lastTimeUIWasUpdated;
 
     public ExecutionTask(final Statement statement, final String sql) {
         this.statement = statement;
         this.sql = sql;
-        this.observers = new HashSet<>();
+        this.trackers = new HashSet<>();
     }
 
-    public void attach(final ExecutionObserver... observers) {
-        if (observers != null) {
-            for (ExecutionObserver observer : observers) {
-                this.observers.add(observer);
+    public void attach(final ExecutionTracker... trackers) {
+        if (trackers != null) {
+            for (ExecutionTracker tracker : trackers) {
+                this.trackers.add(tracker);
             }
         }
     }
 
-    public void attach(final Collection<ExecutionObserver> observers) {
-        if (observers != null) {
-            this.observers.addAll(observers);
+    public void attach(final Collection<ExecutionTracker> trackers) {
+        if (trackers != null) {
+            this.trackers.addAll(trackers);
         }
     }
 
     private void beforeExecution() {
         final BeforeExecutionGuiUpdater updater
-                = new BeforeExecutionGuiUpdater(observers);
+                = new BeforeExecutionGuiUpdater(trackers);
         Platform.runLater(updater);
     }
 
     private void intermediateUpdate(
             final List<StatementExecutionInformation> executionInfos) {
         final IntermediateExecutionGuiUpdater updater
-                = new IntermediateExecutionGuiUpdater(executionInfos, observers);
+                = new IntermediateExecutionGuiUpdater(executionInfos, trackers);
         Platform.runLater(updater);
     }
 
     private void afterExecution() {
         final AfterExecutionGuiUpdater updater
-                = new AfterExecutionGuiUpdater(observers);
+                = new AfterExecutionGuiUpdater(trackers);
         Platform.runLater(updater);
     }
 
@@ -132,7 +132,7 @@ public class ExecutionTask extends Task<Void> {
             final String msg = ex.getLocalizedMessage() + " (SQL-State: "
                     + ex.getSQLState() + ")";
             final ErrorExecutionGuiUpdater updater
-                    = new ErrorExecutionGuiUpdater(observers);
+                    = new ErrorExecutionGuiUpdater(trackers);
             updater.setErrormessage(msg);
             Platform.runLater(updater);
         }

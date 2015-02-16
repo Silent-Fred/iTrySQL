@@ -41,21 +41,21 @@ public abstract class AbstractExecutionGuiUpdater implements Runnable {
     private final List<StatementExecutionInformation> statementExecutionInformations
             = new ArrayList<>();
 
-    private final Collection<ExecutionObserver> observers
+    private final Collection<ExecutionTracker> trackers
             = new HashSet<>();
 
     public AbstractExecutionGuiUpdater(
-            final Collection<ExecutionObserver> observers) {
+            final Collection<ExecutionTracker> trackers) {
         super();
-        if (observers != null) {
-            this.observers.addAll(observers);
+        if (trackers != null) {
+            this.trackers.addAll(trackers);
         }
     }
 
     public AbstractExecutionGuiUpdater(
             final List<StatementExecutionInformation> executionInfos,
-            final Collection<ExecutionObserver> observers) {
-        this(observers);
+            final Collection<ExecutionTracker> trackers) {
+        this(trackers);
         statementExecutionInformations.addAll(executionInfos);
     }
 
@@ -63,8 +63,8 @@ public abstract class AbstractExecutionGuiUpdater implements Runnable {
         return statementExecutionInformations;
     }
 
-    protected Collection<ExecutionObserver> getObservers() {
-        return observers;
+    protected Collection<ExecutionTracker> getTrackers() {
+        return trackers;
     }
 
     public abstract void update();

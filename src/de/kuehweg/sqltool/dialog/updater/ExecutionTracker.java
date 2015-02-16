@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author Michael Kühweg
  */
-public interface ExecutionObserver {
+public interface ExecutionTracker {
 
     void beforeExecution();
 

@@ -39,14 +39,14 @@ public class IntermediateExecutionGuiUpdater extends AbstractExecutionGuiUpdater
 
     public IntermediateExecutionGuiUpdater(
             final List<StatementExecutionInformation> executionInfos,
-            final Collection<ExecutionObserver> observers) {
-        super(executionInfos, observers);
+            final Collection<ExecutionTracker> trackers) {
+        super(executionInfos, trackers);
     }
 
     @Override
     public void update() {
-        for (ExecutionObserver observer : getObservers()) {
-            observer.intermediateUpdate(getStatementExecutionInformations());
+        for (ExecutionTracker tracker : getTrackers()) {
+            tracker.intermediateUpdate(getStatementExecutionInformations());
         }
     }
 

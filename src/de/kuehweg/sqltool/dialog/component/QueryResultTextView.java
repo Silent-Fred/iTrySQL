@@ -25,7 +25,7 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.database.DatabaseConstants;
@@ -41,7 +41,7 @@ import javafx.scene.control.TextArea;
  *
  * @author Michael Kühweg
  */
-public class QueryResultTextView implements ExecutionObserver {
+public class QueryResultTextView implements ExecutionTracker {
 
     private static final int MAX_DBOUTPUT = 500 * 1024;
 

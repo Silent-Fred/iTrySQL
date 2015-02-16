@@ -25,7 +25,7 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import java.sql.Connection;
@@ -41,7 +41,7 @@ import javafx.scene.control.TreeView;
  * @author Michael Kühweg
  */
 public class SchemaTreeModificationDetector implements
-        ExecutionObserver {
+        ExecutionTracker {
 
     private boolean ddlDetected;
     private final TreeView<String> schemaTree;

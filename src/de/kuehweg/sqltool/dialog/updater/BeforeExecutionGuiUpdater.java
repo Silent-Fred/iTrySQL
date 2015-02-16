@@ -36,14 +36,14 @@ import java.util.Collection;
 public class BeforeExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
 
     public BeforeExecutionGuiUpdater(
-            final Collection<ExecutionObserver> observers) {
-        super(observers);
+            final Collection<ExecutionTracker> trackers) {
+        super(trackers);
     }
 
     @Override
     public void update() {
-        for (ExecutionObserver observer : getObservers()) {
-            observer.beforeExecution();
+        for (ExecutionTracker tracker : getTrackers()) {
+            tracker.beforeExecution();
         }
     }
 

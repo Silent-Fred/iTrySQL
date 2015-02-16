@@ -28,7 +28,7 @@ package de.kuehweg.sqltool.dialog.action;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -41,15 +41,15 @@ import java.util.HashSet;
  */
 public class ExecuteAction {
 
-    private final Collection<ExecutionObserver> observers = new HashSet<>();
+    private final Collection<ExecutionTracker> trackers = new HashSet<>();
 
     public ExecuteAction() {
     }
 
-    public void attach(final ExecutionObserver... observers) {
-        if (observers != null) {
-            for (ExecutionObserver observer : observers) {
-                this.observers.add(observer);
+    public void attach(final ExecutionTracker... trackers) {
+        if (trackers != null) {
+            for (ExecutionTracker tracker : trackers) {
+                this.trackers.add(tracker);
             }
         }
     }
@@ -83,7 +83,7 @@ public class ExecuteAction {
                     // aktualisieren zu können.
                     final ExecutionTask executionTask = new ExecutionTask(
                             connection.createStatement(), sql);
-                    executionTask.attach(observers);
+                    executionTask.attach(trackers);
                     final Thread th = new Thread(executionTask);
                     th.setDaemon(true);
                     th.start();
