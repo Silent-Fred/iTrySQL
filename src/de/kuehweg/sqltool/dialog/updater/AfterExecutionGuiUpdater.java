@@ -23,40 +23,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component;
+package de.kuehweg.sqltool.dialog.updater;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
-import de.kuehweg.sqltool.common.ProvidedAudioClip;
-import de.kuehweg.sqltool.common.UserPreferencesManager;
-import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import java.util.List;
+import java.util.Collection;
 
 /**
- * Akustische Rückmeldung zu SQL-Anweisungen
+ * Nach Ausführung einer SQL-Anweisung die Oberfläche auf den aktuellen Stand
+ * bringen
  *
  * @author Michael Kühweg
  */
-public class AudioFeedback implements ExecutionObserver {
+public class AfterExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
 
-    @Override
-    public void beforeExecution() {
+    public AfterExecutionGuiUpdater(
+            final Collection<ExecutionObserver> observers) {
+        super(observers);
     }
 
     @Override
-    public void intermediateUpdate(
-            final List<StatementExecutionInformation> executionInfos) {
-    }
-
-    @Override
-    public void afterExecution() {
-        ProvidedAudioClip audioClip = UserPreferencesManager.
-                getSharedInstance().getBeepAudioClip();
-        if (audioClip != null) {
-            double volume = UserPreferencesManager.getSharedInstance().
-                    getBeepVolume();
-            if (volume > 0.0) {
-                audioClip.play(volume);
-            }
+    public void update() {
+        for (ExecutionObserver observer : getObservers()) {
+            observer.afterExecution();
         }
     }
 

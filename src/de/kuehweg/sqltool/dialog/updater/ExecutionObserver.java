@@ -23,33 +23,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.action;
+package de.kuehweg.sqltool.dialog.updater;
 
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import de.kuehweg.sqltool.dialog.component.UpdateableOnStatementExecution;
-import java.util.Collection;
 import java.util.List;
 
 /**
- * Während Ausführung einer SQL-Anweisung die Oberfläche auf den aktuellen Stand
- * bringen
+ * Schnittstelle für Oberflächenbestandteile, deren Zustand sich ändert, wenn
+ * eine SQL-Anweisung ausgeführt wird
  *
  * @author Michael Kühweg
  */
-public class IntermediateExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
+public interface ExecutionObserver {
 
-    public IntermediateExecutionGuiUpdater(
-            final List<StatementExecutionInformation> executionInfos,
-            final Collection<UpdateableOnStatementExecution> updateables) {
-        super(executionInfos, updateables);
-    }
+    void beforeExecution();
 
-    @Override
-    public void update() {
-        for (UpdateableOnStatementExecution updateable
-                : getUpdateableComponents()) {
-            updateable.intermediateUpdate(getStatementExecutionInformations());
-        }
-    }
+    void intermediateUpdate(final List<StatementExecutionInformation> executionInfos);
 
+    void afterExecution();
 }

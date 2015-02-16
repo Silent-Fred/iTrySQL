@@ -31,7 +31,11 @@ import de.kuehweg.sqltool.common.sqlediting.StatementString;
 import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.database.execution.StatementExecution;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import de.kuehweg.sqltool.dialog.component.UpdateableOnStatementExecution;
+import de.kuehweg.sqltool.dialog.updater.AfterExecutionGuiUpdater;
+import de.kuehweg.sqltool.dialog.updater.BeforeExecutionGuiUpdater;
+import de.kuehweg.sqltool.dialog.updater.ErrorExecutionGuiUpdater;
+import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
+import de.kuehweg.sqltool.dialog.updater.IntermediateExecutionGuiUpdater;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -53,48 +57,45 @@ public class ExecutionTask extends Task<Void> {
 
     private final Statement statement;
     private final String sql;
-    private final Collection<UpdateableOnStatementExecution> updateableComponents;
+    private final Collection<ExecutionObserver> observers;
     private long lastTimeUIWasUpdated;
 
     public ExecutionTask(final Statement statement, final String sql) {
         this.statement = statement;
         this.sql = sql;
-        this.updateableComponents = new HashSet<>();
+        this.observers = new HashSet<>();
     }
 
-    public void addUpdateableComponents(
-            final UpdateableOnStatementExecution... updateables) {
-        if (updateables != null) {
-            for (UpdateableOnStatementExecution updateable : updateables) {
-                updateableComponents.add(updateable);
+    public void attach(final ExecutionObserver... observers) {
+        if (observers != null) {
+            for (ExecutionObserver observer : observers) {
+                this.observers.add(observer);
             }
         }
     }
 
-    public void addUpdateableComponents(
-            final Collection<UpdateableOnStatementExecution> updateables) {
-        if (updateables != null) {
-            updateableComponents.addAll(updateables);
+    public void attach(final Collection<ExecutionObserver> observers) {
+        if (observers != null) {
+            this.observers.addAll(observers);
         }
     }
 
     private void beforeExecution() {
         final BeforeExecutionGuiUpdater updater
-                = new BeforeExecutionGuiUpdater(updateableComponents);
+                = new BeforeExecutionGuiUpdater(observers);
         Platform.runLater(updater);
     }
 
     private void intermediateUpdate(
             final List<StatementExecutionInformation> executionInfos) {
         final IntermediateExecutionGuiUpdater updater
-                = new IntermediateExecutionGuiUpdater(executionInfos,
-                        updateableComponents);
+                = new IntermediateExecutionGuiUpdater(executionInfos, observers);
         Platform.runLater(updater);
     }
 
     private void afterExecution() {
         final AfterExecutionGuiUpdater updater
-                = new AfterExecutionGuiUpdater(updateableComponents);
+                = new AfterExecutionGuiUpdater(observers);
         Platform.runLater(updater);
     }
 
@@ -131,7 +132,7 @@ public class ExecutionTask extends Task<Void> {
             final String msg = ex.getLocalizedMessage() + " (SQL-State: "
                     + ex.getSQLState() + ")";
             final ErrorExecutionGuiUpdater updater
-                    = new ErrorExecutionGuiUpdater(updateableComponents);
+                    = new ErrorExecutionGuiUpdater(observers);
             updater.setErrormessage(msg);
             Platform.runLater(updater);
         }

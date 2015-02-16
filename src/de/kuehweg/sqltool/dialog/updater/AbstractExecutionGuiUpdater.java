@@ -23,46 +23,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.action;
+package de.kuehweg.sqltool.dialog.updater;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.component.UpdateableOnStatementExecution;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
- * Oberfläche im Fehlerfall aufbereiten
+ * GUI passend zur Ausführung von SQL-Anweisungen aktualisieren
  *
  * @author Michael Kühweg
  */
-public class ErrorExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
+public abstract class AbstractExecutionGuiUpdater implements Runnable {
 
-    private String errorThatOccurred;
+    private final List<StatementExecutionInformation> statementExecutionInformations
+            = new ArrayList<>();
 
-    public ErrorExecutionGuiUpdater(
-            final Collection<UpdateableOnStatementExecution> updateables) {
-        super(updateables);
-        errorThatOccurred = DialogDictionary.ERR_UNKNOWN_ERROR.toString();
+    private final Collection<ExecutionObserver> observers
+            = new HashSet<>();
+
+    public AbstractExecutionGuiUpdater(
+            final Collection<ExecutionObserver> observers) {
+        super();
+        if (observers != null) {
+            this.observers.addAll(observers);
+        }
     }
 
-    public void setErrormessage(final String description) {
-        errorThatOccurred
-                = description != null ? description : DialogDictionary.ERR_UNKNOWN_ERROR.
-                        toString();
+    public AbstractExecutionGuiUpdater(
+            final List<StatementExecutionInformation> executionInfos,
+            final Collection<ExecutionObserver> observers) {
+        this(observers);
+        statementExecutionInformations.addAll(executionInfos);
     }
+
+    public List<StatementExecutionInformation> getStatementExecutionInformations() {
+        return statementExecutionInformations;
+    }
+
+    protected Collection<ExecutionObserver> getObservers() {
+        return observers;
+    }
+
+    public abstract void update();
 
     @Override
-    public void update() {
-        for (UpdateableOnStatementExecution updateable
-                : getUpdateableComponents()) {
-            // Bearbeitung auf beendet setzen
-            updateable.afterExecution();
-        }
-        // und danach eine Fehlermeldung ausgeben
-        final ErrorMessage msg = new ErrorMessage(
-                DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                errorThatOccurred,
-                DialogDictionary.COMMON_BUTTON_OK.toString());
-        msg.askUserFeedback();
+    public void run() {
+        update();
     }
+
 }

@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
+import de.kuehweg.sqltool.dialog.updater.ExecutionObserver;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import java.util.LinkedList;
@@ -36,7 +37,7 @@ import javafx.scene.control.TableView;
  *
  * @author Michael Kühweg
  */
-public class SQLHistoryComponent implements UpdateableOnStatementExecution {
+public class SQLHistoryComponent implements ExecutionObserver {
 
     private static final int MAX_HISTORY_ENTRIES = 100;
 

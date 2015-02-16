@@ -23,22 +23,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component;
+package de.kuehweg.sqltool.dialog.updater;
 
-import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import java.util.List;
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
+import java.util.Collection;
 
 /**
- * Schnittstelle für Oberflächenbestandteile, deren Zustand sich ändert, wenn
- * eine SQL-Anweisung ausgeführt wird
+ * Oberfläche im Fehlerfall aufbereiten
  *
  * @author Michael Kühweg
  */
-public interface UpdateableOnStatementExecution {
+public class ErrorExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
 
-    void beforeExecution();
+    private String errorThatOccurred;
 
-    void intermediateUpdate(final List<StatementExecutionInformation> executionInfos);
+    public ErrorExecutionGuiUpdater(
+            final Collection<ExecutionObserver> observers) {
+        super(observers);
+        errorThatOccurred = DialogDictionary.ERR_UNKNOWN_ERROR.toString();
+    }
 
-    void afterExecution();
+    public void setErrormessage(final String description) {
+        errorThatOccurred
+                = description != null ? description : DialogDictionary.ERR_UNKNOWN_ERROR.
+                        toString();
+    }
+
+    @Override
+    public void update() {
+        for (ExecutionObserver observer : getObservers()) {
+            // Bearbeitung auf beendet setzen
+            observer.afterExecution();
+        }
+        // und danach eine Fehlermeldung ausgeben
+        final ErrorMessage msg = new ErrorMessage(
+                DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                errorThatOccurred,
+                DialogDictionary.COMMON_BUTTON_OK.toString());
+        msg.askUserFeedback();
+    }
 }

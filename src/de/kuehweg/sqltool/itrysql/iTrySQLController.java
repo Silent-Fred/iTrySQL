@@ -795,7 +795,7 @@ public class iTrySQLController implements Initializable,
     private ExecuteAction createExecuteAction() {
         ExecuteAction executeAction = new ExecuteAction();
 
-        executeAction.addUpdateableComponents(queryResultTableView,
+        executeAction.attach(queryResultTableView,
                 new SQLHistoryComponent(sqlHistory),
                 new QueryResultTextView(dbOutput),
                 new ExecutionProgressComponent(
