@@ -330,17 +330,11 @@ public class iTrySQLController implements Initializable,
     // sollte mit wenigen Handgriffen des Anwenders der Normalzustand
     // wiederhergestellt werden können.
     private void fixWebViewWithHSQLDBBug() {
-        syntaxDefinitionView.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                WebViewWithHSQLDBBugfix.fix();
-            }
+        syntaxDefinitionView.setOnMouseEntered((MouseEvent t) -> {
+            WebViewWithHSQLDBBugfix.fix();
         });
-        syntaxDefinitionView.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                WebViewWithHSQLDBBugfix.fix();
-            }
+        syntaxDefinitionView.setOnMouseExited((MouseEvent t) -> {
+            WebViewWithHSQLDBBugfix.fix();
         });
     }
 
@@ -766,11 +760,11 @@ public class iTrySQLController implements Initializable,
                 observableArrayList();
         sqlHistoryColumnTimestamp
                 .setCellValueFactory(
-                        new PropertyValueFactory<SQLHistory, String>(
+                        new PropertyValueFactory<>(
                                 "timestamp"));
         sqlHistoryColumnStatement
                 .setCellValueFactory(
-                        new PropertyValueFactory<SQLHistory, String>(
+                        new PropertyValueFactory<>(
                                 "sqlForDisplay"));
         sqlHistory.getSelectionModel().selectedItemProperty()
                 .addListener(new ChangeListener<SQLHistory>() {
