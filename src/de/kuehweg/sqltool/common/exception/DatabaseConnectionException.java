@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,61 +23,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database;
+package de.kuehweg.sqltool.common.exception;
 
 /**
- * Unterstützte JDBC-Treiber
+ * Ausnahmefehler wenn keine Datenbankverbindung möglich ist.
  *
  * @author Michael Kühweg
  */
-public enum JDBCType {
+public class DatabaseConnectionException extends Exception {
 
-    HSQL_IN_MEMORY(
-            "HSQL Database Engine In-Memory",
-            "org.hsqldb.jdbcDriver",
-            "jdbc:hsqldb:",
-            "mem:"),
-    HSQL_STANDALONE(
-            "HSQL Database Engine Standalone",
-            "org.hsqldb.jdbcDriver",
-            "jdbc:hsqldb:",
-            "file:"),
-    HSQL_SERVER(
-            "HSQL Database Engine Server",
-            "org.hsqldb.jdbcDriver",
-            "jdbc:hsqldb:",
-            "hsql:");
-    private final String name;
-    private final String driverClass;
-    private final String urlPrefix;
-    private final String dbType;
-
-    private JDBCType(final String name, final String driverClass,
-            final String urlPrefix, final String dbType) {
-        this.name = name;
-        this.driverClass = driverClass;
-        this.urlPrefix = urlPrefix;
-        this.dbType = dbType;
+    public DatabaseConnectionException(Throwable cause) {
+        super(cause);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDriverClass() {
-        return driverClass;
-    }
-
-    public String getUrlPrefix() {
-        return urlPrefix;
-    }
-
-    public String getDbType() {
-        return dbType;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
 }

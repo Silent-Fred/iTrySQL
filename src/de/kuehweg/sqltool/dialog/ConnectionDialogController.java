@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
 package de.kuehweg.sqltool.dialog;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.ManagedConnectionSettings;
+import de.kuehweg.sqltool.database.ConnectionSetting;
+import de.kuehweg.sqltool.database.ManagedConnectionSettings;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;

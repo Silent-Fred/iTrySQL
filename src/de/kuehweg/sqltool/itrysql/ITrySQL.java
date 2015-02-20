@@ -26,28 +26,29 @@
 package de.kuehweg.sqltool.itrysql;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.database.ServerManager;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * Zentrale Klasse der "iTry SQL" Applikation
- * 
+ *
  * @author Michael Kühweg
  */
 public class ITrySQL extends Application {
 
-	private iTrySQLController controller;
+    private iTrySQLController controller;
 
     @Override
     public void init() throws Exception {
@@ -69,50 +70,55 @@ public class ITrySQL extends Application {
         fxmlLoader.setLocation(getClass().getResource(
                 "/resources/fxml/iTrySQL.fxml"));
         final Parent root = (Parent) fxmlLoader.load();
-		root.getStylesheets().add(
-				getClass().getResource("/resources/css/itrysql.css")
-						.toExternalForm());
+        root.getStylesheets().add(
+                getClass().getResource("/resources/css/itrysql.css")
+                .toExternalForm());
 
-		controller = (iTrySQLController) fxmlLoader.getController();
+        controller = (iTrySQLController) fxmlLoader.getController();
 
-		final Scene scene = new Scene(root);
+        final Scene scene = new Scene(root);
 
+        primaryStage.setScene(scene);
+        final Rectangle2D calculatedSize = StageSizerUtil
+                .calculateSizeDependingOnScreenSize();
+        primaryStage.setX(calculatedSize.getMinX());
+        primaryStage.setY(calculatedSize.getMinY());
+        primaryStage.setWidth(calculatedSize.getWidth());
+        primaryStage.setHeight(calculatedSize.getHeight());
+        primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
+        primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent ev) {
+                if (!controller.quit()) {
+                    ev.consume();
+                }
+            }
+        });
+        primaryStage.show();
+    }
 
-		primaryStage.setScene(scene);
-		final Rectangle2D calculatedSize = StageSizerUtil
-				.calculateSizeDependingOnScreenSize();
-		primaryStage.setX(calculatedSize.getMinX());
-		primaryStage.setY(calculatedSize.getMinY());
-		primaryStage.setWidth(calculatedSize.getWidth());
-		primaryStage.setHeight(calculatedSize.getHeight());
-		primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
-		primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
-		primaryStage.show();
-	}
+    @Override
+    public void stop() throws Exception {
+        try {
+            if (controller != null) {
+                controller.getConnectionHolder().disconnect();
+            }
+        } catch (final Throwable ex) {
+            Logger.getLogger(ITrySQL.class.getName()).log(Level.SEVERE, null,
+                    ex);
+        }
+    }
 
-	@Override
-	public void stop() throws Exception {
-		try {
-			if (controller != null) {
-				controller.getConnectionHolder().disconnect();
-			}
-			ServerManager.getSharedInstance().shutdownServer();
-		} catch (final Throwable ex) {
-			Logger.getLogger(ITrySQL.class.getName()).log(Level.SEVERE, null,
-					ex);
-		}
-	}
-
-	/**
-	 * The main() method is ignored in correctly deployed JavaFX application.
-	 * main() serves only as fallback in case the application can not be
-	 * launched through deployment artifacts, e.g., in IDEs with limited FX
-	 * support. NetBeans ignores main().
-	 * 
-	 * @param args
-	 *            the command line arguments
-	 */
-	public static void main(final String[] args) {
-		launch(args);
-	}
+    /**
+     * The main() method is ignored in correctly deployed JavaFX application.
+     * main() serves only as fallback in case the application can not be
+     * launched through deployment artifacts, e.g., in IDEs with limited FX
+     * support. NetBeans ignores main().
+     *
+     * @param args the command line arguments
+     */
+    public static void main(final String[] args) {
+        launch(args);
+    }
 }

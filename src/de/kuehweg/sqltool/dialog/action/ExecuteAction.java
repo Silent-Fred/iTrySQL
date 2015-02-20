@@ -54,6 +54,14 @@ public class ExecuteAction {
         }
     }
 
+    public void detach(final ExecutionTracker... trackers) {
+        if (trackers != null) {
+            for (ExecutionTracker tracker : trackers) {
+                this.trackers.remove(tracker);
+            }
+        }
+    }
+
     /**
      * SQL ausführen und Dialog aktualisieren
      *

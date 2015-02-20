@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,7 @@ public enum DialogDictionary {
 	MSG_REALLY_REMOVE_CONNECTION("msg_reallyRemoveConnection"),
 	MSG_REALLY_CREATE_TUTORIAL_DATA("msg_reallyCreateTutorialData"),
 	MSG_SELECT_CONNECTION("msg_selectConnection"),
+    MSG_REALLY_QUIT("msg_reallyQuit"),
 	MESSAGEBOX_INFO("label_info"),
 	MESSAGEBOX_WARNING("label_warning"),
 	MESSAGEBOX_CONFIRM("label_confirm"),
@@ -78,6 +79,8 @@ public enum DialogDictionary {
 	LABEL_TREE_REFERENCES("label_treeReferences"),
 	LABEL_TREE_REFERENCED_BY("label_treeReferencedBy"),
     LABEL_UNKNOWN_USER("label_unknownUser"),
+    LABEL_REALLY_QUIT("label_reallyQuit"),
+    LABEL_NOT_REALLY_QUIT("label_notReallyQuit"),
 	TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
 	TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
 	TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),

@@ -30,13 +30,15 @@ import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.common.ProvidedAudioClip;
 import de.kuehweg.sqltool.common.RomanNumber;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
-import de.kuehweg.sqltool.common.sqlediting.ConnectionSetting;
-import de.kuehweg.sqltool.common.sqlediting.ManagedConnectionSettings;
+import de.kuehweg.sqltool.common.exception.DatabaseConnectionException;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.ConnectionHolder;
+import de.kuehweg.sqltool.database.ConnectionSetting;
 import de.kuehweg.sqltool.database.JDBCType;
+import de.kuehweg.sqltool.database.ManagedConnectionSettings;
 import de.kuehweg.sqltool.dialog.AlertBox;
+import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ConnectionDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.License;
@@ -51,7 +53,6 @@ import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
 import de.kuehweg.sqltool.dialog.component.SQLHistoryComponent;
 import de.kuehweg.sqltool.dialog.component.SchemaTreeModificationDetector;
-import de.kuehweg.sqltool.dialog.component.ServerComponentController;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
@@ -177,17 +178,11 @@ public class iTrySQLController implements Initializable,
     @FXML
     private TreeView<String> schemaTreeView;
     @FXML
-    private ComboBox<ConnectionSetting> serverConnectionSelection;
-    @FXML
     private TableView<SQLHistory> sqlHistory;
     @FXML
     private TableColumn<SQLHistory, String> sqlHistoryColumnStatement;
     @FXML
     private TableColumn<SQLHistory, String> sqlHistoryColumnTimestamp;
-    @FXML
-    private Button startServer;
-    @FXML
-    private Button shutdownServer;
     @FXML
     private TextArea statementInput;
     @FXML
@@ -239,16 +234,14 @@ public class iTrySQLController implements Initializable,
     @FXML
     private Label permanentMessage;
     @FXML
-    private TextField serverAlias;
-    @FXML
     private WebView syntaxDefinitionView;
 
     // my own special creation
     private QueryResultTableView queryResultTableView;
+    private SQLHistoryComponent historyComponent;
 
     private ConnectionHolder connectionHolder;
     private ConnectionComponentController connectionComponentController;
-    private ServerComponentController serverComponentController;
     private static int countWindows = 1;
 
     @Override
@@ -292,13 +285,9 @@ public class iTrySQLController implements Initializable,
         assert removeConnection != null : "fx:id=\"removeConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert resultTableContainer != null : "fx:id=\"resultTableContainer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert schemaTreeView != null : "fx:id=\"schemaTreeView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert serverAlias != null : "fx:id=\"serverAlias\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert serverConnectionSelection != null : "fx:id=\"serverConnectionSelection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert shutdownServer != null : "fx:id=\"shutdownServer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert sqlHistory != null : "fx:id=\"sqlHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert sqlHistoryColumnStatement != null : "fx:id=\"sqlHistoryColumnStatement\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert sqlHistoryColumnTimestamp != null : "fx:id=\"sqlHistoryColumnTimestamp\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert startServer != null : "fx:id=\"startServer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert statementInput != null : "fx:id=\"statementInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert statementPane != null : "fx:id=\"statementPane\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert tabDbOutput != null : "fx:id=\"tabDbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -333,6 +322,7 @@ public class iTrySQLController implements Initializable,
         // Komponenten, die mehr Informationen enthalten, als sie anzeigen (z.B. HTML-Export aus Tabellensicht)
         // werden dagegen einmal pro Fenster angelegt.
         queryResultTableView = new QueryResultTableView(resultTableContainer);
+        historyComponent = new SQLHistoryComponent(sqlHistory);
     }
 
     // FIXME Falls noch Fälle offen sein sollten, in denen der Log-Level
@@ -411,19 +401,27 @@ public class iTrySQLController implements Initializable,
         final ConnectionSetting connectionSetting = connectionDialog
                 .getConnectionSetting();
         if (connectionSetting != null) {
-            getConnectionHolder().connect(connectionSetting);
-            controlAutoCommitCheckBoxState();
-            refreshTree(event);
-            if (connectionSetting.getType() == JDBCType.HSQL_IN_MEMORY) {
-                permanentMessage.setText(MessageFormat.format(
-                        DialogDictionary.PATTERN_MESSAGE_IN_MEMORY_DATABASE
-                        .toString(), connectionSetting.getName()));
-                permanentMessage.visibleProperty().set(true);
-            } else {
-                permanentMessage.visibleProperty().set(false);
+            try {
+                getConnectionHolder().connect(connectionSetting);
+                controlAutoCommitCheckBoxState();
+                refreshTree(event);
+                if (connectionSetting.getType() == JDBCType.HSQL_IN_MEMORY) {
+                    permanentMessage.setText(MessageFormat.format(
+                            DialogDictionary.PATTERN_MESSAGE_IN_MEMORY_DATABASE
+                            .toString(), connectionSetting.getName()));
+                    permanentMessage.visibleProperty().set(true);
+                } else {
+                    permanentMessage.visibleProperty().set(false);
+                }
+                // FIXME
+                WebViewWithHSQLDBBugfix.fix();
+            } catch (DatabaseConnectionException ex) {
+                final ErrorMessage msg = new ErrorMessage(
+                        DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                        DialogDictionary.ERR_CONNECTION_FAILURE.toString(),
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                msg.askUserFeedback();
             }
-            // FIXME
-            WebViewWithHSQLDBBugfix.fix();
         }
     }
 
@@ -468,7 +466,9 @@ public class iTrySQLController implements Initializable,
     }
 
     public void tutorialAction(final ActionEvent event) {
-        new TutorialAction().createTutorial(createExecuteAction(),
+        ExecuteAction executeAction = createExecuteAction();
+        executeAction.detach(historyComponent);
+        new TutorialAction().createTutorial(executeAction,
                 getConnectionHolder().getConnection());
     }
 
@@ -485,8 +485,26 @@ public class iTrySQLController implements Initializable,
                 limitMaxRows.isSelected());
     }
 
+    /**
+     * Rückfrage, ob die Applikation beendet werden soll - kann und soll in
+     * einem onCloseRequest-EventHandler aufgerufen werden.
+     *
+     * @return true wenn beendet werden soll
+     */
+    public boolean quit() {
+        final ConfirmDialog confirm = new ConfirmDialog(
+                DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
+                DialogDictionary.MSG_REALLY_QUIT.toString(),
+                DialogDictionary.LABEL_REALLY_QUIT.toString(),
+                DialogDictionary.LABEL_NOT_REALLY_QUIT.toString());
+        return DialogDictionary.LABEL_REALLY_QUIT.toString().equals(
+                confirm.askUserFeedback());
+    }
+
     public void quit(final ActionEvent event) {
-        Platform.exit();
+        if (quit()) {
+            Platform.exit();
+        }
     }
 
     public void toolbarTabDbOutputClearAction(final ActionEvent event) {
@@ -510,7 +528,6 @@ public class iTrySQLController implements Initializable,
                         DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
                         DialogDictionary.COMMON_BUTTON_OK.toString());
                 msg.askUserFeedback();
-
             }
         }
     }
@@ -560,12 +577,10 @@ public class iTrySQLController implements Initializable,
 
     public void removeConnection(final ActionEvent event) {
         connectionComponentController.removeConnection();
-        serverComponentController.refreshServerConnectionSettings();
     }
 
     public void saveConnectionSettings(final ActionEvent event) {
         connectionComponentController.saveConnectionSettings();
-        serverComponentController.refreshServerConnectionSettings();
     }
 
     public void exportConnections(ActionEvent event) {
@@ -597,7 +612,6 @@ public class iTrySQLController implements Initializable,
             try {
                 new ManagedConnectionSettings().importFromFile(file);
                 connectionComponentController.saveConnectionSettings();
-                serverComponentController.refreshServerConnectionSettings();
             } catch (JAXBException | BackingStoreException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -608,22 +622,9 @@ public class iTrySQLController implements Initializable,
         }
     }
 
-    public void changeServerConnection(final ActionEvent event) {
-        serverComponentController.changeServerConnection();
-    }
-
-    public void startServer(final ActionEvent event) {
-        serverComponentController.startServer();
-    }
-
-    public void shutdownServer(final ActionEvent event) {
-        serverComponentController.shutdownServer();
-    }
-
     // ---
     private void initializeContinued() {
         initializeConnectionComponentController();
-        initializeServerComponentController();
         prepareHistory();
         initializeUserPreferences();
 
@@ -703,14 +704,6 @@ public class iTrySQLController implements Initializable,
         connectionComponentController = builder.build();
     }
 
-    private void initializeServerComponentController() {
-        serverComponentController = new ServerComponentController.Builder()
-                .serverConnectionSelection(serverConnectionSelection)
-                .startButton(startServer).shutdownButton(shutdownServer)
-                .serverAlias(serverAlias).build();
-        serverComponentController.refreshServerConnectionSettings();
-    }
-
     private void setupTooltips() {
         Tooltip.install(toolbarExecute, new Tooltip(
                 DialogDictionary.TOOLTIP_EXECUTE.toString()));
@@ -769,7 +762,8 @@ public class iTrySQLController implements Initializable,
     }
 
     private void prepareHistory() {
-        ObservableList<SQLHistory> sqlHistoryItems = FXCollections.observableArrayList();
+        ObservableList<SQLHistory> sqlHistoryItems = FXCollections.
+                observableArrayList();
         sqlHistoryColumnTimestamp
                 .setCellValueFactory(
                         new PropertyValueFactory<SQLHistory, String>(
@@ -796,7 +790,7 @@ public class iTrySQLController implements Initializable,
         ExecuteAction executeAction = new ExecuteAction();
 
         executeAction.attach(queryResultTableView,
-                new SQLHistoryComponent(sqlHistory),
+                historyComponent,
                 new QueryResultTextView(dbOutput),
                 new ExecutionProgressComponent(
                         executionProgressIndicator, executionTime),

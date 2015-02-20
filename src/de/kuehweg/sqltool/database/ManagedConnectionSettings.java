@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Michael Kühweg
+ * Copyright (c) 2014-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,8 +23,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common.sqlediting;
+package de.kuehweg.sqltool.database;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,14 +36,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.database.JDBCType;
 
 /**
  * Verbindungsdaten mit Persistenzverwaltung (in Benutzereinstellungen)
