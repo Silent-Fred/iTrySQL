@@ -37,6 +37,10 @@ import java.util.logging.Logger;
  */
 public class WebViewWithHSQLDBBugfix {
 
+    private WebViewWithHSQLDBBugfix() {
+        // utility class
+    }
+
     public static void fix() {
         Logger.getLogger("com.sun.javafx.webkit.prism.WCGraphicsPrismContext").
                 setLevel(Level.OFF);
