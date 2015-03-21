@@ -46,8 +46,6 @@ public class StatementExecution {
 
     private final StatementExecutionInformation info;
 
-    private int updateCount;
-
     public StatementExecution(final StatementString sql) {
         info = new StatementExecutionInformation();
         info.setSql(sql);
@@ -60,9 +58,11 @@ public class StatementExecution {
         info.setConnectionDescription(statement.getConnection().getMetaData().
                 getURL());
         info.setStartOfExecution(System.currentTimeMillis());
-        statement.execute(info.getSql().originalStatement());
-        updateCount = statement.getUpdateCount();
-        retrieveResult(statement);
+        if (statement.execute(info.getSql().originalStatement())) {
+            retrieveResult(statement);
+        } else {
+            headOnlyResult(statement.getUpdateCount());
+        }
         // als Ende der Ausführung wird der Zeitpunkt betrachtet, ab dem die Ergebnismenge übertragen ist
         info.setEndOfExecution(System.currentTimeMillis());
         return info;
@@ -72,9 +72,7 @@ public class StatementExecution {
         ResultSet resultSet = null;
         try {
             resultSet = statement.getResultSet();
-            if (resultSet == null) {
-                headOnlyResult();
-            } else {
+            if (resultSet != null) {
                 info.setStatementResult(new StatementResult());
                 retrieveHeader(resultSet);
                 retrieveRows(resultSet);
@@ -127,10 +125,16 @@ public class StatementExecution {
         }
     }
 
-    private void headOnlyResult() {
+    private void headOnlyResult(final int updateCount) {
         info.setStatementResult(null);
-        info.setSummary(MessageFormat.format(
-                DialogDictionary.PATTERN_UPDATECOUNT.toString(), updateCount));
+        if (info.getSql().isDataManipulationStatement()) {
+            info.setSummary(MessageFormat.format(
+                    DialogDictionary.PATTERN_UPDATECOUNT.toString(), updateCount));
+        } else {
+            info.setSummary(MessageFormat.format(
+                    DialogDictionary.PATTERN_EXECUTED_STATEMENT.toString(),
+                    info.getSql().firstKeyword()));
+        }
     }
 
     private void erroneousResult() {

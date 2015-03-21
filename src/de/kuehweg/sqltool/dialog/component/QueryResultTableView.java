@@ -25,13 +25,13 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.ResultHeader;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.database.execution.StatementResult;
 import de.kuehweg.sqltool.database.formatter.HtmlResultFormatter;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -97,6 +97,7 @@ public class QueryResultTableView implements ExecutionTracker {
                     .observableArrayList();
             row.add(info.getSummary());
             content.add(row);
+            tableView.setTableMenuButtonVisible(false);
             tableView.setItems(content);
         }
     }
@@ -135,6 +136,7 @@ public class QueryResultTableView implements ExecutionTracker {
                 }
                 content.add(row);
             }
+            tableView.setTableMenuButtonVisible(true);
             tableView.setItems(content);
         }
     }

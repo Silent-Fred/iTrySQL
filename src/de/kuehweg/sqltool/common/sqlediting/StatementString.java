@@ -34,7 +34,16 @@ package de.kuehweg.sqltool.common.sqlediting;
 public class StatementString {
 
     private static final String[] DDL_COMMANDS = new String[]{"CREATE",
-        "ALTER", "DROP"};
+        "ALTER", "DROP", "TRUNCATE"};
+
+    private static final String[] DML_COMMANDS
+            = new String[]{"SELECT", "INSERT", "UPDATE", "DELETE", "MERGE",
+                "CALL", "EXPLAIN", "SCRIPT"};
+
+    private static final String[] DCL_COMMANDS = new String[]{"GRANT", "REVOKE"};
+
+    private static final String[] TCL_COMMANDS = new String[]{"COMMIT",
+        "ROLLBACK", "SAVEPOINT"};
 
     private final String sql;
 
@@ -61,9 +70,40 @@ public class StatementString {
     }
 
     public boolean isDataDefinitionStatement() {
-        final String uncommentedStatement = uncommentedStatement();
-        for (final String ddl : DDL_COMMANDS) {
-            if (uncommentedStatement.toUpperCase().startsWith(ddl)) {
+        return isInCommandList(DDL_COMMANDS);
+    }
+
+    public boolean isDataManipulationStatement() {
+        return isInCommandList(DML_COMMANDS);
+    }
+
+    public boolean isDataControlStatement() {
+        return isInCommandList(DCL_COMMANDS);
+    }
+
+    public boolean isTransactionControlStatement() {
+        return isInCommandList(TCL_COMMANDS);
+    }
+
+    public String firstKeyword() {
+        String uncommentedAndUpperCase = uncommentedStatement().toUpperCase();
+        int to = 0;
+        for (final char ch : uncommentedAndUpperCase.toCharArray()) {
+            if (ch < 'A' || ch > 'Z') {
+                break;
+            }
+            to++;
+        }
+        if (uncommentedAndUpperCase.length() > to) {
+            return uncommentedStatement().toUpperCase().substring(0, to);
+        }
+        return uncommentedAndUpperCase;
+    }
+
+    private boolean isInCommandList(final String[] commands) {
+        final String uncommentedStatement = uncommentedStatement().toUpperCase();
+        for (final String command : commands) {
+            if (uncommentedStatement.startsWith(command)) {
                 return true;
             }
         }
