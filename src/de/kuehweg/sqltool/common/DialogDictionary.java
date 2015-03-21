@@ -81,6 +81,7 @@ public enum DialogDictionary {
     LABEL_UNKNOWN_USER("label_unknownUser"),
     LABEL_REALLY_QUIT("label_reallyQuit"),
     LABEL_NOT_REALLY_QUIT("label_notReallyQuit"),
+    LABEL_APPEND_HISTORY_ITEM_TO_EDITOR("label_appendHistoryItemToEditor"),
 	TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
 	TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
 	TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),

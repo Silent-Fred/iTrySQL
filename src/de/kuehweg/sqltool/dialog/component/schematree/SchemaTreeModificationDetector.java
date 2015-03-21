@@ -23,11 +23,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component;
+package de.kuehweg.sqltool.dialog.component.schematree;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;

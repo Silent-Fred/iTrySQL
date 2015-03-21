@@ -51,10 +51,11 @@ import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
 import de.kuehweg.sqltool.dialog.component.ExecutionProgressComponent;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
-import de.kuehweg.sqltool.dialog.component.SQLHistoryComponent;
-import de.kuehweg.sqltool.dialog.component.SchemaTreeModificationDetector;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
+import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeModificationDetector;
+import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryButtonCell;
+import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryComponent;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import java.io.File;
 import java.io.IOException;
@@ -180,6 +181,8 @@ public class iTrySQLController implements Initializable,
     @FXML
     private TableView<SQLHistory> sqlHistory;
     @FXML
+    private TableColumn<SQLHistory, String> sqlHistoryColumnAction;
+    @FXML
     private TableColumn<SQLHistory, String> sqlHistoryColumnStatement;
     @FXML
     private TableColumn<SQLHistory, String> sqlHistoryColumnTimestamp;
@@ -286,6 +289,7 @@ public class iTrySQLController implements Initializable,
         assert resultTableContainer != null : "fx:id=\"resultTableContainer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert schemaTreeView != null : "fx:id=\"schemaTreeView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert sqlHistory != null : "fx:id=\"sqlHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+        assert sqlHistoryColumnAction != null : "fx:id=\"sqlHistoryColumnAction\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert sqlHistoryColumnStatement != null : "fx:id=\"sqlHistoryColumnStatement\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert sqlHistoryColumnTimestamp != null : "fx:id=\"sqlHistoryColumnTimestamp\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert statementInput != null : "fx:id=\"statementInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -766,18 +770,9 @@ public class iTrySQLController implements Initializable,
                 .setCellValueFactory(
                         new PropertyValueFactory<>(
                                 "sqlForDisplay"));
-        sqlHistory.getSelectionModel().selectedItemProperty()
-                .addListener(new ChangeListener<SQLHistory>() {
-                    @Override
-                    public void changed(
-                            final ObservableValue<? extends SQLHistory> ov,
-                            final SQLHistory oldValue, final SQLHistory newValue) {
-                                if (newValue != null) {
-                                    statementInput.appendText(newValue.
-                                            getOriginalSQL());
-                                }
-                            }
-                });
+
+        sqlHistoryColumnAction.setCellFactory((TableColumn<SQLHistory, String> p) ->
+                new SQLHistoryButtonCell(statementInput));
     }
 
     private ExecuteAction createExecuteAction() {
