@@ -69,8 +69,7 @@ public class ITrySQLStage extends Stage {
 
 			final Scene scene = new Scene(root);
 
-
-			setScene(scene);
+            setScene(scene);
 			getIcons().add(ImagePack.APP_ICON.getAsImage());
 			setTitle(title);
 			if (callerStage != null) {

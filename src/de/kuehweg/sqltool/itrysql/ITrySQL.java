@@ -32,7 +32,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -87,12 +86,9 @@ public class ITrySQL extends Application {
         primaryStage.setHeight(calculatedSize.getHeight());
         primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
         primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent ev) {
-                if (!controller.quit()) {
-                    ev.consume();
-                }
+        primaryStage.setOnCloseRequest((WindowEvent ev) -> {
+            if (!controller.quit()) {
+                ev.consume();
             }
         });
         primaryStage.show();

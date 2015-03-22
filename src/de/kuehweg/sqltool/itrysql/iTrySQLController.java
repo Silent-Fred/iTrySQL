@@ -61,6 +61,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
@@ -241,7 +242,6 @@ public class iTrySQLController implements Initializable,
 
     // my own special creation
     private QueryResultTableView queryResultTableView;
-    private SQLHistoryComponent historyComponent;
 
     private ConnectionHolder connectionHolder;
     private ConnectionComponentController connectionComponentController;
@@ -326,7 +326,6 @@ public class iTrySQLController implements Initializable,
         // Komponenten, die mehr Informationen enthalten, als sie anzeigen (z.B. HTML-Export aus Tabellensicht)
         // werden dagegen einmal pro Fenster angelegt.
         queryResultTableView = new QueryResultTableView(resultTableContainer);
-        historyComponent = new SQLHistoryComponent(sqlHistory);
     }
 
     // FIXME Falls noch Fälle offen sein sollten, in denen der Log-Level
@@ -464,9 +463,7 @@ public class iTrySQLController implements Initializable,
     }
 
     public void tutorialAction(final ActionEvent event) {
-        ExecuteAction executeAction = createExecuteAction();
-        executeAction.detach(historyComponent);
-        new TutorialAction().createTutorial(executeAction,
+        new TutorialAction().createTutorial(createSilentExecuteAction(),
                 getConnectionHolder().getConnection());
     }
 
@@ -771,18 +768,31 @@ public class iTrySQLController implements Initializable,
                         new PropertyValueFactory<>(
                                 "sqlForDisplay"));
 
-        sqlHistoryColumnAction.setCellFactory((TableColumn<SQLHistory, String> p) ->
-                new SQLHistoryButtonCell(statementInput));
+        sqlHistoryColumnAction.setCellFactory(
+                (TableColumn<SQLHistory, String> p)
+                -> new SQLHistoryButtonCell(statementInput));
     }
 
     private ExecuteAction createExecuteAction() {
         ExecuteAction executeAction = new ExecuteAction();
 
         executeAction.attach(queryResultTableView,
-                historyComponent,
+                new SQLHistoryComponent(sqlHistory),
                 new QueryResultTextView(dbOutput),
                 new ExecutionProgressComponent(
                         executionProgressIndicator, executionTime),
+                new AudioFeedback(),
+                new SchemaTreeModificationDetector(schemaTreeView,
+                        getConnectionHolder().getConnection()));
+
+        return executeAction;
+    }
+
+    private ExecuteAction createSilentExecuteAction() {
+        ExecuteAction executeAction = new ExecuteAction();
+
+        executeAction.attach(new ExecutionProgressComponent(
+                executionProgressIndicator, executionTime),
                 new AudioFeedback(),
                 new SchemaTreeModificationDetector(schemaTreeView,
                         getConnectionHolder().getConnection()));
@@ -803,7 +813,19 @@ public class iTrySQLController implements Initializable,
     // --- implementierte Interfaces und weitere Spezialitäten
     @Override
     public void handle(final WindowEvent event) {
-        getConnectionHolder().disconnect();
+        if (WindowEvent.WINDOW_HIDING.equals(event.getEventType())) {
+            try {
+                if (getConnectionHolder().getConnection() != null) {
+                    Statement statement = getConnectionHolder().
+                            getStatement();
+                    if (statement != null) {
+                        getConnectionHolder().getStatement().cancel();
+                    }
+                }
+            } catch (SQLException ex) {
+            }
+            getConnectionHolder().disconnect();
+        }
     }
 
     public ConnectionHolder getConnectionHolder() {

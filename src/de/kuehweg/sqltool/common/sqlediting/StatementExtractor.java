@@ -52,7 +52,7 @@ public class StatementExtractor {
                 script).iterator();
         int pos = 0;
         String lastNotEmptyStatement = "";
-        while (pos < caretPosition && statementIterator.hasNext()) {
+        while (pos <= caretPosition && statementIterator.hasNext()) {
             String statement = statementIterator.next();
             if (statement.trim().length() > 0) {
                 lastNotEmptyStatement = statement.trim();

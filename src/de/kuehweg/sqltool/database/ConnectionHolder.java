@@ -68,6 +68,7 @@ public class ConnectionHolder {
      * Baut die Verbindung auf Basis der übergebenen Verbindungsdaten auf
      *
      * @param connectionSetting
+     * @throws de.kuehweg.sqltool.common.exception.DatabaseConnectionException
      */
     public void connect(final ConnectionSetting connectionSetting) throws DatabaseConnectionException {
         try {
@@ -118,6 +119,7 @@ public class ConnectionHolder {
     public void disconnect() {
         if (connection != null) {
             try {
+                connection.rollback();
                 connection.close();
                 connectedProperty.set(false);
             } catch (final SQLException ex) {
