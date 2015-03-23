@@ -58,7 +58,7 @@ public class StatementExecution {
         info.setConnectionDescription(statement.getConnection().getMetaData().
                 getURL());
         info.setStartOfExecution(System.currentTimeMillis());
-        if (statement.execute(info.getSql().originalStatement())) {
+        if (statement.execute(info.getSql().uncommentedStatement())) {
             retrieveResult(statement);
         } else {
             headOnlyResult(statement.getUpdateCount());

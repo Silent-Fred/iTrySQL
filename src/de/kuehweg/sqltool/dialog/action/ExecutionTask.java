@@ -115,8 +115,11 @@ public class ExecutionTask extends Task<Void> {
             while (queryIterator.hasNext() && !isCancelled()) {
                 final StatementString singleQuery = queryIterator.next();
 
-                executionInfos.add(new StatementExecution(singleQuery).execute(
-                        statement));
+                if (!singleQuery.isEmpty()) {
+                    executionInfos.add(new StatementExecution(singleQuery).
+                            execute(
+                                    statement));
+                }
 
                 if (System.currentTimeMillis() - lastTimeUIWasUpdated
                         > UI_UPDATE_INTERVAL_MILLISECONDS) {

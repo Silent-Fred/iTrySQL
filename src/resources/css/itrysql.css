@@ -115,12 +115,16 @@
 }
 
 #permanentMessage {
-    -fx-text-fill: black;
-    -fx-padding: 4px 20px 4px 20px;
-    -fx-background-color: #ffa210;
-    -fx-opacity: 0.5;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
+    -fx-font-family: 'Bitstream Vera Sans Mono';
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-text-fill: red;
+    -fx-padding: 4px;
+    -fx-background-color: transparent;
+    -fx-border-color: red;
+    -fx-border-style: solid;
+    -fx-border-width: 0.1em;
+    -fx-border-radius: 0.5em;
 }
 
 .scroll-bar .track {

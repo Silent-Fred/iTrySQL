@@ -27,10 +27,15 @@ package de.kuehweg.sqltool.dialog.action;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
+import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
+import de.kuehweg.sqltool.common.sqlediting.StatementString;
+import de.kuehweg.sqltool.database.execution.ResultRow;
+import de.kuehweg.sqltool.database.execution.StatementExecution;
 import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Aufbau der Tutorialdaten
@@ -50,6 +55,7 @@ public class TutorialAction {
                 confirm.askUserFeedback())) {
             final StringBuilder completeSql = new StringBuilder();
             try {
+                completeSql.append("\n");
                 // Daten für die Beispiele
                 completeSql.append(FileUtil
                         .readResourceFile("/resources/sql/examples.sql"));
@@ -57,11 +63,14 @@ public class TutorialAction {
                 // Daten für die Übungen
                 completeSql.append(FileUtil
                         .readResourceFile("/resources/sql/tutorial.sql"));
-                // beide gemeinsam in einer Aktion anlegen und mit CHECKPOINT abschließen
-                completeSql.append("\nCHECKPOINT;\n");
+                completeSql.append("\n");
+                // Daten für einen zweiten User
+                completeSql.append(generateDynamicScript(
+                        "/resources/sql/second_user.sql", connection));
+                completeSql.append("\n");
                 executeAction.handleExecuteAction(completeSql.toString(),
                         connection);
-            } catch (final IOException ex) {
+            } catch (final IOException | SQLException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),
                         DialogDictionary.ERR_TUTORIAL_CREATION_FAILED + " ("
@@ -70,5 +79,37 @@ public class TutorialAction {
                 msg.askUserFeedback();
             }
         }
+    }
+
+    /**
+     * Führt ein Skript aus und liest dessen Ausgaben als eine Reihe von
+     * Anweisungen ein ud erzeugt daraus dynamisch ein SQL-Skript.
+     *
+     * @param resourceFilename
+     * @param connection
+     * @return
+     * @throws SQLException
+     * @throws IOException
+     */
+    private String generateDynamicScript(final String resourceFilename,
+            final Connection connection) throws SQLException, IOException {
+        final StringBuilder dynamicScript = new StringBuilder();
+        if (connection != null) {
+            final StringBuilder completeSql = new StringBuilder();
+            completeSql.append(FileUtil.readResourceFile(resourceFilename));
+            completeSql.append("\n");
+            for (StatementString statement : new StatementExtractor()
+                    .getStatementsFromScript(completeSql.toString())) {
+                for (ResultRow dynamicStatement : new StatementExecution(
+                        statement).execute(connection.createStatement()).
+                        getStatementResult().getRows()) {
+                    for (String column : dynamicStatement.columnsAsString()) {
+                        dynamicScript.append(column);
+                        dynamicScript.append("\n");
+                    }
+                }
+            }
+        }
+        return dynamicScript.toString();
     }
 }

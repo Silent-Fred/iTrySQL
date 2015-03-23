@@ -185,6 +185,11 @@
                                 <URL value="@../css/itrysql.css" />
                               </stylesheets>
                             </TextArea>
+                              <Label fx:id="permanentMessage" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="760.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Label" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <stylesheets>
+                                  <URL value="@../css/itrysql.css" />
+                                </stylesheets>
+                              </Label>
                           </children>
                         </AnchorPane>
                         <ProgressBar fx:id="executionProgressIndicator" layoutX="45.0" layoutY="325.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" />
@@ -192,11 +197,6 @@
                           <font>
                             <Font size="11.0" fx:id="x2" />
                           </font>
-                        </Label>
-                        <Label fx:id="permanentMessage" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Label" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="43.0">
-                          <stylesheets>
-                            <URL value="@../css/itrysql.css" />
-                          </stylesheets>
                         </Label>
                       </children>
                     </AnchorPane>

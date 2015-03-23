@@ -23,50 +23,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.sqlhistory;
+SELECT '/*' FROM INFORMATION_SCHEMA.SYSTEM_USERS
+WHERE user_name = CURRENT_USER AND admin <> true;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
-import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TextArea;
+SELECT 'DROP USER ' || user_name || ' CASCADE;' FROM INFORMATION_SCHEMA.SYSTEM_USERS
+WHERE user_name = 'JOHN_DOE' AND user_name <> CURRENT_USER;
 
-/**
- * Button in TableView des SQL-Verlaufs
- *
- * @author Michael Kühweg
- */
-public class SQLHistoryButtonCell extends TableCell<SQLHistory, String> {
+VALUES ('CREATE USER JOHN_DOE PASSWORD ''geheim'';');
+VALUES ('CREATE SCHEMA JOHN_DOE AUTHORIZATION JOHN_DOE;';
 
-    private final TextArea appendTo;
-    private final Button button;
+VALUES ('DROP TABLE john_doe.ort IF EXISTS;');
+VALUES ('CREATE TABLE john_doe.ort (ort VARCHAR(20) PRIMARY KEY, name VARCHAR(80), alt_min INTEGER, alt_max INTEGER, koordinaten VARCHAR(20) );');
+VALUES ('COMMENT ON TABLE john_doe.ort IS ''Secret places'';');
+VALUES ('INSERT INTO john_doe.ort (ort, name, alt_min, alt_max, koordinaten) VALUES (''US00051'', ''Area 51 (Groom Lake)'', 1401, null, ''N37D14MW115D48M'');');
+VALUES ('INSERT INTO john_doe.ort (ort, name, alt_min, alt_max, koordinaten) VALUES (''US40121'', ''Fort Knox'', 230, null, ''N37D53MW85D58M'');');
+VALUES ('COMMIT;');
 
-    private SQLHistory historyItem;
+VALUES ('CHECKPOINT;');
 
-    public SQLHistoryButtonCell(final TextArea appendTo) {
-        super();
-        this.appendTo = appendTo;
-        button = new Button(
-                DialogDictionary.LABEL_APPEND_HISTORY_ITEM_TO_EDITOR.
-                toString());
-        button.setOnAction((ActionEvent event) -> {
-            if (appendTo != null && historyItem != null) {
-                appendTo.appendText("\n" + historyItem.getOriginalSQL());
-            }
-        });
-    }
-
-    @Override
-    protected void updateItem(String text, boolean empty) {
-        if (!empty) {
-            setGraphic(button);
-            historyItem = (SQLHistory) tableRowProperty().getValue().
-                    getItem();
-        } else {
-            setGraphic(null);
-            historyItem = null;
-        }
-    }
-
-}
+SELECT '*/' FROM INFORMATION_SCHEMA.SYSTEM_USERS
+WHERE user_name = CURRENT_USER AND admin <> true;
