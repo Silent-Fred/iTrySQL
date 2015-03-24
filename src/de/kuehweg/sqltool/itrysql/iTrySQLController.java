@@ -724,6 +724,9 @@ public class iTrySQLController implements Initializable,
                 DialogDictionary.TOOLTIP_DECREASE_FONTSIZE.toString()));
         Tooltip.install(toolbarTabDbOutputZoomIn, new Tooltip(
                 DialogDictionary.TOOLTIP_INCREASE_FONTSIZE.toString()));
+
+        Tooltip.install(permanentMessage, new Tooltip(
+                DialogDictionary.TOOLTIP_IN_MEMORY_DATABASE.toString()));
     }
 
     private void setupMenu() {

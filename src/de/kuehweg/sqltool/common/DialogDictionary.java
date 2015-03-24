@@ -91,6 +91,7 @@ public enum DialogDictionary {
 	TOOLTIP_EXPORT_OUTPUT("tooltip_exportOutput"),
 	TOOLTIP_CLEAR_OUTPUT("tooltip_clearOutput"),
 	TOOLTIP_EXPORT_RESULT("tooltip_exportResult"),
+    TOOLTIP_IN_MEMORY_DATABASE("tooltip_inMemoryDatabase"),
 	PATTERN_EXECUTION_TIME("pattern_executionTime"),
 	PATTERN_EXECUTION_TIMESTAMP("pattern_executionTimestamp"),
 	PATTERN_EXECUTION_TIMESTAMP_WITH_USER("pattern_executionTimestampWithUser"),

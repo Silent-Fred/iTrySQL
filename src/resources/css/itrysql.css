@@ -115,16 +115,9 @@
 }
 
 #permanentMessage {
-    -fx-font-family: 'Bitstream Vera Sans Mono';
-    -fx-font-weight: bold;
-    -fx-font-size: 14;
     -fx-text-fill: red;
     -fx-padding: 4px;
     -fx-background-color: transparent;
-    -fx-border-color: red;
-    -fx-border-style: solid;
-    -fx-border-width: 0.1em;
-    -fx-border-radius: 0.5em;
 }
 
 .scroll-bar .track {
