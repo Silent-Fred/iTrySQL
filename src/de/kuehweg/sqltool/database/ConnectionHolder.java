@@ -83,7 +83,7 @@ public class ConnectionHolder {
                     "password",
                     connectionSetting.getPassword() != null ? connectionSetting
                             .getPassword() : "");
-			// in den Schulungsunterlagen wird das Verhalten des DBMS
+            // in den Schulungsunterlagen wird das Verhalten des DBMS
             // auf Grundlage eines bestimmten Transaktionsmanagements
             // beschrieben - dieses wird daher explizit gesetzt
             properties.setProperty(
@@ -94,14 +94,13 @@ public class ConnectionHolder {
                 // eines benötigt. Bei Gelegenheit mal ein bisschen genauer
                 // untersuchen, welcher Ansatz der bessere ist.
 
-				// als Schulungsclient wird mit kleinen Datenbanken gearbeitet, den
+                // als Schulungsclient wird mit kleinen Datenbanken gearbeitet, den
                 // automatischen Checkpoint daher recht niedrig ansetzen
                 properties.setProperty(
                         DatabaseConstants.HSQLDB_PROPERTY_LOG_SIZE_MB,
                         DatabaseConstants.DEFAULT_LOG_SIZE_MB);
-				// der automatische Shutdown ist zwar für "echte" DB-Clients
-                // nicht
-                // wirklich empfehlenswert, aber für die Zwecke der Schulung
+                // der automatische Shutdown ist zwar für "echte" DB-Clients
+                // nicht wirklich empfehlenswert, aber für die Zwecke der Schulung
                 // eigentlich genau das richtige Verhalten
                 properties.setProperty(
                         DatabaseConstants.HSQLDB_PROPERTY_SHUTDOWN,
@@ -118,12 +117,8 @@ public class ConnectionHolder {
 
     public void disconnect() {
         if (connection != null) {
-            try {
-                connection.rollback();
-                connection.close();
-                connectedProperty.set(false);
-            } catch (final SQLException ex) {
-            }
+            new DatabaseDisconnector(connection).disconnect();
+            connectedProperty.set(false);
             connection = null;
         }
     }

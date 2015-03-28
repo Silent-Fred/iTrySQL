@@ -61,7 +61,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
@@ -817,16 +816,6 @@ public class iTrySQLController implements Initializable,
     @Override
     public void handle(final WindowEvent event) {
         if (WindowEvent.WINDOW_HIDING.equals(event.getEventType())) {
-            try {
-                if (getConnectionHolder().getConnection() != null) {
-                    Statement statement = getConnectionHolder().
-                            getStatement();
-                    if (statement != null) {
-                        getConnectionHolder().getStatement().cancel();
-                    }
-                }
-            } catch (SQLException ex) {
-            }
             getConnectionHolder().disconnect();
         }
     }
