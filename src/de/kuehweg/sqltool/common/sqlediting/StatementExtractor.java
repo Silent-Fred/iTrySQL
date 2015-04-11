@@ -89,7 +89,7 @@ public class StatementExtractor {
         int lastPos = 0;
         int pos = 0;
         while (pos < input.length) {
-            while (state != StatementExtractionStates.FINAL
+            while (state != StatementExtractionStates.STATEMENT_TERMINATION_FOUND
                     && pos < input.length) {
                 state = state.evaluate(input[pos++]);
             }
