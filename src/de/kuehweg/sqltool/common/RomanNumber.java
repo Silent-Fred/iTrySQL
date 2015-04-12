@@ -59,7 +59,7 @@ public class RomanNumber {
 			this.value = value;
 		}
 
-		public static Digit fit(final long number)
+		protected static Digit fit(final long number)
 				throws IllegalArgumentException {
 			for (final Digit digit : values()) {
 				if (digit.value <= number) {

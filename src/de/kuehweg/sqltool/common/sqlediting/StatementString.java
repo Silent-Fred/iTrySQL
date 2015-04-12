@@ -52,10 +52,21 @@ public class StatementString {
         this.sql = sql;
     }
 
+    /**
+     * Unveränderter Text der Anweisung.
+     *
+     * @return
+     */
     public String originalStatement() {
         return sql;
     }
 
+    /**
+     * Liefert die Anweisung ohne Kommentare zurück. Kommentare werden jeweils
+     * durch ein Leerzeichen ersetzt.
+     *
+     * @return
+     */
     public String uncommentedStatement() {
         if (sql == null || sql.trim().length() == 0) {
             return "";
@@ -69,22 +80,55 @@ public class StatementString {
         return trimmedStatement;
     }
 
+    /**
+     * Abfrage auf DDL Statement. Die Anweisung wird dabei <em>nicht</em>
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
+     * einleitenden Schlüsselwort klassifiziert.
+     *
+     * @return true wenn die Anweisung ein DDL Statement ist.
+     */
     public boolean isDataDefinitionStatement() {
         return isInCommandList(DDL_COMMANDS);
     }
 
+    /**
+     * Abfrage auf DML Statement. Die Anweisung wird dabei <em>nicht</em>
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
+     * einleitenden Schlüsselwort klassifiziert.
+     *
+     * @return true wenn die Anweisung ein DML Statement ist.
+     */
     public boolean isDataManipulationStatement() {
         return isInCommandList(DML_COMMANDS);
     }
 
+    /**
+     * Abfrage auf DCL Statement. Die Anweisung wird dabei <em>nicht</em>
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
+     * einleitenden Schlüsselwort klassifiziert.
+     *
+     * @return true wenn die Anweisung ein DCL Statement ist.
+     */
     public boolean isDataControlStatement() {
         return isInCommandList(DCL_COMMANDS);
     }
 
+    /**
+     * Abfrage auf TCL Statement. Die Anweisung wird dabei <em>nicht</em>
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
+     * einleitenden Schlüsselwort klassifiziert.
+     *
+     * @return true wenn die Anweisung ein TCL Statement ist.
+     */
     public boolean isTransactionControlStatement() {
         return isInCommandList(TCL_COMMANDS);
     }
 
+    /**
+     * Extrahiert das einleitende Schlüsselwort der Anweisung.
+     *
+     * @return Einleitendes Schlüsselwort in Großbuchstaben
+     */
     public String firstKeyword() {
         String uncommentedAndUpperCase = uncommentedStatement().toUpperCase();
         int to = 0;
@@ -101,18 +145,21 @@ public class StatementString {
     }
 
     private boolean isInCommandList(final String[] commands) {
-        final String uncommentedStatement = uncommentedStatement().toUpperCase();
-        for (final String command : commands) {
-            if (uncommentedStatement.startsWith(command)) {
-                return true;
+        final String firstKeyword = firstKeyword();
+        if (!firstKeyword.isEmpty()) {
+            for (final String command : commands) {
+                if (command.equals(firstKeyword)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     public boolean isEmpty() {
-        return sql == null || sql.trim().length() == 0
-                || uncommentedStatement().trim().length() == 0;
+        return sql == null || sql.trim().isEmpty()
+                || trimAndRemoveTrailingSemicolons(uncommentedStatement()).
+                isEmpty();
     }
 
     private int findFirstCommentStartIndex(final String statement) {
@@ -183,5 +230,13 @@ public class StatementString {
             }
         }
         return builder.toString().trim();
+    }
+
+    private String trimAndRemoveTrailingSemicolons(final String statement) {
+        String trimmed = statement.trim();
+        while (trimmed.endsWith(";")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1).trim();
+        }
+        return trimmed;
     }
 }
