@@ -9,18 +9,14 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="413.0" styleClass="itry-dialog" xmlns:fx="http://javafx.com/fxml" fx:controller="de.kuehweg.sqltool.dialog.CommonDialogController">
+<AnchorPane id="AnchorPane" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="413.0" styleClass="itry-dialog" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="de.kuehweg.sqltool.dialog.CommonDialogController">
   <children>
     <VBox alignment="TOP_CENTER" prefHeight="103.0" prefWidth="461.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
       <children>
         <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
           <children>
             <ImageView fx:id="icon" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="message" alignment="TOP_LEFT" text="Label" wrapText="true">
-              <font>
-                <Font name="System Bold" size="13.0" />
-              </font>
-            </Label>
+            <Label fx:id="message" alignment="TOP_LEFT" text="Label" wrapText="true" />
           </children>
           <VBox.margin>
             <Insets fx:id="x1" />
