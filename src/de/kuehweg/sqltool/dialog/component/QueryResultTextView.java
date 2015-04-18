@@ -25,12 +25,12 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -208,9 +208,7 @@ public class QueryResultTextView implements ExecutionTracker {
                 outputBacklog.append(formatAsText(info));
             }
         }
-        String fullOutput = outputTextArea.getText() + outputBacklog.toString();
-        if (outputTextArea.getText().length() + outputBacklog.length()
-                < MAX_DBOUTPUT) {
+        if (outputTextArea.getText().length() + outputBacklog.length() < MAX_DBOUTPUT) {
             outputTextArea.appendText(outputBacklog.toString());
         } else {
             int howMuchFromOld = MAX_DBOUTPUT - outputBacklog.length();

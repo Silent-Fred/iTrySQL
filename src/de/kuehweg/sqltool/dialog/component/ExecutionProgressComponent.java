@@ -25,9 +25,9 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.List;
@@ -67,6 +67,8 @@ public class ExecutionProgressComponent implements
     @Override
     public void intermediateUpdate(
             final List<StatementExecutionInformation> executionInfos) {
+		// derzeit keine Updates während Ausführung - ist als "laufend"
+		// visualisiert
     }
 
     @Override

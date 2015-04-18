@@ -46,8 +46,8 @@ public class FontAction {
     }
 
     /**
-     * Schriftgröße einer TextArea ändern - gesetzte Schriftgröße wird als
-     * Ergebnis geliefert
+     * Schriftgröße einer TextArea ändern - gesetzte Schriftgröße wird als Ergebnis
+     * geliefert
      *
      * @param textArea
      * @param diff
@@ -87,27 +87,28 @@ public class FontAction {
                     case "toolbarZoomIn":
                         UserPreferencesManager.getSharedInstance().
                                 setFontSizeStatementInput(
-                                (int) Math.round(
-                                modifyFontSize(statementInput, +1)));
+                                        (int) Math.round(
+                                                modifyFontSize(statementInput, +1)));
                         break;
                     case "toolbarZoomOut":
                         UserPreferencesManager.getSharedInstance().
                                 setFontSizeStatementInput(
-                                (int) Math.round(
-                                modifyFontSize(statementInput, -1)));
+                                        (int) Math.round(
+                                                modifyFontSize(statementInput, -1)));
                         break;
                     case "toolbarTabDbOutputZoomIn":
                         UserPreferencesManager.getSharedInstance().
                                 setFontSizeDbOutput(
-                                (int) Math.round(
-                                modifyFontSize(dbOutput, +1)));
+                                        (int) Math.round(
+                                                modifyFontSize(dbOutput, +1)));
                         break;
                     case "toolbarTabDbOutputZoomOut":
                         UserPreferencesManager.getSharedInstance().
                                 setFontSizeDbOutput(
-                                (int) Math.round(
-                                modifyFontSize(dbOutput, -1)));
+                                        (int) Math.round(
+                                                modifyFontSize(dbOutput, -1)));
                         break;
+                    default: // ups?
                 }
             }
         }

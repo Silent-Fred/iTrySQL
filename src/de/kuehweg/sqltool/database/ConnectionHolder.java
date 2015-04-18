@@ -55,13 +55,10 @@ public class ConnectionHolder {
      * @param connection
      */
     private void connect(final Connection connection) {
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (final SQLException ex) {
-            }
-        }
-        this.connection = connection;
+		if (this.connection != null && this.connection != connection) {
+			disconnect();
+		}
+		this.connection = connection;
     }
 
     /**

@@ -32,6 +32,8 @@ package de.kuehweg.sqltool.common.exception;
  */
 public class DatabaseConnectionException extends Exception {
 
+    private static final long serialVersionUID = -4719287458160826127L;
+
     public DatabaseConnectionException(Throwable cause) {
         super(cause);
     }

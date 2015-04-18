@@ -32,8 +32,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Klasse zur Ausführung einer SQL-Anweisung mit Aufbereitung des Ergebnisses
@@ -41,8 +39,6 @@ import java.util.List;
  * @author Michael Kühweg
  */
 public class StatementExecution {
-
-    private static final String NULL_STR = "[null]";
 
     private final StatementExecutionInformation info;
 
@@ -111,7 +107,6 @@ public class StatementExecution {
             final ResultSetMetaData metaData = resultSet.getMetaData();
             final int col = metaData.getColumnCount();
 
-            final List<ResultRow> rows = new ArrayList<>();
             final Object[] row = new Object[col];
             while (resultSet.next()) {
                 for (int i = 1; i <= col; i++) {

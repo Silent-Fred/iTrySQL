@@ -39,14 +39,12 @@ import javafx.scene.control.TextArea;
  */
 public class SQLHistoryButtonCell extends TableCell<SQLHistory, String> {
 
-    private final TextArea appendTo;
     private final Button button;
 
     private SQLHistory historyItem;
 
     public SQLHistoryButtonCell(final TextArea appendTo) {
         super();
-        this.appendTo = appendTo;
         button = new Button(
                 DialogDictionary.LABEL_APPEND_HISTORY_ITEM_TO_EDITOR.
                 toString());

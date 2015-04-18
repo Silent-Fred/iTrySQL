@@ -68,8 +68,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -759,8 +757,6 @@ public class iTrySQLController implements Initializable,
     }
 
     private void prepareHistory() {
-        ObservableList<SQLHistory> sqlHistoryItems = FXCollections.
-                observableArrayList();
         sqlHistoryColumnTimestamp
                 .setCellValueFactory(
                         new PropertyValueFactory<>(

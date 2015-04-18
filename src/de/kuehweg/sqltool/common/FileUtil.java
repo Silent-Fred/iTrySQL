@@ -71,14 +71,14 @@ public class FileUtil {
 		final StringBuffer b;
 		final InputStreamReader reader = new InputStreamReader(inputStream,
 				"UTF-8");
-		final BufferedReader bufferedReader = new BufferedReader(reader);
-		b = new StringBuffer();
-		String s = null;
-		while ((s = bufferedReader.readLine()) != null) {
-			b.append(s);
-			b.append('\n');
-		}
-		bufferedReader.close();
+        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+            b = new StringBuffer();
+            String s;
+            while ((s = bufferedReader.readLine()) != null) {
+                b.append(s);
+                b.append('\n');
+            }
+        }
 		return b.toString();
 	}
 

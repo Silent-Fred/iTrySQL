@@ -69,7 +69,7 @@ public class RomanNumber {
 			throw new IllegalArgumentException("Cannot fit " + number
 					+ " into RomanNumber");
 		}
-	};
+	}
 
 	@Override
 	public String toString() {

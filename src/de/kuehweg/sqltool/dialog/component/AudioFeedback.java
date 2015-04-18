@@ -25,10 +25,10 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.ProvidedAudioClip;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.util.List;
 
 /**
@@ -40,20 +40,22 @@ public class AudioFeedback implements ExecutionTracker {
 
     @Override
     public void beforeExecution() {
+        // kein Audio Feedback vor der Ausführung
     }
 
     @Override
     public void intermediateUpdate(
             final List<StatementExecutionInformation> executionInfos) {
+        // kein Audio Feedback während der Ausführung
     }
 
     @Override
     public void afterExecution() {
-        ProvidedAudioClip audioClip = UserPreferencesManager.
-                getSharedInstance().getBeepAudioClip();
+        final ProvidedAudioClip audioClip = UserPreferencesManager
+                .getSharedInstance().getBeepAudioClip();
         if (audioClip != null) {
-            double volume = UserPreferencesManager.getSharedInstance().
-                    getBeepVolume();
+            final double volume = UserPreferencesManager.getSharedInstance()
+                    .getBeepVolume();
             if (volume > 0.0) {
                 audioClip.play(volume);
             }
