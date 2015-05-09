@@ -23,32 +23,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution;
+package de.kuehweg.sqltool.database.execution.fake;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Einzelne Ergebniszeile einer SQL-Anweisung
  *
  * @author Michael Kühweg
  */
-public class ResultRow {
+public class FakeStatementWithFakeResultSet extends FakeStatement {
 
-    public static final String NULL_STR = "[null]";
+    private final ResultSet resultSet;
 
-    private final Object[] columns;
+    private final Connection connection;
 
-    public ResultRow(final Object... columns) {
-        this.columns = Arrays.copyOf(columns, columns.length);
+    public FakeStatementWithFakeResultSet(final Connection connection,
+            final ResultSet resultSet) {
+        this.connection = connection;
+        this.resultSet = resultSet;
     }
 
-    public List<String> columnsAsString() {
-        List<String> result = new ArrayList<>(columns.length);
-        for (Object column : columns) {
-            result.add(column != null ? column.toString() : NULL_STR);
+    @Override
+    public boolean execute(String sql) throws SQLException {
+        return true;
+    }
+
+    @Override
+    public ResultSet getResultSet() throws SQLException {
+        if (resultSet == null) {
+            throw new SQLException();
         }
-        return result;
+        return resultSet;
     }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return connection;
+    }
+
 }

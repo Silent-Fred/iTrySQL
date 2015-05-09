@@ -25,17 +25,13 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
-import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.database.execution.StatementExecution;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import de.kuehweg.sqltool.dialog.updater.AfterExecutionGuiUpdater;
-import de.kuehweg.sqltool.dialog.updater.BeforeExecutionGuiUpdater;
-import de.kuehweg.sqltool.dialog.updater.ErrorExecutionGuiUpdater;
+import de.kuehweg.sqltool.dialog.updater.AbstractExecutionGuiUpdater;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import de.kuehweg.sqltool.dialog.updater.IntermediateExecutionGuiUpdater;
+import de.kuehweg.sqltool.dialog.updater.GuiUpdaterProviderI;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -43,7 +39,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 
 /**
@@ -57,13 +52,21 @@ public class ExecutionTask extends Task<Void> {
 
     private final Statement statement;
     private final String sql;
+    private final GuiUpdaterProviderI guiUpdaterProvider;
     private final Collection<ExecutionTracker> trackers;
+    private int maxRows;
     private long lastTimeUIWasUpdated;
 
-    public ExecutionTask(final Statement statement, final String sql) {
+    public ExecutionTask(final Statement statement, final String sql,
+            final GuiUpdaterProviderI guiUpdaterProvider) {
         this.statement = statement;
         this.sql = sql;
+        this.guiUpdaterProvider = guiUpdaterProvider;
         this.trackers = new HashSet<>();
+    }
+
+    public void setLimitMaxRows(final int maxRows) {
+        this.maxRows = maxRows;
     }
 
     public void attach(final ExecutionTracker... trackers) {
@@ -81,22 +84,56 @@ public class ExecutionTask extends Task<Void> {
     }
 
     private void beforeExecution() {
-        final BeforeExecutionGuiUpdater updater
-                = new BeforeExecutionGuiUpdater(trackers);
-        Platform.runLater(updater);
+        if (guiUpdaterProvider != null) {
+            AbstractExecutionGuiUpdater updater = guiUpdaterProvider.
+                    beforeExecutionGuiUpdater(trackers);
+            if (updater != null) {
+                updater.show();
+            }
+        }
     }
 
     private void intermediateUpdate(
             final List<StatementExecutionInformation> executionInfos) {
-        final IntermediateExecutionGuiUpdater updater
-                = new IntermediateExecutionGuiUpdater(executionInfos, trackers);
-        Platform.runLater(updater);
+        if (guiUpdaterProvider != null) {
+            AbstractExecutionGuiUpdater updater = guiUpdaterProvider.
+                    intermediateExecutionGuiUpdater(executionInfos, trackers);
+            if (updater != null) {
+                updater.show();
+            }
+        }
     }
 
     private void afterExecution() {
-        final AfterExecutionGuiUpdater updater
-                = new AfterExecutionGuiUpdater(trackers);
-        Platform.runLater(updater);
+        if (guiUpdaterProvider != null) {
+            AbstractExecutionGuiUpdater updater = guiUpdaterProvider.
+                    afterExecutionGuiUpdater(trackers);
+            if (updater != null) {
+                updater.show();
+            }
+        }
+    }
+
+    private void intermediateUpdateInIntervals(
+            final List<StatementExecutionInformation> executionInfos) {
+        // zu häufige Updates der Oberfläche bei vielen, kurzen Anweisungen
+        // blockieren die UI. Daher nur in regelmäßigen Abständen aktualisieren.
+        if (System.currentTimeMillis() - lastTimeUIWasUpdated
+                > UI_UPDATE_INTERVAL_MILLISECONDS) {
+            intermediateUpdate(executionInfos);
+            executionInfos.clear();
+            lastTimeUIWasUpdated = System.currentTimeMillis();
+        }
+    }
+
+    private void errorUpdate(final String message) {
+        if (guiUpdaterProvider != null) {
+            final AbstractExecutionGuiUpdater updater
+                    = guiUpdaterProvider.errorExecutionGuiUpdater(message, trackers);
+            if (updater != null) {
+                updater.show();
+            }
+        }
     }
 
     @Override
@@ -104,9 +141,7 @@ public class ExecutionTask extends Task<Void> {
         try {
             final List<StatementString> statements = new StatementExtractor()
                     .getStatementsFromScript(sql);
-            if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
-                statement.setMaxRows(DatabaseConstants.MAX_ROWS);
-            }
+            statement.setMaxRows(maxRows);
             beforeExecution();
             List<StatementExecutionInformation> executionInfos
                     = new ArrayList<>();
@@ -117,27 +152,18 @@ public class ExecutionTask extends Task<Void> {
 
                 if (!singleQuery.isEmpty()) {
                     executionInfos.add(new StatementExecution(singleQuery).
-                            execute(
-                                    statement));
+                            execute(statement));
                 }
-
-                if (System.currentTimeMillis() - lastTimeUIWasUpdated
-                        > UI_UPDATE_INTERVAL_MILLISECONDS) {
-                    intermediateUpdate(executionInfos);
-                    executionInfos.clear();
-                    lastTimeUIWasUpdated = System.currentTimeMillis();
-                }
+                intermediateUpdateInIntervals(executionInfos);
             }
-            // falls noch Zwischenupdates ausstehen sollten, diese erst abarbeiten
+            // falls noch Zwischenupdates ausstehen sollten, diese abarbeiten
             intermediateUpdate(executionInfos);
+            // dann abschließen
             afterExecution();
         } catch (final SQLException ex) {
-            final String msg = ex.getLocalizedMessage() + " (SQL-State: "
-                    + ex.getSQLState() + ")";
-            final ErrorExecutionGuiUpdater updater
-                    = new ErrorExecutionGuiUpdater(trackers);
-            updater.setErrormessage(msg);
-            Platform.runLater(updater);
+            errorUpdate(
+                    ex.getLocalizedMessage() + " (SQL-State: "
+                    + ex.getSQLState() + ")");
         }
         return null;
     }

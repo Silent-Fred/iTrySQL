@@ -26,23 +26,22 @@
 package de.kuehweg.sqltool.common.sqlediting;
 
 /**
- * SQL Statement in String-Repräsentation mit einigen Methoden zum einfachen
- * Umgang damit.
+ * SQL Statement in String-Repräsentation mit einigen Methoden zum einfachen Umgang damit.
  *
  * @author Michael Kühweg
  */
 public class StatementString {
 
-    private static final String[] DDL_COMMANDS = new String[]{"CREATE",
+    public static final String[] DDL_COMMANDS = new String[]{"CREATE",
         "ALTER", "DROP", "TRUNCATE"};
 
-    private static final String[] DML_COMMANDS
+    public static final String[] DML_COMMANDS
             = new String[]{"SELECT", "INSERT", "UPDATE", "DELETE", "MERGE",
                 "CALL", "EXPLAIN", "SCRIPT"};
 
-    private static final String[] DCL_COMMANDS = new String[]{"GRANT", "REVOKE"};
+    public static final String[] DCL_COMMANDS = new String[]{"GRANT", "REVOKE"};
 
-    private static final String[] TCL_COMMANDS = new String[]{"COMMIT",
+    public static final String[] TCL_COMMANDS = new String[]{"COMMIT",
         "ROLLBACK", "SAVEPOINT"};
 
     private final String sql;
@@ -62,8 +61,8 @@ public class StatementString {
     }
 
     /**
-     * Liefert die Anweisung ohne Kommentare zurück. Kommentare werden jeweils
-     * durch ein Leerzeichen ersetzt.
+     * Liefert die Anweisung ohne Kommentare zurück. Kommentare werden jeweils durch ein
+     * Leerzeichen ersetzt.
      *
      * @return
      */
@@ -82,8 +81,8 @@ public class StatementString {
 
     /**
      * Abfrage auf DDL Statement. Die Anweisung wird dabei <em>nicht</em>
-     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-     * einleitenden Schlüsselwort klassifiziert.
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+     * Schlüsselwort klassifiziert.
      *
      * @return true wenn die Anweisung ein DDL Statement ist.
      */
@@ -93,8 +92,8 @@ public class StatementString {
 
     /**
      * Abfrage auf DML Statement. Die Anweisung wird dabei <em>nicht</em>
-     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-     * einleitenden Schlüsselwort klassifiziert.
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+     * Schlüsselwort klassifiziert.
      *
      * @return true wenn die Anweisung ein DML Statement ist.
      */
@@ -104,8 +103,8 @@ public class StatementString {
 
     /**
      * Abfrage auf DCL Statement. Die Anweisung wird dabei <em>nicht</em>
-     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-     * einleitenden Schlüsselwort klassifiziert.
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+     * Schlüsselwort klassifiziert.
      *
      * @return true wenn die Anweisung ein DCL Statement ist.
      */
@@ -115,8 +114,8 @@ public class StatementString {
 
     /**
      * Abfrage auf TCL Statement. Die Anweisung wird dabei <em>nicht</em>
-     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-     * einleitenden Schlüsselwort klassifiziert.
+     * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+     * Schlüsselwort klassifiziert.
      *
      * @return true wenn die Anweisung ein TCL Statement ist.
      */

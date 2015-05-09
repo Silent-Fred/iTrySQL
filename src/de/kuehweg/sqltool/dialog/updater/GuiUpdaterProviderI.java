@@ -23,32 +23,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution;
+package de.kuehweg.sqltool.dialog.updater;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Einzelne Ergebniszeile einer SQL-Anweisung
+ * GUI-Updater für die verschiedenen Phasen beim Ausführen einer Anweisung
  *
  * @author Michael Kühweg
  */
-public class ResultRow {
+public interface GuiUpdaterProviderI {
 
-    public static final String NULL_STR = "[null]";
+    AbstractExecutionGuiUpdater beforeExecutionGuiUpdater(
+            final Collection<ExecutionTracker> trackers);
 
-    private final Object[] columns;
+    AbstractExecutionGuiUpdater intermediateExecutionGuiUpdater(
+            final List<StatementExecutionInformation> executionInfos,
+            final Collection<ExecutionTracker> trackers);
 
-    public ResultRow(final Object... columns) {
-        this.columns = Arrays.copyOf(columns, columns.length);
-    }
+    AbstractExecutionGuiUpdater afterExecutionGuiUpdater(
+            final Collection<ExecutionTracker> trackers);
 
-    public List<String> columnsAsString() {
-        List<String> result = new ArrayList<>(columns.length);
-        for (Object column : columns) {
-            result.add(column != null ? column.toString() : NULL_STR);
-        }
-        return result;
-    }
+    AbstractExecutionGuiUpdater errorExecutionGuiUpdater(
+            final Collection<ExecutionTracker> trackers);
+
+    AbstractExecutionGuiUpdater errorExecutionGuiUpdater(final String message,
+            final Collection<ExecutionTracker> trackers);
+
 }

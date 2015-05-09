@@ -48,19 +48,23 @@ public class StatementExecution {
     }
 
     public StatementExecutionInformation execute(final Statement statement) throws SQLException {
-        info.
-                setExecutedBy(statement.getConnection().getMetaData().
-                        getUserName());
-        info.setConnectionDescription(statement.getConnection().getMetaData().
-                getURL());
-        info.setStartOfExecution(System.currentTimeMillis());
-        if (statement.execute(info.getSql().uncommentedStatement())) {
-            retrieveResult(statement);
+        if (info.getSql() == null) {
+            erroneousResult();
         } else {
-            headOnlyResult(statement.getUpdateCount());
+            info.
+                    setExecutedBy(statement.getConnection().getMetaData().
+                            getUserName());
+            info.setConnectionDescription(statement.getConnection().getMetaData().
+                    getURL());
+            info.setStartOfExecution(System.currentTimeMillis());
+            if (statement.execute(info.getSql().uncommentedStatement())) {
+                retrieveResult(statement);
+            } else {
+                headOnlyResult(statement.getUpdateCount());
+            }
+            // als Ende der Ausführung wird der Zeitpunkt betrachtet, ab dem die Ergebnismenge übertragen ist
+            info.setEndOfExecution(System.currentTimeMillis());
         }
-        // als Ende der Ausführung wird der Zeitpunkt betrachtet, ab dem die Ergebnismenge übertragen ist
-        info.setEndOfExecution(System.currentTimeMillis());
         return info;
     }
 
@@ -75,7 +79,6 @@ public class StatementExecution {
                 info.setSummary(MessageFormat.format(
                         DialogDictionary.PATTERN_ROWCOUNT.toString(),
                         info.getStatementResult().getRows().size()));
-
             }
         } catch (SQLException ex) {
             erroneousResult();
@@ -106,7 +109,6 @@ public class StatementExecution {
         if (resultSet != null) {
             final ResultSetMetaData metaData = resultSet.getMetaData();
             final int col = metaData.getColumnCount();
-
             final Object[] row = new Object[col];
             while (resultSet.next()) {
                 for (int i = 1; i <= col; i++) {

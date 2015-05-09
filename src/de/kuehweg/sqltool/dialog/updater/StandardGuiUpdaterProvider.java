@@ -23,32 +23,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution;
+package de.kuehweg.sqltool.dialog.updater;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Einzelne Ergebniszeile einer SQL-Anweisung
+ * GUI-Updater für einer reguläre Ausführung von Anweisungen in der Oberfläche
  *
  * @author Michael Kühweg
  */
-public class ResultRow {
+public class StandardGuiUpdaterProvider implements GuiUpdaterProviderI {
 
-    public static final String NULL_STR = "[null]";
-
-    private final Object[] columns;
-
-    public ResultRow(final Object... columns) {
-        this.columns = Arrays.copyOf(columns, columns.length);
+    @Override
+    public AbstractExecutionGuiUpdater beforeExecutionGuiUpdater(
+            Collection<ExecutionTracker> trackers) {
+        return new BeforeExecutionGuiUpdater(trackers);
     }
 
-    public List<String> columnsAsString() {
-        List<String> result = new ArrayList<>(columns.length);
-        for (Object column : columns) {
-            result.add(column != null ? column.toString() : NULL_STR);
-        }
-        return result;
+    @Override
+    public AbstractExecutionGuiUpdater intermediateExecutionGuiUpdater(
+            List<StatementExecutionInformation> executionInfos,
+            Collection<ExecutionTracker> trackers) {
+        return new IntermediateExecutionGuiUpdater(executionInfos, trackers);
     }
+
+    @Override
+    public AbstractExecutionGuiUpdater afterExecutionGuiUpdater(
+            Collection<ExecutionTracker> trackers) {
+        return new AfterExecutionGuiUpdater(trackers);
+    }
+
+    @Override
+    public AbstractExecutionGuiUpdater errorExecutionGuiUpdater(String message,
+            Collection<ExecutionTracker> trackers) {
+        return new ErrorExecutionGuiUpdater(message, trackers);
+    }
+
+    @Override
+    public AbstractExecutionGuiUpdater errorExecutionGuiUpdater(
+            Collection<ExecutionTracker> trackers) {
+        return new ErrorExecutionGuiUpdater(trackers);
+    }
+
 }

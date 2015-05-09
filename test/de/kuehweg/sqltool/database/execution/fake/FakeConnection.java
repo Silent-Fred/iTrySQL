@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database;
+package de.kuehweg.sqltool.database.execution.fake;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -49,7 +49,7 @@ import java.util.concurrent.Executor;
  *
  * @author Michael Kühweg
  */
-public class FakeConnectionThrowingException implements Connection {
+public class FakeConnection implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {

@@ -36,18 +36,18 @@ import java.util.Collection;
  */
 public class ErrorExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
 
-    private String errorThatOccurred;
+    private String message;
 
     public ErrorExecutionGuiUpdater(
             final Collection<ExecutionTracker> trackers) {
         super(trackers);
-        errorThatOccurred = DialogDictionary.ERR_UNKNOWN_ERROR.toString();
+        message = DialogDictionary.ERR_UNKNOWN_ERROR.toString();
     }
 
-    public void setErrormessage(final String description) {
-        errorThatOccurred
-                = description != null ? description : DialogDictionary.ERR_UNKNOWN_ERROR.
-                        toString();
+    public ErrorExecutionGuiUpdater(final String message,
+            final Collection<ExecutionTracker> trackers) {
+        super(trackers);
+        this.message = message;
     }
 
     @Override
@@ -58,8 +58,7 @@ public class ErrorExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
         }
         // und danach eine Fehlermeldung ausgeben
         final ErrorMessage msg = new ErrorMessage(
-                DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                errorThatOccurred,
+                DialogDictionary.MESSAGEBOX_ERROR.toString(), message,
                 DialogDictionary.COMMON_BUTTON_OK.toString());
         msg.askUserFeedback();
     }

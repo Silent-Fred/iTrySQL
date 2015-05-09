@@ -26,10 +26,13 @@
 package de.kuehweg.sqltool.dialog.action;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.UserPreferencesManager;
+import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.CommonDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
+import de.kuehweg.sqltool.dialog.updater.StandardGuiUpdaterProvider;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -116,8 +119,12 @@ public class ExecuteAction {
                 // während und zum Abschluss der Ausführung die Oberfläche
                 // aktualisieren zu können.
                 final ExecutionTask executionTask = new ExecutionTask(
-                        connection.createStatement(), sql);
+                        connection.createStatement(), sql,
+                        new StandardGuiUpdaterProvider());
                 executionTask.attach(trackers);
+                if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
+                    executionTask.setLimitMaxRows(DatabaseConstants.MAX_ROWS);
+                }
                 final Thread th = new Thread(executionTask);
                 th.setDaemon(true);
                 th.start();

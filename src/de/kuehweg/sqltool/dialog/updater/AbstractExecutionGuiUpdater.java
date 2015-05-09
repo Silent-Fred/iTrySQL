@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import javafx.application.Platform;
 
 /**
  * GUI passend zur Ausführung von SQL-Anweisungen aktualisieren
@@ -67,7 +68,18 @@ public abstract class AbstractExecutionGuiUpdater implements Runnable {
         return trackers;
     }
 
+    /**
+     * Aktualisierung der Inhalte in den Trackers, abhängig von den Anweisungsergebnissen.
+     */
     public abstract void update();
+
+    /**
+     * Aktualisierung der Oberfläche
+     */
+    public void show() {
+        // Aktualisierung mit dem UI-Thread abstimmen
+        Platform.runLater(this);
+    }
 
     @Override
     public void run() {
