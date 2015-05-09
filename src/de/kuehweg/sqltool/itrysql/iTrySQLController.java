@@ -760,7 +760,7 @@ public class iTrySQLController implements Initializable,
         sqlHistoryColumnTimestamp
                 .setCellValueFactory(
                         new PropertyValueFactory<>(
-                                "timestamp"));
+                                "timestampFormatted"));
         sqlHistoryColumnStatement
                 .setCellValueFactory(
                         new PropertyValueFactory<>(

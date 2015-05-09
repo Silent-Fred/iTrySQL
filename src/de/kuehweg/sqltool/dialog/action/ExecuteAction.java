@@ -27,6 +27,7 @@ package de.kuehweg.sqltool.dialog.action;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.dialog.AlertBox;
+import de.kuehweg.sqltool.dialog.CommonDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.sql.Connection;
@@ -63,50 +64,65 @@ public class ExecuteAction {
     }
 
     /**
-     * SQL ausführen und Dialog aktualisieren
+     * SQL ausführen, Dialog aktualisieren, Rückmeldung an Anwender
      *
      * @param sql
      * @param connection
      */
     public void handleExecuteAction(final String sql,
             final Connection connection) {
-        if (sql == null || sql.trim().length() == 0) {
-            final AlertBox msg = new AlertBox(
-                    DialogDictionary.MESSAGEBOX_WARNING.toString(),
-                    DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE.toString(),
+        try {
+            DialogDictionary feedback
+                    = startExecution(sql, connection);
+            if (feedback != null) {
+                CommonDialog alert = new AlertBox(
+                        DialogDictionary.MESSAGEBOX_WARNING.toString(),
+                        feedback.toString(),
+                        DialogDictionary.COMMON_BUTTON_OK.toString());
+                alert.askUserFeedback();
+            }
+        } catch (SQLException ex) {
+            CommonDialog error = new ErrorMessage(
+                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
+                    ex.getLocalizedMessage() + " (" + ex.getSQLState()
+                    + ")",
                     DialogDictionary.COMMON_BUTTON_OK.toString());
-            msg.askUserFeedback();
+            error.askUserFeedback();
+        }
+    }
+
+    /**
+     * Führt SQL auf einer Verbindung aus. Wenn keine Verbindung angegeben ist oder keine
+     * Anweisung zur Ausführung o.a. Handlingfehler, wird ein Dictionary-Eintrag
+     * zurückgegeben, der als Alert ausgegeben werden kann. und erzeugt im Fehlerfall eine
+     * entsprechende Meldung, die ausgegeben werden kann.
+     *
+     * @param sql
+     * @param connection
+     * @return
+     * @throws java.sql.SQLException Im Ausnahmefall (z.B. kein Statement erzeugbar auf
+     * der Connection)
+     */
+    protected DialogDictionary startExecution(final String sql,
+            final Connection connection) throws SQLException {
+        if (sql == null || sql.trim().length() == 0) {
+            return DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE;
         } else {
             if (connection == null) {
-                final AlertBox msg = new AlertBox(
-                        DialogDictionary.MESSAGEBOX_WARNING.toString(),
-                        DialogDictionary.MSG_NO_DB_CONNECTION.toString(),
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                msg.askUserFeedback();
+                return DialogDictionary.MSG_NO_DB_CONNECTION;
             } else {
-                try {
-                    // die eigentliche Ausführung wird im Hintergrund gestartet
-                    // und bekommt alle Informationen mit auf den Weg, um
-                    // während und zum Abschluss der Ausführung die Oberfläche
-                    // aktualisieren zu können.
-                    final ExecutionTask executionTask = new ExecutionTask(
-                            connection.createStatement(), sql);
-                    executionTask.attach(trackers);
-                    final Thread th = new Thread(executionTask);
-                    th.setDaemon(true);
-                    th.start();
-                } catch (final SQLException ex) {
-                    // falls kein Statement erzeugt werden kann, landen wir
-                    // schon vor der eigentlichen Ausführung in einer
-                    // SQL-Exception
-                    final ErrorMessage msg = new ErrorMessage(
-                            DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                            ex.getLocalizedMessage() + " (" + ex.getSQLState()
-                            + ")",
-                            DialogDictionary.COMMON_BUTTON_OK.toString());
-                    msg.askUserFeedback();
-                }
+                // die eigentliche Ausführung wird im Hintergrund gestartet
+                // und bekommt alle Informationen mit auf den Weg, um
+                // während und zum Abschluss der Ausführung die Oberfläche
+                // aktualisieren zu können.
+                final ExecutionTask executionTask = new ExecutionTask(
+                        connection.createStatement(), sql);
+                executionTask.attach(trackers);
+                final Thread th = new Thread(executionTask);
+                th.setDaemon(true);
+                th.start();
             }
         }
+        return null;
     }
 }
