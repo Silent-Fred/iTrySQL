@@ -25,26 +25,57 @@
  */
 package de.kuehweg.sqltool.database.execution;
 
-import java.util.Arrays;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
- * Titelzeile einer SQL-Anweisung
  *
  * @author Michael Kühweg
  */
-public class ResultHeader {
+public class ResultHeaderTest {
 
-    private final String[] columns;
-
-    public ResultHeader(final String... columns) {
-        if (columns == null) {
-            this.columns = new String[]{null};
-        } else {
-            this.columns = Arrays.copyOf(columns, columns.length);
-        }
+    public ResultHeaderTest() {
     }
 
-    public String[] getColumnHeaders() {
-        return Arrays.copyOf(columns, columns.length);
+    @BeforeClass
+    public static void setUpClass() {
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    @Test
+    public void nullSupport() {
+        ResultHeader header = new ResultHeader(" a ", null, "b");
+        Assert.assertEquals(3, header.getColumnHeaders().length);
+        Assert.assertEquals(" a ", header.getColumnHeaders()[0]);
+        // keine spezielle Null-Aufbereitung in den Spaltentiteln
+        Assert.assertEquals(null, header.getColumnHeaders()[1]);
+        Assert.assertEquals("b", header.getColumnHeaders()[2]);
+    }
+
+    @Test
+    public void empty() {
+        ResultHeader header = new ResultHeader();
+        Assert.assertEquals(0, header.getColumnHeaders().length);
+    }
+
+    @Test
+    public void nullSupportForConstructor() {
+        ResultHeader header = new ResultHeader(null);
+        Assert.assertEquals(1, header.getColumnHeaders().length);
     }
 }

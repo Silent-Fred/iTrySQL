@@ -41,7 +41,11 @@ public class ResultRow {
     private final Object[] columns;
 
     public ResultRow(final Object... columns) {
-        this.columns = Arrays.copyOf(columns, columns.length);
+        if (columns == null) {
+            this.columns = new Object[]{null};
+        } else {
+            this.columns = Arrays.copyOf(columns, columns.length);
+        }
     }
 
     public List<String> columnsAsString() {

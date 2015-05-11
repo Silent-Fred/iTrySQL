@@ -25,26 +25,56 @@
  */
 package de.kuehweg.sqltool.database.execution;
 
-import java.util.Arrays;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
- * Titelzeile einer SQL-Anweisung
  *
  * @author Michael Kühweg
  */
-public class ResultHeader {
+public class ResultRowTest {
 
-    private final String[] columns;
-
-    public ResultHeader(final String... columns) {
-        if (columns == null) {
-            this.columns = new String[]{null};
-        } else {
-            this.columns = Arrays.copyOf(columns, columns.length);
-        }
+    public ResultRowTest() {
     }
 
-    public String[] getColumnHeaders() {
-        return Arrays.copyOf(columns, columns.length);
+    @BeforeClass
+    public static void setUpClass() {
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    @Test
+    public void nullSupport() {
+        ResultRow row = new ResultRow(" a ", null, 42);
+        Assert.assertEquals(3, row.columnsAsString().size());
+        Assert.assertEquals(" a ", row.columnsAsString().get(0));
+        Assert.assertEquals(ResultRow.NULL_STR, row.columnsAsString().get(1));
+        Assert.assertEquals("42", row.columnsAsString().get(2));
+    }
+
+    @Test
+    public void empty() {
+        ResultRow row = new ResultRow();
+        Assert.assertTrue(row.columnsAsString().isEmpty());
+    }
+
+    @Test
+    public void nullSupportForConstructor() {
+        ResultRow row = new ResultRow(null);
+        Assert.assertEquals(1, row.columnsAsString().size());
     }
 }
