@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.fake;
+package de.kuehweg.sqltool.database.execution.mock;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,14 +33,15 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class FakeStatementWithFakeResultSet extends FakeStatement {
+public class MockStatementWithFakeResultSet extends MockStatement {
 
     private final ResultSet resultSet;
 
     private final Connection connection;
 
-    public FakeStatementWithFakeResultSet(final Connection connection,
+    public MockStatementWithFakeResultSet(final Connection connection,
             final ResultSet resultSet) {
+        super();
         this.connection = connection;
         this.resultSet = resultSet;
     }

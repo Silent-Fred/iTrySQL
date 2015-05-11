@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.fake;
+package de.kuehweg.sqltool.database.execution.mock;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,31 +33,16 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class FakeStatementUpdateCount42 extends FakeStatement {
+public class MockStatementThrowingExceptionOnExecute extends MockStatementWithFakeResultSet {
 
-    private final Connection connection;
-
-    public FakeStatementUpdateCount42(final Connection connection) {
-        this.connection = connection;
-    }
-
-    @Override
-    public ResultSet getResultSet() throws SQLException {
-        return null;
+    public MockStatementThrowingExceptionOnExecute(final Connection connection,
+            final ResultSet resultSet) {
+        super(connection, resultSet);
     }
 
     @Override
     public boolean execute(String sql) throws SQLException {
-        return false;
+        throw new SQLException("Fake-Statement");
     }
 
-    @Override
-    public int getUpdateCount() throws SQLException {
-        return 42;
-    }
-
-    @Override
-    public Connection getConnection() throws SQLException {
-        return connection;
-    }
 }

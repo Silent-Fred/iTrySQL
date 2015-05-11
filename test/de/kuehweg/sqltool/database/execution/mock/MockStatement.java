@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.fake;
+package de.kuehweg.sqltool.database.execution.mock;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -35,7 +35,7 @@ import java.sql.Statement;
  *
  * @author Michael Kühweg
  */
-public class FakeStatement implements Statement {
+public class MockStatement implements Statement {
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {

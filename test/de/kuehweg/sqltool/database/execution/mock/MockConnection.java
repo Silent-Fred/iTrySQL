@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.fake;
+package de.kuehweg.sqltool.database.execution.mock;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -45,11 +45,11 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 /**
- * Fake-Connection, die beim Aufruf jeglicher Operationen die deklarierte Exception wirft
+ * Mock-Connection, die beim Aufruf jeglicher Operationen die deklarierte Exception wirft
  *
  * @author Michael Kühweg
  */
-public class FakeConnection implements Connection {
+public class MockConnection implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {
