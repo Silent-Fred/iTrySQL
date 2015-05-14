@@ -38,12 +38,8 @@ import javafx.scene.text.Text;
  */
 public class FontAction {
 
-    private static final double MIN_FONT_SIZE = 12;
-    private static final double MAX_FONT_SIZE = 32;
-
-    private FontAction() {
-        // utility class - no instances desired
-    }
+    public static final int MIN_FONT_SIZE = 12;
+    public static final int MAX_FONT_SIZE = 32;
 
     /**
      * Schriftgröße einer TextArea ändern - gesetzte Schriftgröße wird als Ergebnis
@@ -53,8 +49,7 @@ public class FontAction {
      * @param diff
      * @return
      */
-    private static double modifyFontSize(final TextArea textArea,
-            final double diff) {
+    private int modifyFontSize(final TextArea textArea, final int diff) {
         if (textArea != null) {
             final Text text = (Text) textArea.lookup(".text");
             if (text != null) {
@@ -64,10 +59,72 @@ public class FontAction {
                 fontSize = fontSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : fontSize;
                 fontSize = fontSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : fontSize;
                 textArea.setStyle("-fx-font-size: " + (fontSize + diff) + ";");
-                return fontSize;
+                return (int) Math.round(fontSize);
             }
         }
         return MIN_FONT_SIZE;
+    }
+
+    private int whichDifference(final Event event) {
+        final Node source = event != null ? (Node) event.getSource() : null;
+        if (source != null) {
+            switch (source.getId()) {
+                case "toolbarZoomIn":
+                case "toolbarTabDbOutputZoomIn":
+                    return 1;
+                case "toolbarZoomOut":
+                case "toolbarTabDbOutputZoomOut":
+                    return -1;
+                default:
+                    return 0;
+            }
+        }
+        return 0;
+    }
+
+    private TextArea whichTextArea(final Event event) {
+        final Node source = event != null ? (Node) event.getSource() : null;
+        if (source != null) {
+            final TextArea dbOutput = (TextArea) source.getScene().lookup(
+                    "#dbOutput");
+            switch (source.getId()) {
+                case "toolbarZoomIn":
+                case "toolbarZoomOut":
+                    return (TextArea) source.getScene()
+                            .lookup("#statementInput");
+                case "toolbarTabDbOutputZoomIn":
+                case "toolbarTabDbOutputZoomOut":
+                    return (TextArea) source.getScene().lookup(
+                            "#dbOutput");
+                default:
+                    return null;
+            }
+        }
+        return null;
+    }
+
+    private void changeVisualsAndPreferences(final Event event) {
+        final Node source = event != null ? (Node) event.getSource() : null;
+        if (source != null) {
+            final TextArea whichTextArea = whichTextArea(event);
+            final int whichDifference = whichDifference(event);
+            if (whichTextArea != null && whichDifference != 0) {
+                switch (source.getId()) {
+                    case "toolbarZoomIn":
+                    case "toolbarZoomOut":
+                        UserPreferencesManager.getSharedInstance().
+                                setFontSizeStatementInput(
+                                        modifyFontSize(whichTextArea, whichDifference));
+                        break;
+                    case "toolbarTabDbOutputZoomIn":
+                    case "toolbarTabDbOutputZoomOut":
+                        UserPreferencesManager.getSharedInstance().setFontSizeDbOutput(
+                                modifyFontSize(whichTextArea, whichDifference));
+                        break;
+                    default:
+                }
+            }
+        }
     }
 
     /**
@@ -75,42 +132,7 @@ public class FontAction {
      *
      * @param event
      */
-    public static void handleFontAction(final Event event) {
-        final Node source = event != null ? (Node) event.getSource() : null;
-        if (source != null) {
-            final TextArea statementInput = (TextArea) source.getScene()
-                    .lookup("#statementInput");
-            final TextArea dbOutput = (TextArea) source.getScene().lookup(
-                    "#dbOutput");
-            if (statementInput != null) {
-                switch (source.getId()) {
-                    case "toolbarZoomIn":
-                        UserPreferencesManager.getSharedInstance().
-                                setFontSizeStatementInput(
-                                        (int) Math.round(
-                                                modifyFontSize(statementInput, +1)));
-                        break;
-                    case "toolbarZoomOut":
-                        UserPreferencesManager.getSharedInstance().
-                                setFontSizeStatementInput(
-                                        (int) Math.round(
-                                                modifyFontSize(statementInput, -1)));
-                        break;
-                    case "toolbarTabDbOutputZoomIn":
-                        UserPreferencesManager.getSharedInstance().
-                                setFontSizeDbOutput(
-                                        (int) Math.round(
-                                                modifyFontSize(dbOutput, +1)));
-                        break;
-                    case "toolbarTabDbOutputZoomOut":
-                        UserPreferencesManager.getSharedInstance().
-                                setFontSizeDbOutput(
-                                        (int) Math.round(
-                                                modifyFontSize(dbOutput, -1)));
-                        break;
-                    default: // ups?
-                }
-            }
-        }
+    public void handleFontAction(final Event event) {
+        changeVisualsAndPreferences(event);
     }
 }

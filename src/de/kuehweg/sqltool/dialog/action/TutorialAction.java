@@ -55,19 +55,8 @@ public class TutorialAction {
                 confirm.askUserFeedback())) {
             final StringBuilder completeSql = new StringBuilder();
             try {
-                completeSql.append("\n");
-                // Daten für die Beispiele
-                completeSql.append(FileUtil
-                        .readResourceFile("/resources/sql/examples.sql"));
-                completeSql.append("\n");
-                // Daten für die Übungen
-                completeSql.append(FileUtil
-                        .readResourceFile("/resources/sql/tutorial.sql"));
-                completeSql.append("\n");
-                // Daten für einen zweiten User
-                completeSql.append(generateDynamicScript(
-                        "/resources/sql/second_user.sql", connection));
-                completeSql.append("\n");
+                completeSql.append(buildStaticPortionOfScript());
+                completeSql.append(buildDynamicPortionOfScript(connection));
                 executeAction.handleExecuteAction(completeSql.toString(),
                         connection);
             } catch (final IOException | SQLException ex) {
@@ -81,9 +70,31 @@ public class TutorialAction {
         }
     }
 
+    private String buildStaticPortionOfScript() throws IOException {
+        final StringBuilder completeSql = new StringBuilder();
+        completeSql.append("\n");
+        // Daten für die Beispiele
+        completeSql.append(FileUtil
+                .readResourceFile("/resources/sql/examples.sql"));
+        completeSql.append("\n");
+        // Daten für die Übungen
+        completeSql.append(FileUtil
+                .readResourceFile("/resources/sql/tutorial.sql"));
+        completeSql.append("\n");
+        return completeSql.toString();
+    }
+
+    private String buildDynamicPortionOfScript(final Connection connection) throws IOException, SQLException {
+        final StringBuilder completeSql = new StringBuilder();
+        completeSql.append(generateDynamicScript(
+                "/resources/sql/second_user.sql", connection));
+        completeSql.append("\n");
+        return completeSql.toString();
+    }
+
     /**
-     * Führt ein Skript aus und liest dessen Ausgaben als eine Reihe von
-     * Anweisungen ein ud erzeugt daraus dynamisch ein SQL-Skript.
+     * Führt ein Skript aus und liest dessen Ausgaben als eine Reihe von Anweisungen ein
+     * ud erzeugt daraus dynamisch ein SQL-Skript.
      *
      * @param resourceFilename
      * @param connection

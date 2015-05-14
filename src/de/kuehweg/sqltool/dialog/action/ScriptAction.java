@@ -44,7 +44,7 @@ public class ScriptAction {
 	private final TextArea statementInput;
 
 	/**
-	 * Quelle und Ziel ist jeweils die übergeben TextArea
+	 * Quelle und Ziel ist jeweils die übergebene TextArea
 	 * 
 	 * @param statementInput
 	 */

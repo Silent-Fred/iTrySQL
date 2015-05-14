@@ -45,8 +45,7 @@ public abstract class AbstractExecutionGuiUpdater implements Runnable {
     private final Collection<ExecutionTracker> trackers
             = new HashSet<>();
 
-    public AbstractExecutionGuiUpdater(
-            final Collection<ExecutionTracker> trackers) {
+    public AbstractExecutionGuiUpdater(final Collection<ExecutionTracker> trackers) {
         super();
         if (trackers != null) {
             this.trackers.addAll(trackers);

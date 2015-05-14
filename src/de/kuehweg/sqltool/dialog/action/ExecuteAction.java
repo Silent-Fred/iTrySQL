@@ -72,11 +72,9 @@ public class ExecuteAction {
      * @param sql
      * @param connection
      */
-    public void handleExecuteAction(final String sql,
-            final Connection connection) {
+    public void handleExecuteAction(final String sql, final Connection connection) {
         try {
-            DialogDictionary feedback
-                    = startExecution(sql, connection);
+            DialogDictionary feedback = startExecution(sql, connection);
             if (feedback != null) {
                 CommonDialog alert = new AlertBox(
                         DialogDictionary.MESSAGEBOX_WARNING.toString(),

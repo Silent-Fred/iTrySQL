@@ -456,7 +456,7 @@ public class iTrySQLController implements Initializable,
     }
 
     public void fontAction(final ActionEvent event) {
-        FontAction.handleFontAction(event);
+        new FontAction().handleFontAction(event);
     }
 
     public void tutorialAction(final ActionEvent event) {
@@ -478,8 +478,8 @@ public class iTrySQLController implements Initializable,
     }
 
     /**
-     * Rückfrage, ob die Applikation beendet werden soll - kann und soll in
-     * einem onCloseRequest-EventHandler aufgerufen werden.
+     * Rückfrage, ob die Applikation beendet werden soll - kann und soll in einem
+     * onCloseRequest-EventHandler aufgerufen werden.
      *
      * @return true wenn beendet werden soll
      */
