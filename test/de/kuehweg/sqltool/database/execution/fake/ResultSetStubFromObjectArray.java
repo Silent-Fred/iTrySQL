@@ -23,53 +23,73 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
+ * ResultSet auf Basis eines zweidimensionalen Object-Arrays. Die erste Zeile
+ * enthält die Spaltenüberschriften, die weiteren Zeilen die Testinhalte.
  *
  * @author Michael Kühweg
  */
-public class MockResultSetMetaDataFromObjectArray extends MockResultSetMetaData {
+public class ResultSetStubFromObjectArray extends FakeResultSet {
 
     private final Object[][] resultSet;
 
-    public MockResultSetMetaDataFromObjectArray(final Object[][] fakeResultSetContent) {
+    private boolean closed;
+
+    private int currentRow;
+
+    private int currentColumn;
+
+    public ResultSetStubFromObjectArray(final Object[][] fakeResultSetContent) {
         super();
-        this.resultSet = fakeResultSetContent;
+        resultSet = fakeResultSetContent;
     }
 
     @Override
-    public int getColumnCount() throws SQLException {
-        if (resultSet == null || resultSet.length == 0) {
-            throw new SQLException();
-        }
-        return resultSet[0].length;
+    public boolean next() throws SQLException {
+        // erste Zeile sind die Spaltenüberschriften - überspringen
+        currentRow++;
+        currentColumn = 0;
+        return currentRow < resultSet.length;
     }
 
     @Override
-    public int isNullable(int column) throws SQLException {
-        // nullable, wenn im Fake-Result in einer der Zeilen in der Spalte ein NULL-Wert enthalten ist
-        if (resultSet == null || column < 0 || column >= resultSet[0].length) {
-            throw new SQLException();
-        }
-        for (Object[] row : resultSet) {
-            if (row[column] == null) {
-                return ResultSetMetaData.columnNullable;
-            }
-        }
-        return ResultSetMetaData.columnNullableUnknown;
+    public void close() throws SQLException {
+        closed = true;
     }
 
     @Override
-    public String getColumnLabel(int column) throws SQLException {
-        if (resultSet == null || resultSet.length == 0 || column < 1 || column
-                > resultSet[0].length) {
+    public boolean wasNull() throws SQLException {
+        if (resultSet == null || currentRow < 0 || currentRow >= resultSet.length
+                || currentColumn < 0 || currentColumn >= resultSet[0].length) {
             throw new SQLException();
         }
-        return resultSet[0][column - 1].toString();
+        return resultSet[currentRow][currentColumn] == null;
+    }
+
+    @Override
+    public ResultSetMetaData getMetaData() throws SQLException {
+        return new ResultSetMetaDataStubFromObjectArray(resultSet);
+    }
+
+    @Override
+    public Object getObject(int columnIndex) throws SQLException {
+        // columnIndex ist nicht 0 based
+        if (resultSet == null || currentRow < 0 || currentRow >= resultSet.length
+                || columnIndex < 1 || columnIndex > resultSet[0].length) {
+            throw new SQLException();
+        }
+        currentColumn = columnIndex - 1;
+        return resultSet[currentRow][currentColumn];
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException {
+        return closed;
     }
 
 }

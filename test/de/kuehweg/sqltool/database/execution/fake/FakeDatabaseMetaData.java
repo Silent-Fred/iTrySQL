@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public abstract class MockDatabaseMetaData implements DatabaseMetaData {
+public abstract class FakeDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean allProceduresAreCallable() throws SQLException {

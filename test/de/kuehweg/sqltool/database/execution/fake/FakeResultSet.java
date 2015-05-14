@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -48,11 +48,11 @@ import java.util.Calendar;
 import java.util.Map;
 
 /**
- * Mock für ResultSet
+ * ResultSet für Tests
  *
  * @author Michael Kühweg
  */
-public abstract class MockResultSet implements ResultSet {
+public abstract class FakeResultSet implements ResultSet {
 
     @Override
     public boolean next() throws SQLException {

@@ -27,13 +27,13 @@ package de.kuehweg.sqltool.database.execution;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
-import de.kuehweg.sqltool.database.execution.mock.MockResultSetFromObjectArray;
-import de.kuehweg.sqltool.database.execution.mock.MockStatement;
-import de.kuehweg.sqltool.database.execution.mock.MockStatementThrowingExceptionOnExecute;
-import de.kuehweg.sqltool.database.execution.mock.MockStatementUpdateCount42;
-import de.kuehweg.sqltool.database.execution.mock.MockStatementWithFakeResultSet;
-import de.kuehweg.sqltool.database.execution.mock.MockConnectionWithBasicMetaData;
-import de.kuehweg.sqltool.database.execution.mock.MockDatabaseMetaDataWithUrlAndUser;
+import de.kuehweg.sqltool.database.execution.fake.ResultSetStubFromObjectArray;
+import de.kuehweg.sqltool.database.execution.fake.FakeStatement;
+import de.kuehweg.sqltool.database.execution.fake.FakeStatementThrowingExceptionOnExecute;
+import de.kuehweg.sqltool.database.execution.fake.FakeStatementUpdateCount42;
+import de.kuehweg.sqltool.database.execution.fake.StatementStubWithFakeResultSet;
+import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
+import de.kuehweg.sqltool.database.execution.fake.DatabaseMetaDataStubWithUrlAndUser;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -56,10 +56,10 @@ public class StatementExecutionTest {
     private Object[] columnLabels;
     private Object[] columnContent;
 
-    private MockDatabaseMetaDataWithUrlAndUser metaData;
-    private MockConnectionWithBasicMetaData connection;
-    private MockResultSetFromObjectArray resultSet;
-    private MockStatement statement;
+    private DatabaseMetaDataStubWithUrlAndUser metaData;
+    private ConnectionStubWithBasicMetaData connection;
+    private ResultSetStubFromObjectArray resultSet;
+    private FakeStatement statement;
 
     public StatementExecutionTest() {
     }
@@ -76,12 +76,12 @@ public class StatementExecutionTest {
     public void setUp() {
         columnLabels = new String[]{"does", "not", "compute"};
         columnContent = new Object[]{" col1 ", null, 42};
-        metaData = new MockDatabaseMetaDataWithUrlAndUser();
+        metaData = new DatabaseMetaDataStubWithUrlAndUser();
         metaData.setURL(url);
         metaData.setUserName(userName);
-        connection = new MockConnectionWithBasicMetaData();
+        connection = new ConnectionStubWithBasicMetaData();
         connection.setMetaData(metaData);
-        resultSet = new MockResultSetFromObjectArray(new Object[][]{columnLabels, columnContent});
+        resultSet = new ResultSetStubFromObjectArray(new Object[][]{columnLabels, columnContent});
     }
 
     @After
@@ -91,7 +91,7 @@ public class StatementExecutionTest {
     @Test
     public void emptyQuery() throws SQLException {
         StatementExecution execution = new StatementExecution(null);
-        statement = new MockStatementWithFakeResultSet(connection, resultSet);
+        statement = new StatementStubWithFakeResultSet(connection, resultSet);
         StatementExecutionInformation info = execution.execute(statement);
         Assert.assertNull(info.getStatementResult());
         Assert.assertEquals(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.
@@ -102,7 +102,7 @@ public class StatementExecutionTest {
     public void querySuccessfulWithResult() throws SQLException {
         final String sql = "select * from wherever";
         StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new MockStatementWithFakeResultSet(connection, resultSet);
+        statement = new StatementStubWithFakeResultSet(connection, resultSet);
         StatementExecutionInformation info = execution.execute(statement);
         Assert.assertNotNull(info.getStatementResult());
         Assert.assertNotSame(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.
@@ -128,7 +128,7 @@ public class StatementExecutionTest {
     public void closedResultSetAfterExecution() throws SQLException {
         final String sql = "select * from wherever";
         StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new MockStatementWithFakeResultSet(connection, resultSet);
+        statement = new StatementStubWithFakeResultSet(connection, resultSet);
         StatementExecutionInformation info = execution.execute(statement);
         Assert.assertTrue(statement.getResultSet().isClosed());
     }
@@ -137,7 +137,7 @@ public class StatementExecutionTest {
     public void exceptionOnFetch() throws SQLException {
         final String sql = "select * from wherever";
         StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new MockStatementWithFakeResultSet(connection, null);
+        statement = new StatementStubWithFakeResultSet(connection, null);
         StatementExecutionInformation info = execution.execute(statement);
         Assert.assertNull(info.getStatementResult());
         Assert.assertEquals(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.
@@ -148,7 +148,7 @@ public class StatementExecutionTest {
     public void exceptionOnExecution() throws SQLException {
         final String sql = "select * from wherever";
         StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new MockStatementThrowingExceptionOnExecute(connection, resultSet);
+        statement = new FakeStatementThrowingExceptionOnExecute(connection, resultSet);
         StatementExecutionInformation info = execution.execute(statement);
     }
 
@@ -161,7 +161,7 @@ public class StatementExecutionTest {
 
     private void updateCountForDML(final String sql) throws SQLException {
         StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new MockStatementUpdateCount42(connection);
+        statement = new FakeStatementUpdateCount42(connection);
         StatementExecutionInformation info = execution.execute(statement);
         Assert.assertNull(info.getStatementResult());
         Assert.assertEquals(MessageFormat.format(
@@ -184,7 +184,7 @@ public class StatementExecutionTest {
 
     private void summaryForOtherThanDML(final String sql) throws SQLException {
         StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new MockStatementUpdateCount42(connection);
+        statement = new FakeStatementUpdateCount42(connection);
         StatementExecutionInformation info = execution.execute(statement);
         Assert.assertNull(info.getStatementResult());
         Assert.assertEquals(MessageFormat.format(

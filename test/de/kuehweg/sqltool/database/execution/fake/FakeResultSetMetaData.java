@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -32,7 +32,7 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public abstract class MockResultSetMetaData implements ResultSetMetaData {
+public abstract class FakeResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public int getColumnCount() throws SQLException {

@@ -23,30 +23,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
-import java.sql.DatabaseMetaData;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Mock-Connection, die Testinhalte zurückgeben kann
  *
  * @author Michael Kühweg
  */
-public class MockConnectionWithBasicMetaData extends MockConnection {
+public class StatementStubWithFakeResultSet extends FakeStatement {
 
-    private DatabaseMetaData metaData;
+    private final ResultSet resultSet;
 
-    public void setMetaData(final DatabaseMetaData metaData) {
-        this.metaData = metaData;
+    private final Connection connection;
+
+    public StatementStubWithFakeResultSet(final Connection connection,
+            final ResultSet resultSet) {
+        super();
+        this.connection = connection;
+        this.resultSet = resultSet;
     }
 
     @Override
-    public DatabaseMetaData getMetaData() throws SQLException {
-        if (metaData == null) {
+    public boolean execute(String sql) throws SQLException {
+        return true;
+    }
+
+    @Override
+    public ResultSet getResultSet() throws SQLException {
+        if (resultSet == null) {
             throw new SQLException();
         }
-        return metaData;
+        return resultSet;
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return connection;
     }
 
 }

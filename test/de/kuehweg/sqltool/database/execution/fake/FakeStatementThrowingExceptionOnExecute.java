@@ -23,41 +23,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  *
  * @author Michael Kühweg
  */
-public class MockDatabaseMetaDataWithUrlAndUser extends MockDatabaseMetaData {
+public class FakeStatementThrowingExceptionOnExecute extends StatementStubWithFakeResultSet {
 
-    private String url;
-    private String userName;
-
-    public void setURL(final String url) {
-        this.url = url;
+    public FakeStatementThrowingExceptionOnExecute(final Connection connection,
+            final ResultSet resultSet) {
+        super(connection, resultSet);
     }
 
     @Override
-    public String getURL() throws SQLException {
-        if (url == null) {
-            throw new SQLException();
-        }
-        return url;
-    }
-
-    public void setUserName(final String userName) {
-        this.userName = userName;
-    }
-
-    @Override
-    public String getUserName() throws SQLException {
-        if (userName == null) {
-            throw new SQLException();
-        }
-        return userName;
+    public boolean execute(String sql) throws SQLException {
+        throw new SQLException("Fake-Statement");
     }
 
 }

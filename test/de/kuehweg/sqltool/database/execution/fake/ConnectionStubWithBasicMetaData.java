@@ -23,43 +23,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
- * Mock Statement, dass eine Anweisung simuliert, die keine Ergebnismenge, sondern einen
- * Update-Count zurückliefert
+ * Connection, die Testinhalte zurückgeben kann
  *
  * @author Michael Kühweg
  */
-public class MockStatementUpdateCount42 extends MockStatement {
+public class ConnectionStubWithBasicMetaData extends FakeConnection {
 
-    private final Connection connection;
+    private DatabaseMetaData metaData;
 
-    public MockStatementUpdateCount42(final Connection connection) {
-        this.connection = connection;
+    public void setMetaData(final DatabaseMetaData metaData) {
+        this.metaData = metaData;
     }
 
     @Override
-    public ResultSet getResultSet() throws SQLException {
-        return null;
+    public DatabaseMetaData getMetaData() throws SQLException {
+        if (metaData == null) {
+            throw new SQLException();
+        }
+        return metaData;
     }
 
-    @Override
-    public boolean execute(String sql) throws SQLException {
-        return false;
-    }
-
-    @Override
-    public int getUpdateCount() throws SQLException {
-        return 42;
-    }
-
-    @Override
-    public Connection getConnection() throws SQLException {
-        return connection;
-    }
 }

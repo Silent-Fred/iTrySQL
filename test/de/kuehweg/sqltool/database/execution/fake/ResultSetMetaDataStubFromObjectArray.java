@@ -23,26 +23,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.execution.mock;
+package de.kuehweg.sqltool.database.execution.fake;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
  *
  * @author Michael Kühweg
  */
-public class MockStatementThrowingExceptionOnExecute extends MockStatementWithFakeResultSet {
+public class ResultSetMetaDataStubFromObjectArray extends FakeResultSetMetaData {
 
-    public MockStatementThrowingExceptionOnExecute(final Connection connection,
-            final ResultSet resultSet) {
-        super(connection, resultSet);
+    private final Object[][] resultSet;
+
+    public ResultSetMetaDataStubFromObjectArray(final Object[][] fakeResultSetContent) {
+        super();
+        this.resultSet = fakeResultSetContent;
     }
 
     @Override
-    public boolean execute(String sql) throws SQLException {
-        throw new SQLException("Fake-Statement");
+    public int getColumnCount() throws SQLException {
+        if (resultSet == null || resultSet.length == 0) {
+            throw new SQLException();
+        }
+        return resultSet[0].length;
+    }
+
+    @Override
+    public int isNullable(int column) throws SQLException {
+        // nullable, wenn im Fake-Result in einer der Zeilen in der Spalte ein NULL-Wert enthalten ist
+        if (resultSet == null || column < 0 || column >= resultSet[0].length) {
+            throw new SQLException();
+        }
+        for (Object[] row : resultSet) {
+            if (row[column] == null) {
+                return ResultSetMetaData.columnNullable;
+            }
+        }
+        return ResultSetMetaData.columnNullableUnknown;
+    }
+
+    @Override
+    public String getColumnLabel(int column) throws SQLException {
+        if (resultSet == null || resultSet.length == 0 || column < 1 || column
+                > resultSet[0].length) {
+            throw new SQLException();
+        }
+        return resultSet[0][column - 1].toString();
     }
 
 }
