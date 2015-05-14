@@ -26,7 +26,7 @@
 package de.kuehweg.sqltool.dialog.action;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.database.execution.mock.MockConnection;
+import de.kuehweg.sqltool.database.execution.mock.MockConnectionWithBasicMetaData;
 import java.sql.SQLException;
 import junit.framework.Assert;
 import org.junit.After;
@@ -74,7 +74,7 @@ public class ExecuteActionTest {
         Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.
                 startExecution("   \n   \t ", null));
         Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.
-                startExecution("   \n   \t ", new MockConnection()));
+                startExecution("   \n   \t ", new MockConnectionWithBasicMetaData()));
         Assert.assertEquals(DialogDictionary.MSG_NO_DB_CONNECTION, action.
                 startExecution("select * from wherever ", null));
     }
@@ -82,6 +82,6 @@ public class ExecuteActionTest {
     @Test(expected = SQLException.class)
     public void handlingException() throws SQLException {
         action.startExecution("select * from wherever;",
-                new MockConnection());
+                new MockConnectionWithBasicMetaData());
     }
 }

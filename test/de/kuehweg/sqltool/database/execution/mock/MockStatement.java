@@ -35,7 +35,7 @@ import java.sql.Statement;
  *
  * @author Michael Kühweg
  */
-public class MockStatement implements Statement {
+public abstract class MockStatement implements Statement {
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {

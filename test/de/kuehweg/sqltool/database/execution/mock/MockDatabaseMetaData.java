@@ -35,7 +35,7 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class MockDatabaseMetaData implements DatabaseMetaData {
+public abstract class MockDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public boolean allProceduresAreCallable() throws SQLException {

@@ -32,7 +32,7 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class MockResultSetMetaData implements ResultSetMetaData {
+public abstract class MockResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public int getColumnCount() throws SQLException {

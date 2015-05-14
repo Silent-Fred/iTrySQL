@@ -52,7 +52,7 @@ import java.util.Map;
  *
  * @author Michael Kühweg
  */
-public class MockResultSet implements ResultSet {
+public abstract class MockResultSet implements ResultSet {
 
     @Override
     public boolean next() throws SQLException {

@@ -30,8 +30,10 @@ import de.kuehweg.sqltool.database.execution.ResultHeader;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.database.execution.StatementResult;
+import de.kuehweg.sqltool.database.formatter.DefaultHtmlResultTemplateProvider;
 import de.kuehweg.sqltool.database.formatter.HtmlResultFormatter;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
+import java.io.IOException;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -67,7 +69,11 @@ public class QueryResultTableView implements ExecutionTracker {
         if (infoToView == null) {
             return "";
         }
-        return new HtmlResultFormatter(infoToView).formatAsHtml();
+        try {
+            return new HtmlResultFormatter(infoToView).formatAsHtml(DefaultHtmlResultTemplateProvider.getInstance());
+        } catch (IOException ex) {
+            return DialogDictionary.ERR_HTML_EXPORT_FAILED.toString();
+        }
     }
 
     private void buildViewWithoutResultSet(

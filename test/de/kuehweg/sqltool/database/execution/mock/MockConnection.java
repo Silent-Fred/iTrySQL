@@ -49,7 +49,7 @@ import java.util.concurrent.Executor;
  *
  * @author Michael Kühweg
  */
-public class MockConnection implements Connection {
+public abstract class MockConnection implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {

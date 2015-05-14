@@ -26,12 +26,10 @@
 package de.kuehweg.sqltool.database.formatter;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Date;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -55,23 +53,10 @@ public class HtmlResultFormatter {
     }
 
     /**
-     * Formatiert einen Text als Tabellenüberschrift.
-     *
-     * @param value Text wird in HTML Format gewandelt, muss also noch
-     * "naturbelassen" sein
-     * @return
-     */
-    private String formatAsTableHeader(final String value) {
-        return new StringBuilder().append("<th>")
-                .append(StringEscapeUtils.escapeHtml4(value)).append("</th>")
-                .toString();
-    }
-
-    /**
      * Formatiert einen Text als Tabellenzelle
      *
-     * @param value Text wird in HTML Format gewandelt, muss also noch
-     * "naturbelassen" sein
+     * @param value Text wird in HTML Format gewandelt, muss also noch "naturbelassen"
+     * sein
      * @return
      */
     private String formatAsTableData(final String value) {
@@ -81,18 +66,31 @@ public class HtmlResultFormatter {
     }
 
     /**
-     * Formatiert eine Liste von Texten als Tabellenzeile
+     * Formatiert eine Liste von ResultRows als HTML-Tabellenzeile
      *
-     * @param columns Liste von Texten, die in HTML umgewandelt werden
+     * @param resultRow Liste von ResultRows, die in HTML umgewandelt werden
      * @return
      */
-    private String formatAsTableRow(final ResultRow resultRow) {
+    public String formatAsTableRow(final ResultRow resultRow) {
         final StringBuilder builder = new StringBuilder("<tr>");
         for (final String column : resultRow.columnsAsString()) {
             builder.append(formatAsTableData(column));
         }
         builder.append("</tr>\n");
         return builder.toString();
+    }
+
+    /**
+     * Formatiert einen Text als Tabellenüberschrift.
+     *
+     * @param value Text wird in HTML Format gewandelt, muss also noch "naturbelassen"
+     * sein
+     * @return
+     */
+    private String formatAsTableHeader(final String value) {
+        return new StringBuilder().append("<th>")
+                .append(StringEscapeUtils.escapeHtml4(value)).append("</th>")
+                .toString();
     }
 
     /**
@@ -154,43 +152,39 @@ public class HtmlResultFormatter {
         return StringEscapeUtils.escapeHtml4(statementExecution);
     }
 
-    public String formatAsHtml() {
-        try {
-            final String resultTable
-                    = infoToView.getStatementResult() != null ? formatResultAsTable() : "";
+    private String formatEmptyResult(final ResultTemplate template) {
+        template.setExecutionInformation(formatGeneralExecutionInformation());
 
-            String rowCount = "";
-            String limitedRows = "";
+        template.setRowCount(StringEscapeUtils.escapeHtml4(infoToView.getSummary()));
 
-            if (infoToView.getStatementResult() == null) {
-                rowCount = infoToView.getSummary();
-            } else {
-                int selectedRows = infoToView.getStatementResult().getRows().
-                        size();
-                rowCount = MessageFormat.format(
-                        DialogDictionary.PATTERN_ROWCOUNT.toString(),
+        return template.buildWithTemplate();
+    }
+
+    private String formatWithResult(final ResultTemplate template) {
+        template.setExecutionInformation(formatGeneralExecutionInformation());
+        template.setResultTable(formatResultAsTable());
+
+        int selectedRows = infoToView.getStatementResult().getRows().
+                size();
+        final String rowCount = MessageFormat.format(
+                DialogDictionary.PATTERN_ROWCOUNT.toString(),
+                selectedRows);
+        template.setRowCount(StringEscapeUtils.escapeHtml4(rowCount));
+        if (selectedRows >= DatabaseConstants.MAX_ROWS) {
+            if (UserPreferencesManager.getSharedInstance().
+                    isLimitMaxRows()) {
+                final String limitedRows = MessageFormat.format(
+                        DialogDictionary.PATTERN_MAX_ROWS.toString(),
                         selectedRows);
-                if (selectedRows >= DatabaseConstants.MAX_ROWS) {
-                    if (UserPreferencesManager.getSharedInstance().
-                            isLimitMaxRows()) {
-                        limitedRows = MessageFormat.format(
-                                DialogDictionary.PATTERN_MAX_ROWS.toString(),
-                                selectedRows);
-                    }
-                }
+                template.setLimitedRows(StringEscapeUtils.escapeHtml4(limitedRows));
             }
-            String template = FileUtil
-                    .readResourceFile("/resources/html/exporttemplate.html");
-            template = template.replace("statement execution goes here",
-                    formatGeneralExecutionInformation());
-            template = template.replace("result table goes here", resultTable);
-            template = template.replace("row count goes here",
-                    StringEscapeUtils.escapeHtml4(rowCount));
-            template = template.replace("limit rows goes here",
-                    StringEscapeUtils.escapeHtml4(limitedRows));
-            return template;
-        } catch (IOException ex) {
-            return DialogDictionary.ERR_HTML_EXPORT_FAILED.toString();
         }
+
+        return template.buildWithTemplate();
+    }
+
+    public String formatAsHtml(final ResultTemplate template) {
+        return infoToView.getStatementResult() != null ? formatWithResult(template) : formatEmptyResult(
+                template);
     }
 }
