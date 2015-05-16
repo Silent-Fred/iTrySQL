@@ -122,4 +122,14 @@ public class StatementExtractorTest {
         Assert.assertEquals(secondStatement.trim(), new StatementExtractor().
                 extractStatementAtCaretPosition(script, script.length() - 1));
     }
+
+    @Test
+    public void emptyStatement() {
+        Assert.assertNotNull(new StatementExtractor().getStatementsFromScript(null));
+        Assert.
+                assertTrue(new StatementExtractor().getStatementsFromScript(null).
+                        isEmpty());
+        Assert.assertTrue(new StatementExtractor().getStatementsFromScript("").isEmpty());
+        Assert.assertTrue(new StatementExtractor().getStatementsFromScript(" ").isEmpty());
+    }
 }
