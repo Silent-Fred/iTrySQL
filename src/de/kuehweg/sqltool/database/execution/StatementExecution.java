@@ -76,6 +76,9 @@ public class StatementExecution {
                 info.setStatementResult(new StatementResult());
                 retrieveHeader(resultSet);
                 retrieveRows(resultSet);
+                int maxRows = statement.getMaxRows();
+                info.setLimitMaxRowsReached(maxRows > 0 && info.getStatementResult().
+                        getRows().size() >= maxRows);
                 info.setSummary(MessageFormat.format(
                         DialogDictionary.PATTERN_ROWCOUNT.toString(),
                         info.getStatementResult().getRows().size()));

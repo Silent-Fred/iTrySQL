@@ -60,6 +60,8 @@ public class ResultSetStubFromObjectArray extends FakeResultSet {
     @Override
     public void close() throws SQLException {
         closed = true;
+        currentRow = 0;
+        currentColumn = 0;
     }
 
     @Override

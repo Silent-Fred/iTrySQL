@@ -30,41 +30,26 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * GUI-Updater für einer reguläre Ausführung von Anweisungen in der Oberfläche
+ * GUI-Updater für die verschiedenen Phasen beim Ausführen einer Anweisung
  *
  * @author Michael Kühweg
  */
-public class StandardGuiUpdaterProvider implements GuiUpdaterProviderI {
+public interface ExecutionLifecycleGuiUpdaterProvider {
 
-    @Override
-    public AbstractExecutionGuiUpdater beforeExecutionGuiUpdater(
-            Collection<ExecutionTracker> trackers) {
-        return new BeforeExecutionGuiUpdater(trackers);
-    }
+    AbstractExecutionGuiUpdater beforeExecutionGuiUpdater(
+            final Collection<ExecutionTracker> trackers);
 
-    @Override
-    public AbstractExecutionGuiUpdater intermediateExecutionGuiUpdater(
-            List<StatementExecutionInformation> executionInfos,
-            Collection<ExecutionTracker> trackers) {
-        return new IntermediateExecutionGuiUpdater(executionInfos, trackers);
-    }
+    AbstractExecutionGuiUpdater intermediateExecutionGuiUpdater(
+            final List<StatementExecutionInformation> executionInfos,
+            final Collection<ExecutionTracker> trackers);
 
-    @Override
-    public AbstractExecutionGuiUpdater afterExecutionGuiUpdater(
-            Collection<ExecutionTracker> trackers) {
-        return new AfterExecutionGuiUpdater(trackers);
-    }
+    AbstractExecutionGuiUpdater afterExecutionGuiUpdater(
+            final Collection<ExecutionTracker> trackers);
 
-    @Override
-    public AbstractExecutionGuiUpdater errorExecutionGuiUpdater(String message,
-            Collection<ExecutionTracker> trackers) {
-        return new ErrorExecutionGuiUpdater(message, trackers);
-    }
+    AbstractExecutionGuiUpdater errorExecutionGuiUpdater(
+            final Collection<ExecutionTracker> trackers);
 
-    @Override
-    public AbstractExecutionGuiUpdater errorExecutionGuiUpdater(
-            Collection<ExecutionTracker> trackers) {
-        return new ErrorExecutionGuiUpdater(trackers);
-    }
+    AbstractExecutionGuiUpdater errorExecutionGuiUpdater(final String message,
+            final Collection<ExecutionTracker> trackers);
 
 }

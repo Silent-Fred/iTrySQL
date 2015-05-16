@@ -39,6 +39,8 @@ public class StatementStubWithFakeResultSet extends FakeStatement {
 
     private final Connection connection;
 
+    private int maxRows;
+    
     public StatementStubWithFakeResultSet(final Connection connection,
             final ResultSet resultSet) {
         super();
@@ -64,4 +66,13 @@ public class StatementStubWithFakeResultSet extends FakeStatement {
         return connection;
     }
 
+    @Override
+    public void setMaxRows(int max) throws SQLException {
+        maxRows = max;
+    }
+
+    @Override
+    public int getMaxRows() throws SQLException {
+        return maxRows;
+    }
 }

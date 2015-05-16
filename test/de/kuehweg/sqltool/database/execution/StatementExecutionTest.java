@@ -27,13 +27,13 @@ package de.kuehweg.sqltool.database.execution;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
-import de.kuehweg.sqltool.database.execution.fake.ResultSetStubFromObjectArray;
+import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
+import de.kuehweg.sqltool.database.execution.fake.DatabaseMetaDataStubWithUrlAndUser;
 import de.kuehweg.sqltool.database.execution.fake.FakeStatement;
 import de.kuehweg.sqltool.database.execution.fake.FakeStatementThrowingExceptionOnExecute;
 import de.kuehweg.sqltool.database.execution.fake.FakeStatementUpdateCount42;
+import de.kuehweg.sqltool.database.execution.fake.ResultSetStubFromObjectArray;
 import de.kuehweg.sqltool.database.execution.fake.StatementStubWithFakeResultSet;
-import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
-import de.kuehweg.sqltool.database.execution.fake.DatabaseMetaDataStubWithUrlAndUser;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
@@ -81,7 +81,8 @@ public class StatementExecutionTest {
         metaData.setUserName(userName);
         connection = new ConnectionStubWithBasicMetaData();
         connection.setMetaData(metaData);
-        resultSet = new ResultSetStubFromObjectArray(new Object[][]{columnLabels, columnContent});
+        resultSet = new ResultSetStubFromObjectArray(new Object[][]{columnLabels,
+            columnContent});
     }
 
     @After
@@ -122,6 +123,21 @@ public class StatementExecutionTest {
         Assert.assertEquals(" col1 ", resultColumns.get(0));
         Assert.assertEquals(ResultRow.NULL_STR, resultColumns.get(1));
         Assert.assertEquals("42", resultColumns.get(2));
+    }
+
+    @Test
+    public void maxRows() throws SQLException {
+        final String sql = "select * from wherever";
+        StatementExecution execution = new StatementExecution(new StatementString(sql));
+        statement = new StatementStubWithFakeResultSet(connection, resultSet);
+        StatementExecutionInformation info = execution.execute(statement);
+        Assert.assertFalse(info.isLimitMaxRowsReached());
+        statement.setMaxRows(2);
+        info = execution.execute(statement);
+        Assert.assertFalse(info.isLimitMaxRowsReached());
+        statement.setMaxRows(1);
+        info = execution.execute(statement);
+        Assert.assertTrue(info.isLimitMaxRowsReached());
     }
 
     @Test

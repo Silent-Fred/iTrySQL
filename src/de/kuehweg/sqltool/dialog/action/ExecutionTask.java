@@ -31,7 +31,7 @@ import de.kuehweg.sqltool.database.execution.StatementExecution;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.updater.AbstractExecutionGuiUpdater;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import de.kuehweg.sqltool.dialog.updater.GuiUpdaterProviderI;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleGuiUpdaterProvider;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -52,13 +52,13 @@ public class ExecutionTask extends Task<Void> {
 
     private final Statement statement;
     private final String sql;
-    private final GuiUpdaterProviderI guiUpdaterProvider;
+    private final ExecutionLifecycleGuiUpdaterProvider guiUpdaterProvider;
     private final Collection<ExecutionTracker> trackers;
     private int maxRows;
     private long lastTimeUIWasUpdated;
 
     public ExecutionTask(final Statement statement, final String sql,
-            final GuiUpdaterProviderI guiUpdaterProvider) {
+            final ExecutionLifecycleGuiUpdaterProvider guiUpdaterProvider) {
         this.statement = statement;
         this.sql = sql;
         this.guiUpdaterProvider = guiUpdaterProvider;
@@ -143,16 +143,13 @@ public class ExecutionTask extends Task<Void> {
                     .getStatementsFromScript(sql);
             statement.setMaxRows(maxRows);
             beforeExecution();
-            List<StatementExecutionInformation> executionInfos
-                    = new ArrayList<>();
-            final Iterator<StatementString> queryIterator = statements.
-                    iterator();
+            List<StatementExecutionInformation> executionInfos = new ArrayList<>();
+            final Iterator<StatementString> queryIterator = statements.iterator();
             while (queryIterator.hasNext() && !isCancelled()) {
                 final StatementString singleQuery = queryIterator.next();
-
                 if (!singleQuery.isEmpty()) {
-                    executionInfos.add(new StatementExecution(singleQuery).
-                            execute(statement));
+                    executionInfos.add(new StatementExecution(singleQuery).execute(
+                            statement));
                 }
                 intermediateUpdateInIntervals(executionInfos);
             }

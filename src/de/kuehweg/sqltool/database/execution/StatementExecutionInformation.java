@@ -48,6 +48,8 @@ public class StatementExecutionInformation {
 
     private String summary;
 
+    private boolean limitMaxRowsReached;
+
     public StatementString getSql() {
         return sql;
     }
@@ -102,6 +104,14 @@ public class StatementExecutionInformation {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public boolean isLimitMaxRowsReached() {
+        return limitMaxRowsReached;
+    }
+
+    public void setLimitMaxRowsReached(boolean limitMaxRowsReached) {
+        this.limitMaxRowsReached = limitMaxRowsReached;
     }
 
 }

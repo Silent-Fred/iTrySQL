@@ -84,4 +84,5 @@ public class ExecuteActionTest {
         action.startExecution("select * from wherever;",
                 new ConnectionStubWithBasicMetaData());
     }
+
 }

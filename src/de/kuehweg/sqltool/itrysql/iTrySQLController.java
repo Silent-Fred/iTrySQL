@@ -786,6 +786,9 @@ public class iTrySQLController implements Initializable,
                 new SchemaTreeModificationDetector(schemaTreeView,
                         getConnectionHolder().getConnection()));
 
+        executeAction.setLimitMaxRows(UserPreferencesManager.getSharedInstance().
+                isLimitMaxRows());
+
         return executeAction;
     }
 

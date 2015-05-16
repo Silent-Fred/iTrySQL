@@ -26,8 +26,6 @@
 package de.kuehweg.sqltool.database.formatter;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.UserPreferencesManager;
-import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import java.text.MessageFormat;
@@ -170,14 +168,11 @@ public class HtmlResultFormatter {
                 DialogDictionary.PATTERN_ROWCOUNT.toString(),
                 selectedRows);
         template.setRowCount(StringEscapeUtils.escapeHtml4(rowCount));
-        if (selectedRows >= DatabaseConstants.MAX_ROWS) {
-            if (UserPreferencesManager.getSharedInstance().
-                    isLimitMaxRows()) {
-                final String limitedRows = MessageFormat.format(
-                        DialogDictionary.PATTERN_MAX_ROWS.toString(),
-                        selectedRows);
-                template.setLimitedRows(StringEscapeUtils.escapeHtml4(limitedRows));
-            }
+        if (infoToView.isLimitMaxRowsReached()) {
+            final String limitedRows = MessageFormat.format(
+                    DialogDictionary.PATTERN_MAX_ROWS.toString(),
+                    selectedRows);
+            template.setLimitedRows(StringEscapeUtils.escapeHtml4(limitedRows));
         }
 
         return template.buildWithTemplate();

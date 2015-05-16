@@ -26,8 +26,6 @@
 package de.kuehweg.sqltool.dialog.component;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.UserPreferencesManager;
-import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
@@ -177,14 +175,11 @@ public class QueryResultTextView implements ExecutionTracker {
         builder.append(info.getSummary());
         // ist das Ergebnis eventuell abgeschnitten, wird eine Meldung
         // ausgegeben
-        if (info.getStatementResult().getRows().size()
-                >= DatabaseConstants.MAX_ROWS) {
-            if (UserPreferencesManager.getSharedInstance().isLimitMaxRows()) {
-                builder.append("\n\n");
-                builder.append(MessageFormat.format(
-                        DialogDictionary.PATTERN_MAX_ROWS.toString(),
-                        info.getStatementResult().getRows().size()));
-            }
+        if (info.isLimitMaxRowsReached()) {
+            builder.append("\n\n");
+            builder.append(MessageFormat.format(
+                    DialogDictionary.PATTERN_MAX_ROWS.toString(),
+                    info.getStatementResult().getRows().size()));
         }
         return builder.toString();
     }
