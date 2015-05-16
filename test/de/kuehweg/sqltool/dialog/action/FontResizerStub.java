@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,25 +23,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common;
+package de.kuehweg.sqltool.dialog.action;
+
+import de.kuehweg.sqltool.dialog.base.FontResizer;
 
 /**
- * Zentraler Zugriff auf die Benutzereinstellungen
+ * Stub für Schriftgößenänderungen in JUnit-Test
  *
  * @author Michael Kühweg
  */
-public class UserPreferencesManager {
+public class FontResizerStub implements FontResizer {
 
-    private static final UserPreferencesI sharedInstance;
+    private int fontSize;
 
-    static {
-        sharedInstance = new UserPreferences();
+    @Override
+    public int getFontSize() {
+        return fontSize;
     }
 
-    private UserPreferencesManager() {
+    @Override
+    public void setFontSize(int size) {
+        fontSize = size;
     }
 
-    public static UserPreferencesI getSharedInstance() {
-        return sharedInstance;
-    }
 }

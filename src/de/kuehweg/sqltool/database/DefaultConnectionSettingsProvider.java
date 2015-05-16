@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,25 +23,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common;
+package de.kuehweg.sqltool.database;
+
+import de.kuehweg.sqltool.common.DialogDictionary;
 
 /**
- * Zentraler Zugriff auf die Benutzereinstellungen
+ * Liefert Standard-Verbindungsdaten, mit denen ohne explizite Verbindungsanlage durch den
+ * Anwender gearbeitet werden kann.
  *
  * @author Michael Kühweg
  */
-public class UserPreferencesManager {
+public class DefaultConnectionSettingsProvider {
 
-    private static final UserPreferencesI sharedInstance;
-
-    static {
-        sharedInstance = new UserPreferences();
+    private DefaultConnectionSettingsProvider() {
     }
 
-    private UserPreferencesManager() {
+    /**
+     * Eine In-Memory Verbinung wird grundsätzlich immer angeboten.
+     *
+     * @return
+     */
+    public static ConnectionSetting getDefaultInMemoryConnection() {
+        return new ConnectionSetting(
+                DialogDictionary.LABEL_DEFAULT_CONNECTION_IN_MEMORY.toString(),
+                JDBCType.HSQL_IN_MEMORY, null, "rastelli", null, null);
     }
 
-    public static UserPreferencesI getSharedInstance() {
-        return sharedInstance;
+    /**
+     * Eine dateibasierte Version im Benutzerverzeichnis.
+     *
+     * @return
+     */
+    public static ConnectionSetting getDefaultStandaloneUserHomeConnection() {
+        return new ConnectionSetting(
+                DialogDictionary.LABEL_DEFAULT_CONNECTION_STANDALONE_USER_HOME.toString(),
+                JDBCType.HSQL_STANDALONE, System.getProperty("user.home") + "/itrysql",
+                "standard_db", null, null);
     }
+
 }

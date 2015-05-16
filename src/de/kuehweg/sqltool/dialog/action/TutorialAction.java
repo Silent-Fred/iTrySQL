@@ -72,24 +72,18 @@ public class TutorialAction {
 
     private String buildStaticPortionOfScript() throws IOException {
         final StringBuilder completeSql = new StringBuilder();
-        completeSql.append("\n");
         // Daten für die Beispiele
         completeSql.append(FileUtil
-                .readResourceFile("/resources/sql/examples.sql"));
-        completeSql.append("\n");
+                .readResourceFile("/resources/sql/examples.sql")).append("\n");
         // Daten für die Übungen
         completeSql.append(FileUtil
-                .readResourceFile("/resources/sql/tutorial.sql"));
-        completeSql.append("\n");
+                .readResourceFile("/resources/sql/tutorial.sql")).append("\n");
         return completeSql.toString();
     }
 
     private String buildDynamicPortionOfScript(final Connection connection) throws IOException, SQLException {
-        final StringBuilder completeSql = new StringBuilder();
-        completeSql.append(generateDynamicScript(
-                "/resources/sql/second_user.sql", connection));
-        completeSql.append("\n");
-        return completeSql.toString();
+        return new StringBuilder(generateDynamicScript(
+                "/resources/sql/second_user.sql", connection)).append("\n").toString();
     }
 
     /**
@@ -107,16 +101,14 @@ public class TutorialAction {
         final StringBuilder dynamicScript = new StringBuilder();
         if (connection != null) {
             final StringBuilder completeSql = new StringBuilder();
-            completeSql.append(FileUtil.readResourceFile(resourceFilename));
-            completeSql.append("\n");
+            completeSql.append(FileUtil.readResourceFile(resourceFilename)).append("\n");
             for (StatementString statement : new StatementExtractor()
                     .getStatementsFromScript(completeSql.toString())) {
                 for (ResultRow dynamicStatement : new StatementExecution(
                         statement).execute(connection.createStatement()).
                         getStatementResult().getRows()) {
                     for (String column : dynamicStatement.columnsAsString()) {
-                        dynamicScript.append(column);
-                        dynamicScript.append("\n");
+                        dynamicScript.append(column).append("\n");
                     }
                 }
             }

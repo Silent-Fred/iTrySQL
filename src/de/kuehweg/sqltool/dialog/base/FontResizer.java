@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,25 +23,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common;
+package de.kuehweg.sqltool.dialog.base;
 
 /**
- * Zentraler Zugriff auf die Benutzereinstellungen
+ * Interface zum Setzen der Schriftgröße
  *
  * @author Michael Kühweg
  */
-public class UserPreferencesManager {
+public interface FontResizer {
 
-    private static final UserPreferencesI sharedInstance;
+    int getFontSize();
 
-    static {
-        sharedInstance = new UserPreferences();
-    }
+    void setFontSize(final int size);
 
-    private UserPreferencesManager() {
-    }
-
-    public static UserPreferencesI getSharedInstance() {
-        return sharedInstance;
-    }
 }

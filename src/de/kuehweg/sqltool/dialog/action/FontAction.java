@@ -25,114 +25,90 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.common.UserPreferencesManager;
-import javafx.event.Event;
-import javafx.scene.Node;
-import javafx.scene.control.TextArea;
-import javafx.scene.text.Text;
+import de.kuehweg.sqltool.common.UserPreferencesI;
+import de.kuehweg.sqltool.dialog.base.FontResizer;
 
 /**
  * Schriftgröße ändern
  *
  * @author Michael Kühweg
  */
-public class FontAction {
+public abstract class FontAction {
 
-    public static final int MIN_FONT_SIZE = 12;
+    public static final int MIN_FONT_SIZE = 9;
     public static final int MAX_FONT_SIZE = 32;
 
+    private int diff;
+
+    private FontResizer alternativeFontResizer;
+
+    private UserPreferencesI userPreferences;
+
+    public int getDiff() {
+        return diff;
+    }
+
+    public void setDiff(final int diff) {
+        this.diff = diff;
+    }
+
+    public UserPreferencesI getUserPreferences() {
+        return userPreferences;
+    }
+
+    public void setUserPreferences(final UserPreferencesI userPreferences) {
+        this.userPreferences = userPreferences;
+    }
+
     /**
-     * Schriftgröße einer TextArea ändern - gesetzte Schriftgröße wird als Ergebnis
-     * geliefert
+     * Das Setzen der Schriftgröße übernimmt ein FontResizer.
      *
-     * @param textArea
-     * @param diff
+     * @param fontResizer
+     */
+    public void setAlternativeFontResizer(final FontResizer fontResizer) {
+        this.alternativeFontResizer = fontResizer;
+    }
+
+    /**
+     * Standardverfahren zum Ändern der Schriftgröße in der Komponente. Wird verwendet,
+     * wenn kein alternatives Verfahren via setAlternativeFontResizer() angegeben wird
+     *
      * @return
      */
-    private int modifyFontSize(final TextArea textArea, final int diff) {
-        if (textArea != null) {
-            final Text text = (Text) textArea.lookup(".text");
-            if (text != null) {
-                double fontSize = ((Text) textArea.lookup(".text")).getFont()
-                        .getSize();
-                fontSize += diff;
-                fontSize = fontSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : fontSize;
-                fontSize = fontSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : fontSize;
-                textArea.setStyle("-fx-font-size: " + (fontSize + diff) + ";");
-                return (int) Math.round(fontSize);
-            }
-        }
-        return MIN_FONT_SIZE;
-    }
+    public abstract FontResizer getDefaultFontResizer();
 
-    private int whichDifference(final Event event) {
-        final Node source = event != null ? (Node) event.getSource() : null;
-        if (source != null) {
-            switch (source.getId()) {
-                case "toolbarZoomIn":
-                case "toolbarTabDbOutputZoomIn":
-                    return 1;
-                case "toolbarZoomOut":
-                case "toolbarTabDbOutputZoomOut":
-                    return -1;
-                default:
-                    return 0;
-            }
-        }
-        return 0;
-    }
-
-    private TextArea whichTextArea(final Event event) {
-        final Node source = event != null ? (Node) event.getSource() : null;
-        if (source != null) {
-            final TextArea dbOutput = (TextArea) source.getScene().lookup(
-                    "#dbOutput");
-            switch (source.getId()) {
-                case "toolbarZoomIn":
-                case "toolbarZoomOut":
-                    return (TextArea) source.getScene()
-                            .lookup("#statementInput");
-                case "toolbarTabDbOutputZoomIn":
-                case "toolbarTabDbOutputZoomOut":
-                    return (TextArea) source.getScene().lookup(
-                            "#dbOutput");
-                default:
-                    return null;
-            }
-        }
-        return null;
-    }
-
-    private void changeVisualsAndPreferences(final Event event) {
-        final Node source = event != null ? (Node) event.getSource() : null;
-        if (source != null) {
-            final TextArea whichTextArea = whichTextArea(event);
-            final int whichDifference = whichDifference(event);
-            if (whichTextArea != null && whichDifference != 0) {
-                switch (source.getId()) {
-                    case "toolbarZoomIn":
-                    case "toolbarZoomOut":
-                        UserPreferencesManager.getSharedInstance().
-                                setFontSizeStatementInput(
-                                        modifyFontSize(whichTextArea, whichDifference));
-                        break;
-                    case "toolbarTabDbOutputZoomIn":
-                    case "toolbarTabDbOutputZoomOut":
-                        UserPreferencesManager.getSharedInstance().setFontSizeDbOutput(
-                                modifyFontSize(whichTextArea, whichDifference));
-                        break;
-                    default:
-                }
-            }
-        }
-    }
+    /**
+     * Implementierung zum Speichern der zuletzt eingestellten Schriftgröße in
+     * Benutzereinstellungen.
+     *
+     * @param size
+     */
+    public abstract void storeToPreferences(final int size);
 
     /**
      * Fontmanipulationen behandeln
-     *
-     * @param event
      */
-    public void handleFontAction(final Event event) {
-        changeVisualsAndPreferences(event);
+    public void handleFontAction() {
+        final int targetFontSize = modifyFontSize();
+        if (getUserPreferences() != null) {
+            storeToPreferences(targetFontSize);
+        }
     }
+
+    /**
+     * Schriftgröße der definierten Komponente ändern - gesetzte Schriftgröße wird als
+     * Ergebnis geliefert
+     *
+     * @return
+     */
+    private int modifyFontSize() {
+        FontResizer resizer
+                = alternativeFontResizer != null ? alternativeFontResizer : getDefaultFontResizer();
+        int targetSize = resizer.getFontSize() + diff;
+        targetSize = targetSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : targetSize;
+        targetSize = targetSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : targetSize;
+        resizer.setFontSize(targetSize);
+        return targetSize;
+    }
+
 }

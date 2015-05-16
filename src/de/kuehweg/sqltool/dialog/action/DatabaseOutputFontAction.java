@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,25 +23,35 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common;
+package de.kuehweg.sqltool.dialog.action;
+
+import de.kuehweg.sqltool.dialog.base.FontResizer;
+import de.kuehweg.sqltool.dialog.base.TextAreaFontResizer;
+import javafx.scene.control.TextArea;
 
 /**
- * Zentraler Zugriff auf die Benutzereinstellungen
+ * Action zum Ändern der Schriftgröße in der Datenbankausgabe
  *
  * @author Michael Kühweg
  */
-public class UserPreferencesManager {
+public class DatabaseOutputFontAction extends FontAction {
 
-    private static final UserPreferencesI sharedInstance;
+    private final TextArea textArea;
 
-    static {
-        sharedInstance = new UserPreferences();
+    public DatabaseOutputFontAction(final TextArea textArea) {
+        super();
+        this.textArea = textArea;
     }
 
-    private UserPreferencesManager() {
+    @Override
+    public void storeToPreferences(final int size) {
+        if (getUserPreferences() != null) {
+            getUserPreferences().setFontSizeDbOutput(size);
+        }
     }
 
-    public static UserPreferencesI getSharedInstance() {
-        return sharedInstance;
+    @Override
+    public FontResizer getDefaultFontResizer() {
+        return new TextAreaFontResizer(textArea);
     }
 }

@@ -44,6 +44,7 @@ import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
 import de.kuehweg.sqltool.dialog.action.FontAction;
+import de.kuehweg.sqltool.dialog.action.FontActionFactory;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
 import de.kuehweg.sqltool.dialog.component.AudioFeedback;
@@ -456,7 +457,9 @@ public class iTrySQLController implements Initializable,
     }
 
     public void fontAction(final ActionEvent event) {
-        new FontAction().handleFontAction(event);
+        FontAction fontAction = new FontActionFactory().getFontAction(event);
+        fontAction.setUserPreferences(UserPreferencesManager.getSharedInstance());
+        fontAction.handleFontAction();
     }
 
     public void tutorialAction(final ActionEvent event) {
