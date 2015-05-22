@@ -26,21 +26,22 @@
 package de.kuehweg.sqltool.dialog.component.schematree;
 
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.sql.Connection;
-import java.util.Iterator;
-import java.util.List;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeView;
 
 /**
- * Komponente um zu erkennen, ob sich durch SQL-Anweisungen die
- * Datenbankstruktur verändert hat
+ * Komponente um zu erkennen, ob sich durch SQL-Anweisungen die Datenbankstruktur
+ * verändert hat
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeModificationDetector implements
-        ExecutionTracker {
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
+public class SchemaTreeModificationDetector implements ExecutionTracker {
 
     private boolean ddlDetected;
     private final TreeView<String> schemaTree;
@@ -58,21 +59,25 @@ public class SchemaTreeModificationDetector implements
     }
 
     @Override
-    public void intermediateUpdate(
-            List<StatementExecutionInformation> executionInfos) {
-        if (executionInfos != null) {
-            Iterator<StatementExecutionInformation> infoIterator
-                    = executionInfos.iterator();
-            while (!ddlDetected && infoIterator.hasNext()) {
-                StatementExecutionInformation info = infoIterator.next();
-                ddlDetected = ddlDetected || info.getSql() != null && info.
-                        getSql().isDataDefinitionStatement();
-            }
+    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+        if (executionInfo != null) {
+            ddlDetected = ddlDetected || executionInfo.getSql() != null && executionInfo.
+                    getSql().isDataDefinitionStatement();
         }
     }
 
     @Override
     public void afterExecution() {
+        // Aufbereitung im show()
+    }
+
+    @Override
+    public void errorOnExecution(String message) {
+        afterExecution();
+    }
+
+    @Override
+    public void show() {
         if (ddlDetected) {
             final Task<Void> refreshTask = new SchemaTreeBuilderTask(
                     attachedToConnection, schemaTree);

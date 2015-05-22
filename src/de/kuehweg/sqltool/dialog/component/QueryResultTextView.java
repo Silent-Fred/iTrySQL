@@ -28,10 +28,12 @@ package de.kuehweg.sqltool.dialog.component;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefreshPolicy;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.List;
 import javafx.scene.control.TextArea;
 
 /**
@@ -39,15 +41,23 @@ import javafx.scene.control.TextArea;
  *
  * @author Michael Kühweg
  */
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.INTERMEDIATE, refreshPolicy
+        = ExecutionLifecycleRefreshPolicy.DELAYED)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR)
 public class QueryResultTextView implements ExecutionTracker {
 
-    private static final int MAX_DBOUTPUT = 500 * 1024;
+    private static final int MAX_DBOUTPUT = 256 * 1024;
+
+    private static final String TRUNCATED = "[...]";
+
+    private String dbOutput;
 
     private final TextArea outputTextArea;
 
     public QueryResultTextView(final TextArea outputTextArea) {
         super();
         this.outputTextArea = outputTextArea;
+        dbOutput = outputTextArea.getText();
     }
 
     /**
@@ -189,36 +199,50 @@ public class QueryResultTextView implements ExecutionTracker {
         return info.getSummary();
     }
 
+    private String buildNewContent(final String currentContent, final String appendix) {
+        String newContent = "";
+        if (currentContent == null) {
+            newContent = appendix != null ? appendix : "";
+        } else if (appendix == null) {
+            newContent = currentContent; // not null ist durch den ersten Zweig schon geklärt
+        } else {
+            if (appendix.length() >= MAX_DBOUTPUT) {
+                newContent = TRUNCATED
+                        + appendix.substring(appendix.length() - MAX_DBOUTPUT);
+            } else if (currentContent.length() + appendix.length() >= MAX_DBOUTPUT) {
+                newContent = TRUNCATED + currentContent.substring(currentContent.length()
+                        - (MAX_DBOUTPUT - appendix.length())) + appendix;
+            } else {
+                newContent = currentContent + appendix;
+            }
+        }
+        return newContent + "\n";
+    }
+
     @Override
     public void beforeExecution() {
     }
 
     @Override
-    public void intermediateUpdate(
-            final List<StatementExecutionInformation> executionInfos) {
-
-        StringBuilder outputBacklog = new StringBuilder();
-        if (executionInfos != null) {
-            for (final StatementExecutionInformation info : executionInfos) {
-                outputBacklog.append(formatAsText(info));
-            }
-        }
-        if (outputTextArea.getText().length() + outputBacklog.length() < MAX_DBOUTPUT) {
-            outputTextArea.appendText(outputBacklog.toString());
-        } else {
-            int howMuchFromOld = MAX_DBOUTPUT - outputBacklog.length();
-            howMuchFromOld = howMuchFromOld < 0 ? 0 : howMuchFromOld;
-            int startInOld = outputTextArea.getText().length() - howMuchFromOld
-                    - 1;
-            startInOld = startInOld < 0 ? 0 : startInOld;
-            final String old = outputTextArea.getText(startInOld,
-                    outputTextArea.getText().length());
-            outputTextArea.setText(old + outputBacklog.toString());
+    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+        if (executionInfo != null) {
+            dbOutput = buildNewContent(dbOutput, formatAsText(executionInfo));
         }
     }
 
     @Override
     public void afterExecution() {
+    }
+
+    @Override
+    public void errorOnExecution(String message) {
+        dbOutput = buildNewContent(dbOutput, message);
+    }
+
+    @Override
+    public void show() {
+        outputTextArea.setText(dbOutput);
+        outputTextArea.positionCaret(outputTextArea.getLength());
     }
 
 }

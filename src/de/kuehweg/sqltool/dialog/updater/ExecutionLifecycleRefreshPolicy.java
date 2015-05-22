@@ -25,46 +25,12 @@
  */
 package de.kuehweg.sqltool.dialog.updater;
 
-import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import java.util.Collection;
-import java.util.List;
-
 /**
- * GUI-Updater für einer reguläre Ausführung von Anweisungen in der Oberfläche
  *
  * @author Michael Kühweg
  */
-public class StandardLifecycleGuiUpdaterProvider implements ExecutionLifecycleGuiUpdaterProvider {
+public enum ExecutionLifecycleRefreshPolicy {
 
-    @Override
-    public AbstractExecutionGuiUpdater beforeExecutionGuiUpdater(
-            Collection<ExecutionTracker> trackers) {
-        return new BeforeExecutionGuiUpdater(trackers);
-    }
-
-    @Override
-    public AbstractExecutionGuiUpdater intermediateExecutionGuiUpdater(
-            List<StatementExecutionInformation> executionInfos,
-            Collection<ExecutionTracker> trackers) {
-        return new IntermediateExecutionGuiUpdater(executionInfos, trackers);
-    }
-
-    @Override
-    public AbstractExecutionGuiUpdater afterExecutionGuiUpdater(
-            Collection<ExecutionTracker> trackers) {
-        return new AfterExecutionGuiUpdater(trackers);
-    }
-
-    @Override
-    public AbstractExecutionGuiUpdater errorExecutionGuiUpdater(String message,
-            Collection<ExecutionTracker> trackers) {
-        return new ErrorExecutionGuiUpdater(message, trackers);
-    }
-
-    @Override
-    public AbstractExecutionGuiUpdater errorExecutionGuiUpdater(
-            Collection<ExecutionTracker> trackers) {
-        return new ErrorExecutionGuiUpdater(trackers);
-    }
+    IMMEDIATE, DELAYED, NONE;
 
 }

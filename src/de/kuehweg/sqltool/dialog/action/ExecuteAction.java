@@ -31,7 +31,6 @@ import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.CommonDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import de.kuehweg.sqltool.dialog.updater.StandardLifecycleGuiUpdaterProvider;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -47,9 +46,6 @@ public class ExecuteAction {
     private final Collection<ExecutionTracker> trackers = new HashSet<>();
 
     private boolean limitMaxRows;
-
-    public ExecuteAction() {
-    }
 
     public void attach(final ExecutionTracker... trackers) {
         if (trackers != null) {
@@ -107,7 +103,8 @@ public class ExecuteAction {
      * @param connection
      * @return
      * @throws java.sql.SQLException Im Ausnahmefall (z.B. kein Statement erzeugbar auf
-     * der Connection)
+     * der Connection). SQLExceptions während der Ausführung werden über die mitgegebenen
+     * ExecutionTracker abgebildet.
      */
     protected DialogDictionary startExecution(final String sql,
             final Connection connection) throws SQLException {
@@ -122,11 +119,10 @@ public class ExecuteAction {
                 // während und zum Abschluss der Ausführung die Oberfläche
                 // aktualisieren zu können.
                 final ExecutionTask executionTask = new ExecutionTask(
-                        connection.createStatement(), sql,
-                        new StandardLifecycleGuiUpdaterProvider());
+                        connection.createStatement(), sql);
                 executionTask.attach(trackers);
                 if (limitMaxRows) {
-                    executionTask.setLimitMaxRows(DatabaseConstants.MAX_ROWS);
+                    executionTask.setMaxRows(DatabaseConstants.MAX_ROWS);
                 }
                 final Thread th = new Thread(executionTask);
                 th.setDaemon(true);

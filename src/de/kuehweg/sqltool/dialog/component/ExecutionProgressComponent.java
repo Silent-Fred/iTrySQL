@@ -27,10 +27,11 @@ package de.kuehweg.sqltool.dialog.component;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.List;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
@@ -39,11 +40,14 @@ import javafx.scene.control.ProgressBar;
  *
  * @author Michael Kühweg
  */
-public class ExecutionProgressComponent implements
-        ExecutionTracker {
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.BEFORE)
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
+public class ExecutionProgressComponent implements ExecutionTracker {
 
     private static final double PROGRESS_RUNNING = -1;
     private static final double PROGRESS_FINISHED = 1;
+    private static final double PROGRESS_INITIAL = 0;
 
     private final ProgressBar progressBar;
     private final Label executionDuration;
@@ -51,35 +55,49 @@ public class ExecutionProgressComponent implements
     private long startOfExecution;
     private long endOfExecution;
 
+    private double progressToShow;
+    private String durationToShow;
+
     public ExecutionProgressComponent(final ProgressBar progressBar,
             final Label executionDuration) {
         this.progressBar = progressBar;
         this.executionDuration = executionDuration;
+        this.progressToShow = PROGRESS_INITIAL;
     }
 
     @Override
     public void beforeExecution() {
         startOfExecution = System.currentTimeMillis();
-        progressBar.setProgress(PROGRESS_RUNNING);
-        executionDuration.setText(DialogDictionary.LABEL_EXECUTING.toString());
+        progressToShow = PROGRESS_RUNNING;
+        durationToShow = DialogDictionary.LABEL_EXECUTING.toString();
     }
 
     @Override
-    public void intermediateUpdate(
-            final List<StatementExecutionInformation> executionInfos) {
-		// derzeit keine Updates während Ausführung - ist als "laufend"
-		// visualisiert
+    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+        // derzeit keine Updates während Ausführung - ist als "laufend"
+        // visualisiert
     }
 
     @Override
     public void afterExecution() {
         endOfExecution = System.currentTimeMillis();
-        progressBar.setProgress(PROGRESS_FINISHED);
+        progressToShow = PROGRESS_FINISHED;
         final BigDecimal executionTimeInSeconds = BigDecimal.valueOf(
                 endOfExecution - startOfExecution).divide(
                         BigDecimal.valueOf(1000));
-        executionDuration.setText(MessageFormat.format(
-                DialogDictionary.PATTERN_EXECUTION_TIME.toString(),
-                executionTimeInSeconds.toString()));
+        durationToShow = MessageFormat.format(DialogDictionary.PATTERN_EXECUTION_TIME.
+                toString(), executionTimeInSeconds.toString());
+    }
+
+    @Override
+    public void errorOnExecution(String message) {
+        // gleiches Verfahren wie bei einem normalen Abschluss
+        afterExecution();
+    }
+
+    @Override
+    public void show() {
+        progressBar.setProgress(progressToShow);
+        executionDuration.setText(durationToShow);
     }
 }

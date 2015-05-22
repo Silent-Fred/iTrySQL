@@ -23,43 +23,59 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.updater;
+package de.kuehweg.sqltool.dialog.component;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.CommonDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import java.util.Collection;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 
 /**
- * Oberfläche im Fehlerfall aufbereiten
+ * Eigenständiger Tracker für die Ausgabe von Fehlermeldungen.
  *
  * @author Michael Kühweg
  */
-public class ErrorExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
+public class ErrorOnExecutionMessage implements ExecutionTracker {
 
-    private final String message;
+    private String message;
 
-    public ErrorExecutionGuiUpdater(
-            final Collection<ExecutionTracker> trackers) {
-        super(trackers);
-        message = DialogDictionary.ERR_UNKNOWN_ERROR.toString();
+    public ErrorOnExecutionMessage() {
     }
 
-    public ErrorExecutionGuiUpdater(final String message,
-            final Collection<ExecutionTracker> trackers) {
-        super(trackers);
+    public ErrorOnExecutionMessage(String message) {
         this.message = message;
     }
 
     @Override
-    public void update() {
-        for (ExecutionTracker tracker : getTrackers()) {
-            // Bearbeitung auf beendet setzen
-            tracker.afterExecution();
-        }
-        // und danach eine Fehlermeldung ausgeben
-        final ErrorMessage msg = new ErrorMessage(
+    public void beforeExecution() {
+        // nix
+    }
+
+    @Override
+    public void intermediateUpdate(StatementExecutionInformation executionInfo) {
+        // nada
+    }
+
+    @Override
+    public void afterExecution() {
+        // niente
+    }
+
+    @Override
+    public void errorOnExecution(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public void show() {
+        CommonDialog error = new ErrorMessage(
                 DialogDictionary.MESSAGEBOX_ERROR.toString(), message,
                 DialogDictionary.COMMON_BUTTON_OK.toString());
-        msg.askUserFeedback();
+        error.askUserFeedback();
     }
+
 }

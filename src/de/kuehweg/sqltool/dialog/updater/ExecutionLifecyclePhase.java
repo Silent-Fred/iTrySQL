@@ -25,26 +25,12 @@
  */
 package de.kuehweg.sqltool.dialog.updater;
 
-import java.util.Collection;
-
 /**
- * Nach Ausführung einer SQL-Anweisung die Oberfläche auf den aktuellen Stand
- * bringen
+ * Phasen beim Ausführen von Anweisungen.
  *
  * @author Michael Kühweg
  */
-public class AfterExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
+public enum ExecutionLifecyclePhase {
 
-    public AfterExecutionGuiUpdater(
-            final Collection<ExecutionTracker> trackers) {
-        super(trackers);
-    }
-
-    @Override
-    public void update() {
-        for (ExecutionTracker tracker : getTrackers()) {
-            tracker.afterExecution();
-        }
-    }
-
+    BEFORE, INTERMEDIATE, AFTER, ERROR;
 }

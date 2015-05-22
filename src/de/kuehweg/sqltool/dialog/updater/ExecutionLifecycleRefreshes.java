@@ -25,31 +25,21 @@
  */
 package de.kuehweg.sqltool.dialog.updater;
 
-import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import java.util.Collection;
-import java.util.List;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * GUI-Updater für die verschiedenen Phasen beim Ausführen einer Anweisung
+ * Container für mehrfache Refresh-Angaben pro Klasse
  *
  * @author Michael Kühweg
  */
-public interface ExecutionLifecycleGuiUpdaterProvider {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface ExecutionLifecycleRefreshes {
 
-    AbstractExecutionGuiUpdater beforeExecutionGuiUpdater(
-            final Collection<ExecutionTracker> trackers);
-
-    AbstractExecutionGuiUpdater intermediateExecutionGuiUpdater(
-            final List<StatementExecutionInformation> executionInfos,
-            final Collection<ExecutionTracker> trackers);
-
-    AbstractExecutionGuiUpdater afterExecutionGuiUpdater(
-            final Collection<ExecutionTracker> trackers);
-
-    AbstractExecutionGuiUpdater errorExecutionGuiUpdater(
-            final Collection<ExecutionTracker> trackers);
-
-    AbstractExecutionGuiUpdater errorExecutionGuiUpdater(final String message,
-            final Collection<ExecutionTracker> trackers);
-
+    ExecutionLifecycleRefresh[] value();
 }

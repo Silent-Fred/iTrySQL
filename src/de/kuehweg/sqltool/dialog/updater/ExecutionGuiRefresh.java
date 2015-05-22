@@ -25,29 +25,44 @@
  */
 package de.kuehweg.sqltool.dialog.updater;
 
-import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import javafx.application.Platform;
 
 /**
- * Während Ausführung einer SQL-Anweisung die Oberfläche auf den aktuellen Stand
- * bringen
+ * GUI passend zur Ausführung von SQL-Anweisungen aktualisieren
  *
  * @author Michael Kühweg
  */
-public class IntermediateExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
+public class ExecutionGuiRefresh implements Runnable {
 
-    public IntermediateExecutionGuiUpdater(
-            final List<StatementExecutionInformation> executionInfos,
-            final Collection<ExecutionTracker> trackers) {
-        super(executionInfos, trackers);
+    private final Collection<ExecutionTracker> trackers;
+
+    public ExecutionGuiRefresh(Collection<ExecutionTracker> trackers) {
+        this.trackers = new HashSet<>(trackers);
+    }
+
+    private void showAllAttachedTrackers() {
+        trackers.stream().
+                forEach((tracker) -> {
+                    tracker.show();
+                });
+    }
+
+    /**
+     * Aktualisierung der Oberfläche - Einstiegspunkt für den Aufruf.
+     */
+    public void show() {
+        // Aktualisierung mit dem UI-Thread abstimmen
+        if (trackers != null && !trackers.isEmpty()) {
+            Platform.runLater(this);
+        }
     }
 
     @Override
-    public void update() {
-        for (ExecutionTracker tracker : getTrackers()) {
-            tracker.intermediateUpdate(getStatementExecutionInformations());
-        }
+    // Runnable Interface implementiert, um synchron mit dem UI-Thread zu arbeiten
+    public void run() {
+        showAllAttachedTrackers();
     }
 
 }

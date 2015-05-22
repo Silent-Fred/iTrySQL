@@ -32,8 +32,12 @@ import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.database.execution.StatementResult;
 import de.kuehweg.sqltool.database.formatter.DefaultHtmlResultTemplateProvider;
 import de.kuehweg.sqltool.database.formatter.HtmlResultFormatter;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -51,14 +55,17 @@ import javafx.util.Callback;
  *
  * @author Michael Kühweg
  */
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.BEFORE)
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
 public class QueryResultTableView implements ExecutionTracker {
 
-    public static final String RESULT_TABLE_ID
-            = "useMeToFetchTheResultFormatter";
+    public static final String RESULT_TABLE_ID = "useMeToFetchTheResultFormatter";
 
     private final HBox parentContainer;
     private TableView<ObservableList<String>> tableView;
     private StatementExecutionInformation infoToView;
+    private String errorMessage;
 
     public QueryResultTableView(final HBox parentContainer) {
         super();
@@ -70,21 +77,23 @@ public class QueryResultTableView implements ExecutionTracker {
             return "";
         }
         try {
-            return new HtmlResultFormatter(infoToView).formatAsHtml(DefaultHtmlResultTemplateProvider.getInstance());
+            return new HtmlResultFormatter(infoToView).formatAsHtml(
+                    DefaultHtmlResultTemplateProvider.getInstance());
         } catch (IOException ex) {
             return DialogDictionary.ERR_HTML_EXPORT_FAILED.toString();
         }
     }
 
-    private void buildViewWithoutResultSet(
-            final StatementExecutionInformation info) {
-        if (info != null && info.getStatementResult() == null) {
-            tableView.getColumns().clear();
-            tableView.getItems().clear();
+    private void buildViewHeaderWithColumnNameList(final List<String> columnHeaders) {
+        tableView.getColumns().clear();
+        tableView.getItems().clear();
+        int i = 0;
+        for (final String head : columnHeaders) {
             final TableColumn<ObservableList<String>, String> col
                     = new TableColumn<>(
-                            DialogDictionary.LABEL_RESULT_EXECUTED.toString());
-            col.setMinWidth(200);
+                            head);
+            col.setMinWidth(columnHeaders.size() == 1 ? 256 : 111);
+            final int accessIndex = i++;
             col.setCellValueFactory(
                     new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
                         @Override
@@ -92,15 +101,21 @@ public class QueryResultTableView implements ExecutionTracker {
                                 final CellDataFeatures<ObservableList<String>, String> param) {
                                     return new SimpleStringProperty(param.
                                             getValue()
-                                            .get(0).toString());
+                                            .get(accessIndex).toString());
                                 }
                     });
             tableView.getColumns().add(col);
+        }
+    }
+
+    private void buildViewWithoutResultSet(final StatementExecutionInformation info) {
+        if (info != null && info.getStatementResult() == null) {
+            buildViewHeaderWithColumnNameList(Collections.singletonList(
+                    DialogDictionary.LABEL_RESULT_EXECUTED.toString()));
 
             final ObservableList<ObservableList<String>> content = FXCollections
                     .observableArrayList();
-            final ObservableList<String> row = FXCollections
-                    .observableArrayList();
+            final ObservableList<String> row = FXCollections.observableArrayList();
             row.add(info.getSummary());
             content.add(row);
             tableView.setTableMenuButtonVisible(false);
@@ -110,33 +125,14 @@ public class QueryResultTableView implements ExecutionTracker {
 
     private void buildViewWithResultSet(final StatementExecutionInformation info) {
         if (info != null && info.getStatementResult() != null) {
-            tableView.getColumns().clear();
-            tableView.getItems().clear();
-            int i = 0;
-            for (final String head : info.getStatementResult().getHeader().
-                    getColumnHeaders()) {
-                final TableColumn<ObservableList<String>, String> col
-                        = new TableColumn<>(
-                                head);
-                col.setMinWidth(100);
-                final int accessIndex = i++;
-                col.setCellValueFactory(
-                        new Callback<CellDataFeatures<ObservableList<String>, String>, ObservableValue<String>>() {
-                            @Override
-                            public ObservableValue<String> call(
-                                    final CellDataFeatures<ObservableList<String>, String> param) {
-                                        return new SimpleStringProperty(param.
-                                                getValue()
-                                                .get(accessIndex).toString());
-                                    }
-                        });
-                tableView.getColumns().add(col);
-            }
+            buildViewHeaderWithColumnNameList(Arrays.asList(info.getStatementResult().
+                    getHeader().
+                    getColumnHeaders()));
+
             final ObservableList<ObservableList<String>> content = FXCollections
                     .observableArrayList();
             for (final ResultRow resultRow : info.getStatementResult().getRows()) {
-                final ObservableList<String> row = FXCollections
-                        .observableArrayList();
+                final ObservableList<String> row = FXCollections.observableArrayList();
                 for (final String column : resultRow.columnsAsString()) {
                     row.add(column);
                 }
@@ -147,11 +143,32 @@ public class QueryResultTableView implements ExecutionTracker {
         }
     }
 
-    private void buildView(final StatementExecutionInformation info) {
+    private void buildViewWithErrorMessage(final String errorMessage) {
+        buildViewHeaderWithColumnNameList(Collections.singletonList(
+                DialogDictionary.LABEL_EXECUTION_ERROR.toString()));
+
+        final ObservableList<ObservableList<String>> content = FXCollections
+                .observableArrayList();
+        final ObservableList<String> row = FXCollections.observableArrayList();
+        row.add(errorMessage);
+        content.add(row);
+        tableView.setTableMenuButtonVisible(false);
+        tableView.setItems(content);
+    }
+
+    private void prepareBuildView() {
         tableView = new TableView<>();
         tableView.setId(RESULT_TABLE_ID);
         HBox.setHgrow(tableView, Priority.ALWAYS);
+    }
 
+    private void finishBuildView() {
+        parentContainer.getChildren().clear();
+        parentContainer.getChildren().add(tableView);
+    }
+
+    private void buildView(final StatementExecutionInformation info) {
+        prepareBuildView();
         if (info != null) {
             if (info.getStatementResult() != null) {
                 buildViewWithResultSet(info);
@@ -159,8 +176,13 @@ public class QueryResultTableView implements ExecutionTracker {
                 buildViewWithoutResultSet(info);
             }
         }
-        parentContainer.getChildren().clear();
-        parentContainer.getChildren().add(tableView);
+        finishBuildView();
+    }
+
+    private void buildError(final String errorMessage) {
+        prepareBuildView();
+        buildViewWithErrorMessage(errorMessage);
+        finishBuildView();
     }
 
     @Override
@@ -170,17 +192,17 @@ public class QueryResultTableView implements ExecutionTracker {
         info.getStatementResult().setHeader(new ResultHeader(
                 DialogDictionary.LABEL_EXECUTING.
                 toString()));
-        buildView(info);
         // eventuellen alten Inhalt verwerfen
         infoToView = null;
+        errorMessage = null;
     }
 
     @Override
-    public void intermediateUpdate(
-            final List<StatementExecutionInformation> executionInfos) {
-        if (executionInfos != null && !executionInfos.isEmpty()) {
-            infoToView = executionInfos.get(executionInfos.size() - 1);
+    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+        if (executionInfo != null) {
+            infoToView = executionInfo;
         }
+        errorMessage = null;
     }
 
     @Override
@@ -192,6 +214,21 @@ public class QueryResultTableView implements ExecutionTracker {
                     DialogDictionary.LABEL_RESULT_EXECUTED.
                     toString()));
         }
-        buildView(infoToView);
+        errorMessage = null;
+    }
+
+    @Override
+    public void errorOnExecution(String message) {
+        infoToView = null;
+        errorMessage = message;
+    }
+
+    @Override
+    public void show() {
+        if (errorMessage != null) {
+            buildError(errorMessage);
+        } else {
+            buildView(infoToView);
+        }
     }
 }

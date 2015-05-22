@@ -29,16 +29,18 @@ import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
 import de.kuehweg.sqltool.database.execution.StatementExecution;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import de.kuehweg.sqltool.dialog.updater.AbstractExecutionGuiUpdater;
+import de.kuehweg.sqltool.dialog.updater.ExecutionGuiRefresh;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleGuiRefreshProvider;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleGuiUpdaterProvider;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javafx.concurrent.Task;
 
 /**
@@ -48,24 +50,23 @@ import javafx.concurrent.Task;
  */
 public class ExecutionTask extends Task<Void> {
 
-    private final static long UI_UPDATE_INTERVAL_MILLISECONDS = 500;
+    // Anzahl Millisekunden zwischen den verzögerten Refreshes
+    private static final long REFRESH_DELAY = 500;
 
     private final Statement statement;
     private final String sql;
-    private final ExecutionLifecycleGuiUpdaterProvider guiUpdaterProvider;
     private final Collection<ExecutionTracker> trackers;
     private int maxRows;
-    private long lastTimeUIWasUpdated;
 
-    public ExecutionTask(final Statement statement, final String sql,
-            final ExecutionLifecycleGuiUpdaterProvider guiUpdaterProvider) {
+    private ExecutionGuiRefresh guiUpdater;
+
+    public ExecutionTask(final Statement statement, final String sql) {
         this.statement = statement;
         this.sql = sql;
-        this.guiUpdaterProvider = guiUpdaterProvider;
         this.trackers = new HashSet<>();
     }
 
-    public void setLimitMaxRows(final int maxRows) {
+    public void setMaxRows(final int maxRows) {
         this.maxRows = maxRows;
     }
 
@@ -84,85 +85,112 @@ public class ExecutionTask extends Task<Void> {
     }
 
     private void beforeExecution() {
-        if (guiUpdaterProvider != null) {
-            AbstractExecutionGuiUpdater updater = guiUpdaterProvider.
-                    beforeExecutionGuiUpdater(trackers);
-            if (updater != null) {
-                updater.show();
-            }
+        for (ExecutionTracker tracker : trackers) {
+            tracker.beforeExecution();
         }
     }
 
-    private void intermediateUpdate(
-            final List<StatementExecutionInformation> executionInfos) {
-        if (guiUpdaterProvider != null) {
-            AbstractExecutionGuiUpdater updater = guiUpdaterProvider.
-                    intermediateExecutionGuiUpdater(executionInfos, trackers);
-            if (updater != null) {
-                updater.show();
-            }
+    private void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+        for (ExecutionTracker tracker : trackers) {
+            tracker.intermediateUpdate(executionInfo);
         }
     }
 
     private void afterExecution() {
-        if (guiUpdaterProvider != null) {
-            AbstractExecutionGuiUpdater updater = guiUpdaterProvider.
-                    afterExecutionGuiUpdater(trackers);
-            if (updater != null) {
-                updater.show();
-            }
-        }
-    }
-
-    private void intermediateUpdateInIntervals(
-            final List<StatementExecutionInformation> executionInfos) {
-        // zu häufige Updates der Oberfläche bei vielen, kurzen Anweisungen
-        // blockieren die UI. Daher nur in regelmäßigen Abständen aktualisieren.
-        if (System.currentTimeMillis() - lastTimeUIWasUpdated
-                > UI_UPDATE_INTERVAL_MILLISECONDS) {
-            intermediateUpdate(executionInfos);
-            executionInfos.clear();
-            lastTimeUIWasUpdated = System.currentTimeMillis();
+        for (ExecutionTracker tracker : trackers) {
+            tracker.afterExecution();
         }
     }
 
     private void errorUpdate(final String message) {
-        if (guiUpdaterProvider != null) {
-            final AbstractExecutionGuiUpdater updater
-                    = guiUpdaterProvider.errorExecutionGuiUpdater(message, trackers);
-            if (updater != null) {
-                updater.show();
-            }
+        for (ExecutionTracker tracker : trackers) {
+            tracker.errorOnExecution(message);
         }
     }
 
     @Override
     protected Void call() throws Exception {
+        ExecutionLifecycleGuiRefreshProvider lifecycleRefresh
+                = new ExecutionLifecycleGuiRefreshProvider(trackers);
+        Set<ExecutionTracker> trackersForRefresh;
         try {
             final List<StatementString> statements = new StatementExtractor()
                     .getStatementsFromScript(sql);
             statement.setMaxRows(maxRows);
+
+            // before execution
             beforeExecution();
+            refreshBeforePhase(lifecycleRefresh);
+
+            // during execution
+            long lastDelayedRefresh = System.currentTimeMillis();
             List<StatementExecutionInformation> executionInfos = new ArrayList<>();
             final Iterator<StatementString> queryIterator = statements.iterator();
             while (queryIterator.hasNext() && !isCancelled()) {
                 final StatementString singleQuery = queryIterator.next();
                 if (!singleQuery.isEmpty()) {
-                    executionInfos.add(new StatementExecution(singleQuery).execute(
+                    intermediateUpdate(new StatementExecution(singleQuery).execute(
                             statement));
+                    // UI immediate
+                    refresh(lifecycleRefresh.intermediateExecutionGuiRefresh(trackers));
+                    // UI delayed
+                    if (System.currentTimeMillis() - lastDelayedRefresh > REFRESH_DELAY) {
+                        lastDelayedRefresh = System.currentTimeMillis();
+                        refresh(lifecycleRefresh.delayedExecutionGuiRefresh(trackers));
+                    }
                 }
-                intermediateUpdateInIntervals(executionInfos);
             }
-            // falls noch Zwischenupdates ausstehen sollten, diese abarbeiten
-            intermediateUpdate(executionInfos);
+            // eventuell noch pending refreshes
+            refresh(lifecycleRefresh.delayedExecutionGuiRefresh(trackers));
+
             // dann abschließen
             afterExecution();
+            refreshAfterPhase(lifecycleRefresh);
         } catch (final SQLException ex) {
-            errorUpdate(
-                    ex.getLocalizedMessage() + " (SQL-State: "
-                    + ex.getSQLState() + ")");
+            String message = ex.getLocalizedMessage() + " (SQL-State: " + ex.getSQLState()
+                    + ")";
+            errorUpdate(message);
+            refreshErrorPhase(lifecycleRefresh);
         }
         return null;
+    }
+
+    private void refresh(final ExecutionTracker... trackersForRefresh) {
+        if (trackersForRefresh != null && trackersForRefresh.length > 0) {
+            new ExecutionGuiRefresh(Arrays.asList(trackersForRefresh)).show();
+        }
+    }
+
+    private void refresh(final Collection<ExecutionTracker> trackersForRefresh) {
+        if (trackersForRefresh != null && !trackersForRefresh.isEmpty()) {
+            new ExecutionGuiRefresh(trackersForRefresh).show();
+        }
+    }
+
+    private void refreshErrorPhase(ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
+        Set<ExecutionTracker> trackersForRefresh;
+        trackersForRefresh = lifecycleRefresh.errorExecutionGuiRefresh(trackers);
+        trackersForRefresh.addAll(lifecycleRefresh.
+                delayedExecutionGuiRefresh(trackers));
+        refresh(trackersForRefresh);
+    }
+
+    private void refreshAfterPhase(ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
+        Set<ExecutionTracker> trackersForRefresh;
+        // UI am Ende der AFTER Phase komplett refreshed
+        trackersForRefresh = lifecycleRefresh.afterExecutionGuiRefresh(trackers);
+        trackersForRefresh.addAll(lifecycleRefresh.
+                delayedExecutionGuiRefresh(trackers));
+        refresh(trackersForRefresh);
+    }
+
+    private void refreshBeforePhase(ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
+        Set<ExecutionTracker> trackersForRefresh;
+        // UI am Ende der BEFORE Phase komplett refreshed
+        trackersForRefresh = lifecycleRefresh.beforeExecutionGuiRefresh(trackers);
+        trackersForRefresh.addAll(lifecycleRefresh.
+                delayedExecutionGuiRefresh(trackers));
+        refresh(trackersForRefresh);
     }
 
 }

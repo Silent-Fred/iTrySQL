@@ -25,26 +25,26 @@
  */
 package de.kuehweg.sqltool.dialog.updater;
 
-import java.util.Collection;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Vor Ausführung einer SQL-Anweisung die Oberfläche auf den aktuellen Stand
- * bringen
+ * Annotation zur Steuerung des Refresh-Verhaltens einer Komponente im Dialog während
+ * Anweisungen ausgeführt werden
  *
  * @author Michael Kühweg
  */
-public class BeforeExecutionGuiUpdater extends AbstractExecutionGuiUpdater {
+@Documented
+@Repeatable(ExecutionLifecycleRefreshes.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface ExecutionLifecycleRefresh {
 
-    public BeforeExecutionGuiUpdater(
-            final Collection<ExecutionTracker> trackers) {
-        super(trackers);
-    }
+    ExecutionLifecyclePhase phase();
 
-    @Override
-    public void update() {
-        for (ExecutionTracker tracker : getTrackers()) {
-            tracker.beforeExecution();
-        }
-    }
-
+    ExecutionLifecycleRefreshPolicy refreshPolicy() default ExecutionLifecycleRefreshPolicy.IMMEDIATE;
 }

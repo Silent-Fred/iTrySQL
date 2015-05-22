@@ -25,9 +25,11 @@
  */
 package de.kuehweg.sqltool.dialog.component.sqlhistory;
 
-import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
+import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import java.util.LinkedList;
 import java.util.List;
 import javafx.scene.control.TableView;
@@ -37,6 +39,8 @@ import javafx.scene.control.TableView;
  *
  * @author Michael Kühweg
  */
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
 public class SQLHistoryComponent implements ExecutionTracker {
 
     private static final int MAX_HISTORY_ENTRIES = 100;
@@ -44,6 +48,9 @@ public class SQLHistoryComponent implements ExecutionTracker {
     private final TableView<SQLHistory> sqlHistory;
 
     private final List<StatementExecutionInformation> statementBacklog
+            = new LinkedList<>();
+
+    private final List<StatementExecutionInformation> useForNextRefresh
             = new LinkedList<>();
 
     public SQLHistoryComponent(final TableView<SQLHistory> sqlHistory) {
@@ -57,26 +64,36 @@ public class SQLHistoryComponent implements ExecutionTracker {
     }
 
     @Override
-    public void intermediateUpdate(
-            final List<StatementExecutionInformation> executionInfos) {
-        statementBacklog.addAll(executionInfos);
+    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+        statementBacklog.add(executionInfo);
     }
 
     @Override
     public void afterExecution() {
+        // kein inhaltlicher Update mehr erforderlich, Ausgabe erfolgt im show()
+        useForNextRefresh.addAll(statementBacklog);
+    }
+
+    @Override
+    public void errorOnExecution(String message) {
+        afterExecution();
+    }
+
+    @Override
+    public void show() {
         final List<SQLHistory> historyEntriesFromBacklog = new LinkedList<>();
-        for (StatementExecutionInformation info : statementBacklog) {
+        for (StatementExecutionInformation info : useForNextRefresh) {
             if (info.getSql() != null) {
                 historyEntriesFromBacklog.add(0, new SQLHistory(info.getSql().
                         uncommentedStatement()));
             }
         }
+        useForNextRefresh.clear();
         sqlHistory.getItems().addAll(0, historyEntriesFromBacklog);
         if (sqlHistory.getItems().size() > MAX_HISTORY_ENTRIES) {
             sqlHistory.getItems().remove(MAX_HISTORY_ENTRIES, sqlHistory.
                     getItems().size());
         }
-        statementBacklog.clear();
     }
 
 }

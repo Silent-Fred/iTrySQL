@@ -26,11 +26,10 @@
 package de.kuehweg.sqltool.dialog.updater;
 
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import java.util.List;
 
 /**
- * Schnittstelle für Oberflächenbestandteile, deren Zustand sich ändert, wenn
- * eine SQL-Anweisung ausgeführt wird
+ * Schnittstelle für Oberflächenbestandteile, deren Zustand sich ändert, wenn eine
+ * SQL-Anweisung ausgeführt wird
  *
  * @author Michael Kühweg
  */
@@ -38,7 +37,11 @@ public interface ExecutionTracker {
 
     void beforeExecution();
 
-    void intermediateUpdate(final List<StatementExecutionInformation> executionInfos);
+    void intermediateUpdate(final StatementExecutionInformation executionInfo);
 
     void afterExecution();
+
+    void errorOnExecution(String message);
+    
+    void show();
 }

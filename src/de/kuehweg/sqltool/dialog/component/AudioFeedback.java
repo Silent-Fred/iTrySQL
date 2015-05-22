@@ -28,14 +28,16 @@ package de.kuehweg.sqltool.dialog.component;
 import de.kuehweg.sqltool.common.ProvidedAudioClip;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
+import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import java.util.List;
 
 /**
  * Akustische Rückmeldung zu SQL-Anweisungen
  *
  * @author Michael Kühweg
  */
+@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
 public class AudioFeedback implements ExecutionTracker {
 
     @Override
@@ -44,13 +46,23 @@ public class AudioFeedback implements ExecutionTracker {
     }
 
     @Override
-    public void intermediateUpdate(
-            final List<StatementExecutionInformation> executionInfos) {
+    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
         // kein Audio Feedback während der Ausführung
     }
 
     @Override
     public void afterExecution() {
+        // kein inhaltlicher Update, show() - naja... in dem Fall wenig passender Name -
+        // gibt den Ton aus
+    }
+
+    @Override
+    public void errorOnExecution(String message) {
+        // derzeit kein Ton bei Fehler vorgesehen
+    }
+
+    @Override
+    public void show() {
         final ProvidedAudioClip audioClip = UserPreferencesManager
                 .getSharedInstance().getBeepAudioClip();
         if (audioClip != null) {

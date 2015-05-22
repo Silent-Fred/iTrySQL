@@ -49,6 +49,7 @@ import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
 import de.kuehweg.sqltool.dialog.component.AudioFeedback;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
+import de.kuehweg.sqltool.dialog.component.ErrorOnExecutionMessage;
 import de.kuehweg.sqltool.dialog.component.ExecutionProgressComponent;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
@@ -799,7 +800,8 @@ public class iTrySQLController implements Initializable,
                 executionProgressIndicator, executionTime),
                 new AudioFeedback(),
                 new SchemaTreeModificationDetector(schemaTreeView,
-                        getConnectionHolder().getConnection()));
+                        getConnectionHolder().getConnection()),
+                new ErrorOnExecutionMessage());
 
         return executeAction;
     }
