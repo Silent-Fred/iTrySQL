@@ -399,7 +399,7 @@ public class iTrySQLController implements Initializable,
         if (connectionSetting != null) {
             try {
                 getConnectionHolder().connect(connectionSetting);
-                controlAutoCommitCheckBoxState();
+                controlAutoCommitVisuals();
                 refreshTree(event);
                 if (connectionSetting.getType() == JDBCType.HSQL_IN_MEMORY) {
                     permanentMessage.setText(MessageFormat.format(
@@ -627,7 +627,8 @@ public class iTrySQLController implements Initializable,
         setupTooltips();
         setupMenu();
 
-        controlAutoCommitCheckBoxState();
+        controlAutoCommitVisuals();
+
         permanentMessage.visibleProperty().set(false);
         refreshTree(null);
         SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(
@@ -749,7 +750,7 @@ public class iTrySQLController implements Initializable,
                 Bindings.not(getConnectionHolder().connectedProperty()));
     }
 
-    private void controlAutoCommitCheckBoxState() {
+    private void controlAutoCommitVisuals() {
         if (getConnectionHolder().getConnection() != null) {
             try {
                 autoCommit.setSelected(connectionHolder.getConnection()
@@ -758,6 +759,10 @@ public class iTrySQLController implements Initializable,
                 autoCommit.setSelected(true);
             }
         }
+        toolbarCommit.disableProperty().bind(autoCommit.selectedProperty());
+        toolbarRollback.disableProperty().bind(autoCommit.selectedProperty());
+        menuItemCommit.disableProperty().bind(autoCommit.selectedProperty());
+        menuItemRollback.disableProperty().bind(autoCommit.selectedProperty());
     }
 
     private void prepareHistory() {
