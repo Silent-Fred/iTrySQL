@@ -1,0 +1,122 @@
+/*
+ * Copyright (c) 2015, Michael Kühweg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package de.kuehweg.sqltool.dialog.action;
+
+import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
+import de.kuehweg.sqltool.database.execution.fake.DatabaseMetaDataStubWithUrlAndUser;
+import de.kuehweg.sqltool.database.execution.fake.FakeStatement;
+import de.kuehweg.sqltool.database.execution.fake.FakeStatementThrowingExceptionOnExecute;
+import de.kuehweg.sqltool.database.execution.fake.ResultSetStubFromObjectArray;
+import de.kuehweg.sqltool.database.execution.fake.StatementStubWithFakeResultSet;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+/**
+ *
+ * @author Michael Kühweg
+ */
+public class ExecutionTaskTest {
+
+    private static final String url = "db://localhost";
+    private static final String userName = "john_doe";
+
+    private Object[] columnLabels;
+    private Object[] columnContent;
+
+    private DatabaseMetaDataStubWithUrlAndUser metaData;
+    private ConnectionStubWithBasicMetaData connection;
+    private ResultSetStubFromObjectArray resultSet;
+    private FakeStatement statement;
+
+    public ExecutionTaskTest() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+    }
+
+    @Before
+    public void setUp() {
+        columnLabels = new String[]{"does", "not", "compute"};
+        columnContent = new Object[]{" col1 ", null, 42};
+        metaData = new DatabaseMetaDataStubWithUrlAndUser();
+        metaData.setURL(url);
+        metaData.setUserName(userName);
+        connection = new ConnectionStubWithBasicMetaData();
+        connection.setMetaData(metaData);
+        resultSet = new ResultSetStubFromObjectArray(new Object[][]{columnLabels,
+            columnContent});
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    @Test
+    public void noFrillsExecution() throws Exception {
+        statement = new StatementStubWithFakeResultSet(connection, resultSet);
+        ExecutionTask execution = new ExecutionTask(statement, "select * from wherever;");
+        ExecutionTrackerStub tracker = new ExecutionTrackerStub();
+        execution.attach(tracker);
+        execution.call();
+        Assert.assertNull(tracker.getMessage());
+        Assert.assertTrue(tracker.getBeforeExecutionCalls() == 1);
+        Assert.assertTrue(tracker.getIntermediateUpdateCalls() == 1);
+        Assert.assertTrue(tracker.getAfterExecutionCalls() == 1);
+        Assert.assertTrue(tracker.getErrorOnExecutionCalls() == 0);
+    }
+
+    @Test
+    public void errorOnExecution() throws Exception {
+        statement = new FakeStatementThrowingExceptionOnExecute(connection, resultSet);
+        ExecutionTask execution = new ExecutionTask(statement, "select * from wherever;");
+        ExecutionTrackerStub tracker = new ExecutionTrackerStub();
+        execution.attach(tracker);
+        execution.call();
+        Assert.assertNotNull(tracker.getMessage());
+        Assert.assertTrue(tracker.getBeforeExecutionCalls() == 1);
+        Assert.assertTrue(tracker.getIntermediateUpdateCalls() == 0);
+        Assert.assertTrue(tracker.getAfterExecutionCalls() == 0);
+        Assert.assertTrue(tracker.getErrorOnExecutionCalls() == 1);
+    }
+
+    @Test
+    public void noTrackerExecution() throws Exception {
+        statement = new StatementStubWithFakeResultSet(connection, resultSet);
+        ExecutionTask execution = new ExecutionTask(statement, "select * from wherever;");
+        execution.call();
+        // no exception
+    }
+
+}
