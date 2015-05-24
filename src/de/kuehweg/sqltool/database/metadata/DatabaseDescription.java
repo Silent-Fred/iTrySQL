@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public class DatabaseDescription {
 	private final Set<CatalogDescription> catalogs;
 
 	public DatabaseDescription() {
-		this.name = "Not connected";
+		this.name = DialogDictionary.MSG_NO_DB_CONNECTION_FOR_SCHEMA_TREE_VIEW.toString();
 		this.dbProductName = "";
 		this.dbProductVersion = "";
 		catalogs = new HashSet<>();

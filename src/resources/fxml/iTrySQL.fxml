@@ -193,11 +193,17 @@
                                     </AnchorPane>
                                                 <HBox layoutX="45.0" layoutY="325.0" prefHeight="6.0" prefWidth="844.0" VBox.vgrow="NEVER">
                                                    <children>
-                                          <ProgressBar fx:id="executionProgressIndicator" layoutX="45.0" layoutY="325.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" />
+                                          <ProgressBar fx:id="executionProgressIndicator" layoutX="45.0" layoutY="325.0" maxHeight="12.0" minHeight="12.0" prefHeight="12.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" />
                                           <Label fx:id="executionTime" layoutX="251.0" layoutY="327.0" prefWidth="295.0" text="0ms" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="251.0">
                                             <font>
                                               <Font size="11.0" fx:id="x2" />
                                             </font>
+                                                         <HBox.margin>
+                                                            <Insets left="4.0" />
+                                                         </HBox.margin>
+                                                         <padding>
+                                                            <Insets left="4.0" />
+                                                         </padding>
                                           </Label>
                                                    </children>
                                                 </HBox>

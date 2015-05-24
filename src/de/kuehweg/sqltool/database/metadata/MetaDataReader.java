@@ -100,8 +100,7 @@ public class MetaDataReader {
         } finally {
             final Map<CatalogDescription, CatalogDescription> catalogs = new HashMap<>();
             for (final SchemaDescription schema : schemas.values()) {
-                final CatalogDescription key = new CatalogDescription(
-                        schema.getCatalog());
+                final CatalogDescription key = new CatalogDescription(schema.getCatalog());
                 CatalogDescription value = catalogs.get(key);
                 if (value == null) {
                     value = key;

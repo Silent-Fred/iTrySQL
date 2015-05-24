@@ -62,6 +62,7 @@ import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -423,7 +424,7 @@ public class iTrySQLController implements Initializable,
 
     public void disconnect(final ActionEvent event) {
         getConnectionHolder().disconnect();
-        refreshTree(null);
+        refreshTree(null, schemaTreeView);
         permanentMessage.visibleProperty().set(false);
     }
 
@@ -540,8 +541,11 @@ public class iTrySQLController implements Initializable,
     }
 
     public void refreshTree(final ActionEvent event) {
-        final Task<Void> refreshTask = new SchemaTreeBuilderTask(
-                getConnectionHolder().getConnection(), schemaTreeView);
+        refreshTree(getConnectionHolder().getConnection(), schemaTreeView);
+    }
+
+    private void refreshTree(final Connection connection, final TreeView<String> treeToUpdate) {
+        final Task<Void> refreshTask = new SchemaTreeBuilderTask(connection, treeToUpdate);
         final Thread th = new Thread(refreshTask);
         th.setDaemon(true);
         th.start();
@@ -630,7 +634,7 @@ public class iTrySQLController implements Initializable,
         controlAutoCommitVisuals();
 
         permanentMessage.visibleProperty().set(false);
-        refreshTree(null);
+        refreshTree(null, schemaTreeView);
         SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(
                 statementPane, statementInput);
         syntaxDefinitionView.getEngine().load(

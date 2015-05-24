@@ -76,20 +76,20 @@ public class SchemaTreeBuilder implements Runnable {
         stateSaver.readExpandedStateFrom(treeToUpdate);
         final TreeItem<String> root = new TreeItem<>();
         treeToUpdate.setRoot(root);
-        if (db != null) {
-            root.setValue(db.getName());
-            Label label = new Label(SchemaTreeConstants.DATABASE);
-            label.getStyleClass().add(SchemaTreeConstants.STYLE_DATABASE);
-            root.setGraphic(label);
-            root.getChildren().clear();
-            root.getChildren().add(getDbProductInfo(db));
-            for (final CatalogDescription catalog : db.getCatalogs()) {
-                final TreeItem<String> catalogItem = new TreeItem<>(
-                        catalog.getCatalog());
-                catalogItem.getChildren().addAll(getSchemas(catalog));
-                root.getChildren().add(catalogItem);
-            }
+
+        root.setValue(db.getName());
+        Label label = new Label(SchemaTreeConstants.DATABASE);
+        label.getStyleClass().add(SchemaTreeConstants.STYLE_DATABASE);
+        root.setGraphic(label);
+        root.getChildren().clear();
+        root.getChildren().add(getDbProductInfo(db));
+        for (final CatalogDescription catalog : db.getCatalogs()) {
+            final TreeItem<String> catalogItem = new TreeItem<>(
+                    catalog.getCatalog());
+            catalogItem.getChildren().addAll(getSchemas(catalog));
+            root.getChildren().add(catalogItem);
         }
+
         stateSaver.expandFromSavedState(treeToUpdate);
     }
 
