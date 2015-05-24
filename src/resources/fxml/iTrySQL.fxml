@@ -141,62 +141,74 @@
                   <items>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="691.0">
                       <children>
-                        <ToolBar fx:id="toolBar" minWidth="-Infinity" orientation="VERTICAL" prefHeight="279.0" prefWidth="42.0" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <items>
-                            <Button fx:id="toolbarExecute" mnemonicParsing="false" onAction="#execute" styleClass="itry-tool-bar-button">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                            <Separator prefHeight="20.0" prefWidth="36.0" />
-                            <Button fx:id="toolbarCommit" mnemonicParsing="false" onAction="#commit" styleClass="itry-tool-bar-button">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                            <Button fx:id="toolbarRollback" mnemonicParsing="false" onAction="#rollback" styleClass="itry-tool-bar-button">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                            <Separator prefHeight="20.0" prefWidth="36.0" />
-                            <Button fx:id="toolbarZoomOut" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                            <Button fx:id="toolbarZoomIn" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                            <Separator prefHeight="20.0" prefWidth="36.0" />
-                            <Button fx:id="toolbarTutorialData" mnemonicParsing="false" onAction="#tutorialAction" styleClass="itry-tool-bar-button">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </Button>
-                          </items>
-                        </ToolBar>
-                        <AnchorPane id="AnchorPane" fx:id="statementPane" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <children>
-                            <TextArea fx:id="statementInput" prefHeight="333.0" prefWidth="844.0" promptText="%prompt_enterStatement" styleClass="itry-statement-edit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                              <stylesheets>
-                                <URL value="@../css/itrysql.css" />
-                              </stylesheets>
-                            </TextArea>
-                              <Label fx:id="permanentMessage" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="760.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Label" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <stylesheets>
-                                  <URL value="@../css/itrysql.css" />
-                                </stylesheets>
-                              </Label>
-                          </children>
-                        </AnchorPane>
-                        <ProgressBar fx:id="executionProgressIndicator" layoutX="45.0" layoutY="325.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" />
-                        <Label fx:id="executionTime" layoutX="251.0" layoutY="327.0" prefWidth="295.0" text="0ms" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="251.0">
-                          <font>
-                            <Font size="11.0" fx:id="x2" />
-                          </font>
+                                    <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                              <ToolBar fx:id="toolBar" orientation="VERTICAL" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+                                <items>
+                                  <Button fx:id="toolbarExecute" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#execute" styleClass="itry-tool-bar-button" text="E" textAlignment="CENTER" textOverrun="CLIP">
+                                    <stylesheets>
+                                      <URL value="@../css/itrysql.css" />
+                                    </stylesheets>
+                                  </Button>
+                                  <Separator />
+                                  <Button fx:id="toolbarCommit" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#commit" styleClass="itry-tool-bar-button" text="C" textAlignment="CENTER" textOverrun="CLIP">
+                                    <stylesheets>
+                                      <URL value="@../css/itrysql.css" />
+                                    </stylesheets>
+                                  </Button>
+                                  <Button fx:id="toolbarRollback" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#rollback" styleClass="itry-tool-bar-button" text="R" textAlignment="CENTER" textOverrun="CLIP">
+                                    <stylesheets>
+                                      <URL value="@../css/itrysql.css" />
+                                    </stylesheets>
+                                  </Button>
+                                  <Separator />
+                                  <Button fx:id="toolbarZoomOut" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button" text="-" textAlignment="CENTER" textOverrun="CLIP">
+                                    <stylesheets>
+                                      <URL value="@../css/itrysql.css" />
+                                    </stylesheets>
+                                  </Button>
+                                  <Button fx:id="toolbarZoomIn" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button" text="+" textAlignment="CENTER" textOverrun="CLIP">
+                                    <stylesheets>
+                                      <URL value="@../css/itrysql.css" />
+                                    </stylesheets>
+                                  </Button>
+                                  <Separator />
+                                  <Button fx:id="toolbarTutorialData" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#tutorialAction" styleClass="itry-tool-bar-button" text="T" textAlignment="CENTER" textOverrun="CLIP">
+                                    <stylesheets>
+                                      <URL value="@../css/itrysql.css" />
+                                    </stylesheets>
+                                  </Button>
+                                </items>
+                              </ToolBar>
+                                          <VBox layoutX="43.0" AnchorPane.bottomAnchor="-8.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                    <AnchorPane id="AnchorPane" fx:id="statementPane" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+                                      <children>
+                                        <TextArea fx:id="statementInput" prefHeight="333.0" prefWidth="844.0" promptText="%prompt_enterStatement" styleClass="itry-statement-edit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <stylesheets>
+                                            <URL value="@../css/itrysql.css" />
+                                          </stylesheets>
+                                        </TextArea>
+                                      </children>
+                                    </AnchorPane>
+                                                <HBox layoutX="45.0" layoutY="325.0" prefHeight="6.0" prefWidth="844.0" VBox.vgrow="NEVER">
+                                                   <children>
+                                          <ProgressBar fx:id="executionProgressIndicator" layoutX="45.0" layoutY="325.0" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" />
+                                          <Label fx:id="executionTime" layoutX="251.0" layoutY="327.0" prefWidth="295.0" text="0ms" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="251.0">
+                                            <font>
+                                              <Font size="11.0" fx:id="x2" />
+                                            </font>
+                                          </Label>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                        <Label fx:id="permanentMessage" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Label" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <stylesheets>
+                            <URL value="@../css/itrysql.css" />
+                          </stylesheets>
                         </Label>
                       </children>
                     </AnchorPane>
@@ -208,63 +220,71 @@
                               <content>
                                 <AnchorPane id="Content">
                                   <children>
-                                    <ToolBar maxWidth="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="318.0" prefWidth="42.0" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="845.0" AnchorPane.topAnchor="0.0">
-                                      <items>
-                                        <Button fx:id="toolbarTabTableViewExport" mnemonicParsing="false" onAction="#toolbarTabTableViewExportAction" styleClass="itry-tool-bar-button">
-                                          <stylesheets>
-                                            <URL value="@../css/itrysql.css" />
-                                          </stylesheets>
-                                        </Button>
-                                      </items>
-                                    </ToolBar>
-                                    <HBox fx:id="resultTableContainer" prefHeight="318.0" prefWidth="845.0" spacing="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                      <children>
-                                        <TableView id="" HBox.hgrow="ALWAYS">
-                                          <columns>
-                                            <TableColumn prefWidth="75.0" text="%label_empty" />
-                                          </columns>
-                                        </TableView>
-                                      </children>
-                                    </HBox>
+                                                      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                          <ToolBar maxWidth="-Infinity" orientation="VERTICAL" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="845.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+                                            <items>
+                                              <Button fx:id="toolbarTabTableViewExport" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#toolbarTabTableViewExportAction" styleClass="itry-tool-bar-button" text="X" textAlignment="CENTER" textOverrun="CLIP">
+                                                <stylesheets>
+                                                  <URL value="@../css/itrysql.css" />
+                                                </stylesheets>
+                                              </Button>
+                                            </items>
+                                          </ToolBar>
+                                          <HBox fx:id="resultTableContainer" prefHeight="318.0" prefWidth="845.0" spacing="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                              <TableView id="" HBox.hgrow="ALWAYS">
+                                                <columns>
+                                                  <TableColumn prefWidth="75.0" text="%label_empty" />
+                                                </columns>
+                                              </TableView>
+                                            </children>
+                                          </HBox>
+                                                         </children>
+                                                      </HBox>
                                   </children>
                                 </AnchorPane>
                               </content>
                             </Tab>
                             <Tab fx:id="tabDbOutput" style="" text="%label_tabDbOutput">
                               <content>
-                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                <AnchorPane id="Content">
                                   <children>
-                                    <TextArea fx:id="dbOutput" editable="false" prefHeight="318.0" prefWidth="844.0" styleClass="itry-db-output" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                      <stylesheets>
-                                        <URL value="@../css/itrysql.css" />
-                                      </stylesheets>
-                                    </TextArea>
-                                    <ToolBar maxWidth="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="317.9999000000025" prefWidth="42.0" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                      <items>
-                                        <Button fx:id="toolbarTabDbOutputExport" mnemonicParsing="false" onAction="#toolbarTabDbOutputExportAction" styleClass="itry-tool-bar-button">
-                                          <stylesheets>
-                                            <URL value="@../css/itrysql.css" />
-                                          </stylesheets>
-                                        </Button>
-                                        <Separator prefHeight="20.0" prefWidth="32.0" />
-                                        <Button fx:id="toolbarTabDbOutputZoomOut" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
-                                          <stylesheets>
-                                            <URL value="@../css/itrysql.css" />
-                                          </stylesheets>
-                                        </Button>
-                                        <Button fx:id="toolbarTabDbOutputZoomIn" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button">
-                                          <stylesheets>
-                                            <URL value="@../css/itrysql.css" />
-                                          </stylesheets>
-                                        </Button>
-                                        <Separator prefHeight="20.0" prefWidth="32.0" />
-                                        <Button fx:id="toolbarTabDbOutputClear" mnemonicParsing="false" onAction="#toolbarTabDbOutputClearAction" styleClass="itry-tool-bar-button">
-                                          <stylesheets>
-                                            <URL value="@../css/itrysql.css" />
-                                          </stylesheets>
-                                        </Button>
-                                      </items>
-                                    </ToolBar>
+                                                      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                          <ToolBar maxWidth="-Infinity" orientation="VERTICAL" styleClass="itry-tool-bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+                                            <items>
+                                              <Button fx:id="toolbarTabDbOutputExport" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#toolbarTabDbOutputExportAction" styleClass="itry-tool-bar-button" text="X" textAlignment="CENTER" textOverrun="CLIP">
+                                                <stylesheets>
+                                                  <URL value="@../css/itrysql.css" />
+                                                </stylesheets>
+                                              </Button>
+                                              <Separator />
+                                              <Button fx:id="toolbarTabDbOutputZoomOut" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button" text="-" textAlignment="CENTER" textOverrun="CLIP">
+                                                <stylesheets>
+                                                  <URL value="@../css/itrysql.css" />
+                                                </stylesheets>
+                                              </Button>
+                                              <Button fx:id="toolbarTabDbOutputZoomIn" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#fontAction" styleClass="itry-tool-bar-button" text="+" textAlignment="CENTER" textOverrun="CLIP">
+                                                <stylesheets>
+                                                  <URL value="@../css/itrysql.css" />
+                                                </stylesheets>
+                                              </Button>
+                                              <Separator />
+                                              <Button fx:id="toolbarTabDbOutputClear" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#toolbarTabDbOutputClearAction" styleClass="itry-tool-bar-button" text="D" textAlignment="CENTER" textOverrun="CLIP">
+                                                <stylesheets>
+                                                  <URL value="@../css/itrysql.css" />
+                                                </stylesheets>
+                                              </Button>
+                                            </items>
+                                          </ToolBar>
+                                          <TextArea fx:id="dbOutput" editable="false" styleClass="itry-db-output" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
+                                            <stylesheets>
+                                              <URL value="@../css/itrysql.css" />
+                                            </stylesheets>
+                                          </TextArea>
+                                                         </children>
+                                                      </HBox>
                                   </children>
                                 </AnchorPane>
                               </content>

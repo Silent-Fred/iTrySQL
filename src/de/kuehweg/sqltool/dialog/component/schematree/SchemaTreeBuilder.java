@@ -34,7 +34,6 @@ import de.kuehweg.sqltool.database.metadata.IndexDescription;
 import de.kuehweg.sqltool.database.metadata.Nullability;
 import de.kuehweg.sqltool.database.metadata.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.TableDescription;
-import de.kuehweg.sqltool.dialog.images.ImagePack;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,9 +43,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.ImageView;
 
 /**
  * Baumansicht der Datenbankstruktur
@@ -73,14 +72,15 @@ public class SchemaTreeBuilder implements Runnable {
 
     private void refreshSchemaTree(final DatabaseDescription db,
             final TreeView<String> treeToUpdate) {
-        final SchemaTreeExpandedStateSaver stateSaver =
-                new SchemaTreeExpandedStateSaver();
+        final SchemaTreeExpandedStateSaver stateSaver = new SchemaTreeExpandedStateSaver();
         stateSaver.readExpandedStateFrom(treeToUpdate);
         final TreeItem<String> root = new TreeItem<>();
         treeToUpdate.setRoot(root);
         if (db != null) {
             root.setValue(db.getName());
-            root.setGraphic(new ImageView(ImagePack.TREE_DATABASE.getAsImage()));
+            Label label = new Label(SchemaTreeConstants.DATABASE);
+            label.getStyleClass().add(SchemaTreeConstants.STYLE_DATABASE);
+            root.setGraphic(label);
             root.getChildren().clear();
             root.getChildren().add(getDbProductInfo(db));
             for (final CatalogDescription catalog : db.getCatalogs()) {
@@ -101,9 +101,9 @@ public class SchemaTreeBuilder implements Runnable {
     private List<TreeItem<String>> getSchemas(final CatalogDescription catalog) {
         final List<TreeItem<String>> schemaItems = new ArrayList<>();
         for (final SchemaDescription schema : catalog.getSchemas()) {
-            final TreeItem<String> schemaItem = new TreeItem<>(
-                    schema.getSchema(), new ImageView(
-                    ImagePack.TREE_SCHEMA.getAsImage()));
+            Label label = new Label(SchemaTreeConstants.USER);
+            label.getStyleClass().add(SchemaTreeConstants.STYLE_USER);
+            final TreeItem<String> schemaItem = new TreeItem<>(schema.getSchema(), label);
             schemaItem.getChildren().addAll(getTables(schema));
             schemaItems.add(schemaItem);
         }
@@ -115,9 +115,10 @@ public class SchemaTreeBuilder implements Runnable {
         for (final String type : schema.getTableTypes()) {
             final TreeItem<String> typeItem = new TreeItem<>(type);
             for (final TableDescription table : schema.getTablesByType(type)) {
-                final TreeItem<String> tableItem = new TreeItem<>(
-                        table.getTableName(), new ImageView(
-                        ImagePack.TREE_TABLE.getAsImage()));
+                Label label = new Label(SchemaTreeConstants.TABLE);
+                label.getStyleClass().add(SchemaTreeConstants.STYLE_TABLE);
+                final TreeItem<String> tableItem = new TreeItem<>(table.getTableName(),
+                        label);
                 if (table.getRemarks() != null
                         && table.getRemarks().trim().length() > 0) {
                     tableItem.getChildren().add(
@@ -140,14 +141,15 @@ public class SchemaTreeBuilder implements Runnable {
         final List<TreeItem<String>> columnItems = new ArrayList<>(table
                 .getColumns().size());
         for (final ColumnDescription column : table.getColumns()) {
-            final TreeItem<String> columnItem = new TreeItem<>(
-                    column.getColumnName(), new ImageView(
-                    table.getPrimaryKey().contains(column.
-                    getColumnName()) ? ImagePack.TREE_PRIMARY_KEY.getAsImage() : ImagePack.TREE_COLUMN.
-                    getAsImage()));
+            Label label = new Label(
+                    table.getPrimaryKey().contains(column.getColumnName()) ? SchemaTreeConstants.PRIMARY_KEY : SchemaTreeConstants.COLUMN);
+            label.getStyleClass().add(table.getPrimaryKey().contains(column.
+                    getColumnName()) ? SchemaTreeConstants.STYLE_PRIMARY_KEY : SchemaTreeConstants.STYLE_COLUMN);
+            final TreeItem<String> columnItem = new TreeItem<>(column.getColumnName(),
+                    label);
             columnItem.getChildren().add(
                     new TreeItem<>(column.getType() + "("
-                    + column.getSize() + ")"));
+                            + column.getSize() + ")"));
             if (column.getNullable() == Nullability.YES) {
                 columnItem.getChildren().add(new TreeItem<>("NULLABLE"));
             }
@@ -160,9 +162,9 @@ public class SchemaTreeBuilder implements Runnable {
         final List<TreeItem<String>> indexItems = new ArrayList<>(table
                 .getIndices().size());
         for (final IndexDescription index : table.getIndices()) {
-            final TreeItem<String> indexItem = new TreeItem<>(
-                    index.getIndexName(), new ImageView(
-                    ImagePack.TREE_INDEX.getAsImage()));
+            Label label = new Label(SchemaTreeConstants.INDEX);
+            label.getStyleClass().add(SchemaTreeConstants.STYLE_INDEX);
+            final TreeItem<String> indexItem = new TreeItem<>(index.getIndexName(), label);
             indexItem.getChildren().add(
                     new TreeItem<>(index.getColumnName()));
             if (index.isNonUnique()) {
@@ -174,9 +176,10 @@ public class SchemaTreeBuilder implements Runnable {
             return Collections.emptyList();
         }
         final List<TreeItem<String>> indexCollection = new ArrayList<>(1);
+        Label label = new Label(SchemaTreeConstants.INDEX);
+        label.getStyleClass().add(SchemaTreeConstants.STYLE_INDEX);
         final TreeItem<String> indexTitle = new TreeItem<>(
-                DialogDictionary.LABEL_TREE_INDICES.toString(), new ImageView(
-                ImagePack.TREE_INDEX.getAsImage()));
+                DialogDictionary.LABEL_TREE_INDICES.toString(), label);
         indexCollection.add(indexTitle);
         indexTitle.getChildren().addAll(indexItems);
         return indexCollection;
@@ -188,13 +191,14 @@ public class SchemaTreeBuilder implements Runnable {
             final boolean outsideView) {
         final List<TreeItem<String>> foreignKeyItems = new ArrayList<>(
                 foreignKeyDescriptions.size());
-        final ImagePack itemImage =
-                outsideView ? ImagePack.TREE_REFERENCED_BY : ImagePack.TREE_REFERENCES;
         for (final Map.Entry<String, Collection<String>> fk
                 : buildForeignKeyColumnsByForeignKeyNameMap(tableDescription,
-                foreignKeyDescriptions).entrySet()) {
-            final TreeItem<String> foreignKeyItem = new TreeItem<>(
-                    fk.getKey(), new ImageView(itemImage.getAsImage()));
+                        foreignKeyDescriptions).entrySet()) {
+            final Label label = new Label(
+                    outsideView ? SchemaTreeConstants.FOREIGN_KEY_CONSTRAINT : SchemaTreeConstants.REFERENCES);
+            label.getStyleClass().add(
+                    outsideView ? SchemaTreeConstants.STYLE_FOREIGN_KEY_CONSTRAINT : SchemaTreeConstants.STYLE_REFERENCES);
+            final TreeItem<String> foreignKeyItem = new TreeItem<>(fk.getKey(), label);
             final List<String> fkColumns = new ArrayList<>(fk.getValue());
             Collections.sort(fkColumns);
             for (final String column : fkColumns) {
@@ -205,14 +209,15 @@ public class SchemaTreeBuilder implements Runnable {
         if (foreignKeyItems.isEmpty()) {
             return Collections.emptyList();
         }
-        final ImagePack collectionImage =
-                outsideView ? ImagePack.TREE_REFERENCED_BY : ImagePack.TREE_REFERENCES;
-        final DialogDictionary collectionTitle =
-                outsideView ? DialogDictionary.LABEL_TREE_REFERENCED_BY : DialogDictionary.LABEL_TREE_REFERENCES;
+        final Label collectionLabel = new Label(
+                outsideView ? SchemaTreeConstants.FOREIGN_KEY_CONSTRAINT : SchemaTreeConstants.REFERENCES);
+        collectionLabel.getStyleClass().add(
+                outsideView ? SchemaTreeConstants.STYLE_FOREIGN_KEY_CONSTRAINT : SchemaTreeConstants.STYLE_REFERENCES);
+        final DialogDictionary collectionTitle
+                = outsideView ? DialogDictionary.LABEL_TREE_REFERENCED_BY : DialogDictionary.LABEL_TREE_REFERENCES;
         final List<TreeItem<String>> foreignKeyCollection = new ArrayList<>(1);
-        final TreeItem<String> collectionTitleTitem = new TreeItem<>(
-                collectionTitle.toString(),
-                new ImageView(collectionImage.getAsImage()));
+        final TreeItem<String> collectionTitleTitem = new TreeItem<>(collectionTitle.
+                toString(), collectionLabel);
         foreignKeyCollection.add(collectionTitleTitem);
         collectionTitleTitem.getChildren().addAll(foreignKeyItems);
         return foreignKeyCollection;
@@ -262,9 +267,9 @@ public class SchemaTreeBuilder implements Runnable {
         return Objects.equals(tableDescription.getCatalog(),
                 foreignKeyDescription.getFkCatalog())
                 && Objects.equals(tableDescription.getSchema(),
-                foreignKeyDescription.getFkSchema())
+                        foreignKeyDescription.getFkSchema())
                 && Objects.equals(tableDescription.getTableName(),
-                foreignKeyDescription.getFkTableName());
+                        foreignKeyDescription.getFkTableName());
     }
 
     private String getForeignKeyColumn(
@@ -275,11 +280,11 @@ public class SchemaTreeBuilder implements Runnable {
         }
         return isTableOwnerOfForeignKey(tableDescriptionBeingEvaluated,
                 foreignKey)
-                ? foreignKey.getFkColumnName() + " -> "
-                + getForeignKeyPKTableColumnNameQualified(
-                foreignKey)
-                : getForeignKeyFKTableColumnNameQualified(
-                foreignKey);
+                        ? foreignKey.getFkColumnName() + " -> "
+                        + getForeignKeyPKTableColumnNameQualified(
+                                foreignKey)
+                        : getForeignKeyFKTableColumnNameQualified(
+                                foreignKey);
     }
 
     private Map<String, Collection<String>> buildForeignKeyColumnsByForeignKeyNameMap(
@@ -287,8 +292,7 @@ public class SchemaTreeBuilder implements Runnable {
             final Collection<ForeignKeyDescription> foreignKeyDescriptions) {
         final Map<String, Collection<String>> fkColumnsByFK = new HashMap<>();
         for (final ForeignKeyDescription foreignKey : foreignKeyDescriptions) {
-            final String foreignKeyName =
-                    getForeignKeyNameQualified(foreignKey);
+            final String foreignKeyName = getForeignKeyNameQualified(foreignKey);
             Collection<String> fkColumns = fkColumnsByFK.get(foreignKeyName);
             if (fkColumns == null) {
                 fkColumns = new HashSet<>();

@@ -60,6 +60,11 @@ public class ITrySQL extends Application {
                 .toExternalForm(), 12);
         Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBI.ttf")
                 .toExternalForm(), 12);
+        // spezieller Icon-Font
+        Font.loadFont(getClass().getResource("/resources/fonts/iTryIcons-Roman.ttf")
+                .toExternalForm(), 12);
+        Font.loadFont(getClass().getResource("/resources/fonts/iTryIcons-Bold.ttf")
+                .toExternalForm(), 12);
     }
 
     @Override
@@ -107,10 +112,10 @@ public class ITrySQL extends Application {
     }
 
     /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
+     * The main() method is ignored in correctly deployed JavaFX application. main()
+     * serves only as fallback in case the application can not be launched through
+     * deployment artifacts, e.g., in IDEs with limited FX support. NetBeans ignores
+     * main().
      *
      * @param args the command line arguments
      */

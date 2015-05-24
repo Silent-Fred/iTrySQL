@@ -25,93 +25,22 @@
     -fx-background-insets: 0;
     -fx-background-radius: 16;
     -fx-padding: 0;
-    -fx-text-fill: -fx-text-base-color;
+    -fx-text-fill: #067db7;
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
+    -fx-font-family: 'iTryIcons';
+    -fx-font-weight: normal;
+    -fx-font-size: 36;
 }
 
-#toolbarExecute {
-    -fx-graphic: url('../images/execute.png');
-}
-#toolbarExecute:armed, #toolbarExecute:hover, #toolbarExecute:pressed {
-    -fx-graphic: url('../images/execute_active.png');
+.itry-tool-bar-button:armed, .itry-tool-bar-button:hover, .itry-tool-bar-button:pressed {
+    -fx-font-family: 'iTryIcons';
+    -fx-font-weight: bold;
 }
 
-#toolbarCommit {
-    -fx-graphic: url('../images/commit.png');
-}
-#toolbarCommit:armed, #toolbarCommit:hover, #toolbarCommit:pressed {
-    -fx-graphic: url('../images/commit_active.png');
-}
-
-#toolbarCheckpoint {
-    -fx-graphic: url('../images/checkpoint.png');
-}
-#toolbarCheckpoint:armed, #toolbarCheckpoint:hover, #toolbarCheckpoint:pressed {
-    -fx-graphic: url('../images/checkpoint_active.png');
-}
-
-#toolbarRollback {
-    -fx-graphic: url('../images/rollback.png');
-}
-#toolbarRollback:armed, #toolbarRollback:hover, #toolbarRollback:pressed {
-    -fx-graphic: url('../images/rollback_active.png');
-}
-
-#toolbarZoomIn {
-    -fx-graphic: url('../images/zoomin.png');
-}
-#toolbarZoomIn:armed, #toolbarZoomIn:hover, #toolbarZoomIn:pressed {
-    -fx-graphic: url('../images/zoomin_active.png');
-}
-
-#toolbarZoomOut {
-    -fx-graphic: url('../images/zoomout.png');
-}
-#toolbarZoomOut:armed, #toolbarZoomOut:hover, #toolbarZoomOut:pressed {
-    -fx-graphic: url('../images/zoomout_active.png');
-}
-
-#toolbarTutorialData {
-    -fx-graphic: url('../images/tutorialdata.png');
-}
-#toolbarTutorialData:armed, #toolbarTutorialData:hover, #toolbarTutorialData:pressed {
-    -fx-graphic: url('../images/tutorialdata_active.png');
-}
-
-#toolbarTabTableViewExport {
-    -fx-graphic: url('../images/export.png');
-}
-#toolbarTabTableViewExport:armed, #toolbarTabTableViewExport:hover, #toolbarTabTableViewExport:pressed {
-    -fx-graphic: url('../images/export_active.png');
-}
-
-#toolbarTabDbOutputExport {
-    -fx-graphic: url('../images/export.png');
-}
-#toolbarTabDbOutputExport:armed, #toolbarTabDbOutputExport:hover, #toolbarTabDbOutputExport:pressed {
-    -fx-graphic: url('../images/export_active.png');
-}
-
-#toolbarTabDbOutputClear {
-    -fx-graphic: url('../images/clear.png');
-}
-#toolbarTabDbOutputClear:armed, #toolbarTabDbOutputClear:hover, #toolbarTabDbOutputClear:pressed {
-    -fx-graphic: url('../images/clear_active.png');
-}
-
-#toolbarTabDbOutputZoomIn {
-    -fx-graphic: url('../images/zoomin.png');
-}
-#toolbarTabDbOutputZoomIn:armed, #toolbarTabDbOutputZoomIn:hover, #toolbarTabDbOutputZoomIn:pressed {
-    -fx-graphic: url('../images/zoomin_active.png');
-}
-
-#toolbarTabDbOutputZoomOut {
-    -fx-graphic: url('../images/zoomout.png');
-}
-#toolbarTabDbOutputZoomOut:armed, #toolbarTabDbOutputZoomOut:hover, #toolbarTabDbOutputZoomOut:pressed {
-    -fx-graphic: url('../images/zoomout_active.png');
+.tooltip {
+    -fx-font-family: 'System';
+    -fx-font-size: 12;
 }
 
 #permanentMessage {
@@ -162,7 +91,40 @@
     -fx-opacity: 0.4;
 }
 
-#schemaTreeView .tree-cell {
-    /* slightly higher indent for the schema tree */
-    -fx-indent: 20;
+#schemaTreeView .tree-cell .label {
+    -fx-font-family: 'iTryIcons';
+    -fx-font-size: 24;
+    -fx-padding: 0;
+}
+
+#schemaTreeView .schema-tree-database {
+    -fx-text-fill: #067db7;
+}
+
+#schemaTreeView .schema-tree-user {
+    -fx-text-fill: #067db7;
+}
+
+#schemaTreeView .schema-tree-table {
+    -fx-text-fill: #067db7;
+}
+
+#schemaTreeView .schema-tree-column {
+    -fx-text-fill: #067db7;
+}
+
+#schemaTreeView .schema-tree-primary-key {
+    -fx-text-fill: #8500AF;
+}
+
+#schemaTreeView .schema-tree-foreign-key-constraint {
+    -fx-text-fill: #005A7C;
+}
+
+#schemaTreeView .schema-tree-references {
+    -fx-text-fill: #005A7C;
+}
+
+#schemaTreeView .schema-tree-index {
+    -fx-text-fill: #C97100;
 }

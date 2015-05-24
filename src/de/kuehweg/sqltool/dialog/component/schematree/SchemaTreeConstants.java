@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,31 +23,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.images;
-
-import javafx.scene.image.Image;
+package de.kuehweg.sqltool.dialog.component.schematree;
 
 /**
- * Bilder, Icons,... ansprechbar machen
- * 
+ * Konstanten für die Strukturansicht
+ *
  * @author Michael Kühweg
  */
-public enum ImagePack {
+public class SchemaTreeConstants {
 
-	APP_ICON("AppIcon.png"),
-	MSG_ERROR("msg_error.png"),
-	MSG_INFO("msg_info.png"),
-	MSG_QUESTION("msg_question.png"),
-	MSG_WARNING("msg_warning.png");
-	private static final String resourcePath = "/resources/images/";
-	private final String imageName;
+    public static final String DATABASE = "d";
+    public static final String USER = "u";
+    public static final String TABLE = "t";
+    public static final String COLUMN = "c";
+    public static final String PRIMARY_KEY = "p";
+    public static final String FOREIGN_KEY_CONSTRAINT = "f";
+    public static final String REFERENCES = "r";
+    public static final String INDEX = "i";
 
-	private ImagePack(final String imageName) {
-		this.imageName = imageName;
-	}
-
-	public Image getAsImage() {
-		return new Image(this.getClass().getResourceAsStream(
-				resourcePath + imageName));
-	}
+    public static final String STYLE_DATABASE = "schema-tree-database";
+    public static final String STYLE_USER = "schema-tree-user";
+    public static final String STYLE_TABLE = "schema-tree-table";
+    public static final String STYLE_COLUMN = "schema-tree-column";
+    public static final String STYLE_PRIMARY_KEY = "schema-tree-primary-key";
+    public static final String STYLE_FOREIGN_KEY_CONSTRAINT = "schema-tree-foreign-key-constraint";
+    public static final String STYLE_REFERENCES = "schema-tree-references";
+    public static final String STYLE_INDEX = "schema-tree-index";
+    
+    private SchemaTreeConstants() {
+    }
 }
