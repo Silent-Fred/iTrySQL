@@ -115,47 +115,53 @@ public class SchemaTreeBuilder implements Runnable {
         for (final String type : schema.getTableTypes()) {
             final TreeItem<String> typeItem = new TreeItem<>(type);
             for (final TableDescription table : schema.getTablesByType(type)) {
-                Label label = new Label(SchemaTreeConstants.TABLE);
-                label.getStyleClass().add(SchemaTreeConstants.STYLE_TABLE);
-                final TreeItem<String> tableItem = new TreeItem<>(table.getTableName(),
-                        label);
-                if (table.getRemarks() != null
-                        && table.getRemarks().trim().length() > 0) {
-                    tableItem.getChildren().add(
-                            new TreeItem<>(table.getRemarks()));
-                }
-                tableItem.getChildren().addAll(getColumns(table));
-                tableItem.getChildren().addAll(getForeignKeys(table, table.
-                        getForeignKeys(), false));
-                tableItem.getChildren().addAll(getForeignKeys(table, table.
-                        getReferencedBy(), true));
-                tableItem.getChildren().addAll(getIndices(table));
-                typeItem.getChildren().add(tableItem);
+                typeItem.getChildren().add(buildTableItem(table));
             }
             typeItems.add(typeItem);
         }
         return typeItems;
     }
 
+    private TreeItem<String> buildTableItem(final TableDescription table) {
+        Label label = new Label(SchemaTreeConstants.TABLE);
+        label.getStyleClass().add(SchemaTreeConstants.STYLE_TABLE);
+        final TreeItem<String> tableItem = new TreeItem<>(table.getTableName(),
+                label);
+        if (table.getRemarks() != null
+                && table.getRemarks().trim().length() > 0) {
+            tableItem.getChildren().add(new TreeItem<>(table.getRemarks()));
+        }
+        tableItem.getChildren().addAll(getColumns(table));
+        tableItem.getChildren().addAll(
+                getForeignKeys(table, table.getForeignKeys(), false));
+        tableItem.getChildren().addAll(
+                getForeignKeys(table, table.getReferencedBy(), true));
+        tableItem.getChildren().addAll(getIndices(table));
+        return tableItem;
+    }
+
     private List<TreeItem<String>> getColumns(final TableDescription table) {
         final List<TreeItem<String>> columnItems = new ArrayList<>(table
                 .getColumns().size());
         for (final ColumnDescription column : table.getColumns()) {
-            Label label = new Label(
-                    table.getPrimaryKey().contains(column.getColumnName()) ? SchemaTreeConstants.PRIMARY_KEY : SchemaTreeConstants.COLUMN);
-            label.getStyleClass().add(table.getPrimaryKey().contains(column.
-                    getColumnName()) ? SchemaTreeConstants.STYLE_PRIMARY_KEY : SchemaTreeConstants.STYLE_COLUMN);
-            final TreeItem<String> columnItem = new TreeItem<>(column.getColumnName(),
-                    label);
-            columnItem.getChildren().add(
-                    new TreeItem<>(column.getType() + "("
-                            + column.getSize() + ")"));
-            if (column.getNullable() == Nullability.YES) {
-                columnItem.getChildren().add(new TreeItem<>("NULLABLE"));
-            }
-            columnItems.add(columnItem);
+            columnItems.add(buildColumnItem(table, column));
         }
         return columnItems;
+    }
+
+    private TreeItem<String> buildColumnItem(final TableDescription table,
+            final ColumnDescription column) {
+        Label label = new Label(
+                table.getPrimaryKey().contains(column.getColumnName()) ? SchemaTreeConstants.PRIMARY_KEY : SchemaTreeConstants.COLUMN);
+        label.getStyleClass().add(table.getPrimaryKey().contains(column.
+                getColumnName()) ? SchemaTreeConstants.STYLE_PRIMARY_KEY : SchemaTreeConstants.STYLE_COLUMN);
+        final TreeItem<String> columnItem = new TreeItem<>(column.getColumnName(), label);
+        columnItem.getChildren().add(new TreeItem<>(column.getType() + "(" + column.
+                getSize() + ")"));
+        if (column.getNullable() == Nullability.YES) {
+            columnItem.getChildren().add(new TreeItem<>("NULLABLE"));
+        }
+        return columnItem;
     }
 
     private List<TreeItem<String>> getIndices(final TableDescription table) {
