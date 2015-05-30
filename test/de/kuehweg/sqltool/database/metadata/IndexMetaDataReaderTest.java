@@ -93,25 +93,25 @@ public class IndexMetaDataReaderTest {
                 "SCHEMA-1", "TABLE-1", "IDX-NAME-1", "COLUMN-1", 0, true);
         IndexDescription sameIndex = new IndexDescription("CATALOG-1",
                 "SCHEMA-1", "TABLE-1", "IDX-NAME-1", "COLUMN-1", 1, false);
-        IndexDescription differentIndex = new IndexDescription("CATALOG-1",
+        IndexDescription differentCoumnIndex = new IndexDescription("CATALOG-1",
                 "SCHEMA-1", "TABLE-1", "IDX-NAME-1", "COLUMN-2", 0, true);
-        IndexDescription anotherDifferentIndex = new IndexDescription("CATALOG-1",
+        IndexDescription differentNameIndex = new IndexDescription("CATALOG-1",
                 "SCHEMA-1", "TABLE-1", "IDX-NAME-2", "COLUMN-1", 0, true);
-        IndexDescription yetAnotherDifferentIndex = new IndexDescription("CATALOG-1",
+        IndexDescription differentTableIndex = new IndexDescription("CATALOG-1",
                 "SCHEMA-1", "TABLE-2", "IDX-NAME-1", "COLUMN-1", 0, true);
-        IndexDescription yetAnotherWayDifferentIndex = new IndexDescription("CATALOG-1",
+        IndexDescription differentSchemaIndex = new IndexDescription("CATALOG-1",
                 "SCHEMA-2", "TABLE-1", "IDX-NAME-1", "COLUMN-1", 0, true);
         Set<IndexDescription> indices = new HashSet<>();
         indices.add(idx1);
         indices.add(sameIndex);
         assertEquals(1, indices.size());
-        indices.add(differentIndex);
+        indices.add(differentCoumnIndex);
         assertEquals(2, indices.size());
-        indices.add(anotherDifferentIndex);
+        indices.add(differentNameIndex);
         assertEquals(3, indices.size());
-        indices.add(yetAnotherDifferentIndex);
+        indices.add(differentTableIndex);
         assertEquals(4, indices.size());
-        indices.add(yetAnotherWayDifferentIndex);
+        indices.add(differentSchemaIndex);
         assertEquals(5, indices.size());
     }
 }

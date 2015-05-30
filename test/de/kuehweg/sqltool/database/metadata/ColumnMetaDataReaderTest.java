@@ -104,11 +104,11 @@ public class ColumnMetaDataReaderTest {
                 "SCHEMA-1", "TABLE-1",
                 "COLUMN-2", "TYPE-2", 2,
                 1, Nullability.MAYBE, "DEFAULT-2", "REMARK-2");
-        ColumnDescription anotherDifferentColumn = new ColumnDescription("CATALOG-1",
+        ColumnDescription differentTableColumn = new ColumnDescription("CATALOG-1",
                 "SCHEMA-1", "TABLE-2",
                 "COLUMN-1", "TYPE-2", 2,
                 1, Nullability.MAYBE, "DEFAULT-2", "REMARK-2");
-        ColumnDescription anotherVeryDifferentColumn = new ColumnDescription("CATALOG-1",
+        ColumnDescription differentSchemaColumn = new ColumnDescription("CATALOG-1",
                 "SCHEMA-2", "TABLE-1",
                 "COLUMN-1", "TYPE-2", 2,
                 1, Nullability.MAYBE, "DEFAULT-2", "REMARK-2");
@@ -118,9 +118,9 @@ public class ColumnMetaDataReaderTest {
         assertEquals(1, columns.size());
         columns.add(differentColumn);
         assertEquals(2, columns.size());
-        columns.add(anotherDifferentColumn);
+        columns.add(differentTableColumn);
         assertEquals(3, columns.size());
-        columns.add(anotherVeryDifferentColumn);
+        columns.add(differentSchemaColumn);
         assertEquals(4, columns.size());
     }
 }

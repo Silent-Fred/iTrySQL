@@ -92,7 +92,7 @@ public class TableMetaDataReaderTest {
                 "TYPE-1", "REMARK-2");
         TableDescription differentTable = new TableDescription("CATALOG-1", "SCHEMA-1", "TABLE-2",
                 "TYPE-1", "REMARK-1");
-        TableDescription anotherDifferentTable = new TableDescription("CATALOG-1", "SCHEMA-2", "TABLE-1",
+        TableDescription differentSchemaTable = new TableDescription("CATALOG-1", "SCHEMA-2", "TABLE-1",
                 "TYPE-1", "REMARK-1");
         Set<TableDescription> tables = new HashSet<>();
         tables.add(table1);
@@ -100,7 +100,7 @@ public class TableMetaDataReaderTest {
         assertEquals(1, tables.size());
         tables.add(differentTable);
         assertEquals(2, tables.size());
-        tables.add(anotherDifferentTable);
+        tables.add(differentSchemaTable);
         assertEquals(3, tables.size());
     }
 }

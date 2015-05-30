@@ -25,30 +25,51 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
- * Metadaten der Foreign Key Constraints aufbereiten
  *
  * @author Michael Kühweg
  */
-public class ForeignKeyMetaDataReader extends AbstractMetaDataReader<ForeignKeyColumnDescription> {
-
-    @Override
-    protected ForeignKeyColumnDescription buildDescription(ResultSet foreignKeyConstraint) throws SQLException {
-        ForeignKeyColumnDescription foreignKeyConstraintDescription
-                = new ForeignKeyColumnDescription(
-                        foreignKeyConstraint.getString("FKTABLE_CAT"),
-                        foreignKeyConstraint.getString("FKTABLE_SCHEM"),
-                        foreignKeyConstraint.getString("FKTABLE_NAME"),
-                        foreignKeyConstraint.getString("FKCOLUMN_NAME"),
-                        foreignKeyConstraint.getString("FK_NAME"),
-                        foreignKeyConstraint.getString("PKTABLE_CAT"),
-                        foreignKeyConstraint.getString("PKTABLE_SCHEM"),
-                        foreignKeyConstraint.getString("PKTABLE_NAME"),
-                        foreignKeyConstraint.getString("PKCOLUMN_NAME"));
-        return foreignKeyConstraintDescription;
+public class CatalogDescriptionTest {
+    
+    public CatalogDescriptionTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+    }
+    
+    @After
+    public void tearDown() {
     }
 
+    @Test
+    public void sorting() {
+        List<CatalogDescription> catalogs = new LinkedList<>();
+
+        catalogs.add(new CatalogDescription("CATALOG2"));
+        catalogs.add(new CatalogDescription("CATALOG1"));
+
+        Collections.sort(catalogs);
+
+        Assert.assertEquals("CATALOG1", catalogs.get(0).getCatalog());
+        Assert.assertEquals("CATALOG2", catalogs.get(1).getCatalog());
+    }
 }

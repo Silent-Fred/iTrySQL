@@ -47,8 +47,8 @@ public class TableDescription implements Comparable<TableDescription> {
     private final String remarks;
     private final Set<ColumnDescription> columns;
     private final Set<IndexDescription> indices;
-    private final Set<ForeignKeyDescription> foreignKeys;
-    private final Set<ForeignKeyDescription> referencedBy;
+    private final Set<ForeignKeyColumnDescription> foreignKeys;
+    private final Set<ForeignKeyColumnDescription> referencedBy;
     private final Set<PrimaryKeyColumnDescription> primaryKey;
 
     public TableDescription(final String catalog, final String schema,
@@ -113,29 +113,29 @@ public class TableDescription implements Comparable<TableDescription> {
         }
     }
 
-    public List<ForeignKeyDescription> getForeignKeys() {
-        final List<ForeignKeyDescription> result = new ArrayList<>(foreignKeys);
+    public List<ForeignKeyColumnDescription> getForeignKeys() {
+        final List<ForeignKeyColumnDescription> result = new ArrayList<>(foreignKeys);
         Collections.sort(result);
         return result;
     }
 
-    public void addForeignKeys(final Collection<ForeignKeyDescription> fks) {
+    public void addForeignKeys(final Collection<ForeignKeyColumnDescription> fks) {
         if (fks != null) {
-            for (final ForeignKeyDescription fk : fks) {
+            for (final ForeignKeyColumnDescription fk : fks) {
                 foreignKeys.add(fk);
             }
         }
     }
 
-    public List<ForeignKeyDescription> getReferencedBy() {
-        final List<ForeignKeyDescription> result = new ArrayList<>(referencedBy);
+    public List<ForeignKeyColumnDescription> getReferencedBy() {
+        final List<ForeignKeyColumnDescription> result = new ArrayList<>(referencedBy);
         Collections.sort(result);
         return result;
     }
 
-    public void addReferencedBy(final Collection<ForeignKeyDescription> refs) {
+    public void addReferencedBy(final Collection<ForeignKeyColumnDescription> refs) {
         if (refs != null) {
-            for (final ForeignKeyDescription ref : refs) {
+            for (final ForeignKeyColumnDescription ref : refs) {
                 referencedBy.add(ref);
             }
         }

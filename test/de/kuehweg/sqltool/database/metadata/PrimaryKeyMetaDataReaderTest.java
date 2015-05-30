@@ -90,25 +90,25 @@ public class PrimaryKeyMetaDataReaderTest {
                 "PK-NAME-1", "COLUMN-1");
         PrimaryKeyColumnDescription samePk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-1", "TABLE-1",
                 "PK-NAME-1", "COLUMN-1");
-        PrimaryKeyColumnDescription differentPk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-1", "TABLE-1",
+        PrimaryKeyColumnDescription differentColumnPk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-1", "TABLE-1",
                 "PK-NAME-1", "COLUMN-2");
-        PrimaryKeyColumnDescription anotherDifferentPk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-1", "TABLE-1",
+        PrimaryKeyColumnDescription differentNamePk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-1", "TABLE-1",
                 "PK-NAME-2", "COLUMN-1");
-        PrimaryKeyColumnDescription yetAnotherDifferentPk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-1", "TABLE-2",
+        PrimaryKeyColumnDescription differentTablePk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-1", "TABLE-2",
                 "PK-NAME-1", "COLUMN-1");
-        PrimaryKeyColumnDescription yetAnotherWayDifferentPk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-2", "TABLE-1",
+        PrimaryKeyColumnDescription differentSchemaPk = new PrimaryKeyColumnDescription("CATALOG-1", "SCHEMA-2", "TABLE-1",
                 "PK-NAME-1", "COLUMN-1");
         Set<PrimaryKeyColumnDescription> pks = new HashSet<>();
         pks.add(pk1);
         pks.add(samePk);
         assertEquals(1, pks.size());
-        pks.add(differentPk);
+        pks.add(differentColumnPk);
         assertEquals(2, pks.size());
-        pks.add(anotherDifferentPk);
+        pks.add(differentNamePk);
         assertEquals(3, pks.size());
-        pks.add(yetAnotherDifferentPk);
+        pks.add(differentTablePk);
         assertEquals(4, pks.size());
-        pks.add(yetAnotherWayDifferentPk);
+        pks.add(differentSchemaPk);
         assertEquals(5, pks.size());
     }
 }

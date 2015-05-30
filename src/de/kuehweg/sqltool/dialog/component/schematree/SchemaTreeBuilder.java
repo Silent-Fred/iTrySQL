@@ -29,7 +29,7 @@ import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.metadata.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.ColumnDescription;
 import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.ForeignKeyDescription;
+import de.kuehweg.sqltool.database.metadata.ForeignKeyColumnDescription;
 import de.kuehweg.sqltool.database.metadata.IndexDescription;
 import de.kuehweg.sqltool.database.metadata.Nullability;
 import de.kuehweg.sqltool.database.metadata.PrimaryKeyColumnDescription;
@@ -216,7 +216,7 @@ public class SchemaTreeBuilder implements Runnable {
 
     private List<TreeItem<String>> getReferentialIntegrityConstraints(
             final TableDescription tableDescription,
-            final Collection<ForeignKeyDescription> foreignKeyDescriptions,
+            final Collection<ForeignKeyColumnDescription> foreignKeyDescriptions,
             final boolean outsideView) {
         final List<TreeItem<String>> foreignKeyItems = new ArrayList<>(
                 foreignKeyDescriptions.size());
@@ -253,7 +253,7 @@ public class SchemaTreeBuilder implements Runnable {
     }
 
     private String getForeignKeyFKTableColumnNameQualified(
-            final ForeignKeyDescription foreignKeyDescription) {
+            final ForeignKeyColumnDescription foreignKeyDescription) {
         final StringBuilder qualifiedNameBuilder = new StringBuilder();
         if (foreignKeyDescription.isOutside()) {
             qualifiedNameBuilder.append(foreignKeyDescription.getFkCatalog()).
@@ -266,7 +266,7 @@ public class SchemaTreeBuilder implements Runnable {
     }
 
     private String getForeignKeyPKTableColumnNameQualified(
-            final ForeignKeyDescription foreignKeyDescription) {
+            final ForeignKeyColumnDescription foreignKeyDescription) {
         final StringBuilder qualifiedNameBuilder = new StringBuilder();
         if (foreignKeyDescription.isOutside()) {
             qualifiedNameBuilder.append(foreignKeyDescription.getPkCatalog()).
@@ -279,7 +279,7 @@ public class SchemaTreeBuilder implements Runnable {
     }
 
     private String getForeignKeyNameQualified(
-            final ForeignKeyDescription referencedByDescription) {
+            final ForeignKeyColumnDescription referencedByDescription) {
         final StringBuilder qualifiedNameBuilder = new StringBuilder();
         if (referencedByDescription.isOutside()) {
             qualifiedNameBuilder.append(referencedByDescription.getFkCatalog()).
@@ -292,7 +292,7 @@ public class SchemaTreeBuilder implements Runnable {
 
     private boolean isTableOwnerOfForeignKey(
             final TableDescription tableDescription,
-            final ForeignKeyDescription foreignKeyDescription) {
+            final ForeignKeyColumnDescription foreignKeyDescription) {
         return Objects.equals(tableDescription.getCatalog(),
                 foreignKeyDescription.getFkCatalog())
                 && Objects.equals(tableDescription.getSchema(),
@@ -303,7 +303,7 @@ public class SchemaTreeBuilder implements Runnable {
 
     private String getForeignKeyColumn(
             final TableDescription tableDescriptionBeingEvaluated,
-            final ForeignKeyDescription foreignKey) {
+            final ForeignKeyColumnDescription foreignKey) {
         if (foreignKey == null) {
             return "";
         }
@@ -318,9 +318,9 @@ public class SchemaTreeBuilder implements Runnable {
 
     private Map<String, Collection<String>> buildForeignKeyColumnsByForeignKeyNameMap(
             final TableDescription tableDescriptionBeingEvaluated,
-            final Collection<ForeignKeyDescription> foreignKeyDescriptions) {
+            final Collection<ForeignKeyColumnDescription> foreignKeyDescriptions) {
         final Map<String, Collection<String>> fkColumnsByFK = new HashMap<>();
-        for (final ForeignKeyDescription foreignKey : foreignKeyDescriptions) {
+        for (final ForeignKeyColumnDescription foreignKey : foreignKeyDescriptions) {
             final String foreignKeyName = getForeignKeyNameQualified(foreignKey);
             Collection<String> fkColumns = fkColumnsByFK.get(foreignKeyName);
             if (fkColumns == null) {
