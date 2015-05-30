@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
 import de.kuehweg.sqltool.database.metadata.ForeignKeyDescription;
 import de.kuehweg.sqltool.database.metadata.IndexDescription;
 import de.kuehweg.sqltool.database.metadata.Nullability;
+import de.kuehweg.sqltool.database.metadata.PrimaryKeyColumnDescription;
 import de.kuehweg.sqltool.database.metadata.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.TableDescription;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
@@ -133,9 +134,9 @@ public class SchemaTreeBuilder implements Runnable {
         }
         tableItem.getChildren().addAll(getColumns(table));
         tableItem.getChildren().addAll(
-                getForeignKeys(table, table.getForeignKeys(), false));
+                getReferentialIntegrityConstraints(table, table.getForeignKeys(), false));
         tableItem.getChildren().addAll(
-                getForeignKeys(table, table.getReferencedBy(), true));
+                getReferentialIntegrityConstraints(table, table.getReferencedBy(), true));
         tableItem.getChildren().addAll(getIndices(table));
         return tableItem;
     }
@@ -149,12 +150,34 @@ public class SchemaTreeBuilder implements Runnable {
         return columnItems;
     }
 
+    private String qualifiedColumnName(final ColumnDescription meta) {
+        return meta.getCatalog() + "." + meta.getSchema() + "." + meta.getTableName()
+                + "." + meta.getColumnName();
+    }
+
+    private String qualifiedColumnName(final PrimaryKeyColumnDescription meta) {
+        return meta.getCatalog() + "." + meta.getSchema() + "." + meta.getTableName()
+                + "." + meta.getColumnName();
+    }
+
+    private boolean isPrimaryKeyColumn(final TableDescription table,
+            final ColumnDescription column) {
+        for (PrimaryKeyColumnDescription pk : table.getPrimaryKey()) {
+            if (qualifiedColumnName(pk).equals(SchemaTreeBuilder.this.qualifiedColumnName(
+                    column))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private TreeItem<String> buildColumnItem(final TableDescription table,
             final ColumnDescription column) {
+        boolean pkColumn = isPrimaryKeyColumn(table, column);
         Label label = new Label(
-                table.getPrimaryKey().contains(column.getColumnName()) ? SchemaTreeConstants.PRIMARY_KEY : SchemaTreeConstants.COLUMN);
-        label.getStyleClass().add(table.getPrimaryKey().contains(column.
-                getColumnName()) ? SchemaTreeConstants.STYLE_PRIMARY_KEY : SchemaTreeConstants.STYLE_COLUMN);
+                pkColumn ? SchemaTreeConstants.PRIMARY_KEY : SchemaTreeConstants.COLUMN);
+        label.getStyleClass().add(
+                pkColumn ? SchemaTreeConstants.STYLE_PRIMARY_KEY : SchemaTreeConstants.STYLE_COLUMN);
         final TreeItem<String> columnItem = new TreeItem<>(column.getColumnName(), label);
         columnItem.getChildren().add(new TreeItem<>(column.getType() + "(" + column.
                 getSize() + ")"));
@@ -191,7 +214,7 @@ public class SchemaTreeBuilder implements Runnable {
         return indexCollection;
     }
 
-    private List<TreeItem<String>> getForeignKeys(
+    private List<TreeItem<String>> getReferentialIntegrityConstraints(
             final TableDescription tableDescription,
             final Collection<ForeignKeyDescription> foreignKeyDescriptions,
             final boolean outsideView) {

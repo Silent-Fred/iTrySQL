@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.schematree;
+package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
-import java.sql.Connection;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeView;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der Metadaten
- * vergleichsweise lang dauern kann (könnte) und die Oberfläche zwischenzeitlich nicht
- * blockiert sein soll.
+ * Metadaten der Primary Key Constraints aufbereiten
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeBuilderTask extends Task<Void> {
-
-    private final Connection connection;
-    private final TreeView<String> treeToUpdate;
-
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView<String> treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
-    }
+public class PrimaryKeyMetaDataReader extends AbstractMetaDataReader<PrimaryKeyColumnDescription> {
 
     @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = connection != null ? new MetaDataReader().
-                readMetaData(connection) : new DatabaseDescription();
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
+    protected PrimaryKeyColumnDescription buildDescription(ResultSet primaryKeyConstraint) throws SQLException {
+        PrimaryKeyColumnDescription primaryKeyConstraintDescription
+                = new PrimaryKeyColumnDescription(
+                        primaryKeyConstraint.getString("TABLE_CAT"),
+                        primaryKeyConstraint.getString("TABLE_SCHEM"),
+                        primaryKeyConstraint.getString("TABLE_NAME"),
+                        primaryKeyConstraint.getString("PK_NAME"),
+                        primaryKeyConstraint.getString("COLUMN_NAME"));
+        return primaryKeyConstraintDescription;
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,25 @@ package de.kuehweg.sqltool.database.metadata;
 import java.util.Objects;
 
 /**
- * Beschreibung der Index-Metadaten.
+ * Beschreibung der Primärschlüssel-Metadaten
  *
  * @author Michael Kühweg
  */
-public class IndexDescription implements Comparable<IndexDescription> {
+public class PrimaryKeyColumnDescription {
 
     private final String catalog;
     private final String schema;
     private final String tableName;
-    private final String indexName;
+    private final String primaryKeyName;
     private final String columnName;
-    private final int ordinalPosition;
-    private final boolean nonUnique;
 
-    public IndexDescription(final String catalog, final String schema,
-            final String tableName, final String indexName,
-            final String columnName, final int ordinalPosition,
-            final boolean nonUnique) {
+    public PrimaryKeyColumnDescription(String catalog, String schema, String tableName,
+            String primaryKeyName, String columnName) {
         this.catalog = catalog == null ? "" : catalog;
         this.schema = schema == null ? "" : schema;
         this.tableName = tableName == null ? "" : tableName;
-        this.indexName = indexName == null ? "" : indexName;
+        this.primaryKeyName = primaryKeyName == null ? "" : primaryKeyName;
         this.columnName = columnName == null ? "" : columnName;
-        this.ordinalPosition = ordinalPosition;
-        this.nonUnique = nonUnique;
     }
 
     public String getCatalog() {
@@ -67,72 +61,47 @@ public class IndexDescription implements Comparable<IndexDescription> {
         return tableName;
     }
 
-    public String getIndexName() {
-        return indexName;
+    public String getPrimaryKeyName() {
+        return primaryKeyName;
     }
 
     public String getColumnName() {
         return columnName;
     }
 
-    public int getOrdinalPosition() {
-        return ordinalPosition;
-    }
-
-    public boolean isNonUnique() {
-        return nonUnique;
-    }
-
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 13 * hash + Objects.hashCode(catalog);
-        hash = 13 * hash + Objects.hashCode(schema);
-        hash = 13 * hash + Objects.hashCode(tableName);
-        hash = 13 * hash + Objects.hashCode(indexName);
-        hash = 13 * hash + Objects.hashCode(columnName);
+        hash = 97 * hash + Objects.hashCode(this.catalog);
+        hash = 97 * hash + Objects.hashCode(this.schema);
+        hash = 97 * hash + Objects.hashCode(this.tableName);
+        hash = 97 * hash + Objects.hashCode(this.primaryKeyName);
+        hash = 97 * hash + Objects.hashCode(this.columnName);
         return hash;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IndexDescription other = (IndexDescription) obj;
-        if (!Objects.equals(catalog, other.catalog)) {
+        final PrimaryKeyColumnDescription other = (PrimaryKeyColumnDescription) obj;
+        if (!Objects.equals(this.catalog, other.catalog)) {
             return false;
         }
-        if (!Objects.equals(schema, other.schema)) {
+        if (!Objects.equals(this.schema, other.schema)) {
             return false;
         }
-        if (!Objects.equals(tableName, other.tableName)) {
+        if (!Objects.equals(this.tableName, other.tableName)) {
             return false;
         }
-        if (!Objects.equals(indexName, other.indexName)) {
+        if (!Objects.equals(this.primaryKeyName, other.primaryKeyName)) {
             return false;
         }
-        return Objects.equals(columnName, other.columnName);
+        return Objects.equals(this.columnName, other.columnName);
     }
 
-    @Override
-    public int compareTo(final IndexDescription other) {
-        int result = catalog.compareTo(other.catalog);
-        if (result == 0) {
-            result = schema.compareTo(other.schema);
-        }
-        if (result == 0) {
-            result = tableName.compareTo(other.tableName);
-        }
-        if (result == 0) {
-            result = indexName.compareTo(other.indexName);
-        }
-        if (result == 0) {
-            result = ordinalPosition - other.ordinalPosition;
-        }
-        return result;
-    }
 }

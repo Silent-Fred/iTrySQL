@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,9 +57,9 @@ public class CatalogDescription implements Comparable<CatalogDescription> {
 		return result;
 	}
 
-	public void addSchemas(final SchemaDescription... schs) {
-		for (final SchemaDescription schema : schs) {
-			schemas.add(schema);
+	public void addSchemas(final SchemaDescription... schemas) {
+		for (final SchemaDescription schema : schemas) {
+			this.schemas.add(schema);
 		}
 	}
 
@@ -79,10 +79,7 @@ public class CatalogDescription implements Comparable<CatalogDescription> {
 			return false;
 		}
 		final CatalogDescription other = (CatalogDescription) obj;
-		if (!Objects.equals(catalog, other.catalog)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(catalog, other.catalog);
 	}
 
 	@Override

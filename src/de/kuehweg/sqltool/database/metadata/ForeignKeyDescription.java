@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Michael Kühweg
+ * Copyright (c) 2014-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -159,10 +159,7 @@ public class ForeignKeyDescription implements Comparable<ForeignKeyDescription> 
 		if (!Objects.equals(this.fkTableName, other.fkTableName)) {
 			return false;
 		}
-		if (!Objects.equals(this.fkColumnName, other.fkColumnName)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.fkColumnName, other.fkColumnName);
 	}
 
 	@Override

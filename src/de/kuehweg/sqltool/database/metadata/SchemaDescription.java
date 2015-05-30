@@ -91,10 +91,7 @@ public class SchemaDescription implements Comparable<SchemaDescription> {
 		if (!Objects.equals(catalog, other.catalog)) {
 			return false;
 		}
-		if (!Objects.equals(schema, other.schema)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(schema, other.schema);
 	}
 
 	@Override

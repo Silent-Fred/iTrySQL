@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.schematree;
+package de.kuehweg.sqltool.database.execution.fake;
 
-import de.kuehweg.sqltool.database.metadata.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
-import java.sql.Connection;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeView;
+import java.sql.SQLException;
 
 /**
- * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der Metadaten
- * vergleichsweise lang dauern kann (könnte) und die Oberfläche zwischenzeitlich nicht
- * blockiert sein soll.
+ * ResultSet zum Test der Metadatenaufbereitung
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeBuilderTask extends Task<Void> {
+public class ResultSetStubForMetaDataReader extends FakeResultSet {
 
-    private final Connection connection;
-    private final TreeView<String> treeToUpdate;
+    public static final String PREFIX_GET = "CALLED-GET-";
 
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView<String> treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
+    private static final String[] COLUMN_LABELS_RETURNING_INT
+            = new String[]{"COLUMN_SIZE", "DECIMAL_DIGITS", "ORDINAL_POSITION"};
+
+    private int count;
+
+    public ResultSetStubForMetaDataReader(int count) {
+        this.count = count;
     }
 
     @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = connection != null ? new MetaDataReader().
-                readMetaData(connection) : new DatabaseDescription();
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
+    public boolean next() throws SQLException {
+        return --count >= 0;
     }
+
+    @Override
+    public String getString(String columnLabel) throws SQLException {
+        return PREFIX_GET + String.class.getSimpleName() + columnLabel;
+    }
+
+    @Override
+    public int getInt(String columnLabel) throws SQLException {
+        for (int i = 0; i < COLUMN_LABELS_RETURNING_INT.length; i++) {
+            if (COLUMN_LABELS_RETURNING_INT[i].equals(columnLabel)) {
+                return i;
+            }
+        }
+        return 0xC01;
+    }
+
+    @Override
+    public boolean getBoolean(String columnLabel) throws SQLException {
+        return true; // Hauptsache nicht Defaultwert für Boolean ;-)
+    }
+
 }
