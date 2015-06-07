@@ -46,7 +46,7 @@ import javafx.scene.control.TextArea;
 @ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR)
 public class QueryResultTextView implements ExecutionTracker {
 
-    private static final int MAX_DBOUTPUT = 256 * 1024;
+    private static final int MAX_DBOUTPUT_LENGTH = 256 * 1024;
 
     private static final String TRUNCATED = "[...]";
 
@@ -206,12 +206,12 @@ public class QueryResultTextView implements ExecutionTracker {
         } else if (appendix == null) {
             newContent = currentContent; // not null ist durch den ersten Zweig schon geklärt
         } else {
-            if (appendix.length() >= MAX_DBOUTPUT) {
+            if (appendix.length() >= MAX_DBOUTPUT_LENGTH) {
                 newContent = TRUNCATED
-                        + appendix.substring(appendix.length() - MAX_DBOUTPUT);
-            } else if (currentContent.length() + appendix.length() >= MAX_DBOUTPUT) {
+                        + appendix.substring(appendix.length() - MAX_DBOUTPUT_LENGTH);
+            } else if (currentContent.length() + appendix.length() >= MAX_DBOUTPUT_LENGTH) {
                 newContent = TRUNCATED + currentContent.substring(currentContent.length()
-                        - (MAX_DBOUTPUT - appendix.length())) + appendix;
+                        - (MAX_DBOUTPUT_LENGTH - appendix.length())) + appendix;
             } else {
                 newContent = currentContent + appendix;
             }

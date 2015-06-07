@@ -25,6 +25,8 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import de.kuehweg.sqltool.database.metadata.description.PrimaryKeyColumnDescription;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,18 +35,20 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class PrimaryKeyMetaDataReader extends AbstractMetaDataReader<PrimaryKeyColumnDescription> {
+public class PrimaryKeyMetaDataReader extends AbstractMetaDataReader {
+
+    public PrimaryKeyMetaDataReader(DatabaseDescription root) {
+        super(root);
+    }
 
     @Override
-    protected PrimaryKeyColumnDescription buildDescription(ResultSet primaryKeyConstraint) throws SQLException {
-        PrimaryKeyColumnDescription primaryKeyConstraintDescription
-                = new PrimaryKeyColumnDescription(
-                        primaryKeyConstraint.getString("TABLE_CAT"),
-                        primaryKeyConstraint.getString("TABLE_SCHEM"),
-                        primaryKeyConstraint.getString("TABLE_NAME"),
-                        primaryKeyConstraint.getString("PK_NAME"),
-                        primaryKeyConstraint.getString("COLUMN_NAME"));
-        return primaryKeyConstraintDescription;
+    protected void readAndAddDescription(ResultSet primaryKeyConstraint) throws SQLException {
+        findParent(primaryKeyConstraint.getString("TABLE_CAT"),
+                primaryKeyConstraint.getString("TABLE_SCHEM"),
+                primaryKeyConstraint.getString("TABLE_NAME")).adoptOrphan(
+                        new PrimaryKeyColumnDescription(
+                                primaryKeyConstraint.getString("PK_NAME"),
+                                primaryKeyConstraint.getString("COLUMN_NAME")));
     }
 
 }

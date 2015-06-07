@@ -41,8 +41,17 @@ public class ResultSetStubForMetaDataReader extends FakeResultSet {
 
     private int count;
 
+    private String columnLabelToAppendAutoIncrease;
+    private int autoIncrease = 1;
+
     public ResultSetStubForMetaDataReader(int count) {
+        this(count, null);
+    }
+
+    public ResultSetStubForMetaDataReader(int count,
+            String columnLabelToAppendAutoIncrease) {
         this.count = count;
+        this.columnLabelToAppendAutoIncrease = columnLabelToAppendAutoIncrease;
     }
 
     @Override
@@ -52,7 +61,9 @@ public class ResultSetStubForMetaDataReader extends FakeResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        return PREFIX_GET + String.class.getSimpleName() + columnLabel;
+        return PREFIX_GET + String.class.getSimpleName() + columnLabel
+                + (columnLabelToAppendAutoIncrease != null
+                && columnLabelToAppendAutoIncrease.equals(columnLabel) ? autoIncrease++ : "");
     }
 
     @Override

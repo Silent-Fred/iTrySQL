@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
+import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -62,39 +63,24 @@ public class SchemaDescriptionTest {
 
     @Test
     public void tableTypes() {
-        SchemaDescription schema = new SchemaDescription("CATALOG", "SCHEMA");
+        DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
-        schema.addTables(new TableDescription("CATALOG", "SCHEMA", "TABLE-1",
-                "TYPE-1", "REMARK-1"));
-        schema.addTables(new TableDescription("CATALOG", "SCHEMA", "TABLE-2",
-                "TYPE-1", "REMARK-1"));
-        schema.addTables(new TableDescription("CATALOG", "SCHEMA", "TABLE-3",
-                "TYPE-2", "REMARK-1"));
+        CatalogDescription catalog = new CatalogDescription("CATALOG");
+        db.adoptOrphan(catalog);
+
+        SchemaDescription schema = new SchemaDescription("SCHEMA");
+        catalog.adoptOrphan(schema);
+
+        TableDescription table11 = new TableDescription("TABLE-1", "TYPE-1", "REMARKS");
+        TableDescription table21 = new TableDescription("TABLE-2", "TYPE-1", "REMARKS");
+        TableDescription table32 = new TableDescription("TABLE-3", "TYPE-2", "REMARKS");
+
+        schema.adoptOrphan(table11);
+        schema.adoptOrphan(table21);
+        schema.adoptOrphan(table32);
 
         Assert.assertEquals(2, schema.getTableTypes().size());
         Assert.assertEquals(2, schema.getTablesByType("TYPE-1").size());
         Assert.assertEquals(1, schema.getTablesByType("TYPE-2").size());
-    }
-
-    @Test
-    public void sorting() {
-        List<SchemaDescription> schemas = new LinkedList<>();
-
-        schemas.add(new SchemaDescription("CATALOG2", "SCHEMA1"));
-        schemas.add(new SchemaDescription("CATALOG1", "SCHEMA2"));
-        schemas.add(new SchemaDescription("CATALOG1", "SCHEMA1"));
-        schemas.add(new SchemaDescription("CATALOG2", "SCHEMA2"));
-
-        Collections.sort(schemas);
-
-        Assert.assertEquals("CATALOG1", schemas.get(0).getCatalog());
-        Assert.assertEquals("CATALOG1", schemas.get(1).getCatalog());
-        Assert.assertEquals("CATALOG2", schemas.get(2).getCatalog());
-        Assert.assertEquals("CATALOG2", schemas.get(3).getCatalog());
-
-        Assert.assertEquals("SCHEMA1", schemas.get(0).getSchema());
-        Assert.assertEquals("SCHEMA2", schemas.get(1).getSchema());
-        Assert.assertEquals("SCHEMA1", schemas.get(2).getSchema());
-        Assert.assertEquals("SCHEMA2", schemas.get(3).getSchema());
     }
 }

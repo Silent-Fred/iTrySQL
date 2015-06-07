@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.schematree;
+package de.kuehweg.sqltool.database.metadata.description;
 
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
-import java.sql.Connection;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeView;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der Metadaten
- * vergleichsweise lang dauern kann (könnte) und die Oberfläche zwischenzeitlich nicht
- * blockiert sein soll.
+ * Beschreibung der catalog Metadaten. Ein catalog enthält Schemata.
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeBuilderTask extends Task<Void> {
+public class CatalogDescription extends DatabaseObjectDescription {
 
-    private final Connection connection;
-    private final TreeView<String> treeToUpdate;
+    private final Set<SchemaDescription> schemas;
 
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView<String> treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
+    public CatalogDescription(final String catalog) {
+        super(catalog);
+        schemas = new HashSet<>();
+    }
+
+    /**
+     * Schemas im Catalog, sortiert nach Schemaname.
+     *
+     * @return
+     */
+    public List<SchemaDescription> getSchemas() {
+        final List<SchemaDescription> result = new ArrayList<>(schemas);
+        Collections.sort(result);
+        return result;
+    }
+
+    private void addSchemas(final SchemaDescription... schemas) {
+        for (final SchemaDescription schema : schemas) {
+            this.schemas.add(schema);
+        }
     }
 
     @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = connection != null ? new MetaDataReader().
-                readMetaData(connection) : new DatabaseDescription();
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
+    protected void appendChild(DatabaseObjectDescription child) {
+        if (SchemaDescription.class.isAssignableFrom(child.getClass())) {
+            addSchemas((SchemaDescription) child);
+        } else {
+            super.appendChild(child);
+        }
     }
 }

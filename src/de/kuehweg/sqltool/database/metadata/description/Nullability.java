@@ -23,38 +23,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.schematree;
-
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
-import java.sql.Connection;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeView;
+package de.kuehweg.sqltool.database.metadata.description;
 
 /**
- * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der Metadaten
- * vergleichsweise lang dauern kann (könnte) und die Oberfläche zwischenzeitlich nicht
- * blockiert sein soll.
- *
+ * Mögliche Werte für die Nullability von Tabellenspalten
+ * 
  * @author Michael Kühweg
  */
-public class SchemaTreeBuilderTask extends Task<Void> {
+public enum Nullability {
 
-    private final Connection connection;
-    private final TreeView<String> treeToUpdate;
-
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView<String> treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
-    }
-
-    @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = connection != null ? new MetaDataReader().
-                readMetaData(connection) : new DatabaseDescription();
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
-    }
+	YES, NO, MAYBE;
 }

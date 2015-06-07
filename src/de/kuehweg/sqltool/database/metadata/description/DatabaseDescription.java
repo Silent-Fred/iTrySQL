@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,45 +23,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.metadata;
+package de.kuehweg.sqltool.database.metadata.description;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+
 /**
  * Beschreibung der Metadaten einer Datenbank. Die Datenbank enthält catalogs.
- * 
+ *
  * @author Michael Kühweg
  */
-public class DatabaseDescription {
+public class DatabaseDescription extends DatabaseObjectDescription {
 
-	private final String name;
 	private final String dbProductName;
 	private final String dbProductVersion;
 	private final Set<CatalogDescription> catalogs;
 
 	public DatabaseDescription() {
-		this.name = DialogDictionary.MSG_NO_DB_CONNECTION_FOR_SCHEMA_TREE_VIEW.toString();
-		this.dbProductName = "";
-		this.dbProductVersion = "";
+		super(DialogDictionary.MSG_NO_DB_CONNECTION_FOR_SCHEMA_TREE_VIEW
+				.toString());
+		dbProductName = "";
+		dbProductVersion = "";
 		catalogs = new HashSet<>();
 	}
 
 	public DatabaseDescription(final String name, final String dbProductName,
 			final String dbProductVersion) {
-		this.name = name == null ? "" : name;
+		super(name);
 		this.dbProductName = dbProductName == null ? "" : dbProductName;
 		this.dbProductVersion = dbProductVersion == null ? ""
 				: dbProductVersion;
 		catalogs = new HashSet<>();
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public String getDbProductName() {
@@ -78,9 +75,18 @@ public class DatabaseDescription {
 		return result;
 	}
 
-	public void addCatalogs(final CatalogDescription... cats) {
+	private void addCatalogs(final CatalogDescription... cats) {
 		for (final CatalogDescription catalog : cats) {
 			catalogs.add(catalog);
+		}
+	}
+
+	@Override
+	protected void appendChild(final DatabaseObjectDescription child) {
+		if (CatalogDescription.class.isAssignableFrom(child.getClass())) {
+			addCatalogs((CatalogDescription) child);
+		} else {
+			super.appendChild(child);
 		}
 	}
 }

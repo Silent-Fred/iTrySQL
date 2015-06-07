@@ -25,6 +25,8 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import de.kuehweg.sqltool.database.metadata.description.IndexColumnDescription;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,18 +35,20 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class IndexMetaDataReader extends AbstractMetaDataReader<IndexDescription> {
+public class IndexMetaDataReader extends AbstractMetaDataReader {
+
+    public IndexMetaDataReader(DatabaseDescription root) {
+        super(root);
+    }
 
     @Override
-    protected IndexDescription buildDescription(final ResultSet index) throws SQLException {
-        final IndexDescription indexDescription = new IndexDescription(
-                index.getString("TABLE_CAT"),
+    protected void readAndAddDescription(final ResultSet index) throws SQLException {
+        findParent(index.getString("TABLE_CAT"),
                 index.getString("TABLE_SCHEM"),
-                index.getString("TABLE_NAME"),
-                index.getString("INDEX_NAME"),
-                index.getString("COLUMN_NAME"),
-                index.getInt("ORDINAL_POSITION"),
-                index.getBoolean("NON_UNIQUE"));
-        return indexDescription;
+                index.getString("TABLE_NAME")).adoptOrphan(new IndexColumnDescription(
+                                index.getString("INDEX_NAME"),
+                                index.getString("COLUMN_NAME"),
+                                index.getInt("ORDINAL_POSITION"),
+                                index.getBoolean("NON_UNIQUE")));
     }
 }

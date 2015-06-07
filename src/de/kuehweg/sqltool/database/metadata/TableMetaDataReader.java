@@ -25,6 +25,8 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import de.kuehweg.sqltool.database.metadata.description.TableDescription;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,16 +35,18 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class TableMetaDataReader extends AbstractMetaDataReader<TableDescription>{
+public class TableMetaDataReader extends AbstractMetaDataReader {
+
+    public TableMetaDataReader(DatabaseDescription root) {
+        super(root);
+    }
 
     @Override
-    protected TableDescription buildDescription(final ResultSet table) throws SQLException {
-        final TableDescription tableDescription = new TableDescription(
-                table.getString("TABLE_CAT"),
-                table.getString("TABLE_SCHEM"),
-                table.getString("TABLE_NAME"),
-                table.getString("TABLE_TYPE"),
-                table.getString("REMARKS"));
-        return tableDescription;
+    protected void readAndAddDescription(final ResultSet table) throws SQLException {
+        findParent(table.getString("TABLE_CAT"), table.getString("TABLE_SCHEM")).
+                adoptOrphan(new TableDescription(
+                                table.getString("TABLE_NAME"),
+                                table.getString("TABLE_TYPE"),
+                                table.getString("REMARKS")));
     }
 }

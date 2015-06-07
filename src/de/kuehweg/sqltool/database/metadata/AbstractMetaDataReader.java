@@ -27,25 +27,87 @@ package de.kuehweg.sqltool.database.metadata;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.LinkedList;
+
+import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
+import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 
 /**
  * Abstrakte Basisklasse für die Metadaten-Aufbereiter
  *
  * @author Michael Kühweg
- * @param <DESCRIPTION> Die Klasse mit den aufbereiteten Metadaten
  */
-public abstract class AbstractMetaDataReader<DESCRIPTION> {
+public abstract class AbstractMetaDataReader {
 
-    public Collection<DESCRIPTION> buildDescriptions(final ResultSet metadata) throws SQLException {
-        Collection<DESCRIPTION> descriptions = new LinkedList<>();
-        while (metadata.next()) {
-            descriptions.add(buildDescription(metadata));
-        }
-        return descriptions;
-    }
+	private final DatabaseDescription root;
 
-    protected abstract DESCRIPTION buildDescription(final ResultSet metadata) throws SQLException;
+	public AbstractMetaDataReader(final DatabaseDescription root) {
+		this.root = root;
+	}
+
+	public void readAndAddDescriptions(final ResultSet metadata)
+			throws SQLException {
+		while (metadata.next()) {
+			readAndAddDescription(metadata);
+		}
+	}
+
+	public DatabaseDescription findParent() {
+		return root;
+	}
+
+	public CatalogDescription findParent(final String catalogName) {
+		return findCatalog(catalogName);
+	}
+
+	public SchemaDescription findParent(final String catalogName,
+			final String schemaName) {
+		return findSchema(schemaName, findCatalog(catalogName));
+	}
+
+	public TableDescription findParent(final String catalogName,
+			final String schemaName, final String tableName) {
+		return findTable(tableName,
+				findSchema(schemaName, findCatalog(catalogName)));
+	}
+
+	private CatalogDescription findCatalog(final String catalogName) {
+		if (catalogName != null) {
+			for (final CatalogDescription catalog : root.getCatalogs()) {
+				if (catalog.getName().equals(catalogName)) {
+					return catalog;
+				}
+			}
+		}
+		return null;
+	}
+
+	private SchemaDescription findSchema(final String schemaName,
+			final CatalogDescription catalog) {
+		if (schemaName != null && catalog != null) {
+			for (final SchemaDescription schema : catalog.getSchemas()) {
+				if (schema.getName().equals(schemaName)) {
+					return schema;
+				}
+			}
+		}
+		return null;
+	}
+
+	private TableDescription findTable(final String tableName,
+			final SchemaDescription schema) {
+		if (tableName != null && schema != null) {
+			for (final TableDescription table : schema.getTables()) {
+				if (table.getName().equals(tableName)) {
+					return table;
+				}
+			}
+		}
+		return null;
+	}
+
+	protected abstract void readAndAddDescription(final ResultSet metadata)
+			throws SQLException;
 
 }

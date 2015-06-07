@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.schematree;
+package de.kuehweg.sqltool.database.metadata.description;
 
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
-import java.sql.Connection;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeView;
+import java.util.Comparator;
 
 /**
- * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der Metadaten
- * vergleichsweise lang dauern kann (könnte) und die Oberfläche zwischenzeitlich nicht
- * blockiert sein soll.
+ * Comparator mit dem ForeignKeyColumnDescriptions nach dem Namen der fkColumn sortiert
+ * werden können.
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeBuilderTask extends Task<Void> {
-
-    private final Connection connection;
-    private final TreeView<String> treeToUpdate;
-
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView<String> treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
-    }
+public class ForeignKeyColumnByColumnName implements Comparator<ForeignKeyColumnDescription> {
 
     @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = connection != null ? new MetaDataReader().
-                readMetaData(connection) : new DatabaseDescription();
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
+    public int compare(ForeignKeyColumnDescription o1, ForeignKeyColumnDescription o2) {
+        return o1.getInsideColumnName().compareTo(o2.getInsideColumnName());
     }
+
 }

@@ -25,6 +25,9 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.Nullability;
+import de.kuehweg.sqltool.database.metadata.description.ColumnDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -33,22 +36,24 @@ import java.sql.SQLException;
  *
  * @author Michael Kühweg
  */
-public class ColumnMetaDataReader extends AbstractMetaDataReader<ColumnDescription> {
+public class ColumnMetaDataReader extends AbstractMetaDataReader {
+
+    public ColumnMetaDataReader(DatabaseDescription root) {
+        super(root);
+    }
 
     @Override
-    protected ColumnDescription buildDescription(final ResultSet column) throws SQLException {
-        final ColumnDescription columnDescription = new ColumnDescription(
-                column.getString("TABLE_CAT"),
+    protected void readAndAddDescription(final ResultSet column) throws SQLException {
+        findParent(column.getString("TABLE_CAT"),
                 column.getString("TABLE_SCHEM"),
-                column.getString("TABLE_NAME"),
-                column.getString("COLUMN_NAME"),
-                column.getString("TYPE_NAME"),
-                column.getInt("COLUMN_SIZE"),
-                column.getInt("DECIMAL_DIGITS"),
-                nullabilityOnColumn(column.getString("IS_NULLABLE")),
-                column.getString("COLUMN_DEF"),
-                column.getString("REMARKS"));
-        return columnDescription;
+                column.getString("TABLE_NAME")).adoptOrphan(new ColumnDescription(
+                                column.getString("COLUMN_NAME"),
+                                column.getString("TYPE_NAME"),
+                                column.getInt("COLUMN_SIZE"),
+                                column.getInt("DECIMAL_DIGITS"),
+                                nullabilityOnColumn(column.getString("IS_NULLABLE")),
+                                column.getString("COLUMN_DEF"),
+                                column.getString("REMARKS")));
     }
 
     private Nullability nullabilityOnColumn(final String nullableMeta) {

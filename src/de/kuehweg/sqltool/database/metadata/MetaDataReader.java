@@ -29,12 +29,13 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
+import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 
 /**
  * Klasse zum Auslesen der Metadaten einer Datenbank.
@@ -43,142 +44,123 @@ import java.util.logging.Logger;
  */
 public class MetaDataReader {
 
-    /**
-     * Liest die Metadaten der übergebenen Datenbankverbindung aus und liefert sie in
-     * aufbereiteter Form als DatabaseDescription zurück.
-     *
-     * @param connection
-     * @return
-     */
-    public DatabaseDescription readMetaData(final Connection connection) {
-        DatabaseDescription db;
-        try {
-            final DatabaseMetaData metaData = connection.getMetaData();
-            final String dbName = metaData.getUserName() + "@"
-                    + metaData.getURL();
-            final String dbProductName = metaData.getDatabaseProductName();
-            final String dbProductVersion = metaData
-                    .getDatabaseProductVersion();
-            db = new DatabaseDescription(dbName, dbProductName,
-                    dbProductVersion);
+	/**
+	 * Liest die Metadaten der übergebenen Datenbankverbindung aus und liefert
+	 * sie in aufbereiteter Form als DatabaseDescription zurück.
+	 *
+	 * @param connection
+	 * @return
+	 */
+	public DatabaseDescription readMetaData(final Connection connection) {
+		DatabaseDescription db;
+		try {
+			final DatabaseMetaData metaData = connection.getMetaData();
+			final String dbName = metaData.getUserName() + "@"
+					+ metaData.getURL();
+			final String dbProductName = metaData.getDatabaseProductName();
+			final String dbProductVersion = metaData
+					.getDatabaseProductVersion();
+			db = new DatabaseDescription(dbName, dbProductName,
+					dbProductVersion);
 
-            final Collection<TableDescription> tableDescriptions
-                    = readCompleteTableDescriptions(connection);
+			readCatalogDescriptions(db, connection);
+			readSchemaDescriptions(db, connection);
+			readTableDescriptions(db, connection);
+			readTableSubObjects(db, connection);
 
-            db.addCatalogs(buildCatalogDescriptionsFromSchemaDescriptions(
-                    buildSchemaDescriptionsFromTableDescriptions(tableDescriptions)).
-                    toArray(new CatalogDescription[0]));
-        } catch (final SQLException ex) {
-            Logger.getLogger(MetaDataReader.class.getName()).log(Level.SEVERE,
-                    null, ex);
-            db = new DatabaseDescription();
-        }
-        return db;
-    }
+		} catch (final SQLException ex) {
+			Logger.getLogger(MetaDataReader.class.getName()).log(Level.SEVERE,
+					null, ex);
+			db = new DatabaseDescription();
+		}
+		return db;
+	}
 
-    private Collection<TableDescription> readRawTableDescriptions(
-            final Connection connection) throws SQLException {
-        try (ResultSet tables = connection.getMetaData().getTables(null, null, null, null)) {
-            return new ArrayList<>(new TableMetaDataReader().buildDescriptions(tables));
-        }
-    }
+	private void readCatalogDescriptions(final DatabaseDescription db,
+			final Connection connection) throws SQLException {
+		try (ResultSet catalogs = connection.getMetaData().getCatalogs()) {
+			new CatalogMetaDataReader(db).readAndAddDescriptions(catalogs);
+		}
+	}
 
-    private Collection<TableDescription> readCompleteTableDescriptions(
-            final Connection connection) throws SQLException {
-        final Collection<TableDescription> tableDescriptions = readRawTableDescriptions(
-                connection);
-        for (TableDescription table : tableDescriptions) {
-            readColumnDescriptions(connection, table);
-            readPrimaryKeyDescriptions(connection, table);
+	private void readSchemaDescriptions(final DatabaseDescription db,
+			final Connection connection) throws SQLException {
+		try (ResultSet schemas = connection.getMetaData().getSchemas()) {
+			new SchemaMetaDataReader(db).readAndAddDescriptions(schemas);
+		}
+	}
 
-            readIndexDescriptions(connection, table);
+	private void readTableDescriptions(final DatabaseDescription db,
+			final Connection connection) throws SQLException {
+		try (ResultSet tables = connection.getMetaData().getTables(null, null,
+				null, null)) {
+			new TableMetaDataReader(db).readAndAddDescriptions(tables);
+		}
+	}
 
-            readForeignKeyDescriptions(connection, table);
-            readReferencedByDescriptions(connection, table);
-        }
-        return tableDescriptions;
-    }
+	private void readTableSubObjects(final DatabaseDescription db,
+			final Connection connection) throws SQLException {
+		for (final CatalogDescription catalog : db.getCatalogs()) {
+			for (final SchemaDescription schema : catalog.getSchemas()) {
+				for (final TableDescription table : schema.getTables()) {
+					readColumns(db, connection, catalog.getName(),
+							schema.getName(), table.getName());
+					readPrimaryKeyColumns(db, connection, catalog.getName(),
+							schema.getName(), table.getName());
+					readIndices(db, connection, catalog.getName(),
+							schema.getName(), table.getName());
+					readExportedKeys(db, connection, catalog.getName(),
+							schema.getName(), table.getName());
+					readImportedKeys(db, connection, catalog.getName(),
+							schema.getName(), table.getName());
+				}
+			}
+		}
+	}
 
-    private void readPrimaryKeyDescriptions(final Connection connection,
-            TableDescription table) throws SQLException {
-        try (ResultSet pks = connection.getMetaData().getPrimaryKeys(table.
-                getCatalog(), table.getSchema(), table.getTableName())) {
-            table.
-                    addPrimaryKeys(new PrimaryKeyMetaDataReader().buildDescriptions(
-                                    pks));
-        }
-    }
+	private void readColumns(final DatabaseDescription db,
+			final Connection connection, final String catalog,
+			final String schema, final String table) throws SQLException {
+		try (ResultSet columns = connection.getMetaData().getColumns(catalog,
+				schema, table, null)) {
+			new ColumnMetaDataReader(db).readAndAddDescriptions(columns);
+		}
+	}
 
-    private void readColumnDescriptions(final Connection connection,
-            TableDescription table) throws SQLException {
-        try (ResultSet columns = connection.getMetaData().getColumns(table.
-                getCatalog(), table.getSchema(), table.getTableName(), null)) {
-            table.
-                    addColumns(new ColumnMetaDataReader().buildDescriptions(
-                                    columns));
-        }
-    }
+	private void readPrimaryKeyColumns(final DatabaseDescription db,
+			final Connection connection, final String catalog,
+			final String schema, final String table) throws SQLException {
+		try (ResultSet columns = connection.getMetaData().getPrimaryKeys(
+				catalog, schema, table)) {
+			new PrimaryKeyMetaDataReader(db).readAndAddDescriptions(columns);
+		}
+	}
 
-    private void readIndexDescriptions(final Connection connection,
-            TableDescription table) throws SQLException {
-        try (ResultSet idx = connection.getMetaData().getIndexInfo(table.
-                getCatalog(), table.getSchema(), table.getTableName(), false, false)) {
-            table.addIndices(new IndexMetaDataReader().buildDescriptions(idx));
-        }
-    }
+	private void readIndices(final DatabaseDescription db,
+			final Connection connection, final String catalog,
+			final String schema, final String table) throws SQLException {
+		try (ResultSet idx = connection.getMetaData().getIndexInfo(catalog,
+				schema, table, false, false)) {
+			new IndexMetaDataReader(db).readAndAddDescriptions(idx);
+		}
+	}
 
-    private void readForeignKeyDescriptions(final Connection connection,
-            TableDescription table) throws SQLException {
-        try (ResultSet fks = connection.getMetaData().getImportedKeys(table.
-                getCatalog(), table.getSchema(), table.getTableName())) {
-            table.
-                    addForeignKeys(new ForeignKeyMetaDataReader().buildDescriptions(
-                                    fks));
-        }
-    }
+	private void readExportedKeys(final DatabaseDescription db,
+			final Connection connection, final String catalog,
+			final String schema, final String table) throws SQLException {
+		try (ResultSet idx = connection.getMetaData().getExportedKeys(catalog,
+				schema, table)) {
+			new ExportedKeyMetaDataReader(db).readAndAddDescriptions(idx);
+		}
+	}
 
-    private void readReferencedByDescriptions(final Connection connection,
-            TableDescription table) throws SQLException {
-        try (ResultSet fks = connection.getMetaData().getExportedKeys(table.
-                getCatalog(), table.getSchema(), table.getTableName())) {
-            table.addReferencedBy(new ForeignKeyMetaDataReader().
-                    buildDescriptions(fks));
-        }
-    }
-
-    protected Collection<SchemaDescription> buildSchemaDescriptionsFromTableDescriptions(
-            final Collection<TableDescription> tables) {
-        Map<SchemaDescription, SchemaDescription> schemas = new HashMap<>();
-        if (tables != null) {
-            for (TableDescription table : tables) {
-                SchemaDescription schema = new SchemaDescription(table.getCatalog(),
-                        table.getSchema());
-                if (schemas.containsKey(schema)) {
-                    schema = schemas.get(schema);
-                } else {
-                    schemas.put(schema, schema);
-                }
-                schema.addTables(table);
-            }
-        }
-        return schemas.keySet();
-    }
-
-    protected Collection<CatalogDescription> buildCatalogDescriptionsFromSchemaDescriptions(
-            final Collection<SchemaDescription> schemas) {
-        Map<CatalogDescription, CatalogDescription> catalogs = new HashMap<>();
-        if (schemas != null) {
-            for (SchemaDescription schema : schemas) {
-                CatalogDescription catalog = new CatalogDescription(schema.getCatalog());
-                if (catalogs.containsKey(catalog)) {
-                    catalog = catalogs.get(catalog);
-                } else {
-                    catalogs.put(catalog, catalog);
-                }
-                catalog.addSchemas(schema);
-            }
-        }
-        return catalogs.keySet();
-    }
+	private void readImportedKeys(final DatabaseDescription db,
+			final Connection connection, final String catalog,
+			final String schema, final String table) throws SQLException {
+		try (ResultSet idx = connection.getMetaData().getImportedKeys(catalog,
+				schema, table)) {
+			new ImportedKeyMetaDataReader(db).readAndAddDescriptions(idx);
+		}
+	}
 
 }

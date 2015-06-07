@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.schematree;
+package de.kuehweg.sqltool.database.metadata;
 
 import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
-import java.sql.Connection;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeView;
+import de.kuehweg.sqltool.database.metadata.description.ImportedKeyColumnDescription;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der Metadaten
- * vergleichsweise lang dauern kann (könnte) und die Oberfläche zwischenzeitlich nicht
- * blockiert sein soll.
+ * Metadaten der Foreign Key Constraints aufbereiten
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeBuilderTask extends Task<Void> {
+public class ImportedKeyMetaDataReader extends AbstractMetaDataReader {
 
-    private final Connection connection;
-    private final TreeView<String> treeToUpdate;
-
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView<String> treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
+    public ImportedKeyMetaDataReader(DatabaseDescription root) {
+        super(root);
     }
 
     @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = connection != null ? new MetaDataReader().
-                readMetaData(connection) : new DatabaseDescription();
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
+    protected void readAndAddDescription(ResultSet foreignKeyConstraint) throws SQLException {
+        findParent(foreignKeyConstraint.getString("FKTABLE_CAT"),
+                foreignKeyConstraint.getString("FKTABLE_SCHEM"),
+                foreignKeyConstraint.getString("FKTABLE_NAME")).adoptOrphan(
+                        new ImportedKeyColumnDescription(
+                                foreignKeyConstraint.getString("FK_NAME"),
+                                foreignKeyConstraint.getString("FKCOLUMN_NAME"),
+                                foreignKeyConstraint.getString("PKTABLE_CAT"),
+                                foreignKeyConstraint.getString("PKTABLE_SCHEM"),
+                                foreignKeyConstraint.getString("PKTABLE_NAME"),
+                                foreignKeyConstraint.getString("PKCOLUMN_NAME")));
     }
+
 }

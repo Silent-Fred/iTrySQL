@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class CatalogDescriptionTest {
 
         Collections.sort(catalogs);
 
-        Assert.assertEquals("CATALOG1", catalogs.get(0).getCatalog());
-        Assert.assertEquals("CATALOG2", catalogs.get(1).getCatalog());
+        Assert.assertEquals("CATALOG1", catalogs.get(0).getName());
+        Assert.assertEquals("CATALOG2", catalogs.get(1).getName());
     }
 }

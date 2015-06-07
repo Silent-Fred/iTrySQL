@@ -74,7 +74,7 @@ public class ResultRowTest {
 
     @Test
     public void nullSupportForConstructor() {
-        ResultRow row = new ResultRow(null);
+        ResultRow row = new ResultRow((Object[])null);
         Assert.assertEquals(1, row.columnsAsString().size());
     }
 }

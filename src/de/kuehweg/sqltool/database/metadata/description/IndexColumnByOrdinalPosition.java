@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,14 +23,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.metadata;
+package de.kuehweg.sqltool.database.metadata.description;
+
+import java.util.Comparator;
 
 /**
- * Mögliche Werte für die Nullability von Tabellenspalten
- * 
+ * Comparator mit dem IndexColumnDescriptions nach ordinal position der Spalten im Index
+ * sortiert werden können.
+ *
  * @author Michael Kühweg
  */
-public enum Nullability {
+public class IndexColumnByOrdinalPosition implements Comparator<IndexColumnDescription> {
 
-	YES, NO, MAYBE;
+    @Override
+    public int compare(IndexColumnDescription o1, IndexColumnDescription o2) {
+        int result = o1.compareTo(o2);
+        if (result == 0) {
+            result = o1.getOrdinalPosition() - o2.getOrdinalPosition();
+        }
+        return result;
+    }
+
 }

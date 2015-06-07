@@ -28,7 +28,6 @@ package de.kuehweg.sqltool.database.metadata;
 import de.kuehweg.sqltool.database.execution.fake.ResultSetStubForMetaDataReader;
 import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.description.IndexColumnDescription;
 import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 import java.sql.SQLException;
@@ -44,7 +43,7 @@ import org.junit.Test;
  *
  * @author Michael Kühweg
  */
-public class IndexMetaDataReaderTest {
+public class ImportedKeyMetaDataReaderTest {
 
     private DatabaseDescription db;
     private CatalogDescription catalog;
@@ -52,7 +51,7 @@ public class IndexMetaDataReaderTest {
     private TableDescription table;
     private TableDescription tableUntouched;
 
-    public IndexMetaDataReaderTest() {
+    public ImportedKeyMetaDataReaderTest() {
     }
 
     @BeforeClass
@@ -69,17 +68,17 @@ public class IndexMetaDataReaderTest {
 
         catalog = new CatalogDescription(
                 ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_CAT");
+                getSimpleName() + "FKTABLE_CAT");
         db.adoptOrphan(catalog);
 
         schema = new SchemaDescription(
                 ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_SCHEM");
+                getSimpleName() + "FKTABLE_SCHEM");
         catalog.adoptOrphan(schema);
 
         table = new TableDescription(
                 ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_NAME", "TABLE", "REMARKS");
+                getSimpleName() + "FKTABLE_NAME", "TABLE", "REMARKS");
         tableUntouched = new TableDescription("TABLE1", "TABLE",
                 "REMARKS");
 
@@ -92,38 +91,14 @@ public class IndexMetaDataReaderTest {
     }
 
     @Test
-    public void readMetaDataTwoIndices() throws SQLException {
-        IndexMetaDataReader metaDataReader = new IndexMetaDataReader(db);
+    public void readImportedKeys() throws SQLException {
+        ImportedKeyMetaDataReader metaDataReader = new ImportedKeyMetaDataReader(db);
         metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2,
-                "INDEX_NAME"));
+                "FK_NAME"));
 
-        assertTrue(tableUntouched.getIndices().isEmpty());
-        assertEquals(2, table.getIndices().size());
-    }
+        assertTrue(tableUntouched.getImportedKeyColumns().isEmpty());
+        assertEquals(2, table.getImportedKeyColumns().size());
 
-    @Test
-    public void readMetaDataOneIndexTwoColumns() throws SQLException {
-        IndexMetaDataReader metaDataReader = new IndexMetaDataReader(db);
-        metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2,
-                "COLUMN_NAME"));
-
-        assertTrue(tableUntouched.getIndices().isEmpty());
-        assertEquals(2, table.getIndices().size());
-    }
-
-    @Test
-    public void readMetaDataOneIndexOneColumnsAllData() throws SQLException {
-        IndexMetaDataReader metaDataReader = new IndexMetaDataReader(db);
-        metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(1));
-
-        assertTrue(tableUntouched.getIndices().isEmpty());
-        assertEquals(1, table.getIndices().size());
-
-        IndexColumnDescription index = table.getIndices().iterator().next();
-        assertEquals(ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "INDEX_NAME", index.getName());
-        assertEquals(2, index.getOrdinalPosition());
-        assertEquals(ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "COLUMN_NAME", index.getColumnName());
+        assertTrue(table.getExportedKeyColumns().isEmpty());
     }
 }

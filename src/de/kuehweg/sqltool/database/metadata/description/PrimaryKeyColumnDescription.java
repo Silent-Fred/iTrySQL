@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.schematree;
+package de.kuehweg.sqltool.database.metadata.description;
 
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
-import java.sql.Connection;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.TreeView;
+import java.util.Objects;
 
 /**
- * Strukturansicht aktualisieren. Als Task implementiert, da das Auslesen der Metadaten
- * vergleichsweise lang dauern kann (könnte) und die Oberfläche zwischenzeitlich nicht
- * blockiert sein soll.
+ * Beschreibung der Primärschlüssel-Metadaten
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeBuilderTask extends Task<Void> {
+public class PrimaryKeyColumnDescription extends DatabaseObjectDescription {
 
-    private final Connection connection;
-    private final TreeView<String> treeToUpdate;
+    private final String columnName;
 
-    public SchemaTreeBuilderTask(final Connection connection,
-            final TreeView<String> treeToUpdate) {
-        this.connection = connection;
-        this.treeToUpdate = treeToUpdate;
+    public PrimaryKeyColumnDescription(String primaryKeyName, String columnName) {
+        super(primaryKeyName);
+        this.columnName = columnName == null ? "" : columnName;
+    }
+
+    public String getColumnName() {
+        return columnName;
     }
 
     @Override
-    protected Void call() throws Exception {
-        final DatabaseDescription db = connection != null ? new MetaDataReader().
-                readMetaData(connection) : new DatabaseDescription();
-        Platform.runLater(new SchemaTreeBuilder(db, treeToUpdate));
-        return null;
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 79 * hash + Objects.hashCode(this.columnName);
+        return hash;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final PrimaryKeyColumnDescription other = (PrimaryKeyColumnDescription) obj;
+            return Objects.equals(this.columnName, other.columnName);
+        }
+        return false;
+    }
+
 }
