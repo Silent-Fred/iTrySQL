@@ -67,19 +67,13 @@ public class IndexMetaDataReaderTest {
     public void setUp() {
         db = new DatabaseDescription("db", "product", "version");
 
-        catalog = new CatalogDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_CAT");
+        catalog = new CatalogDescription("TABLE_CAT");
         db.adoptOrphan(catalog);
 
-        schema = new SchemaDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_SCHEM");
+        schema = new SchemaDescription("TABLE_SCHEM");
         catalog.adoptOrphan(schema);
 
-        table = new TableDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_NAME", "TABLE", "REMARKS");
+        table = new TableDescription("TABLE_NAME", "TABLE", "REMARKS");
         tableUntouched = new TableDescription("TABLE1", "TABLE",
                 "REMARKS");
 
@@ -120,10 +114,8 @@ public class IndexMetaDataReaderTest {
         assertEquals(1, table.getIndices().size());
 
         IndexColumnDescription index = table.getIndices().iterator().next();
-        assertEquals(ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "INDEX_NAME", index.getName());
+        assertEquals("INDEX_NAME", index.getName());
         assertEquals(2, index.getOrdinalPosition());
-        assertEquals(ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "COLUMN_NAME", index.getColumnName());
+        assertEquals("COLUMN_NAME", index.getColumnName());
     }
 }

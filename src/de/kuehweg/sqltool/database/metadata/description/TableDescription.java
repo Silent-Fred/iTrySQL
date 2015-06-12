@@ -49,8 +49,8 @@ public class TableDescription extends DatabaseObjectDescription {
     public TableDescription(final String tableName, final String tableType,
             final String remarks) {
         super(tableName);
-        this.tableType = tableType;
-        this.remarks = remarks;
+        this.tableType = tableType == null ? "" : tableType;
+        this.remarks = remarks == null ? "" : remarks;
         columns = new HashSet<>();
         indexColumns = new HashSet<>();
         importedKeyColumns = new HashSet<>();

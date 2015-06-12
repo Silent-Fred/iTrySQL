@@ -44,12 +44,12 @@ public class ColumnDescription extends DatabaseObjectDescription {
             final Nullability nullable, final String defaultValue,
             final String remarks) {
         super(columnName);
-        this.type = type;
+        this.type = type == null ? "" : type;
         this.size = size;
         this.decimalDigits = decimalDigits;
         this.nullable = nullable;
-        this.defaultValue = defaultValue;
-        this.remarks = remarks;
+        this.defaultValue = defaultValue == null ? "" : defaultValue;
+        this.remarks = remarks == null ? "" : remarks;
     }
 
     public String getType() {

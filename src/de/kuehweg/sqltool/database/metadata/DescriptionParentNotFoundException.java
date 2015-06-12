@@ -25,57 +25,17 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 /**
+ * Exception für den Fall, dass die Suche nach einem Parent fehlschlägt
  *
  * @author Michael Kühweg
  */
-public class CatalogDescriptionTest {
+public class DescriptionParentNotFoundException extends Exception {
 
-    public CatalogDescriptionTest() {
+    public DescriptionParentNotFoundException() {
     }
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    @Test
-    public void sorting() {
-        List<CatalogDescription> catalogs = new LinkedList<>();
-
-        catalogs.add(new CatalogDescription("CATALOG2"));
-        catalogs.add(new CatalogDescription("CATALOG1"));
-
-        Collections.sort(catalogs);
-
-        Assert.assertEquals("CATALOG1", catalogs.get(0).getName());
-        Assert.assertEquals("CATALOG2", catalogs.get(1).getName());
-    }
-
-    @Test
-    public void nullSafe() {
-        Assert.assertEquals("", new CatalogDescription(null).getName());
+    public DescriptionParentNotFoundException(String msg) {
+        super(msg);
     }
 }

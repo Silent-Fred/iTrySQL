@@ -32,9 +32,11 @@ package de.kuehweg.sqltool.database.metadata.description;
  */
 public class ImportedKeyColumnDescription extends ForeignKeyColumnDescription {
 
-    public ImportedKeyColumnDescription(String foreignKeyName, String fkColumnName,
-            String pkCatalog, String pkSchema, String pkTableName, String pkColumnName) {
-        super(foreignKeyName, fkColumnName, pkCatalog, pkSchema, pkTableName, pkColumnName);
+    public ImportedKeyColumnDescription(String foreignKeyName, String insideColumnName,
+            String outsideCatalog, String outsideSchema, String outsideTableName,
+            String outsideColumnName) {
+        super(foreignKeyName, insideColumnName, outsideCatalog, outsideSchema,
+                outsideTableName, outsideColumnName);
     }
 
 }

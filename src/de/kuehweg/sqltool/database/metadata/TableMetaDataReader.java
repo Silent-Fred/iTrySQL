@@ -25,8 +25,8 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

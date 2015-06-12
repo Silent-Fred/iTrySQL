@@ -66,14 +66,10 @@ public class TableMetaDataReaderTest {
     public void setUp() {
         db = new DatabaseDescription("db", "product", "version");
 
-        catalog = new CatalogDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_CAT");
+        catalog = new CatalogDescription("TABLE_CAT");
         db.adoptOrphan(catalog);
 
-        schema = new SchemaDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_SCHEM");
+        schema = new SchemaDescription("TABLE_SCHEM");
         catalog.adoptOrphan(schema);
     }
 
@@ -92,12 +88,9 @@ public class TableMetaDataReaderTest {
         // alle Daten übertragen ?
         int count = 1;
         for (TableDescription table : schema.getTables()) {
-            assertEquals(ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                    getSimpleName() + "TABLE_NAME" + count++, table.getName());
-            assertEquals(ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                    getSimpleName() + "TABLE_TYPE", table.getTableType());
-            assertEquals(ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                    getSimpleName() + "REMARKS", table.getRemarks());
+            assertEquals("TABLE_NAME" + count++, table.getName());
+            assertEquals("TABLE_TYPE", table.getTableType());
+            assertEquals("REMARKS", table.getRemarks());
         }
     }
 }

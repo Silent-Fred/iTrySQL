@@ -83,4 +83,9 @@ public class SchemaDescriptionTest {
         Assert.assertEquals(2, schema.getTablesByType("TYPE-1").size());
         Assert.assertEquals(1, schema.getTablesByType("TYPE-2").size());
     }
+
+    @Test
+    public void nullSafe() {
+        Assert.assertEquals("", new SchemaDescription(null).getName());
+    }
 }

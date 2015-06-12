@@ -34,8 +34,6 @@ import java.sql.SQLException;
  */
 public class ResultSetStubForMetaDataReader extends FakeResultSet {
 
-    public static final String PREFIX_GET = "CALLED-GET-";
-
     private static final String[] COLUMN_LABELS_RETURNING_INT
             = new String[]{"COLUMN_SIZE", "DECIMAL_DIGITS", "ORDINAL_POSITION"};
 
@@ -61,8 +59,7 @@ public class ResultSetStubForMetaDataReader extends FakeResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        return PREFIX_GET + String.class.getSimpleName() + columnLabel
-                + (columnLabelToAppendAutoIncrease != null
+        return columnLabel + (columnLabelToAppendAutoIncrease != null
                 && columnLabelToAppendAutoIncrease.equals(columnLabel) ? autoIncrease++ : "");
     }
 

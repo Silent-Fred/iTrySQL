@@ -33,6 +33,7 @@ import de.kuehweg.sqltool.database.metadata.description.Nullability;
 import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 import java.sql.SQLException;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -68,21 +69,14 @@ public class ColumnMetaDataReaderTest {
     public void setUp() {
         db = new DatabaseDescription("db", "product", "version");
 
-        catalog = new CatalogDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_CAT");
+        catalog = new CatalogDescription("TABLE_CAT");
         db.adoptOrphan(catalog);
 
-        schema = new SchemaDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_SCHEM");
+        schema = new SchemaDescription("TABLE_SCHEM");
         catalog.adoptOrphan(schema);
 
-        table = new TableDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TABLE_NAME", "TABLE", "REMARKS");
-        tableUntouched = new TableDescription("TABLE1", "TABLE",
-                "REMARKS");
+        table = new TableDescription("TABLE_NAME", "TABLE", "REMARKS");
+        tableUntouched = new TableDescription("TABLE1", "TABLE", "REMARKS");
 
         schema.adoptOrphan(table);
         schema.adoptOrphan(tableUntouched);
@@ -109,25 +103,42 @@ public class ColumnMetaDataReaderTest {
 
     }
 
+    @Test
+    public void wrongWay() throws SQLException {
+        DatabaseDescription wrongWayDb = new DatabaseDescription();
+        ColumnMetaDataReader metaDataReader = new ColumnMetaDataReader(wrongWayDb);
+        metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2,
+                "COLUMN_NAME"));
+
+        assertEquals(1, wrongWayDb.getCatalogs().size());
+        assertEquals("TABLE_CAT", wrongWayDb.getCatalogs().iterator().next().getName());
+
+        assertEquals(1, wrongWayDb.getCatalogs().iterator().next().getSchemas().size());
+        assertEquals("TABLE_SCHEM", wrongWayDb.getCatalogs().iterator().next().
+                getSchemas().iterator().next().getName());
+
+        List<TableDescription> tables = wrongWayDb.getCatalogs().iterator().next().
+                getSchemas().iterator().next().getTables();
+        assertEquals(1, tables.size());
+        assertEquals("TABLE_NAME", tables.iterator().next().getName());
+
+        assertEquals("UNKNOWN", tables.iterator().next().getTableType());
+        assertEquals(
+                "This table's description was built by accident. Some subobject was created first. The description is incomplete.",
+                tables.iterator().next().getRemarks());
+    }
+
     private boolean isCorrectColumn(ColumnDescription column, int count) {
-        boolean correct = column.getRemarks().equals(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "REMARKS");
+        boolean correct = column.getRemarks().equals("REMARKS");
 
         // der Spaltenname wird im Stub mit fortlaufender Nummer erzeugt
-        correct = correct && column.getName().equals(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "COLUMN_NAME" + count);
+        correct = correct && column.getName().equals("COLUMN_NAME" + count);
 
         correct = correct && column.getSize() == 0;
         correct = correct && column.getDecimalDigits() == 1;
-        correct = correct && column.getType().equals(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "TYPE_NAME");
+        correct = correct && column.getType().equals("TYPE_NAME");
         correct = correct && Nullability.MAYBE == column.getNullable();
-        correct = correct && column.getDefaultValue().equals(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "COLUMN_DEF");
+        correct = correct && column.getDefaultValue().equals("COLUMN_DEF");
         return correct;
     }
 }

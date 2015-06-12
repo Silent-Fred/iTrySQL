@@ -243,4 +243,66 @@ public class TableDescriptionTest {
         table.adoptOrphan(new SchemaDescription("SCHEMA"));
     }
 
+    @Test
+    public void nullSafe() {
+        Assert.assertEquals("", new TableDescription(null, null, null).getName());
+        Assert.assertEquals("", new TableDescription(null, null, null).getTableType());
+        Assert.assertEquals("", new TableDescription(null, null, null).getRemarks());
+    }
+
+    @Test
+    public void nullSafeColumns() {
+        Assert.assertEquals("", new ColumnDescription(null, null, 0, 0, Nullability.MAYBE,
+                null, null).getName());
+        Assert.assertEquals("", new ColumnDescription(null, null, 0, 0, Nullability.MAYBE,
+                null, null).getType());
+        Assert.assertEquals("", new ColumnDescription(null, null, 0, 0, Nullability.MAYBE,
+                null, null).getDefaultValue());
+        Assert.assertEquals("", new ColumnDescription(null, null, 0, 0, Nullability.MAYBE,
+                null, null).getRemarks());
+    }
+
+    @Test
+    public void nullSafePrimaryKeys() {
+        Assert.assertEquals("", new PrimaryKeyColumnDescription(null, null).getName());
+        Assert.assertEquals("", new PrimaryKeyColumnDescription(null, null).
+                getColumnName());
+    }
+
+    @Test
+    public void nullSafeForeignKeys() {
+        Assert.assertEquals("", new ImportedKeyColumnDescription(null, null, null, null,
+                null, null).getName());
+        Assert.assertEquals("", new ImportedKeyColumnDescription(null, null, null, null,
+                null, null).getInsideColumnName());
+        Assert.assertEquals("", new ImportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideCatalog());
+        Assert.assertEquals("", new ImportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideSchema());
+        Assert.assertEquals("", new ImportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideTableName());
+        Assert.assertEquals("", new ImportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideColumnName());
+
+        Assert.assertEquals("", new ExportedKeyColumnDescription(null, null, null, null,
+                null, null).getName());
+        Assert.assertEquals("", new ExportedKeyColumnDescription(null, null, null, null,
+                null, null).getInsideColumnName());
+        Assert.assertEquals("", new ExportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideCatalog());
+        Assert.assertEquals("", new ExportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideSchema());
+        Assert.assertEquals("", new ExportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideTableName());
+        Assert.assertEquals("", new ExportedKeyColumnDescription(null, null, null, null,
+                null, null).getOutsideColumnName());
+    }
+
+    @Test
+    public void nullSafeIndices() {
+        Assert.assertEquals("", new IndexColumnDescription(null, null, 0, true).getName());
+        Assert.assertEquals("", new IndexColumnDescription(null, null, 0, true).
+                getColumnName());
+    }
+
 }

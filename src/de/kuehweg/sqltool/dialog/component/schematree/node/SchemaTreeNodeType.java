@@ -23,59 +23,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.metadata;
-
-import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+package de.kuehweg.sqltool.dialog.component.schematree.node;
 
 /**
+ * Typ eines Knotens in der Strukturansicht. Hierüber kann z.B. das passende Icon
+ * zugeordnet werden.
  *
  * @author Michael Kühweg
  */
-public class CatalogDescriptionTest {
+public enum SchemaTreeNodeType {
 
-    public CatalogDescriptionTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    @Test
-    public void sorting() {
-        List<CatalogDescription> catalogs = new LinkedList<>();
-
-        catalogs.add(new CatalogDescription("CATALOG2"));
-        catalogs.add(new CatalogDescription("CATALOG1"));
-
-        Collections.sort(catalogs);
-
-        Assert.assertEquals("CATALOG1", catalogs.get(0).getName());
-        Assert.assertEquals("CATALOG2", catalogs.get(1).getName());
-    }
-
-    @Test
-    public void nullSafe() {
-        Assert.assertEquals("", new CatalogDescription(null).getName());
-    }
+    PLAIN, DATABASE, CATALOG, SCHEMA, TABLE_TYPE, TABLE, COLUMN, PRIMARY_KEY_COLUMN,
+    IMPORTED_KEYS, IMPORTED_KEY, IMPORTED_KEY_COLUMN, EXPORTED_KEYS, EXPORTED_KEY,
+    EXPORTED_KEY_COLUMN, INDICES, INDEX, INDEX_COLUMN;
 }

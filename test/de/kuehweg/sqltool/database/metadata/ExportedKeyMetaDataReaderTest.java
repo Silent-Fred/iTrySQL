@@ -66,21 +66,14 @@ public class ExportedKeyMetaDataReaderTest {
     public void setUp() {
         db = new DatabaseDescription("db", "product", "version");
 
-        catalog = new CatalogDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "PKTABLE_CAT");
+        catalog = new CatalogDescription("PKTABLE_CAT");
         db.adoptOrphan(catalog);
 
-        schema = new SchemaDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "PKTABLE_SCHEM");
+        schema = new SchemaDescription("PKTABLE_SCHEM");
         catalog.adoptOrphan(schema);
 
-        table = new TableDescription(
-                ResultSetStubForMetaDataReader.PREFIX_GET + String.class.
-                getSimpleName() + "PKTABLE_NAME", "TABLE", "REMARKS");
-        tableUntouched = new TableDescription("TABLE1", "TABLE",
-                "REMARKS");
+        table = new TableDescription("PKTABLE_NAME", "TABLE", "REMARKS");
+        tableUntouched = new TableDescription("TABLE1", "TABLE", "REMARKS");
 
         schema.adoptOrphan(table);
         schema.adoptOrphan(tableUntouched);
