@@ -25,9 +25,9 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,87 +39,86 @@ import org.junit.Test;
  */
 public class ResultTemplateTest {
 
-    private static final String BASE_TEMPLATE_TEXT
-            = "Test: @execution @resultTable @rowCount @limitRows.";
+	private static final String BASE_TEMPLATE_TEXT = "Test: @execution @resultTable @rowCount @limitRows.";
 
-    private ResultTemplate template;
+	private ResultTemplate template;
 
-    public ResultTemplateTest() {
-    }
+	public ResultTemplateTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-        template = new ResultTemplate(BASE_TEMPLATE_TEXT);
-        template.setPlaceholderExecution("@execution");
-        template.setPlaceholderResultTable("@resultTable");
-        template.setPlaceholderRowCount("@rowCount");
-        template.setPlaceholderLimitRows("@limitRows");
-    }
+	@Before
+	public void setUp() {
+		template = new ResultTemplate(BASE_TEMPLATE_TEXT);
+		template.setPlaceholderExecution("@execution");
+		template.setPlaceholderResultTable("@resultTable");
+		template.setPlaceholderRowCount("@rowCount");
+		template.setPlaceholderLimitRows("@limitRows");
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void emptyTemplate() {
-        ResultTemplate emptyTemplate = new ResultTemplate();
-        Assert.assertEquals("", emptyTemplate.buildWithTemplate());
-    }
+	@Test
+	public void emptyTemplate() {
+		final ResultTemplate emptyTemplate = new ResultTemplate();
+		Assert.assertEquals("", emptyTemplate.buildWithTemplate());
+	}
 
-    @Test
-    public void nothingToFillIn() {
-        Assert.assertEquals("Test:    .", template.
-                buildWithTemplate());
-    }
+	@Test
+	public void nothingToFillIn() {
+		Assert.assertEquals("Test:    .", template.buildWithTemplate());
+	}
 
-    @Test
-    public void emptyResult() {
-        template.setExecutionInformation("happily executed");
-        template.setRowCount("happy rows counted");
-        Assert.assertEquals("Test: happily executed  happy rows counted .", template.
-                buildWithTemplate());
-    }
+	@Test
+	public void emptyResult() {
+		template.setExecutionInformation("happily executed");
+		template.setRowCount("happy rows counted");
+		Assert.assertEquals("Test: happily executed  happy rows counted .",
+				template.buildWithTemplate());
+	}
 
-    @Test
-    public void withResult() {
-        template.setExecutionInformation("happily executed");
-        template.setResultTable("happy results");
-        template.setRowCount("happy rows counted");
-        Assert.assertEquals("Test: happily executed happy results happy rows counted .",
-                template.buildWithTemplate());
-    }
+	@Test
+	public void withResult() {
+		template.setExecutionInformation("happily executed");
+		template.setResultTable("happy results");
+		template.setRowCount("happy rows counted");
+		Assert.assertEquals(
+				"Test: happily executed happy results happy rows counted .",
+				template.buildWithTemplate());
+	}
 
-    @Test
-    public void withResultAndLimit() {
-        template.setExecutionInformation("happily executed");
-        template.setResultTable("happy results");
-        template.setRowCount("happy rows counted");
-        template.setLimitedRows("happy limitations");
-        Assert.assertEquals(
-                "Test: happily executed happy results happy rows counted happy limitations.",
-                template.buildWithTemplate());
-    }
+	@Test
+	public void withResultAndLimit() {
+		template.setExecutionInformation("happily executed");
+		template.setResultTable("happy results");
+		template.setRowCount("happy rows counted");
+		template.setLimitedRows("happy limitations");
+		Assert.assertEquals(
+				"Test: happily executed happy results happy rows counted happy limitations.",
+				template.buildWithTemplate());
+	}
 
-    @Test
-    public void damagedTemplate() {
-        template.setPlaceholderExecution("#execution");
-        template.setPlaceholderResultTable("#resultTable");
-        template.setPlaceholderRowCount("#rowCount");
-        template.setPlaceholderLimitRows("#limitRows");
+	@Test
+	public void damagedTemplate() {
+		template.setPlaceholderExecution("#execution");
+		template.setPlaceholderResultTable("#resultTable");
+		template.setPlaceholderRowCount("#rowCount");
+		template.setPlaceholderLimitRows("#limitRows");
 
-        template.setExecutionInformation("happily executed");
-        template.setResultTable("happy results");
-        template.setRowCount("happy rows counted");
-        template.setLimitedRows("happy limitations");
+		template.setExecutionInformation("happily executed");
+		template.setResultTable("happy results");
+		template.setRowCount("happy rows counted");
+		template.setLimitedRows("happy limitations");
 
-        Assert.assertEquals(BASE_TEMPLATE_TEXT, template.buildWithTemplate());
-    }
+		Assert.assertEquals(BASE_TEMPLATE_TEXT, template.buildWithTemplate());
+	}
 }

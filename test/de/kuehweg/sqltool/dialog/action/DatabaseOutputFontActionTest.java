@@ -25,15 +25,16 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.common.UserPreferencesI;
-import de.kuehweg.sqltool.common.UserPreferencesStub;
-import de.kuehweg.sqltool.dialog.base.FontResizer;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import de.kuehweg.sqltool.common.UserPreferencesI;
+import de.kuehweg.sqltool.common.UserPreferencesStub;
+import de.kuehweg.sqltool.dialog.base.FontResizer;
 
 /**
  *
@@ -41,91 +42,91 @@ import org.junit.Test;
  */
 public class DatabaseOutputFontActionTest {
 
-    private FontAction action;
-    private FontResizer fontResizer;
-    private UserPreferencesI userPreferences;
+	private FontAction action;
+	private FontResizer fontResizer;
+	private UserPreferencesI userPreferences;
 
-    public DatabaseOutputFontActionTest() {
-    }
+	public DatabaseOutputFontActionTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-        fontResizer = new FontResizerStub();
-        userPreferences = new UserPreferencesStub();
-        action = new DatabaseOutputFontAction(null);
-    }
+	@Before
+	public void setUp() {
+		fontResizer = new FontResizerStub();
+		userPreferences = new UserPreferencesStub();
+		action = new DatabaseOutputFontAction(null);
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void increaseFontSize() {
-        fontResizer.setFontSize(FontAction.MAX_FONT_SIZE - 1);
-        action.setAlternativeFontResizer(fontResizer);
-        action.setDiff(1);
-        action.handleFontAction();
-        Assert.assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
-    }
+	@Test
+	public void increaseFontSize() {
+		fontResizer.setFontSize(FontAction.MAX_FONT_SIZE - 1);
+		action.setAlternativeFontResizer(fontResizer);
+		action.setDiff(1);
+		action.handleFontAction();
+		Assert.assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
+	}
 
-    @Test
-    public void maxFontSize() {
-        fontResizer.setFontSize(FontAction.MAX_FONT_SIZE - 1);
-        action.setAlternativeFontResizer(fontResizer);
-        action.setDiff(1);
-        action.handleFontAction();
-        // hier dürfte nicht mehr weiter vergößert werden
-        action.handleFontAction();
-        Assert.assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
-    }
+	@Test
+	public void maxFontSize() {
+		fontResizer.setFontSize(FontAction.MAX_FONT_SIZE - 1);
+		action.setAlternativeFontResizer(fontResizer);
+		action.setDiff(1);
+		action.handleFontAction();
+		// hier dürfte nicht mehr weiter vergößert werden
+		action.handleFontAction();
+		Assert.assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
+	}
 
-    @Test
-    public void decreaseFontSize() {
-        fontResizer.setFontSize(FontAction.MIN_FONT_SIZE + 1);
-        action.setAlternativeFontResizer(fontResizer);
-        action.setDiff(-1);
-        action.handleFontAction();
-        Assert.assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
-    }
+	@Test
+	public void decreaseFontSize() {
+		fontResizer.setFontSize(FontAction.MIN_FONT_SIZE + 1);
+		action.setAlternativeFontResizer(fontResizer);
+		action.setDiff(-1);
+		action.handleFontAction();
+		Assert.assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
+	}
 
-    @Test
-    public void minFontSize() {
-        fontResizer.setFontSize(FontAction.MIN_FONT_SIZE + 1);
-        action.setAlternativeFontResizer(fontResizer);
-        action.setDiff(-1);
-        action.handleFontAction();
-        // hier dürfte nicht mehr weiter verkleinert werden
-        action.handleFontAction();
-        Assert.assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
-    }
+	@Test
+	public void minFontSize() {
+		fontResizer.setFontSize(FontAction.MIN_FONT_SIZE + 1);
+		action.setAlternativeFontResizer(fontResizer);
+		action.setDiff(-1);
+		action.handleFontAction();
+		// hier dürfte nicht mehr weiter verkleinert werden
+		action.handleFontAction();
+		Assert.assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
+	}
 
-    @Test(expected = NullPointerException.class)
-    public void defaultResizerWithoutTextArea() {
-        action.setDiff(-1);
-        // boom!
-        action.handleFontAction();
-    }
+	@Test(expected = NullPointerException.class)
+	public void defaultResizerWithoutTextArea() {
+		action.setDiff(-1);
+		// boom!
+		action.handleFontAction();
+	}
 
-    @Test
-    public void storeToPreferences() {
-        fontResizer.setFontSize(FontAction.MAX_FONT_SIZE + 1);
-        action.setAlternativeFontResizer(fontResizer);
-        action.setDiff(1);
-        action.setUserPreferences(userPreferences);
-        action.handleFontAction();
-        Assert.assertEquals(fontResizer.getFontSize(), userPreferences.
-                getFontSizeDbOutput());
-        action.handleFontAction();
-        Assert.assertEquals(fontResizer.getFontSize(), userPreferences.
-                getFontSizeDbOutput());
-    }
+	@Test
+	public void storeToPreferences() {
+		fontResizer.setFontSize(FontAction.MAX_FONT_SIZE + 1);
+		action.setAlternativeFontResizer(fontResizer);
+		action.setDiff(1);
+		action.setUserPreferences(userPreferences);
+		action.handleFontAction();
+		Assert.assertEquals(fontResizer.getFontSize(),
+				userPreferences.getFontSizeDbOutput());
+		action.handleFontAction();
+		Assert.assertEquals(fontResizer.getFontSize(),
+				userPreferences.getFontSizeDbOutput());
+	}
 
 }

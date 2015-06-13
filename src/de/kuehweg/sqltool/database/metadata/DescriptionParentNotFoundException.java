@@ -32,10 +32,12 @@ package de.kuehweg.sqltool.database.metadata;
  */
 public class DescriptionParentNotFoundException extends Exception {
 
-    public DescriptionParentNotFoundException() {
-    }
+	private static final long serialVersionUID = -8113596952440922654L;
 
-    public DescriptionParentNotFoundException(String msg) {
-        super(msg);
-    }
+	public DescriptionParentNotFoundException() {
+	}
+
+	public DescriptionParentNotFoundException(final String msg) {
+		super(msg);
+	}
 }

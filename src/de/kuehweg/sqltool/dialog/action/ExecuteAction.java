@@ -25,16 +25,17 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
+
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.dialog.AlertBox;
 import de.kuehweg.sqltool.dialog.CommonDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * Dialogaktion: SQL-Anweisung(en) ausführen
@@ -43,92 +44,92 @@ import java.util.HashSet;
  */
 public class ExecuteAction {
 
-    private final Collection<ExecutionTracker> trackers = new HashSet<>();
+	private final Collection<ExecutionTracker> trackers = new HashSet<>();
 
-    private boolean limitMaxRows;
+	private boolean limitMaxRows;
 
-    public void attach(final ExecutionTracker... trackers) {
-        if (trackers != null) {
-            for (ExecutionTracker tracker : trackers) {
-                this.trackers.add(tracker);
-            }
-        }
-    }
+	public void attach(final ExecutionTracker... trackers) {
+		if (trackers != null) {
+			for (final ExecutionTracker tracker : trackers) {
+				this.trackers.add(tracker);
+			}
+		}
+	}
 
-    public void detach(final ExecutionTracker... trackers) {
-        if (trackers != null) {
-            for (ExecutionTracker tracker : trackers) {
-                this.trackers.remove(tracker);
-            }
-        }
-    }
+	public void detach(final ExecutionTracker... trackers) {
+		if (trackers != null) {
+			for (final ExecutionTracker tracker : trackers) {
+				this.trackers.remove(tracker);
+			}
+		}
+	}
 
-    public void setLimitMaxRows(boolean limitMaxRows) {
-        this.limitMaxRows = limitMaxRows;
-    }
+	public void setLimitMaxRows(final boolean limitMaxRows) {
+		this.limitMaxRows = limitMaxRows;
+	}
 
-    /**
-     * SQL ausführen, Dialog aktualisieren, Rückmeldung an Anwender
-     *
-     * @param sql
-     * @param connection
-     */
-    public void handleExecuteAction(final String sql, final Connection connection) {
-        try {
-            DialogDictionary feedback = startExecution(sql, connection);
-            if (feedback != null) {
-                CommonDialog alert = new AlertBox(
-                        DialogDictionary.MESSAGEBOX_WARNING.toString(),
-                        feedback.toString(),
-                        DialogDictionary.COMMON_BUTTON_OK.toString());
-                alert.askUserFeedback();
-            }
-        } catch (SQLException ex) {
-            CommonDialog error = new ErrorMessage(
-                    DialogDictionary.MESSAGEBOX_ERROR.toString(),
-                    ex.getLocalizedMessage() + " (" + ex.getSQLState()
-                    + ")",
-                    DialogDictionary.COMMON_BUTTON_OK.toString());
-            error.askUserFeedback();
-        }
-    }
+	/**
+	 * SQL ausführen, Dialog aktualisieren, Rückmeldung an Anwender
+	 *
+	 * @param sql
+	 * @param connection
+	 */
+	public void handleExecuteAction(final String sql,
+			final Connection connection) {
+		try {
+			final DialogDictionary feedback = startExecution(sql, connection);
+			if (feedback != null) {
+				final CommonDialog alert = new AlertBox(
+						DialogDictionary.MESSAGEBOX_WARNING.toString(),
+						feedback.toString(),
+						DialogDictionary.COMMON_BUTTON_OK.toString());
+				alert.askUserFeedback();
+			}
+		} catch (final SQLException ex) {
+			final CommonDialog error = new ErrorMessage(
+					DialogDictionary.MESSAGEBOX_ERROR.toString(),
+					ex.getLocalizedMessage() + " (" + ex.getSQLState() + ")",
+					DialogDictionary.COMMON_BUTTON_OK.toString());
+			error.askUserFeedback();
+		}
+	}
 
-    /**
-     * Führt SQL auf einer Verbindung aus. Wenn keine Verbindung angegeben ist oder keine
-     * Anweisung zur Ausführung o.a. Handlingfehler, wird ein Dictionary-Eintrag
-     * zurückgegeben, der als Alert ausgegeben werden kann. und erzeugt im Fehlerfall eine
-     * entsprechende Meldung, die ausgegeben werden kann.
-     *
-     * @param sql
-     * @param connection
-     * @return
-     * @throws java.sql.SQLException Im Ausnahmefall (z.B. kein Statement erzeugbar auf
-     * der Connection). SQLExceptions während der Ausführung werden über die mitgegebenen
-     * ExecutionTracker abgebildet.
-     */
-    protected DialogDictionary startExecution(final String sql,
-            final Connection connection) throws SQLException {
-        if (sql == null || sql.trim().length() == 0) {
-            return DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE;
-        } else {
-            if (connection == null) {
-                return DialogDictionary.MSG_NO_DB_CONNECTION;
-            } else {
-                // die eigentliche Ausführung wird im Hintergrund gestartet
-                // und bekommt alle Informationen mit auf den Weg, um
-                // während und zum Abschluss der Ausführung die Oberfläche
-                // aktualisieren zu können.
-                final ExecutionTask executionTask = new ExecutionTask(
-                        connection.createStatement(), sql);
-                executionTask.attach(trackers);
-                if (limitMaxRows) {
-                    executionTask.setMaxRows(DatabaseConstants.MAX_ROWS);
-                }
-                final Thread th = new Thread(executionTask);
-                th.setDaemon(true);
-                th.start();
-            }
-        }
-        return null;
-    }
+	/**
+	 * Führt SQL auf einer Verbindung aus. Wenn keine Verbindung angegeben ist
+	 * oder keine Anweisung zur Ausführung o.a. Handlingfehler, wird ein
+	 * Dictionary-Eintrag zurückgegeben, der als Alert ausgegeben werden kann.
+	 * und erzeugt im Fehlerfall eine entsprechende Meldung, die ausgegeben
+	 * werden kann.
+	 *
+	 * @param sql
+	 * @param connection
+	 * @return
+	 * @throws java.sql.SQLException
+	 *             Im Ausnahmefall (z.B. kein Statement erzeugbar auf der
+	 *             Connection). SQLExceptions während der Ausführung werden über
+	 *             die mitgegebenen ExecutionTracker abgebildet.
+	 */
+	protected DialogDictionary startExecution(final String sql,
+			final Connection connection) throws SQLException {
+		if (sql == null || sql.trim().length() == 0) {
+			return DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE;
+		}
+		if (connection == null) {
+			return DialogDictionary.MSG_NO_DB_CONNECTION;
+		}
+		// die eigentliche Ausführung wird im Hintergrund gestartet
+		// und bekommt alle Informationen mit auf den Weg, um
+		// während und zum Abschluss der Ausführung die Oberfläche
+		// aktualisieren zu können.
+		final ExecutionTask executionTask = new ExecutionTask(
+				connection.createStatement(), sql);
+		executionTask.attach(trackers);
+		if (limitMaxRows) {
+			executionTask.setMaxRows(DatabaseConstants.MAX_ROWS);
+		}
+		final Thread th = new Thread(executionTask);
+		th.setDaemon(true);
+		th.start();
+		return null;
+	}
 }

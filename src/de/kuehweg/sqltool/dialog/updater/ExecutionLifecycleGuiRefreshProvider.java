@@ -31,95 +31,130 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Tracker mit passend annotiertem Refresh für die verschiedenen Phasen beim Ausführen
- * einer Anweisung ermitteln
+ * Tracker mit passend annotiertem Refresh für die verschiedenen Phasen beim
+ * Ausführen einer Anweisung ermitteln
  *
  * @author Michael Kühweg
  */
 public class ExecutionLifecycleGuiRefreshProvider {
 
-    private final Set<ExecutionTracker> trackers;
-    private final Set<ExecutionTracker> pendingUpdates;
+	private final Set<ExecutionTracker> trackers;
+	private final Set<ExecutionTracker> pendingUpdates;
 
-    public ExecutionLifecycleGuiRefreshProvider(
-            final Collection<ExecutionTracker> trackers) {
-        this.trackers = new HashSet<>(trackers);
-        this.pendingUpdates = new HashSet<>();
-    }
+	public ExecutionLifecycleGuiRefreshProvider(
+			final Collection<ExecutionTracker> trackers) {
+		this.trackers = new HashSet<>(trackers);
+		pendingUpdates = new HashSet<>();
+	}
 
-    private boolean policyOnPhase(final ExecutionLifecyclePhase phase,
-            final ExecutionLifecycleRefreshPolicy policy, final ExecutionTracker tracker) {
-        for (ExecutionLifecycleRefresh refresh : tracker.getClass().getAnnotationsByType(
-                ExecutionLifecycleRefresh.class)) {
-            if (refresh.phase() == phase && refresh.refreshPolicy() == policy) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private boolean policyOnPhase(final ExecutionLifecyclePhase phase,
+			final ExecutionLifecycleRefreshPolicy policy,
+			final ExecutionTracker tracker) {
+		for (final ExecutionLifecycleRefresh refresh : tracker.getClass()
+				.getAnnotationsByType(ExecutionLifecycleRefresh.class)) {
+			if (refresh.phase() == phase && refresh.refreshPolicy() == policy) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private Set<ExecutionTracker> trackersWithPolicyOnPhase(
-            final ExecutionLifecycleRefreshPolicy policy,
-            final ExecutionLifecyclePhase phase,
-            final Collection<ExecutionTracker> trackers) {
-        if (trackers == null || trackers.isEmpty()) {
-            return Collections.emptySet();
-        }
-        Set<ExecutionTracker> requestedRefresh = new HashSet<>(trackers.size());
-        for (ExecutionTracker tracker : trackers) {
-            if (policyOnPhase(phase, policy, tracker)) {
-                requestedRefresh.add(tracker);
-            }
-        }
-        return requestedRefresh;
-    }
+	private Set<ExecutionTracker> trackersWithPolicyOnPhase(
+			final ExecutionLifecycleRefreshPolicy policy,
+			final ExecutionLifecyclePhase phase,
+			final Collection<ExecutionTracker> trackers) {
+		if (trackers == null || trackers.isEmpty()) {
+			return Collections.emptySet();
+		}
+		final Set<ExecutionTracker> requestedRefresh = new HashSet<>(
+				trackers.size());
+		for (final ExecutionTracker tracker : trackers) {
+			if (policyOnPhase(phase, policy, tracker)) {
+				requestedRefresh.add(tracker);
+			}
+		}
+		return requestedRefresh;
+	}
 
-    private Set<ExecutionTracker> immediateTrackersForPhase(ExecutionLifecyclePhase phase,
-            final Collection<ExecutionTracker> trackers) {
-        return new HashSet<>(trackersWithPolicyOnPhase(
-                ExecutionLifecycleRefreshPolicy.IMMEDIATE,
-                phase, trackers));
-    }
+	private Set<ExecutionTracker> immediateTrackersForPhase(
+			final ExecutionLifecyclePhase phase,
+			final Collection<ExecutionTracker> trackers) {
+		return new HashSet<>(trackersWithPolicyOnPhase(
+				ExecutionLifecycleRefreshPolicy.IMMEDIATE, phase, trackers));
+	}
 
-    private Set<ExecutionTracker> delayedTrackersForPhase(ExecutionLifecyclePhase phase,
-            final Collection<ExecutionTracker> trackers) {
-        return new HashSet<>(trackersWithPolicyOnPhase(
-                ExecutionLifecycleRefreshPolicy.DELAYED,
-                phase, trackers));
-    }
+	private Set<ExecutionTracker> delayedTrackersForPhase(
+			final ExecutionLifecyclePhase phase,
+			final Collection<ExecutionTracker> trackers) {
+		return new HashSet<>(trackersWithPolicyOnPhase(
+				ExecutionLifecycleRefreshPolicy.DELAYED, phase, trackers));
+	}
 
-    public Set<ExecutionTracker> beforeExecutionGuiRefresh(
-            final Collection<ExecutionTracker> trackers) {
-        pendingUpdates.addAll(delayedTrackersForPhase(ExecutionLifecyclePhase.BEFORE,
-                trackers));
-        return immediateTrackersForPhase(ExecutionLifecyclePhase.BEFORE, trackers);
-    }
+	/**
+	 * Tracker, die einen Refresh der Oberfläche anstoßen sollen, bevor die
+	 * Anweisung ausgeführt wird (z.B. um den Start zu visualisieren). Vorher
+	 * verzögerte Tracker werden ebenfalls berücksichtigt.
+	 *
+	 * @return
+	 */
+	public Set<ExecutionTracker> beforeExecutionGuiRefresh() {
+		pendingUpdates.addAll(delayedTrackersForPhase(
+				ExecutionLifecyclePhase.BEFORE, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.BEFORE,
+				trackers);
+	}
 
-    public Set<ExecutionTracker> intermediateExecutionGuiRefresh(
-            final Collection<ExecutionTracker> trackers) {
-        pendingUpdates.addAll(
-                delayedTrackersForPhase(ExecutionLifecyclePhase.INTERMEDIATE, trackers));
-        return immediateTrackersForPhase(ExecutionLifecyclePhase.INTERMEDIATE, trackers);
-    }
+	/**
+	 * Tracker, die während der laufenden Ausführung einen Refresh der
+	 * Oberfläche anstoßen sollen. Vorher verzögerte Tracker werden ebenfalls
+	 * berücksichtigt.
+	 *
+	 * @return
+	 */
+	public Set<ExecutionTracker> intermediateExecutionGuiRefresh() {
+		pendingUpdates.addAll(delayedTrackersForPhase(
+				ExecutionLifecyclePhase.INTERMEDIATE, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.INTERMEDIATE,
+				trackers);
+	}
 
-    public Set<ExecutionTracker> afterExecutionGuiRefresh(
-            final Collection<ExecutionTracker> trackers) {
-        pendingUpdates.addAll(
-                delayedTrackersForPhase(ExecutionLifecyclePhase.AFTER, trackers));
-        return immediateTrackersForPhase(ExecutionLifecyclePhase.AFTER, trackers);
-    }
+	/**
+	 * Tracker, die zum Abschluss der Anweisung einen Refresh der Oberfläche
+	 * anstoßen sollen. Vorher verzögerte Tracker werden ebenfalls
+	 * berücksichtigt.
+	 *
+	 * @return
+	 */
+	public Set<ExecutionTracker> afterExecutionGuiRefresh() {
+		pendingUpdates.addAll(delayedTrackersForPhase(
+				ExecutionLifecyclePhase.AFTER, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.AFTER,
+				trackers);
+	}
 
-    public Set<ExecutionTracker> errorExecutionGuiRefresh(
-            final Collection<ExecutionTracker> trackers) {
-        pendingUpdates.addAll(
-                delayedTrackersForPhase(ExecutionLifecyclePhase.ERROR, trackers));
-        return immediateTrackersForPhase(ExecutionLifecyclePhase.ERROR, trackers);
-    }
+	/**
+	 * Tracker, die im Fall eines Fehlers bei der Ausführung einen Refresh der
+	 * Oberfläche anstoßen sollen. Vorher verzögerte Tracker werden ebenfalls
+	 * berücksichtigt.
+	 *
+	 * @return
+	 */
+	public Set<ExecutionTracker> errorExecutionGuiRefresh() {
+		pendingUpdates.addAll(delayedTrackersForPhase(
+				ExecutionLifecyclePhase.ERROR, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.ERROR,
+				trackers);
+	}
 
-    public Set<ExecutionTracker> delayedExecutionGuiRefresh(
-            final Collection<ExecutionTracker> trackers) {
-        Set<ExecutionTracker> delayed = new HashSet<>(pendingUpdates);
-        pendingUpdates.clear();
-        return delayed;
-    }
+	/**
+	 * Tracker, die in vorherigen Phasen für eine verzögerte Ausgabe vorgemerkt
+	 * wurden.
+	 *
+	 * @return
+	 */
+	public Set<ExecutionTracker> delayedExecutionGuiRefresh() {
+		final Set<ExecutionTracker> delayed = new HashSet<>(pendingUpdates);
+		pendingUpdates.clear();
+		return delayed;
+	}
 }

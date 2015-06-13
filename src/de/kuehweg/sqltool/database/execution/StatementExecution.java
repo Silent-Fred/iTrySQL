@@ -25,13 +25,14 @@
  */
 package de.kuehweg.sqltool.database.execution;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.StatementString;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.sqlediting.StatementString;
 
 /**
  * Klasse zur Ausführung einer SQL-Anweisung mit Aufbereitung des Ergebnisses
@@ -40,106 +41,98 @@ import java.text.MessageFormat;
  */
 public class StatementExecution {
 
-    private final StatementExecutionInformation info;
+	private final StatementExecutionInformation info;
 
-    public StatementExecution(final StatementString sql) {
-        info = new StatementExecutionInformation();
-        info.setSql(sql);
-    }
+	public StatementExecution(final StatementString sql) {
+		info = new StatementExecutionInformation();
+		info.setSql(sql);
+	}
 
-    public StatementExecutionInformation execute(final Statement statement) throws SQLException {
-        if (info.getSql() == null) {
-            erroneousResult();
-        } else {
-            info.
-                    setExecutedBy(statement.getConnection().getMetaData().
-                            getUserName());
-            info.setConnectionDescription(statement.getConnection().getMetaData().
-                    getURL());
-            info.setStartOfExecution(System.currentTimeMillis());
-            if (statement.execute(info.getSql().uncommentedStatement())) {
-                retrieveResult(statement);
-            } else {
-                headOnlyResult(statement.getUpdateCount());
-            }
-            // als Ende der Ausführung wird der Zeitpunkt betrachtet, ab dem die Ergebnismenge übertragen ist
-            info.setEndOfExecution(System.currentTimeMillis());
-        }
-        return info;
-    }
+	public StatementExecutionInformation execute(final Statement statement)
+			throws SQLException {
+		if (info.getSql() == null) {
+			erroneousResult();
+		} else {
+			info.setExecutedBy(statement.getConnection().getMetaData()
+					.getUserName());
+			info.setConnectionDescription(statement.getConnection()
+					.getMetaData().getURL());
+			info.setStartOfExecution(System.currentTimeMillis());
+			if (statement.execute(info.getSql().uncommentedStatement())) {
+				retrieveResult(statement);
+			} else {
+				headOnlyResult(statement.getUpdateCount());
+			}
+			// als Ende der Ausführung wird der Zeitpunkt betrachtet, ab dem die
+			// Ergebnismenge übertragen ist
+			info.setEndOfExecution(System.currentTimeMillis());
+		}
+		return info;
+	}
 
-    private void retrieveResult(final Statement statement) {
-        ResultSet resultSet = null;
-        try {
-            resultSet = statement.getResultSet();
-            if (resultSet != null) {
-                info.setStatementResult(new StatementResult());
-                retrieveHeader(resultSet);
-                retrieveRows(resultSet);
-                int maxRows = statement.getMaxRows();
-                info.setLimitMaxRowsReached(maxRows > 0 && info.getStatementResult().
-                        getRows().size() >= maxRows);
-                info.setSummary(MessageFormat.format(
-                        DialogDictionary.PATTERN_ROWCOUNT.toString(),
-                        info.getStatementResult().getRows().size()));
-            }
-        } catch (SQLException ex) {
-            erroneousResult();
-        }
-        try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-        } catch (final SQLException ex) {
-            erroneousResult();
-        }
-    }
+	private void retrieveResult(final Statement statement) {
+		try (ResultSet resultSet = statement.getResultSet()) {
+			if (resultSet != null) {
+				info.setStatementResult(new StatementResult());
+				retrieveHeader(resultSet);
+				retrieveRows(resultSet);
+				final int maxRows = statement.getMaxRows();
+				info.setLimitMaxRowsReached(maxRows > 0
+						&& info.getStatementResult().getRows().size() >= maxRows);
+				info.setSummary(MessageFormat.format(
+						DialogDictionary.PATTERN_ROWCOUNT.toString(), info
+								.getStatementResult().getRows().size()));
+			}
+		} catch (final SQLException ex) {
+			erroneousResult();
+		}
+	}
 
-    private void retrieveHeader(final ResultSet resultSet) throws SQLException {
-        if (resultSet != null) {
-            final ResultSetMetaData metaData = resultSet.getMetaData();
-            final int col = metaData.getColumnCount();
+	private void retrieveHeader(final ResultSet resultSet) throws SQLException {
+		if (resultSet != null) {
+			final ResultSetMetaData metaData = resultSet.getMetaData();
+			final int col = metaData.getColumnCount();
 
-            final String[] header = new String[col];
-            for (int i = 1; i <= col; i++) {
-                header[i - 1] = metaData.getColumnLabel(i);
-            }
-            info.getStatementResult().setHeader(new ResultHeader(header));
-        }
-    }
+			final String[] header = new String[col];
+			for (int i = 1; i <= col; i++) {
+				header[i - 1] = metaData.getColumnLabel(i);
+			}
+			info.getStatementResult().setHeader(new ResultHeader(header));
+		}
+	}
 
-    private void retrieveRows(final ResultSet resultSet) throws SQLException {
-        if (resultSet != null) {
-            final ResultSetMetaData metaData = resultSet.getMetaData();
-            final int col = metaData.getColumnCount();
-            final Object[] row = new Object[col];
-            while (resultSet.next()) {
-                for (int i = 1; i <= col; i++) {
-                    row[i - 1] = resultSet.getObject(i);
-                    if (resultSet.wasNull()) {
-                        row[i - 1] = null;
-                    }
-                }
-                info.getStatementResult().addRow(new ResultRow(row));
-            }
-        }
-    }
+	private void retrieveRows(final ResultSet resultSet) throws SQLException {
+		if (resultSet != null) {
+			final ResultSetMetaData metaData = resultSet.getMetaData();
+			final int col = metaData.getColumnCount();
+			final Object[] row = new Object[col];
+			while (resultSet.next()) {
+				for (int i = 1; i <= col; i++) {
+					row[i - 1] = resultSet.getObject(i);
+					if (resultSet.wasNull()) {
+						row[i - 1] = null;
+					}
+				}
+				info.getStatementResult().addRow(new ResultRow(row));
+			}
+		}
+	}
 
-    private void headOnlyResult(final int updateCount) {
-        info.setStatementResult(null);
-        if (info.getSql().isDataManipulationStatement()) {
-            info.setSummary(MessageFormat.format(
-                    DialogDictionary.PATTERN_UPDATECOUNT.toString(), updateCount));
-        } else {
-            info.setSummary(MessageFormat.format(
-                    DialogDictionary.PATTERN_EXECUTED_STATEMENT.toString(),
-                    info.getSql().firstKeyword()));
-        }
-    }
+	private void headOnlyResult(final int updateCount) {
+		info.setStatementResult(null);
+		if (info.getSql().isDataManipulationStatement()) {
+			info.setSummary(MessageFormat.format(
+					DialogDictionary.PATTERN_UPDATECOUNT.toString(),
+					updateCount));
+		} else {
+			info.setSummary(MessageFormat.format(
+					DialogDictionary.PATTERN_EXECUTED_STATEMENT.toString(),
+					info.getSql().firstKeyword()));
+		}
+	}
 
-    private void erroneousResult() {
-        info.setStatementResult(null);
-        info.setSummary(
-                DialogDictionary.LABEL_RESULT_ERROR.toString());
-    }
+	private void erroneousResult() {
+		info.setStatementResult(null);
+		info.setSummary(DialogDictionary.LABEL_RESULT_ERROR.toString());
+	}
 }

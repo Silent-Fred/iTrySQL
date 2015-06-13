@@ -26,18 +26,6 @@
 package de.kuehweg.sqltool.dialog.component.schematree;
 
 import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.CATALOG;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.EXPORTED_KEY;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.EXPORTED_KEYS;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.EXPORTED_KEY_COLUMN;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.IMPORTED_KEY;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.IMPORTED_KEYS;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.IMPORTED_KEY_COLUMN;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.INDEX_COLUMN;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.INDICES;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.PRIMARY_KEY_COLUMN;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.SCHEMA;
-import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType.TABLE_TYPE;
 
 /**
  * Styles für Knoten in der Strukturansicht
@@ -46,36 +34,36 @@ import static de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode
  */
 public class SchemaTreeStyleFinder {
 
-    public String styleClass(final SchemaTreeNode node) {
-        switch (node.getType()) {
-            case DATABASE:
-                return SchemaTreeConstants.STYLE_DATABASE;
-            case CATALOG:
-                return SchemaTreeConstants.STYLE_USER;
-            case SCHEMA:
-                return SchemaTreeConstants.STYLE_USER;
-            case TABLE_TYPE:
-            case TABLE:
-                return SchemaTreeConstants.STYLE_TABLE;
-            case COLUMN:
-                return SchemaTreeConstants.STYLE_COLUMN;
-            case PRIMARY_KEY_COLUMN:
-                return SchemaTreeConstants.STYLE_PRIMARY_KEY;
-            case IMPORTED_KEYS:
-            case IMPORTED_KEY:
-            case IMPORTED_KEY_COLUMN:
-                return SchemaTreeConstants.STYLE_REFERENCES;
-            case EXPORTED_KEYS:
-            case EXPORTED_KEY:
-            case EXPORTED_KEY_COLUMN:
-                return SchemaTreeConstants.STYLE_FOREIGN_KEY_CONSTRAINT;
-            case INDICES:
-            case INDEX:
-            case INDEX_COLUMN:
-                return SchemaTreeConstants.STYLE_INDEX;
-            default:
-                return "";
-        }
-    }
+	public String styleClass(final SchemaTreeNode node) {
+		switch (node.getType()) {
+		case DATABASE:
+			return SchemaTreeConstants.STYLE_DATABASE;
+		case CATALOG:
+			return SchemaTreeConstants.STYLE_USER;
+		case SCHEMA:
+			return SchemaTreeConstants.STYLE_USER;
+		case TABLE_TYPE:
+		case TABLE:
+			return SchemaTreeConstants.STYLE_TABLE;
+		case COLUMN:
+			return SchemaTreeConstants.STYLE_COLUMN;
+		case PRIMARY_KEY_COLUMN:
+			return SchemaTreeConstants.STYLE_PRIMARY_KEY;
+		case IMPORTED_KEYS:
+		case IMPORTED_KEY:
+		case IMPORTED_KEY_COLUMN:
+			return SchemaTreeConstants.STYLE_REFERENCES;
+		case EXPORTED_KEYS:
+		case EXPORTED_KEY:
+		case EXPORTED_KEY_COLUMN:
+			return SchemaTreeConstants.STYLE_FOREIGN_KEY_CONSTRAINT;
+		case INDICES:
+		case INDEX:
+		case INDEX_COLUMN:
+			return SchemaTreeConstants.STYLE_INDEX;
+		default:
+			return "";
+		}
+	}
 
 }

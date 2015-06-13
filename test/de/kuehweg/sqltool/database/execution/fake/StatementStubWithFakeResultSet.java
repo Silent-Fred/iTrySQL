@@ -35,44 +35,49 @@ import java.sql.SQLException;
  */
 public class StatementStubWithFakeResultSet extends FakeStatement {
 
-    private final ResultSet resultSet;
+	private final ResultSet resultSet;
 
-    private final Connection connection;
+	private final Connection connection;
 
-    private int maxRows;
-    
-    public StatementStubWithFakeResultSet(final Connection connection,
-            final ResultSet resultSet) {
-        super();
-        this.connection = connection;
-        this.resultSet = resultSet;
-    }
+	private int maxRows;
 
-    @Override
-    public boolean execute(String sql) throws SQLException {
-        return true;
-    }
+	public StatementStubWithFakeResultSet(final Connection connection,
+			final ResultSet resultSet) {
+		super();
+		this.connection = connection;
+		this.resultSet = resultSet;
+	}
 
-    @Override
-    public ResultSet getResultSet() throws SQLException {
-        if (resultSet == null) {
-            throw new SQLException();
-        }
-        return resultSet;
-    }
+	@Override
+	public boolean execute(final String sql) throws SQLException {
+		return true;
+	}
 
-    @Override
-    public Connection getConnection() throws SQLException {
-        return connection;
-    }
+	@Override
+	public ResultSet getResultSet() throws SQLException {
+		if (resultSet == null) {
+			throw new SQLException();
+		}
+		return resultSet;
+	}
 
-    @Override
-    public void setMaxRows(int max) throws SQLException {
-        maxRows = max;
-    }
+	@Override
+	public void close() throws SQLException {
+		// ohne Exception
+	}
 
-    @Override
-    public int getMaxRows() throws SQLException {
-        return maxRows;
-    }
+	@Override
+	public Connection getConnection() throws SQLException {
+		return connection;
+	}
+
+	@Override
+	public void setMaxRows(final int max) throws SQLException {
+		maxRows = max;
+	}
+
+	@Override
+	public int getMaxRows() throws SQLException {
+		return maxRows;
+	}
 }

@@ -25,14 +25,15 @@
  */
 package de.kuehweg.sqltool.dialog.component.schematree;
 
-import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode;
-import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType;
-import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode;
+import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType;
 
 /**
  *
@@ -40,37 +41,37 @@ import org.junit.Test;
  */
 public class SchemaTreeStyleFinderTest {
 
-    public SchemaTreeStyleFinderTest() {
-    }
+	public SchemaTreeStyleFinderTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void neverReturnsNull() {
-        final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
-        for (SchemaTreeNodeType type : SchemaTreeNodeType.values()) {
-            Assert.assertNotNull(styleFinder.styleClass(new SchemaTreeNode(type,
-                    "whatever")));
-        }
-    }
+	@Test
+	public void neverReturnsNull() {
+		final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
+		for (final SchemaTreeNodeType type : SchemaTreeNodeType.values()) {
+			Assert.assertNotNull(styleFinder.styleClass(new SchemaTreeNode(
+					type, "whatever")));
+		}
+	}
 
-    @Test(expected = NullPointerException.class)
-    public void doesNotAcceptNull() {
-        final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
-        styleFinder.styleClass(null);
-    }
+	@Test(expected = NullPointerException.class)
+	public void doesNotAcceptNull() {
+		final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
+		styleFinder.styleClass(null);
+	}
 }

@@ -25,18 +25,21 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import static org.junit.Assert.assertEquals;
+
+import java.sql.SQLException;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import de.kuehweg.sqltool.database.execution.fake.ResultSetStubForMetaDataReader;
 import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
-import java.sql.SQLException;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Metadaten von Tabellen testen
@@ -45,52 +48,51 @@ import org.junit.Test;
  */
 public class TableMetaDataReaderTest {
 
-    private DatabaseDescription db;
-    private CatalogDescription catalog;
-    private SchemaDescription schema;
-    private TableDescription table;
-    private TableDescription tableUntouched;
+	private DatabaseDescription db;
+	private CatalogDescription catalog;
+	private SchemaDescription schema;
 
-    public TableMetaDataReaderTest() {
-    }
+	public TableMetaDataReaderTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-        db = new DatabaseDescription("db", "product", "version");
+	@Before
+	public void setUp() {
+		db = new DatabaseDescription("db", "product", "version");
 
-        catalog = new CatalogDescription("TABLE_CAT");
-        db.adoptOrphan(catalog);
+		catalog = new CatalogDescription("TABLE_CAT");
+		db.adoptOrphan(catalog);
 
-        schema = new SchemaDescription("TABLE_SCHEM");
-        catalog.adoptOrphan(schema);
-    }
+		schema = new SchemaDescription("TABLE_SCHEM");
+		catalog.adoptOrphan(schema);
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void readMetaData() throws SQLException {
-        TableMetaDataReader metaDataReader = new TableMetaDataReader(db);
-        metaDataReader.readAndAddDescriptions(
-                new ResultSetStubForMetaDataReader(2, "TABLE_NAME"));
+	@Test
+	public void readMetaData() throws SQLException {
+		final TableMetaDataReader metaDataReader = new TableMetaDataReader(db);
+		metaDataReader
+				.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2,
+						"TABLE_NAME"));
 
-        assertEquals(2, schema.getTables().size());
+		assertEquals(2, schema.getTables().size());
 
-        // alle Daten übertragen ?
-        int count = 1;
-        for (TableDescription table : schema.getTables()) {
-            assertEquals("TABLE_NAME" + count++, table.getName());
-            assertEquals("TABLE_TYPE", table.getTableType());
-            assertEquals("REMARKS", table.getRemarks());
-        }
-    }
+		// alle Daten übertragen ?
+		int count = 1;
+		for (final TableDescription table : schema.getTables()) {
+			assertEquals("TABLE_NAME" + count++, table.getName());
+			assertEquals("TABLE_TYPE", table.getTableType());
+			assertEquals("REMARKS", table.getRemarks());
+		}
+	}
 }

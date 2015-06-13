@@ -25,15 +25,17 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
 import java.sql.SQLException;
-import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
 
 /**
  * Test der Ausführung von SQL-Anweisungen
@@ -42,47 +44,49 @@ import org.junit.Test;
  */
 public class ExecuteActionTest {
 
-    private ExecuteAction action;
+	private ExecuteAction action;
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-        action = new ExecuteAction();
-    }
+	@Before
+	public void setUp() {
+		action = new ExecuteAction();
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void handlingProblemsInGeneral() throws SQLException {
-        Assert.assertNotNull(action.startExecution(null, null));
-        Assert.assertNotNull(action.startExecution("select * from wherever;", null));
-    }
+	@Test
+	public void handlingProblemsInGeneral() throws SQLException {
+		Assert.assertNotNull(action.startExecution(null, null));
+		Assert.assertNotNull(action.startExecution("select * from wherever;",
+				null));
+	}
 
-    @Test
-    public void specificMessages() throws SQLException {
-        Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.
-                startExecution(null, null));
-        Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.
-                startExecution("   \n   \t ", null));
-        Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.
-                startExecution("   \n   \t ", new ConnectionStubWithBasicMetaData()));
-        Assert.assertEquals(DialogDictionary.MSG_NO_DB_CONNECTION, action.
-                startExecution("select * from wherever ", null));
-    }
+	@Test
+	public void specificMessages() throws SQLException {
+		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
+				action.startExecution(null, null));
+		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
+				action.startExecution("   \n   \t ", null));
+		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
+				action.startExecution("   \n   \t ",
+						new ConnectionStubWithBasicMetaData()));
+		Assert.assertEquals(DialogDictionary.MSG_NO_DB_CONNECTION,
+				action.startExecution("select * from wherever ", null));
+	}
 
-    @Test(expected = SQLException.class)
-    public void handlingException() throws SQLException {
-        action.startExecution("select * from wherever;",
-                new ConnectionStubWithBasicMetaData());
-    }
+	@Test(expected = SQLException.class)
+	public void handlingException() throws SQLException {
+		action.startExecution("select * from wherever;",
+				new ConnectionStubWithBasicMetaData());
+	}
 
 }
