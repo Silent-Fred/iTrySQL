@@ -93,7 +93,7 @@
 
 #schemaTreeView .tree-cell .label {
     -fx-font-family: 'iTryIcons';
-    -fx-font-size: 24;
+    -fx-font-size: 18;
     -fx-padding: 0;
 }
 
@@ -118,11 +118,11 @@
 }
 
 #schemaTreeView .schema-tree-foreign-key-constraint {
-    -fx-text-fill: #005A7C;
+    -fx-text-fill: #007c7c;
 }
 
 #schemaTreeView .schema-tree-references {
-    -fx-text-fill: #005A7C;
+    -fx-text-fill: #007c7c;
 }
 
 #schemaTreeView .schema-tree-index {

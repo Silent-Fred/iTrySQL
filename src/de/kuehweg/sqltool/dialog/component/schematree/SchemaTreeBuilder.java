@@ -29,6 +29,7 @@ import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode;
 import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeBuilder;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -42,6 +43,9 @@ public class SchemaTreeBuilder implements Runnable {
 
     private final DatabaseDescription db;
     private final TreeView<String> treeToUpdate;
+
+    private final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
+    private final SchemaTreeIconFinder iconFinder = new SchemaTreeIconFinder();
 
     public SchemaTreeBuilder(final DatabaseDescription db,
             final TreeView<String> treeToUpdate) {
@@ -70,85 +74,21 @@ public class SchemaTreeBuilder implements Runnable {
     private TreeItem<String> createTreeItem(final SchemaTreeNode node) {
         final TreeItem<String> treeItem = new TreeItem<>();
         treeItem.setValue(node.getTitle());
-        treeItem.setGraphic(createLabel(node));
+        treeItem.setGraphic(createIcon(node));
         for (SchemaTreeNode child : node.getChildren()) {
             treeItem.getChildren().add(createTreeItem(child));
         }
         return treeItem;
     }
 
-    private Label createLabel(final SchemaTreeNode node) {
-        final String labelText = labelText(node);
-        if (labelText == null || labelText.isEmpty()) {
+    private Node createIcon(final SchemaTreeNode node) {
+        final String iconCharacter = iconFinder.iconCharacter(node);
+        if (iconCharacter.isEmpty()) {
             return null;
         }
-        final Label label = new Label(labelText);
-        label.getStyleClass().add(styleClass(node));
-        return label;
-    }
-
-    private String labelText(final SchemaTreeNode node) {
-        switch (node.getType()) {
-            case DATABASE:
-                return SchemaTreeConstants.DATABASE;
-            case CATALOG:
-                return SchemaTreeConstants.USER;
-            case SCHEMA:
-                return SchemaTreeConstants.USER;
-            case TABLE_TYPE:
-            case TABLE:
-                return SchemaTreeConstants.TABLE;
-            case COLUMN:
-                return SchemaTreeConstants.COLUMN;
-            case PRIMARY_KEY_COLUMN:
-                return SchemaTreeConstants.PRIMARY_KEY;
-            case IMPORTED_KEYS:
-            case IMPORTED_KEY:
-            case IMPORTED_KEY_COLUMN:
-                return SchemaTreeConstants.REFERENCES;
-            case EXPORTED_KEYS:
-            case EXPORTED_KEY:
-            case EXPORTED_KEY_COLUMN:
-                return SchemaTreeConstants.FOREIGN_KEY_CONSTRAINT;
-            case INDICES:
-            case INDEX:
-            case INDEX_COLUMN:
-                return SchemaTreeConstants.INDEX;
-            default:
-                return "";
-        }
-    }
-
-    private String styleClass(final SchemaTreeNode node) {
-        switch (node.getType()) {
-            case DATABASE:
-                return SchemaTreeConstants.STYLE_DATABASE;
-            case CATALOG:
-                return SchemaTreeConstants.STYLE_USER;
-            case SCHEMA:
-                return SchemaTreeConstants.STYLE_USER;
-            case TABLE_TYPE:
-            case TABLE:
-                return SchemaTreeConstants.STYLE_TABLE;
-            case COLUMN:
-                return SchemaTreeConstants.STYLE_COLUMN;
-            case PRIMARY_KEY_COLUMN:
-                return SchemaTreeConstants.STYLE_PRIMARY_KEY;
-            case IMPORTED_KEYS:
-            case IMPORTED_KEY:
-            case IMPORTED_KEY_COLUMN:
-                return SchemaTreeConstants.STYLE_REFERENCES;
-            case EXPORTED_KEYS:
-            case EXPORTED_KEY:
-            case EXPORTED_KEY_COLUMN:
-                return SchemaTreeConstants.STYLE_FOREIGN_KEY_CONSTRAINT;
-            case INDICES:
-            case INDEX:
-            case INDEX_COLUMN:
-                return SchemaTreeConstants.STYLE_INDEX;
-            default:
-                return "";
-        }
+        final Label icon = new Label(iconCharacter);
+        icon.getStyleClass().add(styleFinder.styleClass(node));
+        return icon;
     }
 
 }
