@@ -43,9 +43,8 @@ public abstract class AbstractBaseIntegration {
     protected Connection getTestConnection() {
         return connection;
     }
-    
+
     protected void openTestConnection() throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        Class.forName(JDBCType.HSQL_IN_MEMORY.getDriverClass()).newInstance();
         final Properties properties = new Properties();
         properties.setProperty("user", "JOHN_DOE");
         properties.setProperty("password", "secret");
@@ -54,7 +53,9 @@ public abstract class AbstractBaseIntegration {
         properties.setProperty(
                 DatabaseConstants.HSQLDB_PROPERTY_TX_CONTROL,
                 DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
-        connection = DriverManager.getConnection(JDBCType.HSQL_IN_MEMORY.getUrlPrefix() + "mem", properties);
+        properties.setProperty("hsqldb.files_readonly", "true");
+        connection = DriverManager.getConnection(JDBCType.HSQL_IN_MEMORY.getUrlPrefix()
+                + "mem", properties);
     }
 
     protected void closeTestConnection() throws SQLException {
@@ -68,7 +69,6 @@ public abstract class AbstractBaseIntegration {
             connection.createStatement().execute("DROP SCHEMA " + schema + " CASCADE");
         }
     }
-
 
     protected void dropPublicSchema() throws SQLException {
         dropSchema("PUBLIC");
