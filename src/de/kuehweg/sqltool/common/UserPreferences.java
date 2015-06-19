@@ -25,7 +25,10 @@
  */
 package de.kuehweg.sqltool.common;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
 /**
@@ -55,6 +58,7 @@ public class UserPreferences implements UserPreferencesI {
         preferences = Preferences.userNodeForPackage(getClass()).node(
                 getClass().getSimpleName());
         initialize();
+        addChangeListener();
     }
 
     private void initialize() {
@@ -71,6 +75,17 @@ public class UserPreferences implements UserPreferencesI {
         } catch (final IllegalArgumentException ex) {
             beepAudioClip = getDefaultBeepAudioClip();
         }
+    }
+
+    private void addChangeListener() {
+        preferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
+            try {
+                evt.getNode().flush();
+            } catch (BackingStoreException ex) {
+                Logger.getLogger(UserPreferences.class.getName()).
+                        log(Level.WARNING, evt.getKey(), ex);
+            }
+        });
     }
 
     /**
@@ -93,10 +108,6 @@ public class UserPreferences implements UserPreferencesI {
         if (this.limitMaxRows != limitMaxRows) {
             this.limitMaxRows = limitMaxRows;
             preferences.putBoolean(LIMIT_MAX_ROWS, limitMaxRows);
-            try {
-                preferences.flush();
-            } catch (final BackingStoreException e) {
-            }
         }
     }
 
@@ -120,10 +131,6 @@ public class UserPreferences implements UserPreferencesI {
         if (fontSizeStatementInput != fontSize) {
             fontSizeStatementInput = fontSize;
             preferences.putInt(FONT_SIZE_STATEMENT_INPUT, fontSize);
-            try {
-                preferences.flush();
-            } catch (final BackingStoreException e) {
-            }
         }
     }
 
@@ -147,10 +154,6 @@ public class UserPreferences implements UserPreferencesI {
         if (fontSizeDbOutput != fontSize) {
             fontSizeDbOutput = fontSize;
             preferences.putInt(FONT_SIZE_DB_OUTPUT, fontSize);
-            try {
-                preferences.flush();
-            } catch (final BackingStoreException e) {
-            }
         }
     }
 
@@ -174,10 +177,6 @@ public class UserPreferences implements UserPreferencesI {
         if (this.beepVolume != beepVolume) {
             this.beepVolume = beepVolume;
             preferences.putDouble(BEEP_VOLUME, beepVolume);
-            try {
-                preferences.flush();
-            } catch (final BackingStoreException e) {
-            }
         }
     }
 
@@ -201,10 +200,6 @@ public class UserPreferences implements UserPreferencesI {
         if (this.beepAudioClip != beepAudioClip) {
             this.beepAudioClip = beepAudioClip;
             preferences.put(BEEP_AUDIO_CLIP, beepAudioClip.name());
-            try {
-                preferences.flush();
-            } catch (final BackingStoreException e) {
-            }
         }
     }
 
