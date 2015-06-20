@@ -228,8 +228,6 @@ public class iTrySQLController implements Initializable,
     @FXML
     private Button createConnection;
     @FXML
-    private Button editConnection;
-    @FXML
     private Button removeConnection;
     @FXML
     private Button exportConnections;
@@ -265,7 +263,6 @@ public class iTrySQLController implements Initializable,
         assert connectionUser != null : "fx:id=\"connectionUser\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert createConnection != null : "fx:id=\"createConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert dbOutput != null : "fx:id=\"dbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-        assert editConnection != null : "fx:id=\"editConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert executionProgressIndicator != null : "fx:id=\"executionProgressIndicator\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert executionTime != null : "fx:id=\"executionTime\" was not injected: check your FXML file 'iTrySQL.fxml'.";
         assert limitMaxRows != null : "fx:id=\"limitMaxRows\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -567,10 +564,6 @@ public class iTrySQLController implements Initializable,
         connectionComponentController.createConnection();
     }
 
-    public void editConnection(final ActionEvent event) {
-        connectionComponentController.editConnection();
-    }
-
     public void removeConnection(final ActionEvent event) {
         connectionComponentController.removeConnection();
     }
@@ -696,7 +689,6 @@ public class iTrySQLController implements Initializable,
         builder.connectionUser(connectionUser);
         builder.dbName(connectionDbName);
         builder.browseButton(connectionDirectoryChoice);
-        builder.editButton(editConnection);
         builder.removeButton(removeConnection);
         connectionComponentController = builder.build();
     }

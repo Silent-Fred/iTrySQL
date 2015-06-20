@@ -65,16 +65,10 @@ public class ConnectionComponentController {
         private TextField connectionUser;
         private Button browseButton;
         private TextField dbName;
-        private Button editButton;
         private Button removeButton;
 
         public Builder(final VBox container) {
             this.container = container;
-        }
-
-        public Builder editButton(final Button editButton) {
-            this.editButton = editButton;
-            return this;
         }
 
         public Builder removeButton(final Button removeButton) {
@@ -130,9 +124,7 @@ public class ConnectionComponentController {
     private final TextField connectionUser;
     private final Button browseButton;
     private final TextField dbName;
-    private final Button editButton;
     private final Button removeButton;
-    private final BooleanProperty connectionSettingsEditable;
     private final BooleanProperty connectionSettingFileBased;
 
     private ConnectionComponentController(final Builder builder) {
@@ -144,17 +136,9 @@ public class ConnectionComponentController {
         connectionUser = builder.connectionUser;
         browseButton = builder.browseButton;
         dbName = builder.dbName;
-        editButton = builder.editButton;
         removeButton = builder.removeButton;
-        connectionSettingsEditable = new SimpleBooleanProperty(false);
         connectionSettingFileBased = new SimpleBooleanProperty(false);
-        connectionName.disableProperty().bind(Bindings.not(connectionSettingsEditable));
-        connectionType.disableProperty().bind(Bindings.not(connectionSettingsEditable));
-        connectionUrl.disableProperty().bind(Bindings.not(connectionSettingsEditable));
-        dbName.disableProperty().bind(Bindings.not(connectionSettingsEditable));
-        connectionUser.disableProperty().bind(Bindings.not(connectionSettingsEditable));
-        browseButton.disableProperty().bind(Bindings.not(connectionSettingsEditable).or(
-                Bindings.not(connectionSettingFileBased)));
+        browseButton.disableProperty().bind(Bindings.not(connectionSettingFileBased));
         prepareConnectionSettings();
     }
 
@@ -172,19 +156,11 @@ public class ConnectionComponentController {
         saveConnectionSettings();
         if (connectionSelection.getItems().indexOf(connectionSetting) >= 0) {
             connectionSelection.setValue(connectionSetting);
-            editConnection();
+            putSelectedConnectionSettingInDialog();
         }
         container.visibleProperty().set(true);
-        editButton.disableProperty().set(true);
-        removeButton.disableProperty().set(true);
-        connectionSettingsEditable.set(true);
+        removeButton.disableProperty().set(false);
         connectionSettingFileBased.set(isFileBasedType(connectionSetting));
-    }
-
-    public void editConnection() {
-        putSelectedConnectionSettingInDialog();
-        controlConnectionSettingsVisibility();
-        connectionSettingsEditable.set(true);
     }
 
     public void changeConnectionType() {
@@ -212,7 +188,6 @@ public class ConnectionComponentController {
     public void cancelEdit() {
         connectionSelection.valueProperty().set(null);
         controlConnectionSettingsVisibility();
-        connectionSettingsEditable.set(false);
     }
 
     public void saveConnectionSettings() {
@@ -278,7 +253,6 @@ public class ConnectionComponentController {
         final boolean empty = connectionSelection.valueProperty().get() == null;
         container.visibleProperty().set(!empty);
         removeButton.disableProperty().set(empty);
-        editButton.disableProperty().set(empty);
     }
 
     private void putSelectedConnectionSettingInDialog() {

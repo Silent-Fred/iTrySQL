@@ -86,7 +86,6 @@
                                       </items>
                                     </ComboBox>
                                     <Button fx:id="createConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#createConnection" text="%label_createConnection" />
-                                    <Button fx:id="editConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#editConnection" text="%label_editConnection" VBox.vgrow="NEVER" />
                                     <Separator VBox.vgrow="NEVER" />
                                     <Button fx:id="removeConnection" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#removeConnection" text="%label_removeConnection" />
                                     <VBox fx:id="connectionSettings" prefHeight="310.0" prefWidth="261.0" spacing="10.0" VBox.vgrow="ALWAYS">
@@ -94,7 +93,7 @@
                                         <Label text="%label_connectionSettings" VBox.vgrow="NEVER" />
                                         <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
                                         <TextField fx:id="connectionName" promptText="%prompt_connectionName" VBox.vgrow="NEVER" />
-                                        <ComboBox fx:id="connectionType" disable="true" onAction="#changeConnectionType" VBox.vgrow="NEVER">
+                                        <ComboBox fx:id="connectionType" onAction="#changeConnectionType" VBox.vgrow="NEVER">
                                           <items>
                                             <FXCollections fx:factory="observableArrayList">
                                               <String fx:value="Item 1" />
@@ -103,7 +102,7 @@
                                             </FXCollections>
                                           </items>
                                         </ComboBox>
-                                        <TextField fx:id="connectionUrl" disable="true" prefWidth="265.0" promptText="%prompt_connectionUrl" VBox.vgrow="NEVER" />
+                                        <TextField fx:id="connectionUrl" prefWidth="265.0" promptText="%prompt_connectionUrl" VBox.vgrow="NEVER" />
                                         <Button fx:id="connectionDirectoryChoice" mnemonicParsing="false" onAction="#chooseDbDirectory" text="%label_connectionDirectoryChoice" VBox.vgrow="ALWAYS" />
                                         <TextField fx:id="connectionDbName" prefWidth="200.0" promptText="%prompt_dbName" />
                                         <Separator prefWidth="200.0" VBox.vgrow="NEVER" />
