@@ -103,7 +103,7 @@ public class ITrySQL extends Application {
     public void stop() throws Exception {
         try {
             if (controller != null) {
-                controller.getConnectionHolder().disconnect();
+                controller.stop();
             }
         } catch (final Throwable ex) {
             Logger.getLogger(ITrySQL.class.getName()).log(Level.SEVERE, null,

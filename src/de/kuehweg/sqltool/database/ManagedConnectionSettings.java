@@ -102,7 +102,8 @@ public class ManagedConnectionSettings {
     /**
      * Bestehende Verbindungsdaten auslesen
      *
-     * @return
+     * @return Liste der bekannten Verbindungen, sortiert nach der Standardreihenfolge für
+     * ConnectionSetting
      */
     public List<ConnectionSetting> getConnectionSettings() {
         if (connectionSettings == null) {

@@ -27,6 +27,7 @@ package de.kuehweg.sqltool.dialog.component;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.ConnectionSetting;
+import de.kuehweg.sqltool.database.DefaultConnectionSettingsProvider;
 import de.kuehweg.sqltool.database.JDBCType;
 import de.kuehweg.sqltool.database.ManagedConnectionSettings;
 import de.kuehweg.sqltool.dialog.ConfirmDialog;
@@ -131,7 +132,7 @@ public class ConnectionComponentController {
     private final TextField dbName;
     private final Button editButton;
     private final Button removeButton;
-    private final BooleanProperty connectionSettingsEdit;
+    private final BooleanProperty connectionSettingsEditable;
     private final BooleanProperty connectionSettingFileBased;
 
     private ConnectionComponentController(final Builder builder) {
@@ -145,47 +146,45 @@ public class ConnectionComponentController {
         dbName = builder.dbName;
         editButton = builder.editButton;
         removeButton = builder.removeButton;
-        connectionSettingsEdit = new SimpleBooleanProperty(false);
+        connectionSettingsEditable = new SimpleBooleanProperty(false);
         connectionSettingFileBased = new SimpleBooleanProperty(false);
-        connectionName.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        connectionType.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        connectionUrl.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        dbName.disableProperty().bind(Bindings.not(connectionSettingsEdit));
-        connectionUser.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit));
-        browseButton.disableProperty().bind(
-                Bindings.not(connectionSettingsEdit).or(
+        connectionName.disableProperty().bind(Bindings.not(connectionSettingsEditable));
+        connectionType.disableProperty().bind(Bindings.not(connectionSettingsEditable));
+        connectionUrl.disableProperty().bind(Bindings.not(connectionSettingsEditable));
+        dbName.disableProperty().bind(Bindings.not(connectionSettingsEditable));
+        connectionUser.disableProperty().bind(Bindings.not(connectionSettingsEditable));
+        browseButton.disableProperty().bind(Bindings.not(connectionSettingsEditable).or(
                 Bindings.not(connectionSettingFileBased)));
         prepareConnectionSettings();
     }
 
     public void changeConnection() {
+        putSelectedConnectionSettingInDialog();
         controlConnectionSettingsVisibility();
-        putConnectionSettingInDialog(connectionSelection.getValue());
     }
 
     public void createConnection() {
-        final String name = createValidNewConnectionName(
-                DialogDictionary.PATTERN_NEW_CONNECTION_NAME
-                .toString());
-        final ConnectionSetting setting = new ConnectionSetting(name,
-                JDBCType.HSQL_IN_MEMORY, "", "johndoe", null, null);
-        putConnectionSettingInDialog(setting);
+        final ConnectionSetting connectionSetting = DefaultConnectionSettingsProvider.
+                getDefaultTemplateStandaloneUserHomeConnection();
+        connectionSetting.setName(
+                createValidNewConnectionName(connectionSetting.getName()));
+        putConnectionSettingInDialog(connectionSetting);
+        saveConnectionSettings();
+        if (connectionSelection.getItems().indexOf(connectionSetting) >= 0) {
+            connectionSelection.setValue(connectionSetting);
+            editConnection();
+        }
         container.visibleProperty().set(true);
         editButton.disableProperty().set(true);
         removeButton.disableProperty().set(true);
-        connectionSettingsEdit.set(true);
-        connectionSettingFileBased.set(false);
+        connectionSettingsEditable.set(true);
+        connectionSettingFileBased.set(isFileBasedType(connectionSetting));
     }
 
     public void editConnection() {
-        final ConnectionSetting setting = connectionSelection.getValue();
-        putConnectionSettingInDialog(setting);
+        putSelectedConnectionSettingInDialog();
         controlConnectionSettingsVisibility();
-        connectionSettingsEdit.set(true);
+        connectionSettingsEditable.set(true);
     }
 
     public void changeConnectionType() {
@@ -193,16 +192,14 @@ public class ConnectionComponentController {
         if (type != null) {
             connectionUrl.setText(null);
             dbName.setText(null);
-            connectionSettingFileBased.set(type == JDBCType.HSQL_STANDALONE);
+            connectionSettingFileBased.set(isFileBasedType(type));
         }
     }
 
     public void chooseDbDirectory() {
         final DirectoryChooser dirChooser = new DirectoryChooser();
-        dirChooser.setTitle(DialogDictionary.LABEL_DB_DIRECTORY_CHOOSER
-                .toString());
-        final File dir = dirChooser
-                .showDialog(container.getScene().getWindow());
+        dirChooser.setTitle(DialogDictionary.LABEL_DB_DIRECTORY_CHOOSER.toString());
+        final File dir = dirChooser.showDialog(container.getScene().getWindow());
         if (dir != null) {
             final JDBCType type = connectionType.valueProperty().get();
             if (type != null) {
@@ -215,15 +212,17 @@ public class ConnectionComponentController {
     public void cancelEdit() {
         connectionSelection.valueProperty().set(null);
         controlConnectionSettingsVisibility();
-        connectionSettingsEdit.set(false);
+        connectionSettingsEditable.set(false);
     }
 
     public void saveConnectionSettings() {
-        final ConnectionSetting setting = getConnectionSettingFromDialog();
-        final ManagedConnectionSettings settings =
-                new ManagedConnectionSettings();
         try {
+            final ManagedConnectionSettings settings = new ManagedConnectionSettings();
+            final ConnectionSetting setting = getConnectionSettingFromDialog();
             settings.addConnectionSetting(setting);
+            prepareConnectionSettings();
+            connectionSelection.setValue(setting);
+            putSelectedConnectionSettingInDialog();
         } catch (final BackingStoreException ex) {
             final ErrorMessage msg = new ErrorMessage(
                     DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -232,7 +231,6 @@ public class ConnectionComponentController {
                     DialogDictionary.COMMON_BUTTON_OK.toString());
             msg.askUserFeedback();
         }
-        prepareConnectionSettings();
     }
 
     public void removeConnection() {
@@ -245,10 +243,7 @@ public class ConnectionComponentController {
         if (DialogDictionary.LABEL_REMOVE_CONNECTION.toString().equals(
                 confirmation)) {
             try {
-                final ManagedConnectionSettings settings =
-                        new ManagedConnectionSettings();
-                settings.removeConnectionSetting(
-                        getConnectionSettingFromDialog());
+                removeConnectionSettingFromPreferences(connectionSelection.getValue());
             } catch (final BackingStoreException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -258,7 +253,25 @@ public class ConnectionComponentController {
                 msg.askUserFeedback();
             }
             prepareConnectionSettings();
+            // nach dem Löschen immer den Editiermodus beenden
+            cancelEdit();
         }
+    }
+
+    private void removeConnectionSettingFromPreferences(
+            final ConnectionSetting connectionSetting) throws BackingStoreException {
+        if (connectionSetting != null) {
+            final ManagedConnectionSettings settings = new ManagedConnectionSettings();
+            settings.removeConnectionSetting(connectionSetting);
+        }
+    }
+
+    private boolean isFileBasedType(final ConnectionSetting connectionSetting) {
+        return connectionSetting != null && isFileBasedType(connectionSetting.getType());
+    }
+
+    private boolean isFileBasedType(JDBCType type) {
+        return type != null && type == JDBCType.HSQL_STANDALONE;
     }
 
     private void controlConnectionSettingsVisibility() {
@@ -266,6 +279,10 @@ public class ConnectionComponentController {
         container.visibleProperty().set(!empty);
         removeButton.disableProperty().set(empty);
         editButton.disableProperty().set(empty);
+    }
+
+    private void putSelectedConnectionSettingInDialog() {
+        putConnectionSettingInDialog(connectionSelection.getValue());
     }
 
     private void putConnectionSettingInDialog(final ConnectionSetting setting) {
@@ -289,8 +306,7 @@ public class ConnectionComponentController {
     }
 
     private void fillConnectionSettings() {
-        final ManagedConnectionSettings settings =
-                new ManagedConnectionSettings();
+        final ManagedConnectionSettings settings = new ManagedConnectionSettings();
         final ObservableList<ConnectionSetting> localSettings = FXCollections
                 .observableArrayList();
         for (final ConnectionSetting connectionSetting : settings
@@ -321,8 +337,7 @@ public class ConnectionComponentController {
         if (name == null) {
             return true;
         }
-        final ManagedConnectionSettings settings =
-                new ManagedConnectionSettings();
+        final ManagedConnectionSettings settings = new ManagedConnectionSettings();
         for (final ConnectionSetting setting : settings.getConnectionSettings()) {
             if (setting.getName() != null && setting.getName().equals(name)) {
                 return true;

@@ -243,7 +243,7 @@ public class iTrySQLController implements Initializable,
     // my own special creation
     private QueryResultTableView queryResultTableView;
 
-    private ConnectionHolder connectionHolder;
+    private final ConnectionHolder connectionHolder = new ConnectionHolder();
     private ConnectionComponentController connectionComponentController;
     private static int countWindows = 1;
 
@@ -351,7 +351,7 @@ public class iTrySQLController implements Initializable,
     public void autoCommit(final ActionEvent event) {
         // Auto-Commit ist keine echte Benutzereinstellung sondern wird pro
         // Verbindung gesteuert, z.T. auch durch JDBC-Vorgaben
-        if (getConnectionHolder().getConnection() == null) {
+        if (getConnection() == null) {
             final AlertBox msg = new AlertBox(
                     DialogDictionary.MESSAGEBOX_WARNING.toString(),
                     DialogDictionary.MSG_NO_DB_CONNECTION.toString(),
@@ -359,8 +359,7 @@ public class iTrySQLController implements Initializable,
             msg.askUserFeedback();
         } else {
             try {
-                connectionHolder.getConnection().setAutoCommit(
-                        autoCommit.isSelected());
+                getConnection().setAutoCommit(autoCommit.isSelected());
             } catch (final SQLException ex) {
                 final ErrorMessage msg = new ErrorMessage(
                         DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -399,7 +398,7 @@ public class iTrySQLController implements Initializable,
                 .getConnectionSetting();
         if (connectionSetting != null) {
             try {
-                getConnectionHolder().connect(connectionSetting);
+                connectionHolder.connect(connectionSetting);
                 controlAutoCommitVisuals();
                 refreshTree(event);
                 if (connectionSetting.getType() == JDBCType.HSQL_IN_MEMORY) {
@@ -423,7 +422,7 @@ public class iTrySQLController implements Initializable,
     }
 
     public void disconnect(final ActionEvent event) {
-        getConnectionHolder().disconnect();
+        connectionHolder.disconnect();
         refreshTree(null, schemaTreeView);
         permanentMessage.visibleProperty().set(false);
     }
@@ -438,24 +437,21 @@ public class iTrySQLController implements Initializable,
                             statementInput.getCaretPosition());
         }
         focusResult();
-        createExecuteAction().handleExecuteAction(sql, getConnectionHolder().
-                getConnection());
+        createExecuteAction().handleExecuteAction(sql, getConnection());
     }
 
     public void executeScript(final ActionEvent event) {
         focusResult();
         createExecuteAction().handleExecuteAction(statementInput.getText(),
-                getConnectionHolder().getConnection());
+                getConnection());
     }
 
     public void commit(final ActionEvent event) {
-        createExecuteAction().handleExecuteAction("COMMIT",
-                getConnectionHolder().getConnection());
+        createExecuteAction().handleExecuteAction("COMMIT", getConnection());
     }
 
     public void rollback(final ActionEvent event) {
-        createExecuteAction().handleExecuteAction("ROLLBACK",
-                getConnectionHolder().getConnection());
+        createExecuteAction().handleExecuteAction("ROLLBACK", getConnection());
     }
 
     public void fontAction(final ActionEvent event) {
@@ -465,8 +461,7 @@ public class iTrySQLController implements Initializable,
     }
 
     public void tutorialAction(final ActionEvent event) {
-        new TutorialAction().createTutorial(createSilentExecuteAction(),
-                getConnectionHolder().getConnection());
+        new TutorialAction().createTutorial(createSilentExecuteAction(), getConnection());
     }
 
     public void fileOpenScriptAction(final ActionEvent event) {
@@ -541,10 +536,11 @@ public class iTrySQLController implements Initializable,
     }
 
     public void refreshTree(final ActionEvent event) {
-        refreshTree(getConnectionHolder().getConnection(), schemaTreeView);
+        refreshTree(getConnection(), schemaTreeView);
     }
 
-    private void refreshTree(final Connection connection, final TreeView<String> treeToUpdate) {
+    private void refreshTree(final Connection connection,
+            final TreeView<String> treeToUpdate) {
         final Task<Void> refreshTask = new SchemaTreeBuilderTask(connection, treeToUpdate);
         final Thread th = new Thread(refreshTask);
         th.setDaemon(true);
@@ -751,14 +747,13 @@ public class iTrySQLController implements Initializable,
                 KeyCombination.SHORTCUT_DOWN));
 
         menuItemDisconnect.disableProperty().bind(
-                Bindings.not(getConnectionHolder().connectedProperty()));
+                Bindings.not(connectionHolder.connectedProperty()));
     }
 
     private void controlAutoCommitVisuals() {
-        if (getConnectionHolder().getConnection() != null) {
+        if (getConnection() != null) {
             try {
-                autoCommit.setSelected(connectionHolder.getConnection()
-                        .getAutoCommit());
+                autoCommit.setSelected(getConnection().getAutoCommit());
             } catch (final SQLException ex) {
                 autoCommit.setSelected(true);
             }
@@ -793,8 +788,7 @@ public class iTrySQLController implements Initializable,
                 new ExecutionProgressComponent(
                         executionProgressIndicator, executionTime),
                 new AudioFeedback(),
-                new SchemaTreeModificationDetector(schemaTreeView,
-                        getConnectionHolder().getConnection()));
+                new SchemaTreeModificationDetector(schemaTreeView, getConnection()));
 
         executeAction.setLimitMaxRows(UserPreferencesManager.getSharedInstance().
                 isLimitMaxRows());
@@ -808,11 +802,14 @@ public class iTrySQLController implements Initializable,
         executeAction.attach(new ExecutionProgressComponent(
                 executionProgressIndicator, executionTime),
                 new AudioFeedback(),
-                new SchemaTreeModificationDetector(schemaTreeView,
-                        getConnectionHolder().getConnection()),
+                new SchemaTreeModificationDetector(schemaTreeView, getConnection()),
                 new ErrorOnExecutionMessage());
 
         return executeAction;
+    }
+
+    private Connection getConnection() {
+        return connectionHolder.getConnection();
     }
 
     public void focusResult() {
@@ -829,15 +826,11 @@ public class iTrySQLController implements Initializable,
     @Override
     public void handle(final WindowEvent event) {
         if (WindowEvent.WINDOW_HIDING.equals(event.getEventType())) {
-            getConnectionHolder().disconnect();
+            connectionHolder.disconnect();
         }
     }
 
-    public ConnectionHolder getConnectionHolder() {
-        if (connectionHolder == null) {
-            connectionHolder = new ConnectionHolder();
-        }
-        return connectionHolder;
+    public void stop() {
+        connectionHolder.disconnect();
     }
-
 }

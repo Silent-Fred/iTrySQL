@@ -61,4 +61,18 @@ public class DefaultConnectionSettingsProvider {
                 "standard_db", null, null);
     }
 
+    /**
+     * Eine dateibasierte Version im Benutzerverzeichnis als Vorlage für neue
+     * Verbindungen.
+     *
+     * @return
+     */
+    public static ConnectionSetting getDefaultTemplateStandaloneUserHomeConnection() {
+        return new ConnectionSetting(
+                DialogDictionary.PATTERN_NEW_CONNECTION_NAME.toString(),
+                JDBCType.HSQL_STANDALONE, System.getProperty("user.home") + "/"
+                + DialogDictionary.PATTERN_NEW_CONNECTION_FOLDER.toString(),
+                DialogDictionary.PATTERN_NEW_CONNECTION_FILE.toString(), null, null);
+    }
+
 }

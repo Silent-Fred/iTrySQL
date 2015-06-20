@@ -49,16 +49,16 @@ public class ConnectionHolder {
     }
 
     /**
-     * Baut die "richtige" Verbindung auf, abgeleitet aus den
-     * "benutzertauglichen" Verbindungsdaten
+     * Baut die "richtige" Verbindung auf, abgeleitet aus den "benutzertauglichen"
+     * Verbindungsdaten
      *
      * @param connection
      */
     private void connect(final Connection connection) {
-		if (this.connection != null && this.connection != connection) {
-			disconnect();
-		}
-		this.connection = connection;
+        if (this.connection != null && this.connection != connection) {
+            disconnect();
+        }
+        this.connection = connection;
     }
 
     /**
@@ -106,7 +106,7 @@ public class ConnectionHolder {
             connect(DriverManager.getConnection(connectionSetting.getUrl(),
                     properties));
             connectedProperty.set(true);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
+        } catch (NullPointerException | ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
             connectedProperty.set(false);
             throw new DatabaseConnectionException(ex);
         }
