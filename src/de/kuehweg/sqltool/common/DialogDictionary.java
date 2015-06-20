@@ -103,6 +103,8 @@ public enum DialogDictionary {
     PATTERN_EXECUTED_STATEMENT("pattern_executedStatement"),
     PATTERN_MAX_ROWS("pattern_maxRows"),
     PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),
+    PATTERN_NEW_CONNECTION_FOLDER("pattern_newConnectionFolder"),
+    PATTERN_NEW_CONNECTION_FILE("pattern_newConnectionFile"),
     PATTERN_MESSAGE_IN_MEMORY_DATABASE("pattern_messageInMemoryDatabase");
     private final String key;
 
