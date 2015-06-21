@@ -30,12 +30,11 @@ import de.kuehweg.sqltool.database.execution.ResultHeader;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.database.execution.StatementResult;
-import de.kuehweg.sqltool.database.formatter.DefaultHtmlResultTemplateProvider;
+import de.kuehweg.sqltool.database.formatter.DefaultHtmlResultTemplate;
 import de.kuehweg.sqltool.database.formatter.HtmlResultFormatter;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,9 +54,9 @@ import javafx.util.Callback;
  *
  * @author Michael Kühweg
  */
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.BEFORE)
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.BEFORE)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR)
 public class QueryResultTableView implements ExecutionTracker {
 
     public static final String RESULT_TABLE_ID = "useMeToFetchTheResultFormatter";
@@ -76,12 +75,8 @@ public class QueryResultTableView implements ExecutionTracker {
         if (infoToView == null) {
             return "";
         }
-        try {
-            return new HtmlResultFormatter(infoToView).formatAsHtml(
-                    DefaultHtmlResultTemplateProvider.getInstance());
-        } catch (IOException ex) {
-            return DialogDictionary.ERR_HTML_EXPORT_FAILED.toString();
-        }
+        return new HtmlResultFormatter(infoToView).format(
+                new DefaultHtmlResultTemplate());
     }
 
     private void buildViewHeaderWithColumnNameList(final List<String> columnHeaders) {

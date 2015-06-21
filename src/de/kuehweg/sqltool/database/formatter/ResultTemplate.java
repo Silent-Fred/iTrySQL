@@ -26,6 +26,9 @@
 package de.kuehweg.sqltool.database.formatter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Vorlage für den HTML-Export eines Abfrageergebnisses
@@ -126,24 +129,65 @@ public class ResultTemplate implements Serializable {
         this.limitedRows = limitedRows;
     }
 
+    private List<String> splitTemplate(final String part, final String placeholder) {
+        List<String> split = new LinkedList<>();
+        if (part != null && placeholder != null) {
+            int pos = part.indexOf(placeholder);
+            if (pos < 0) {
+                split.add(part);
+            } else {
+                if (pos > 0) {
+                    split.add(part.substring(0, pos));
+                }
+                split.add(placeholder);
+                if (pos + placeholder.length() < part.length()) {
+                    split.addAll(splitTemplate(part.substring(pos + placeholder.length()),
+                            placeholder));
+                }
+            }
+        }
+        return split;
+    }
+
+    private List<String> splitTemplate(final List<String> parts, final String placeholder) {
+        List<String> split = new LinkedList<>();
+        for (String part : parts) {
+            split.addAll(splitTemplate(part, placeholder));
+        }
+        return split;
+    }
+
+    private List<String> fillInPlaceholder(final List<String> parts,
+            final String placeholder, final String replacement) {
+        List<String> withReplacements = new ArrayList<>(parts.size());
+        for (String part : parts) {
+            if (placeholder.equals(part)) {
+                withReplacements.add(replacement != null ? replacement : "");
+            } else {
+                withReplacements.add(part);
+            }
+        }
+        return withReplacements;
+    }
+
     public String buildWithTemplate() {
-        String buildWithMe = template != null ? template : "";
-        if (placeholderExecution != null) {
-            buildWithMe = buildWithMe.replace(placeholderExecution,
-                    getExecutionInformation() != null ? getExecutionInformation() : "");
+        String buildWithMe = getTemplate() != null ? getTemplate() : "";
+        List<String> parts = new LinkedList<>();
+        parts.add(buildWithMe);
+        parts = splitTemplate(parts, placeholderExecution);
+        parts = splitTemplate(parts, placeholderResultTable);
+        parts = splitTemplate(parts, placeholderRowCount);
+        parts = splitTemplate(parts, placeholderLimitRows);
+
+        parts = fillInPlaceholder(parts, placeholderExecution, getExecutionInformation());
+        parts = fillInPlaceholder(parts, placeholderResultTable, getResultTable());
+        parts = fillInPlaceholder(parts, placeholderRowCount, getRowCount());
+        parts = fillInPlaceholder(parts, placeholderLimitRows, getLimitedRows());
+
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            builder.append(part);
         }
-        if (placeholderResultTable != null) {
-            buildWithMe = buildWithMe.replace(placeholderResultTable,
-                    getResultTable() != null ? getResultTable() : "");
-        }
-        if (placeholderRowCount != null) {
-            buildWithMe = buildWithMe.replace(placeholderRowCount,
-                    getRowCount() != null ? getRowCount() : "");
-        }
-        if (placeholderLimitRows != null) {
-            buildWithMe = buildWithMe.replace(placeholderLimitRows,
-                    getLimitedRows() != null ? getLimitedRows() : "");
-        }
-        return buildWithMe;
+        return builder.toString();
     }
 }

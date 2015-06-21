@@ -44,7 +44,6 @@ public enum DialogDictionary {
     ERR_FILE_OPEN_FAILED("err_fileOpenFailed"),
     ERR_FILE_SAVE_FAILED("err_fileSaveFailed"),
     ERR_CONNECTION_SETTING_SAVE_FAILED("err_connectionSettingSaveFailed"),
-    ERR_HTML_EXPORT_FAILED("err_htmlExportFailed"),
     ERR_UNKNOWN_ERROR("err_unknownError"),
     MSG_NO_DB_CONNECTION("msg_noDbConnection"),
     MSG_NO_STATEMENT_TO_EXECUTE("msg_noStatementToExecute"),

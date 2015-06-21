@@ -37,9 +37,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  *
  * @author Michael Kühweg
  */
-public class HtmlResultFormatter {
-
-    private final StatementExecutionInformation infoToView;
+public class HtmlResultFormatter extends ResultFormatter {
 
     /**
      * Im Konstruktor wird das Abfrageergebnis übergeben
@@ -47,7 +45,7 @@ public class HtmlResultFormatter {
      * @param info
      */
     public HtmlResultFormatter(final StatementExecutionInformation info) {
-        this.infoToView = info;
+        super(info);
     }
 
     /**
@@ -69,7 +67,7 @@ public class HtmlResultFormatter {
      * @param resultRow Liste von ResultRows, die in HTML umgewandelt werden
      * @return
      */
-    public String formatAsTableRow(final ResultRow resultRow) {
+    private String formatAsTableRow(final ResultRow resultRow) {
         final StringBuilder builder = new StringBuilder("<tr>");
         for (final String column : resultRow.columnsAsString()) {
             builder.append(formatAsTableData(column));
@@ -100,7 +98,8 @@ public class HtmlResultFormatter {
         final StringBuilder builder = new StringBuilder();
         builder.append("<thead><tr>");
         // Spaltenüberschriften aufbauen
-        for (final String header : infoToView.getStatementResult().getHeader().
+        for (final String header
+                : getStatementExecutionInformation().getStatementResult().getHeader().
                 getColumnHeaders()) {
             builder.append(formatAsTableHeader(header));
         }
@@ -117,7 +116,8 @@ public class HtmlResultFormatter {
         final StringBuilder builder = new StringBuilder();
         builder.append("<tbody>\n");
         // Inhalte aufbauen
-        for (final ResultRow row : infoToView.getStatementResult().getRows()) {
+        for (final ResultRow row
+                : getStatementExecutionInformation().getStatementResult().getRows()) {
             builder.append(formatAsTableRow(row));
         }
         builder.append("</tbody>\n");
@@ -138,12 +138,21 @@ public class HtmlResultFormatter {
         return builder.toString();
     }
 
+    private Date startOfExecutionAsDate() {
+        return getStatementExecutionInformation() != null ? new Date(
+                getStatementExecutionInformation().getStartOfExecution()) : new Date();
+    }
+
+    private String executedByWithConnectionDescription() {
+        final StatementExecutionInformation info = getStatementExecutionInformation();
+        return info != null ? info.getExecutedBy() + "@" + info.
+                getConnectionDescription() : DialogDictionary.LABEL_UNKNOWN_USER.
+                toString();
+    }
+
     private String formatGeneralExecutionInformation() {
-        final Date when = infoToView != null ? new Date(infoToView.
-                getStartOfExecution()) : new Date();
-        final String who
-                = infoToView != null ? infoToView.getExecutedBy() : DialogDictionary.LABEL_UNKNOWN_USER.
-                        toString();
+        final Date when = startOfExecutionAsDate();
+        final String who = executedByWithConnectionDescription();
         final String statementExecution = MessageFormat.format(
                 DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER
                 .toString(), when, who);
@@ -153,7 +162,11 @@ public class HtmlResultFormatter {
     private String formatEmptyResult(final ResultTemplate template) {
         template.setExecutionInformation(formatGeneralExecutionInformation());
 
-        template.setRowCount(StringEscapeUtils.escapeHtml4(infoToView.getSummary()));
+        template.setRowCount(StringEscapeUtils.escapeHtml4(
+                getStatementExecutionInformation().getSummary()));
+
+        template.setResultTable(null);
+        template.setLimitedRows(null);
 
         return template.buildWithTemplate();
     }
@@ -162,13 +175,15 @@ public class HtmlResultFormatter {
         template.setExecutionInformation(formatGeneralExecutionInformation());
         template.setResultTable(formatResultAsTable());
 
-        int selectedRows = infoToView.getStatementResult().getRows().
-                size();
+        int selectedRows = getStatementExecutionInformation().getStatementResult().
+                getRows().size();
         final String rowCount = MessageFormat.format(
                 DialogDictionary.PATTERN_ROWCOUNT.toString(),
                 selectedRows);
         template.setRowCount(StringEscapeUtils.escapeHtml4(rowCount));
-        if (infoToView.isLimitMaxRowsReached()) {
+        if (!getStatementExecutionInformation().isLimitMaxRowsReached()) {
+            template.setLimitedRows(null);
+        } else {
             final String limitedRows = MessageFormat.format(
                     DialogDictionary.PATTERN_MAX_ROWS.toString(),
                     selectedRows);
@@ -178,8 +193,8 @@ public class HtmlResultFormatter {
         return template.buildWithTemplate();
     }
 
-    public String formatAsHtml(final ResultTemplate template) {
-        return infoToView.getStatementResult() != null ? formatWithResult(template) : formatEmptyResult(
-                template);
+    public String format(final ResultTemplate template) {
+        return getStatementExecutionInformation().getStatementResult() != null ? formatWithResult(
+                template) : formatEmptyResult(template);
     }
 }

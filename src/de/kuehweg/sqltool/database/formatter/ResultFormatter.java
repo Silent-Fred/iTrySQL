@@ -25,40 +25,31 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
-import de.kuehweg.sqltool.common.FileUtil;
-import java.io.IOException;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 
 /**
- * Standardvorlage für HTML-Ausgabe
+ * Basisklasse für verschiedene Ergebnisaufbereitungen
  *
  * @author Michael Kühweg
  */
-public class DefaultHtmlResultTemplateProvider {
+public abstract class ResultFormatter {
 
-    private static final String DEFAULT_TEMPLATE_URL
-            = "/resources/html/exporttemplate.html";
+    private final StatementExecutionInformation statementExecutionInformation;
 
-    private static final String DEFAULT_PLACEHOLDER_EXECUTION
-            = "statement execution goes here";
-
-    private static final String DEFAULT_PLACEHOLDER_RESULT_TABLE
-            = "result table goes here";
-
-    private static final String DEFAULT_PLACEHOLDER_ROW_COUNT = "row count goes here";
-
-    private static final String DEFAULT_PLACEHOLDER_LIMIT_ROWS = "limit rows goes here";
-
-    private DefaultHtmlResultTemplateProvider() {
+    /**
+     * Die Formatierung bezieht sich immer auf das Ergebnis einer Anweisung.
+     *
+     * @param statementExecutionInformation
+     */
+    public ResultFormatter(
+            final StatementExecutionInformation statementExecutionInformation) {
+        this.statementExecutionInformation = statementExecutionInformation;
     }
 
-    public static ResultTemplate getInstance() throws IOException {
-        ResultTemplate template = new ResultTemplate();
-        template.setTemplate(FileUtil.readResourceFile(DEFAULT_TEMPLATE_URL));
-        template.setPlaceholderExecution(DEFAULT_PLACEHOLDER_EXECUTION);
-        template.setPlaceholderResultTable(DEFAULT_PLACEHOLDER_RESULT_TABLE);
-        template.setPlaceholderRowCount(DEFAULT_PLACEHOLDER_ROW_COUNT);
-        template.setPlaceholderLimitRows(DEFAULT_PLACEHOLDER_LIMIT_ROWS);
-        return template;
+    public StatementExecutionInformation getStatementExecutionInformation() {
+        return statementExecutionInformation;
     }
+
+    public abstract String format(final ResultTemplate template);
 
 }
