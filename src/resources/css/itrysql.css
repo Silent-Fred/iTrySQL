@@ -23,7 +23,6 @@
 .itry-tool-bar-button {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
-    -fx-background-radius: 16;
     -fx-padding: 0;
     -fx-text-fill: #067db7;
     -fx-alignment: CENTER;
@@ -34,8 +33,7 @@
 }
 
 .itry-tool-bar-button:armed, .itry-tool-bar-button:hover, .itry-tool-bar-button:pressed {
-    -fx-font-family: 'iTryIcons';
-    -fx-font-weight: bold;
+    -fx-text-fill: #0096c9;
 }
 
 .tooltip {
