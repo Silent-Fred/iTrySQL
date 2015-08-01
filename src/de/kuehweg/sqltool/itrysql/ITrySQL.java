@@ -63,8 +63,6 @@ public class ITrySQL extends Application {
         // spezieller Icon-Font
         Font.loadFont(getClass().getResource("/resources/fonts/iTryIcons-Roman.ttf")
                 .toExternalForm(), 12);
-        Font.loadFont(getClass().getResource("/resources/fonts/iTryIcons-Bold.ttf")
-                .toExternalForm(), 12);
     }
 
     @Override
