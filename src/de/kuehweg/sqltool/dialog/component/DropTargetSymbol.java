@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,9 @@ import javafx.scene.shape.Line;
  */
 public class DropTargetSymbol extends Pane {
 
+    private static final String COLOR = "#067db7";
+    private static final double STROKE_WIDTH = 1.0;
+    
 	public DropTargetSymbol(final Pane parentPane) {
 		super();
 		if (parentPane != null) {
@@ -59,8 +62,8 @@ public class DropTargetSymbol extends Pane {
 			arc.setStartAngle(100.0f);
 			arc.setLength(340.0f);
 			arc.setType(ArcType.OPEN);
-			arc.setStrokeWidth(1.0);
-			arc.setStroke(Color.web("#0071bb"));
+			arc.setStrokeWidth(STROKE_WIDTH);
+			arc.setStroke(Color.web(COLOR));
 			arc.setFill(Color.TRANSPARENT);
 
 			final Line lineVert = new Line();
@@ -68,27 +71,27 @@ public class DropTargetSymbol extends Pane {
 			lineVert.startYProperty().set(bottom - radius);
 			lineVert.endXProperty().set(centerX);
 			lineVert.endYProperty().set(bottom - radius * 3);
-			lineVert.setStrokeWidth(1.0);
-			lineVert.setStroke(Color.web("#0071bb"));
-			lineVert.setFill(Color.web("#0071bb"));
+			lineVert.setStrokeWidth(STROKE_WIDTH);
+			lineVert.setStroke(Color.web(COLOR));
+			lineVert.setFill(Color.web(COLOR));
 
 			final Line arrowLeft = new Line();
 			arrowLeft.startXProperty().set(centerX);
 			arrowLeft.startYProperty().set(bottom - radius);
 			arrowLeft.endXProperty().set(centerX - arrowBounds);
 			arrowLeft.endYProperty().set(bottom - radius - arrowBounds);
-			arrowLeft.setStrokeWidth(1.0);
-			arrowLeft.setStroke(Color.web("#0071bb"));
-			arrowLeft.setFill(Color.web("#0071bb"));
+			arrowLeft.setStrokeWidth(STROKE_WIDTH);
+			arrowLeft.setStroke(Color.web(COLOR));
+			arrowLeft.setFill(Color.web(COLOR));
 
 			final Line arrowRight = new Line();
 			arrowRight.startXProperty().set(centerX);
 			arrowRight.startYProperty().set(bottom - radius);
 			arrowRight.endXProperty().set(centerX + arrowBounds);
 			arrowRight.endYProperty().set(bottom - radius - arrowBounds);
-			arrowRight.setStrokeWidth(1.0);
-			arrowRight.setStroke(Color.web("#0071bb"));
-			arrowRight.setFill(Color.web("#0071bb"));
+			arrowRight.setStrokeWidth(STROKE_WIDTH);
+			arrowRight.setStroke(Color.web(COLOR));
+			arrowRight.setFill(Color.web(COLOR));
 
 			getChildren().add(arc);
 			getChildren().add(lineVert);

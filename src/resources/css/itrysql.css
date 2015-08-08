@@ -5,9 +5,6 @@
 */
 
 .root {
-    -dark-warm-gray: rgb(207, 202, 196);
-    -warm-gray: rgb(227, 222, 216);
-    -mid-gray: rgb(216, 222, 227);
     -scroll-bar-background: #aaaaaa;
     display: block;
 }
