@@ -130,8 +130,6 @@
 
 
 		<mkdir dir="${BuildPath}/deploy" />
-		<!-- Need to use ${basedir} because somehow the ant task is calculating the directory differently -->
-		<!-- fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${basedir}/deploy" outfile="iTrySQL" nativeBundles="dmg" updatemode="background" -->
 		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BuildPath}/deploy" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
 
 			<fx:platform basedir="${java.home}" />
