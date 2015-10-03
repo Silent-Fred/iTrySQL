@@ -28,28 +28,27 @@ package de.kuehweg.sqltool.database.formatter;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 
 /**
- * Basisklasse für verschiedene Ergebnisaufbereitungen
+ * Basisklasse für verschiedene Ergebnisaufbereitungen.
  *
  * @author Michael Kühweg
  */
 public abstract class ResultFormatter {
 
-    private final StatementExecutionInformation statementExecutionInformation;
+	private final StatementExecutionInformation statementExecutionInformation;
 
-    /**
-     * Die Formatierung bezieht sich immer auf das Ergebnis einer Anweisung.
-     *
-     * @param statementExecutionInformation
-     */
-    public ResultFormatter(
-            final StatementExecutionInformation statementExecutionInformation) {
-        this.statementExecutionInformation = statementExecutionInformation;
-    }
+	/**
+	 * Die Formatierung bezieht sich immer auf das Ergebnis einer Anweisung.
+	 *
+	 * @param statementExecutionInformation
+	 */
+	public ResultFormatter(final StatementExecutionInformation statementExecutionInformation) {
+		this.statementExecutionInformation = statementExecutionInformation;
+	}
 
-    public StatementExecutionInformation getStatementExecutionInformation() {
-        return statementExecutionInformation;
-    }
+	public StatementExecutionInformation getStatementExecutionInformation() {
+		return statementExecutionInformation;
+	}
 
-    public abstract String format(final ResultTemplate template);
+	public abstract String format(final ResultTemplate template);
 
 }

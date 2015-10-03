@@ -32,21 +32,19 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Line;
 
 /**
- * Symbol für ein DropTarget
- * 
+ * Symbol für ein DropTarget.
+ *
  * @author Michael Kühweg
  */
 public class DropTargetSymbol extends Pane {
 
-    private static final String COLOR = "#067db7";
-    private static final double STROKE_WIDTH = 1.0;
-    
+	private static final String COLOR = "#067db7";
+	private static final double STROKE_WIDTH = 1.0;
+
 	public DropTargetSymbol(final Pane parentPane) {
 		super();
 		if (parentPane != null) {
-			final double baseSize = Math.min(
-					Math.min(parentPane.getWidth(), parentPane.getHeight()),
-					160);
+			final double baseSize = Math.min(Math.min(parentPane.getWidth(), parentPane.getHeight()), 160);
 
 			final double radius = baseSize / 3;
 			final double arrowBounds = radius / 2;

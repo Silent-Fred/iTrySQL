@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.web.WebView;
 
 /**
- * Controller für den Dialog mit Programm- und Lizenzinformationen
- * 
+ * Controller für den Dialog mit Programm- und Lizenzinformationen.
+ *
  * @author Michael Kühweg
  */
 public class LicenseController implements Initializable {
@@ -43,12 +43,9 @@ public class LicenseController implements Initializable {
 	private WebView licenseWebView;
 
 	@Override
-	public void initialize(final URL fxmlFileLocation,
-			final ResourceBundle resources) {
+	public void initialize(final URL fxmlFileLocation, final ResourceBundle resources) {
 		assert licenseWebView != null : "fx:id=\"licenseWebView\" was not injected: check your FXML file 'License.fxml'.";
 
-		licenseWebView.getEngine().load(
-				this.getClass().getResource("/resources/html/license.html")
-						.toExternalForm());
+		licenseWebView.getEngine().load(this.getClass().getResource("/resources/html/license.html").toExternalForm());
 	}
 }

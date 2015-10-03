@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Michael Kühweg
+ * Copyright (c) 2014-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,14 +35,16 @@ import java.util.logging.Logger;
  *
  * @author Michael Kühweg
  */
-public class WebViewWithHSQLDBBugfix {
+public final class WebViewWithHSQLDBBugfix {
 
-    private WebViewWithHSQLDBBugfix() {
-        // utility class
-    }
+	private WebViewWithHSQLDBBugfix() {
+		// utility class
+	}
 
-    public static void fix() {
-        Logger.getLogger("com.sun.javafx.webkit.prism.WCGraphicsPrismContext").
-                setLevel(Level.OFF);
-    }
+	/**
+	 * Workaround / Fix für die Kollission zwischen JavaFX und HSQLDB.
+	 */
+	public static void fix() {
+		Logger.getLogger("com.sun.javafx.webkit.prism.WCGraphicsPrismContext").setLevel(Level.OFF);
+	}
 }

@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Basistest für Dialogtexte
+ * Basistest für Dialogtexte.
  *
  * @author Michael Kühweg
  */
@@ -58,8 +58,7 @@ public class DialogDictionaryTest {
 	@Test
 	public void bundleComplete() {
 		for (final Enum<?> dictionaryEntry : DialogDictionary.values()) {
-			Assert.assertNotSame(dictionaryEntry.name(),
-					dictionaryEntry.toString());
+			Assert.assertNotSame(dictionaryEntry.name(), dictionaryEntry.toString());
 		}
 	}
 }

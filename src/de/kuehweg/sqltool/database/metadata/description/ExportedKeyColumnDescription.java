@@ -26,17 +26,16 @@
 package de.kuehweg.sqltool.database.metadata.description;
 
 /**
- * Exported Keys (analog JDBC Metadata)
+ * Exported Keys (analog JDBC Metadata).
  *
  * @author Michael Kühweg
  */
 public class ExportedKeyColumnDescription extends ForeignKeyColumnDescription {
 
-    public ExportedKeyColumnDescription(String foreignKeyName, String insideColumnName,
-            String outsideCatalog, String outsideSchema, String outsideTableName,
-            String outsideColumnName) {
-        super(foreignKeyName, insideColumnName, outsideCatalog, outsideSchema,
-                outsideTableName, outsideColumnName);
-    }
+	public ExportedKeyColumnDescription(final String foreignKeyName, final String insideColumnName,
+			final String outsideCatalog, final String outsideSchema, final String outsideTableName,
+			final String outsideColumnName) {
+		super(foreignKeyName, insideColumnName, outsideCatalog, outsideSchema, outsideTableName, outsideColumnName);
+	}
 
 }

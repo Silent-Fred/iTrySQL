@@ -26,91 +26,91 @@
 package de.kuehweg.sqltool.common;
 
 /**
- * Testimplementierung der UserPreferences
+ * Testimplementierung der UserPreferences.
  *
  * @author Michael Kühweg
  */
 public class UserPreferencesStub implements UserPreferencesI {
 
-    // Preferences mit Defaultwerten
-    private boolean limitMaxRows = isDefaultLimitMaxRows();
-    private int fontSizeStatementInput = getDefaultFontSizeStatementInput();
-    private int fontSizeDbOutput = getDefaultFontSizeDbOutput();
-    private double beepVolume = getDefaultBeepVolume();
-    private ProvidedAudioClip beepAudioClip = getDefaultBeepAudioClip();
+	// Preferences mit Defaultwerten
+	private boolean limitMaxRows = isDefaultLimitMaxRows();
+	private int fontSizeStatementInput = getDefaultFontSizeStatementInput();
+	private int fontSizeDbOutput = getDefaultFontSizeDbOutput();
+	private double beepVolume = getDefaultBeepVolume();
+	private ProvidedAudioClip beepAudioClip = getDefaultBeepAudioClip();
 
-    @Override
-    public boolean isLimitMaxRows() {
-        return limitMaxRows;
-    }
+	@Override
+	public boolean isLimitMaxRows() {
+		return limitMaxRows;
+	}
 
-    @Override
-    public void setLimitMaxRows(final boolean limitMaxRows) {
-        this.limitMaxRows = limitMaxRows;
-    }
+	@Override
+	public void setLimitMaxRows(final boolean limitMaxRows) {
+		this.limitMaxRows = limitMaxRows;
+	}
 
-    @Override
-    public int getFontSizeStatementInput() {
-        return fontSizeStatementInput;
-    }
+	@Override
+	public int getFontSizeStatementInput() {
+		return fontSizeStatementInput;
+	}
 
-    @Override
-    public void setFontSizeStatementInput(final int fontSize) {
-        fontSizeStatementInput = fontSize;
-    }
+	@Override
+	public void setFontSizeStatementInput(final int fontSize) {
+		fontSizeStatementInput = fontSize;
+	}
 
-    @Override
-    public int getFontSizeDbOutput() {
-        return fontSizeDbOutput;
-    }
+	@Override
+	public int getFontSizeDbOutput() {
+		return fontSizeDbOutput;
+	}
 
-    @Override
-    public void setFontSizeDbOutput(final int fontSize) {
-        fontSizeDbOutput = fontSize;
-    }
+	@Override
+	public void setFontSizeDbOutput(final int fontSize) {
+		fontSizeDbOutput = fontSize;
+	}
 
-    @Override
-    public double getBeepVolume() {
-        return beepVolume;
-    }
+	@Override
+	public double getBeepVolume() {
+		return beepVolume;
+	}
 
-    @Override
-    public void setBeepVolume(final double beepVolume) {
-        this.beepVolume = beepVolume;
-    }
+	@Override
+	public void setBeepVolume(final double beepVolume) {
+		this.beepVolume = beepVolume;
+	}
 
-    @Override
-    public ProvidedAudioClip getBeepAudioClip() {
-        return beepAudioClip;
-    }
+	@Override
+	public ProvidedAudioClip getBeepAudioClip() {
+		return beepAudioClip;
+	}
 
-    @Override
-    public void setBeepAudioClip(final ProvidedAudioClip beepAudioClip) {
-        this.beepAudioClip = beepAudioClip;
-    }
+	@Override
+	public void setBeepAudioClip(final ProvidedAudioClip beepAudioClip) {
+		this.beepAudioClip = beepAudioClip;
+	}
 
-    @Override
-    public ProvidedAudioClip getDefaultBeepAudioClip() {
-        return ProvidedAudioClip.BEEP;
-    }
+	@Override
+	public ProvidedAudioClip getDefaultBeepAudioClip() {
+		return ProvidedAudioClip.BEEP;
+	}
 
-    @Override
-    public double getDefaultBeepVolume() {
-        return 0.0;
-    }
+	@Override
+	public double getDefaultBeepVolume() {
+		return 0.0;
+	}
 
-    @Override
-    public int getDefaultFontSizeDbOutput() {
-        return 12;
-    }
+	@Override
+	public int getDefaultFontSizeDbOutput() {
+		return 12;
+	}
 
-    @Override
-    public int getDefaultFontSizeStatementInput() {
-        return 12;
-    }
+	@Override
+	public int getDefaultFontSizeStatementInput() {
+		return 12;
+	}
 
-    @Override
-    public boolean isDefaultLimitMaxRows() {
-        return true;
-    }
+	@Override
+	public boolean isDefaultLimitMaxRows() {
+		return true;
+	}
 }

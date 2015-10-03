@@ -32,99 +32,99 @@ import java.util.Objects;
  */
 public abstract class ForeignKeyColumnDescription extends DatabaseObjectDescription {
 
-    private final String foreignKeyName;
-    private final String insideColumnName;
-    private final String outsideCatalog;
-    private final String outsideSchema;
-    private final String outsideTableName;
-    private final String outsideColumnName;
+	private final String foreignKeyName;
+	private final String insideColumnName;
+	private final String outsideCatalog;
+	private final String outsideSchema;
+	private final String outsideTableName;
+	private final String outsideColumnName;
 
-    public ForeignKeyColumnDescription(String foreignKeyName, String insideColumnName,
-            String outsideCatalog, String outsideSchema, String outsideTableName,
-            String outsideColumnName) {
-        super(foreignKeyName);
-        this.foreignKeyName = foreignKeyName == null ? "" : foreignKeyName;
-        this.insideColumnName = insideColumnName == null ? "" : insideColumnName;
-        this.outsideCatalog = outsideCatalog == null ? "" : outsideCatalog;
-        this.outsideSchema = outsideSchema == null ? "" : outsideSchema;
-        this.outsideTableName = outsideTableName == null ? "" : outsideTableName;
-        this.outsideColumnName = outsideColumnName == null ? "" : outsideColumnName;
-    }
+	public ForeignKeyColumnDescription(final String foreignKeyName, final String insideColumnName,
+			final String outsideCatalog, final String outsideSchema, final String outsideTableName,
+			final String outsideColumnName) {
+		super(foreignKeyName);
+		this.foreignKeyName = foreignKeyName == null ? "" : foreignKeyName;
+		this.insideColumnName = insideColumnName == null ? "" : insideColumnName;
+		this.outsideCatalog = outsideCatalog == null ? "" : outsideCatalog;
+		this.outsideSchema = outsideSchema == null ? "" : outsideSchema;
+		this.outsideTableName = outsideTableName == null ? "" : outsideTableName;
+		this.outsideColumnName = outsideColumnName == null ? "" : outsideColumnName;
+	}
 
-    public String getInsideColumnName() {
-        return insideColumnName;
-    }
+	public String getInsideColumnName() {
+		return insideColumnName;
+	}
 
-    public String getOutsideCatalog() {
-        return outsideCatalog;
-    }
+	public String getOutsideCatalog() {
+		return outsideCatalog;
+	}
 
-    public String getOutsideSchema() {
-        return outsideSchema;
-    }
+	public String getOutsideSchema() {
+		return outsideSchema;
+	}
 
-    public String getOutsideTableName() {
-        return outsideTableName;
-    }
+	public String getOutsideTableName() {
+		return outsideTableName;
+	}
 
-    public String getOutsideColumnName() {
-        return outsideColumnName;
-    }
+	public String getOutsideColumnName() {
+		return outsideColumnName;
+	}
 
-    private boolean referencesOutsideSchema() {
-        DatabaseObjectDescription schema = findHierarchyLevel(SchemaDescription.class);
-        return schema == null || !schema.getName().equals(outsideSchema);
-    }
+	private boolean referencesOutsideSchema() {
+		final DatabaseObjectDescription schema = findHierarchyLevel(SchemaDescription.class);
+		return schema == null || !schema.getName().equals(outsideSchema);
+	}
 
-    private boolean referencesOutsideCatalog() {
-        DatabaseObjectDescription catalog = findHierarchyLevel(CatalogDescription.class);
-        return catalog == null || !catalog.getName().equals(outsideCatalog);
-    }
+	private boolean referencesOutsideCatalog() {
+		final DatabaseObjectDescription catalog = findHierarchyLevel(CatalogDescription.class);
+		return catalog == null || !catalog.getName().equals(outsideCatalog);
+	}
 
-    public boolean referencesFarOutside() {
-        return referencesOutsideSchema() || referencesOutsideCatalog();
-    }
+	public boolean referencesFarOutside() {
+		return referencesOutsideSchema() || referencesOutsideCatalog();
+	}
 
-    public String getQualifiedOutsideColumn() {
-        return getOutsideTableName() + "." + getOutsideColumnName();
-    }
+	public String getQualifiedOutsideColumn() {
+		return getOutsideTableName() + "." + getOutsideColumnName();
+	}
 
-    public String getFullyQualifiedOutsideColumn() {
-        return getOutsideCatalog() + "." + getOutsideSchema() + "." + getOutsideTableName() + "."
-                + getOutsideColumnName();
-    }
+	public String getFullyQualifiedOutsideColumn() {
+		return getOutsideCatalog() + "." + getOutsideSchema() + "." + getOutsideTableName() + "."
+				+ getOutsideColumnName();
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = super.hashCode();
-        hash = 89 * hash + Objects.hashCode(this.foreignKeyName);
-        hash = 89 * hash + Objects.hashCode(this.insideColumnName);
-        hash = 89 * hash + Objects.hashCode(this.outsideCatalog);
-        hash = 89 * hash + Objects.hashCode(this.outsideSchema);
-        hash = 89 * hash + Objects.hashCode(this.outsideTableName);
-        hash = 89 * hash + Objects.hashCode(this.outsideColumnName);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		hash = 89 * hash + Objects.hashCode(foreignKeyName);
+		hash = 89 * hash + Objects.hashCode(insideColumnName);
+		hash = 89 * hash + Objects.hashCode(outsideCatalog);
+		hash = 89 * hash + Objects.hashCode(outsideSchema);
+		hash = 89 * hash + Objects.hashCode(outsideTableName);
+		hash = 89 * hash + Objects.hashCode(outsideColumnName);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            final ForeignKeyColumnDescription other = (ForeignKeyColumnDescription) obj;
-            if (!Objects.equals(this.insideColumnName, other.insideColumnName)) {
-                return false;
-            }
-            if (!Objects.equals(this.outsideCatalog, other.outsideCatalog)) {
-                return false;
-            }
-            if (!Objects.equals(this.outsideSchema, other.outsideSchema)) {
-                return false;
-            }
-            if (!Objects.equals(this.outsideTableName, other.outsideTableName)) {
-                return false;
-            }
-            return Objects.equals(this.outsideColumnName, other.outsideColumnName);
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (super.equals(obj)) {
+			final ForeignKeyColumnDescription other = (ForeignKeyColumnDescription) obj;
+			if (!Objects.equals(insideColumnName, other.insideColumnName)) {
+				return false;
+			}
+			if (!Objects.equals(outsideCatalog, other.outsideCatalog)) {
+				return false;
+			}
+			if (!Objects.equals(outsideSchema, other.outsideSchema)) {
+				return false;
+			}
+			if (!Objects.equals(outsideTableName, other.outsideTableName)) {
+				return false;
+			}
+			return Objects.equals(outsideColumnName, other.outsideColumnName);
+		}
+		return false;
+	}
 
 }

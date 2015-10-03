@@ -29,126 +29,127 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
- *
+ * ResultSetMetaData Implementierung für Tests. Wirft für jede Operation eine
+ * {@link SQLException}, kann also z.B. zur Abischerung korrekter
+ * Fehlerbehandlung in aufrufenden Klassen verwendet werden.
+ * 
  * @author Michael Kühweg
  */
 public abstract class FakeResultSetMetaData implements ResultSetMetaData {
 
-    @Override
-    public int getColumnCount() throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public int getColumnCount() throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isAutoIncrement(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isAutoIncrement(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isCaseSensitive(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isCaseSensitive(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isSearchable(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isSearchable(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isCurrency(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isCurrency(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public int isNullable(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public int isNullable(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isSigned(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isSigned(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public int getColumnDisplaySize(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public int getColumnDisplaySize(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public String getColumnLabel(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public String getColumnLabel(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public String getColumnName(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public String getColumnName(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public String getSchemaName(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public String getSchemaName(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public int getPrecision(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public int getPrecision(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public int getScale(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public int getScale(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public String getTableName(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public String getTableName(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public String getCatalogName(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public String getCatalogName(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public int getColumnType(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public int getColumnType(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public String getColumnTypeName(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public String getColumnTypeName(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isReadOnly(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isReadOnly(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isWritable(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isWritable(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isDefinitelyWritable(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isDefinitelyWritable(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public String getColumnClassName(int column) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public String getColumnClassName(final int column) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public <T> T
-            unwrap(Class< T> iface) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public <T> T unwrap(final Class<T> iface) throws SQLException {
+		throw new SQLException();
+	}
 
-    @Override
-    public boolean isWrapperFor(
-            Class<?> iface) throws SQLException {
-        throw new SQLException();
-    }
+	@Override
+	public boolean isWrapperFor(final Class<?> iface) throws SQLException {
+		throw new SQLException();
+	}
 
 }

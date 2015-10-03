@@ -38,146 +38,143 @@ import java.util.Set;
  */
 public class TableDescription extends DatabaseObjectDescription {
 
-    private final String tableType;
-    private final String remarks;
-    private final Set<ColumnDescription> columns;
-    private final Set<PrimaryKeyColumnDescription> primaryKeyColumns;
-    private final Set<IndexColumnDescription> indexColumns;
-    private final Set<ForeignKeyColumnDescription> importedKeyColumns;
-    private final Set<ForeignKeyColumnDescription> exportedKeyColumns;
+	private final String tableType;
+	private final String remarks;
+	private final Set<ColumnDescription> columns;
+	private final Set<PrimaryKeyColumnDescription> primaryKeyColumns;
+	private final Set<IndexColumnDescription> indexColumns;
+	private final Set<ForeignKeyColumnDescription> importedKeyColumns;
+	private final Set<ForeignKeyColumnDescription> exportedKeyColumns;
 
-    public TableDescription(final String tableName, final String tableType,
-            final String remarks) {
-        super(tableName);
-        this.tableType = tableType == null ? "" : tableType;
-        this.remarks = remarks == null ? "" : remarks;
-        columns = new HashSet<>();
-        indexColumns = new HashSet<>();
-        importedKeyColumns = new HashSet<>();
-        exportedKeyColumns = new HashSet<>();
-        primaryKeyColumns = new HashSet<>();
-    }
+	public TableDescription(final String tableName, final String tableType, final String remarks) {
+		super(tableName);
+		this.tableType = tableType == null ? "" : tableType;
+		this.remarks = remarks == null ? "" : remarks;
+		columns = new HashSet<>();
+		indexColumns = new HashSet<>();
+		importedKeyColumns = new HashSet<>();
+		exportedKeyColumns = new HashSet<>();
+		primaryKeyColumns = new HashSet<>();
+	}
 
-    public String getTableType() {
-        return tableType;
-    }
+	public String getTableType() {
+		return tableType;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    /**
-     * Tabellenspalten, sortiert nach Name
-     *
-     * @return
-     */
-    public List<ColumnDescription> getColumns() {
-        final List<ColumnDescription> result = new ArrayList<>(columns);
-        Collections.sort(result);
-        return result;
-    }
+	/**
+	 * Tabellenspalten, sortiert nach Name.
+	 *
+	 * @return
+	 */
+	public List<ColumnDescription> getColumns() {
+		final List<ColumnDescription> result = new ArrayList<>(columns);
+		Collections.sort(result);
+		return result;
+	}
 
-    private void addColumns(final ColumnDescription... cols) {
-        if (cols != null) {
-            for (final ColumnDescription col : cols) {
-                columns.add(col);
-            }
-        }
-    }
+	private void addColumns(final ColumnDescription... cols) {
+		if (cols != null) {
+			for (final ColumnDescription col : cols) {
+				columns.add(col);
+			}
+		}
+	}
 
-    /**
-     * Indizes der Tabelle, sortiert nach Indexname
-     *
-     * @return
-     */
-    public List<IndexColumnDescription> getIndices() {
-        final List<IndexColumnDescription> result = new ArrayList<>(indexColumns);
-        Collections.sort(result);
-        return result;
-    }
+	/**
+	 * Indizes der Tabelle, sortiert nach Indexname.
+	 *
+	 * @return
+	 */
+	public List<IndexColumnDescription> getIndices() {
+		final List<IndexColumnDescription> result = new ArrayList<>(indexColumns);
+		Collections.sort(result);
+		return result;
+	}
 
-    private void addIndexColumns(final IndexColumnDescription... inds) {
-        if (inds != null) {
-            for (final IndexColumnDescription index : inds) {
-                indexColumns.add(index);
-            }
-        }
-    }
+	private void addIndexColumns(final IndexColumnDescription... inds) {
+		if (inds != null) {
+			for (final IndexColumnDescription index : inds) {
+				indexColumns.add(index);
+			}
+		}
+	}
 
-    /**
-     * ImportedKeys, sortiert nach Foreign Key Name. Die einzelnen Spalten, aus denen der
-     * Foreign Key aufgebaut ist, sind nicht sortiert.
-     *
-     * @return
-     */
-    public List<ForeignKeyColumnDescription> getImportedKeyColumns() {
-        final List<ForeignKeyColumnDescription> result = new ArrayList<>(
-                importedKeyColumns);
-        Collections.sort(result);
-        return result;
-    }
+	/**
+	 * ImportedKeys, sortiert nach Foreign Key Name. Die einzelnen Spalten, aus
+	 * denen der Foreign Key aufgebaut ist, sind nicht sortiert.
+	 *
+	 * @return
+	 */
+	public List<ForeignKeyColumnDescription> getImportedKeyColumns() {
+		final List<ForeignKeyColumnDescription> result = new ArrayList<>(importedKeyColumns);
+		Collections.sort(result);
+		return result;
+	}
 
-    private void addImportedKeyColumns(final ForeignKeyColumnDescription... fks) {
-        if (fks != null) {
-            for (final ForeignKeyColumnDescription fk : fks) {
-                importedKeyColumns.add(fk);
-            }
-        }
-    }
+	private void addImportedKeyColumns(final ForeignKeyColumnDescription... fks) {
+		if (fks != null) {
+			for (final ForeignKeyColumnDescription fk : fks) {
+				importedKeyColumns.add(fk);
+			}
+		}
+	}
 
-    /**
-     * ExportedKeys, sortiert nach Foreign Key Name. Die einzelnen Spalten, aus denen der
-     * Foreign Key aufgebaut ist, sind nicht sortiert.
-     *
-     * @return
-     */
-    public List<ForeignKeyColumnDescription> getExportedKeyColumns() {
-        final List<ForeignKeyColumnDescription> result = new ArrayList<>(
-                exportedKeyColumns);
-        Collections.sort(result);
-        return result;
-    }
+	/**
+	 * ExportedKeys, sortiert nach Foreign Key Name. Die einzelnen Spalten, aus
+	 * denen der Foreign Key aufgebaut ist, sind nicht sortiert.
+	 *
+	 * @return
+	 */
+	public List<ForeignKeyColumnDescription> getExportedKeyColumns() {
+		final List<ForeignKeyColumnDescription> result = new ArrayList<>(exportedKeyColumns);
+		Collections.sort(result);
+		return result;
+	}
 
-    private void addExportedKeyColumns(final ForeignKeyColumnDescription... fks) {
-        if (fks != null) {
-            for (final ForeignKeyColumnDescription fk : fks) {
-                exportedKeyColumns.add(fk);
-            }
-        }
-    }
+	private void addExportedKeyColumns(final ForeignKeyColumnDescription... fks) {
+		if (fks != null) {
+			for (final ForeignKeyColumnDescription fk : fks) {
+				exportedKeyColumns.add(fk);
+			}
+		}
+	}
 
-    /**
-     * Primärschlüsselspalten. Die einzelnen Spalten, aus denen der Primärschlüssel aufgebaut ist, sind nicht sortiert.
-     *
-     * @return
-     */
-    public List<PrimaryKeyColumnDescription> getPrimaryKeyColumns() {
-        return new ArrayList<>(primaryKeyColumns);
-    }
+	/**
+	 * Primärschlüsselspalten. Die einzelnen Spalten, aus denen der
+	 * Primärschlüssel aufgebaut ist, sind nicht sortiert.
+	 *
+	 * @return
+	 */
+	public List<PrimaryKeyColumnDescription> getPrimaryKeyColumns() {
+		return new ArrayList<>(primaryKeyColumns);
+	}
 
-    private void addPrimaryKeyColumns(
-            final PrimaryKeyColumnDescription... primaryKeyColumns) {
-        if (primaryKeyColumns != null) {
-            for (final PrimaryKeyColumnDescription pk : primaryKeyColumns) {
-                this.primaryKeyColumns.add(pk);
-            }
-        }
-    }
+	private void addPrimaryKeyColumns(final PrimaryKeyColumnDescription... primaryKeyColumns) {
+		if (primaryKeyColumns != null) {
+			for (final PrimaryKeyColumnDescription pk : primaryKeyColumns) {
+				this.primaryKeyColumns.add(pk);
+			}
+		}
+	}
 
-    @Override
-    protected void appendChild(DatabaseObjectDescription child) {
-        if (ColumnDescription.class.isAssignableFrom(child.getClass())) {
-            addColumns((ColumnDescription) child);
-        } else if (PrimaryKeyColumnDescription.class.isAssignableFrom(child.getClass())) {
-            addPrimaryKeyColumns((PrimaryKeyColumnDescription) child);
-        } else if (IndexColumnDescription.class.isAssignableFrom(child.getClass())) {
-            addIndexColumns((IndexColumnDescription) child);
-        } else if (ImportedKeyColumnDescription.class.isAssignableFrom(child.getClass())) {
-            addImportedKeyColumns((ImportedKeyColumnDescription) child);
-        } else if (ExportedKeyColumnDescription.class.isAssignableFrom(child.getClass())) {
-            addExportedKeyColumns((ExportedKeyColumnDescription) child);
-        } else {
-            super.appendChild(child);
-        }
-    }
+	@Override
+	protected void appendChild(final DatabaseObjectDescription child) {
+		if (ColumnDescription.class.isAssignableFrom(child.getClass())) {
+			addColumns((ColumnDescription) child);
+		} else if (PrimaryKeyColumnDescription.class.isAssignableFrom(child.getClass())) {
+			addPrimaryKeyColumns((PrimaryKeyColumnDescription) child);
+		} else if (IndexColumnDescription.class.isAssignableFrom(child.getClass())) {
+			addIndexColumns((IndexColumnDescription) child);
+		} else if (ImportedKeyColumnDescription.class.isAssignableFrom(child.getClass())) {
+			addImportedKeyColumns((ImportedKeyColumnDescription) child);
+		} else if (ExportedKeyColumnDescription.class.isAssignableFrom(child.getClass())) {
+			addExportedKeyColumns((ExportedKeyColumnDescription) child);
+		} else {
+			super.appendChild(child);
+		}
+	}
 }

@@ -25,66 +25,65 @@
  */
 package de.kuehweg.sqltool.dialog.component.schematree;
 
+import java.sql.Connection;
+
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import java.sql.Connection;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeView;
 
 /**
- * Komponente um zu erkennen, ob sich durch SQL-Anweisungen die Datenbankstruktur
- * verändert hat
+ * Komponente um zu erkennen, ob sich durch SQL-Anweisungen die
+ * Datenbankstruktur verändert hat.
  *
  * @author Michael Kühweg
  */
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR)
 public class SchemaTreeModificationDetector implements ExecutionTracker {
 
-    private boolean ddlDetected;
-    private final TreeView<String> schemaTree;
-    private final Connection attachedToConnection;
+	private boolean ddlDetected;
+	private final TreeView<String> schemaTree;
+	private final Connection attachedToConnection;
 
-    public SchemaTreeModificationDetector(final TreeView<String> schemaTree,
-            final Connection connection) {
-        this.schemaTree = schemaTree;
-        this.attachedToConnection = connection;
-    }
+	public SchemaTreeModificationDetector(final TreeView<String> schemaTree, final Connection connection) {
+		this.schemaTree = schemaTree;
+		attachedToConnection = connection;
+	}
 
-    @Override
-    public void beforeExecution() {
-        ddlDetected = false;
-    }
+	@Override
+	public void beforeExecution() {
+		ddlDetected = false;
+	}
 
-    @Override
-    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
-        if (executionInfo != null) {
-            ddlDetected = ddlDetected || executionInfo.getSql() != null && executionInfo.
-                    getSql().isDataDefinitionStatement();
-        }
-    }
+	@Override
+	public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+		if (executionInfo != null) {
+			ddlDetected = ddlDetected
+					|| executionInfo.getSql() != null && executionInfo.getSql().isDataDefinitionStatement();
+		}
+	}
 
-    @Override
-    public void afterExecution() {
-        // Aufbereitung im show()
-    }
+	@Override
+	public void afterExecution() {
+		// Aufbereitung im show()
+	}
 
-    @Override
-    public void errorOnExecution(String message) {
-        afterExecution();
-    }
+	@Override
+	public void errorOnExecution(final String message) {
+		afterExecution();
+	}
 
-    @Override
-    public void show() {
-        if (ddlDetected) {
-            final Task<Void> refreshTask = new SchemaTreeBuilderTask(
-                    attachedToConnection, schemaTree);
-            final Thread th = new Thread(refreshTask);
-            th.setDaemon(true);
-            th.start();
-        }
-    }
+	@Override
+	public void show() {
+		if (ddlDetected) {
+			final Task<Void> refreshTask = new SchemaTreeBuilderTask(attachedToConnection, schemaTree);
+			final Thread th = new Thread(refreshTask);
+			th.setDaemon(true);
+			th.start();
+		}
+	}
 
 }

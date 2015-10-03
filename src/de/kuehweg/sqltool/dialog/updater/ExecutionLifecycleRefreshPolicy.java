@@ -26,11 +26,12 @@
 package de.kuehweg.sqltool.dialog.updater;
 
 /**
- *
+ * Aktualisierungsverhalten im Lifecycle.
+ * 
  * @author Michael Kühweg
  */
 public enum ExecutionLifecycleRefreshPolicy {
 
-    IMMEDIATE, DELAYED, NONE;
+	IMMEDIATE, DELAYED, NONE;
 
 }

@@ -30,19 +30,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * Statement Implementierung für Tests. Wirft beim execute eine
+ * {@link SQLException}, kann also z.B. zur Absicherung korrekter
+ * Fehlerbehandlung in aufrufenden Klassen verwendet werden.
+ * 
  * @author Michael Kühweg
  */
 public class FakeStatementThrowingExceptionOnExecute extends StatementStubWithFakeResultSet {
 
-    public FakeStatementThrowingExceptionOnExecute(final Connection connection,
-            final ResultSet resultSet) {
-        super(connection, resultSet);
-    }
+	public FakeStatementThrowingExceptionOnExecute(final Connection connection, final ResultSet resultSet) {
+		super(connection, resultSet);
+	}
 
-    @Override
-    public boolean execute(String sql) throws SQLException {
-        throw new SQLException("Fake-Statement");
-    }
+	@Override
+	public boolean execute(final String sql) throws SQLException {
+		throw new SQLException("Fake-Statement");
+	}
 
 }

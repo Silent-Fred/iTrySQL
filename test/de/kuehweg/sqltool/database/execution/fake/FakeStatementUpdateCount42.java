@@ -30,36 +30,36 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Statement, dass eine Anweisung simuliert, die keine Ergebnismenge, sondern einen
- * Update-Count zurückliefert
+ * Statement Implementierung, das eine Anweisung simuliert, die keine
+ * Ergebnismenge, sondern einen Update-Count zurückliefert.
  *
  * @author Michael Kühweg
  */
 public class FakeStatementUpdateCount42 extends FakeStatement {
 
-    private final Connection connection;
+	private final Connection connection;
 
-    public FakeStatementUpdateCount42(final Connection connection) {
-        this.connection = connection;
-    }
+	public FakeStatementUpdateCount42(final Connection connection) {
+		this.connection = connection;
+	}
 
-    @Override
-    public ResultSet getResultSet() throws SQLException {
-        return null;
-    }
+	@Override
+	public ResultSet getResultSet() throws SQLException {
+		return null;
+	}
 
-    @Override
-    public boolean execute(String sql) throws SQLException {
-        return false;
-    }
+	@Override
+	public boolean execute(final String sql) throws SQLException {
+		return false;
+	}
 
-    @Override
-    public int getUpdateCount() throws SQLException {
-        return 42;
-    }
+	@Override
+	public int getUpdateCount() throws SQLException {
+		return 42;
+	}
 
-    @Override
-    public Connection getConnection() throws SQLException {
-        return connection;
-    }
+	@Override
+	public Connection getConnection() throws SQLException {
+		return connection;
+	}
 }

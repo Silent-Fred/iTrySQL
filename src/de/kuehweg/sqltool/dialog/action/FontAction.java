@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,86 +29,89 @@ import de.kuehweg.sqltool.common.UserPreferencesI;
 import de.kuehweg.sqltool.dialog.base.FontResizer;
 
 /**
- * Schriftgröße ändern
+ * Schriftgröße ändern und in Preferences speichern.
  *
  * @author Michael Kühweg
  */
 public abstract class FontAction {
 
-    public static final int MIN_FONT_SIZE = 9;
-    public static final int MAX_FONT_SIZE = 32;
+	public static final int MIN_FONT_SIZE = 9;
+	public static final int MAX_FONT_SIZE = 32;
 
-    private int diff;
+	private int diff;
 
-    private FontResizer alternativeFontResizer;
+	private FontResizer alternativeFontResizer;
 
-    private UserPreferencesI userPreferences;
+	private UserPreferencesI userPreferences;
 
-    public int getDiff() {
-        return diff;
-    }
+	public int getDiff() {
+		return diff;
+	}
 
-    public void setDiff(final int diff) {
-        this.diff = diff;
-    }
+	public void setDiff(final int diff) {
+		this.diff = diff;
+	}
 
-    public UserPreferencesI getUserPreferences() {
-        return userPreferences;
-    }
+	public UserPreferencesI getUserPreferences() {
+		return userPreferences;
+	}
 
-    public void setUserPreferences(final UserPreferencesI userPreferences) {
-        this.userPreferences = userPreferences;
-    }
+	public void setUserPreferences(final UserPreferencesI userPreferences) {
+		this.userPreferences = userPreferences;
+	}
 
-    /**
-     * Das Setzen der Schriftgröße übernimmt ein FontResizer.
-     *
-     * @param fontResizer
-     */
-    public void setAlternativeFontResizer(final FontResizer fontResizer) {
-        this.alternativeFontResizer = fontResizer;
-    }
+	/**
+	 * Das Setzen der Schriftgröße übernimmt ein FontResizer.
+	 *
+	 * @param fontResizer
+	 */
+	public void setAlternativeFontResizer(final FontResizer fontResizer) {
+		alternativeFontResizer = fontResizer;
+	}
 
-    /**
-     * Standardverfahren zum Ändern der Schriftgröße in der Komponente. Wird verwendet,
-     * wenn kein alternatives Verfahren via setAlternativeFontResizer() angegeben wird
-     *
-     * @return
-     */
-    public abstract FontResizer getDefaultFontResizer();
+	/**
+	 * Standardverfahren zum Ändern der Schriftgröße in der Komponente. Wird
+	 * verwendet, wenn kein alternatives Verfahren via
+	 * setAlternativeFontResizer() angegeben wird.
+	 *
+	 * @return
+	 */
+	public abstract FontResizer getDefaultFontResizer();
 
-    /**
-     * Implementierung zum Speichern der zuletzt eingestellten Schriftgröße in
-     * Benutzereinstellungen.
-     *
-     * @param size
-     */
-    public abstract void storeToPreferences(final int size);
+	/**
+	 * Implementierung zum Speichern der zuletzt eingestellten Schriftgröße in
+	 * Benutzereinstellungen.
+	 *
+	 * @param size
+	 */
+	protected abstract void storeToPreferences(final int size);
 
-    /**
-     * Fontmanipulationen behandeln
-     */
-    public void handleFontAction() {
-        final int targetFontSize = modifyFontSize();
-        if (getUserPreferences() != null) {
-            storeToPreferences(targetFontSize);
-        }
-    }
+	/**
+	 * Fontmanipulationen behandeln.
+	 */
+	public void handleFontAction() {
+		final int targetFontSize = modifyFontSize();
+		if (getUserPreferences() != null) {
+			storeToPreferences(targetFontSize);
+		}
+	}
 
-    /**
-     * Schriftgröße der definierten Komponente ändern - gesetzte Schriftgröße wird als
-     * Ergebnis geliefert
-     *
-     * @return
-     */
-    private int modifyFontSize() {
-        FontResizer resizer
-                = alternativeFontResizer != null ? alternativeFontResizer : getDefaultFontResizer();
-        int targetSize = resizer.getFontSize() + diff;
-        targetSize = targetSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : targetSize;
-        targetSize = targetSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : targetSize;
-        resizer.setFontSize(targetSize);
-        return targetSize;
-    }
+	/**
+	 * Schriftgröße der definierten Komponente ändern - gesetzte Schriftgröße
+	 * wird als Ergebnis geliefert.
+	 *
+	 * @return Eingestellte Schriftgröße. Bei Erreichen von minimaler oder
+	 *         maximaler Schriftgröße wird keine weitere Veränderung
+	 *         durchgeführt, die zu einem Verlassen des definierten
+	 *         Schriftgrößenbereichs führen würde.
+	 */
+	private int modifyFontSize() {
+		final FontResizer resizer = alternativeFontResizer != null ? alternativeFontResizer : getDefaultFontResizer();
+		int targetSize = resizer.getFontSize() + diff;
+		targetSize = targetSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : targetSize;
+		targetSize = targetSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : targetSize;
+		resizer.setFontSize(targetSize);
+		return targetSize;
+	}
 
 }

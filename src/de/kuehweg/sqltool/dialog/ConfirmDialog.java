@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,21 +29,22 @@ import de.kuehweg.sqltool.dialog.images.ImagePack;
 
 /**
  * Spezialisierter Dialog für Rückfragen mit der Möglichkeit, mehrere Buttons
- * anzuzeigen
- * 
+ * anzuzeigen.
+ *
  * @author Michael Kühweg
  */
 public class ConfirmDialog extends CommonDialog {
 
 	/**
 	 * @param title
+	 *            Dialogtitel
 	 * @param message
+	 *            Nachricht an den Anwender
 	 * @param buttonTexts
 	 *            Buttons in der Reihenfolge von rechts nach links, wobei rechts
 	 *            (d.h. der erste angegebene Button) als Default vorbelegt ist
 	 */
-	public ConfirmDialog(final String title, final String message,
-			final String... buttonTexts) {
+	public ConfirmDialog(final String title, final String message, final String... buttonTexts) {
 		super(message);
 		specializeDialogTitle(title);
 		specializeDialogIcon(ImagePack.MSG_QUESTION);

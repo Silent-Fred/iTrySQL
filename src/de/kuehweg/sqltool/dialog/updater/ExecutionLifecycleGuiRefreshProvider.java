@@ -32,7 +32,7 @@ import java.util.Set;
 
 /**
  * Tracker mit passend annotiertem Refresh für die verschiedenen Phasen beim
- * Ausführen einer Anweisung ermitteln
+ * Ausführen einer Anweisung ermitteln.
  *
  * @author Michael Kühweg
  */
@@ -41,14 +41,26 @@ public class ExecutionLifecycleGuiRefreshProvider {
 	private final Set<ExecutionTracker> trackers;
 	private final Set<ExecutionTracker> pendingUpdates;
 
-	public ExecutionLifecycleGuiRefreshProvider(
-			final Collection<ExecutionTracker> trackers) {
+	/**
+	 * @param trackers
+	 *            Collection mit den zu bearbeitenden Trackern
+	 */
+	public ExecutionLifecycleGuiRefreshProvider(final Collection<ExecutionTracker> trackers) {
 		this.trackers = new HashSet<>(trackers);
 		pendingUpdates = new HashSet<>();
 	}
 
-	private boolean policyOnPhase(final ExecutionLifecyclePhase phase,
-			final ExecutionLifecycleRefreshPolicy policy,
+	/**
+	 * @param phase
+	 *            Phase im Lifecycle der Ausführung
+	 * @param policy
+	 *            Art und Weise der Aktualisierung (sofort, verzögert, nie)
+	 * @param tracker
+	 *            Tracker
+	 * @return true wenn der abgefragte Tracker zur angegebenen Phase im
+	 *         Lifecycle die angegebene Policy annotiert hat
+	 */
+	private boolean policyOnPhase(final ExecutionLifecyclePhase phase, final ExecutionLifecycleRefreshPolicy policy,
 			final ExecutionTracker tracker) {
 		for (final ExecutionLifecycleRefresh refresh : tracker.getClass()
 				.getAnnotationsByType(ExecutionLifecycleRefresh.class)) {
@@ -59,15 +71,23 @@ public class ExecutionLifecycleGuiRefreshProvider {
 		return false;
 	}
 
-	private Set<ExecutionTracker> trackersWithPolicyOnPhase(
-			final ExecutionLifecycleRefreshPolicy policy,
-			final ExecutionLifecyclePhase phase,
-			final Collection<ExecutionTracker> trackers) {
+	/**
+	 * @param phase
+	 *            Phase im Lifecycle der Ausführung
+	 * @param policy
+	 *            Art und Weise der Aktualisierung (sofort, verzögert, nie)
+	 * @param trackers
+	 *            Zu prüfende Tracker
+	 * @return Set mit allen Trackern aus der übergebenen Collection, die in der
+	 *         angegebenen Lifecycle Phase die angegebene Policy annotiert
+	 *         haben.
+	 */
+	private Set<ExecutionTracker> trackersWithPolicyOnPhase(final ExecutionLifecyclePhase phase,
+			final ExecutionLifecycleRefreshPolicy policy, final Collection<ExecutionTracker> trackers) {
 		if (trackers == null || trackers.isEmpty()) {
 			return Collections.emptySet();
 		}
-		final Set<ExecutionTracker> requestedRefresh = new HashSet<>(
-				trackers.size());
+		final Set<ExecutionTracker> requestedRefresh = new HashSet<>(trackers.size());
 		for (final ExecutionTracker tracker : trackers) {
 			if (policyOnPhase(phase, policy, tracker)) {
 				requestedRefresh.add(tracker);
@@ -76,81 +96,78 @@ public class ExecutionLifecycleGuiRefreshProvider {
 		return requestedRefresh;
 	}
 
-	private Set<ExecutionTracker> immediateTrackersForPhase(
-			final ExecutionLifecyclePhase phase,
+	/**
+	 * @param phase
+	 *            Phase im Lifecycle der Ausführung
+	 * @param trackers
+	 *            Zu prüfende Tracker
+	 * @return Tracker aus der übergebenen Collections, die für die angegebene
+	 *         Phase als immediate annotiert sind
+	 */
+	private Set<ExecutionTracker> immediateTrackersForPhase(final ExecutionLifecyclePhase phase,
 			final Collection<ExecutionTracker> trackers) {
-		return new HashSet<>(trackersWithPolicyOnPhase(
-				ExecutionLifecycleRefreshPolicy.IMMEDIATE, phase, trackers));
-	}
-
-	private Set<ExecutionTracker> delayedTrackersForPhase(
-			final ExecutionLifecyclePhase phase,
-			final Collection<ExecutionTracker> trackers) {
-		return new HashSet<>(trackersWithPolicyOnPhase(
-				ExecutionLifecycleRefreshPolicy.DELAYED, phase, trackers));
+		return new HashSet<>(trackersWithPolicyOnPhase(phase, ExecutionLifecycleRefreshPolicy.IMMEDIATE, trackers));
 	}
 
 	/**
-	 * Tracker, die einen Refresh der Oberfläche anstoßen sollen, bevor die
-	 * Anweisung ausgeführt wird (z.B. um den Start zu visualisieren). Vorher
-	 * verzögerte Tracker werden ebenfalls berücksichtigt.
-	 *
-	 * @return
+	 * @param phase
+	 *            Phase im Lifecycle der Ausführung
+	 * @param trackers
+	 *            Zu prüfende Tracker
+	 * @return Tracker aus der übergebenen Collections, die für die angegebene
+	 *         Phase als delayed annotiert sind
+	 */
+	private Set<ExecutionTracker> delayedTrackersForPhase(final ExecutionLifecyclePhase phase,
+			final Collection<ExecutionTracker> trackers) {
+		return new HashSet<>(trackersWithPolicyOnPhase(phase, ExecutionLifecycleRefreshPolicy.DELAYED, trackers));
+	}
+
+	/**
+	 * @return Tracker, die einen Refresh der Oberfläche anstoßen sollen, bevor
+	 *         die Anweisung ausgeführt wird (z.B. um den Start zu
+	 *         visualisieren). Vorher verzögerte Tracker werden ebenfalls
+	 *         berücksichtigt.
 	 */
 	public Set<ExecutionTracker> beforeExecutionGuiRefresh() {
-		pendingUpdates.addAll(delayedTrackersForPhase(
-				ExecutionLifecyclePhase.BEFORE, trackers));
-		return immediateTrackersForPhase(ExecutionLifecyclePhase.BEFORE,
-				trackers);
+		pendingUpdates.addAll(delayedTrackersForPhase(ExecutionLifecyclePhase.BEFORE, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.BEFORE, trackers);
 	}
 
 	/**
-	 * Tracker, die während der laufenden Ausführung einen Refresh der
-	 * Oberfläche anstoßen sollen. Vorher verzögerte Tracker werden ebenfalls
-	 * berücksichtigt.
+	 * @return Tracker, die während der laufenden Ausführung einen Refresh der
+	 *         Oberfläche anstoßen sollen. Vorher verzögerte Tracker werden
+	 *         ebenfalls berücksichtigt.
 	 *
-	 * @return
 	 */
 	public Set<ExecutionTracker> intermediateExecutionGuiRefresh() {
-		pendingUpdates.addAll(delayedTrackersForPhase(
-				ExecutionLifecyclePhase.INTERMEDIATE, trackers));
-		return immediateTrackersForPhase(ExecutionLifecyclePhase.INTERMEDIATE,
-				trackers);
+		pendingUpdates.addAll(delayedTrackersForPhase(ExecutionLifecyclePhase.INTERMEDIATE, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.INTERMEDIATE, trackers);
 	}
 
 	/**
-	 * Tracker, die zum Abschluss der Anweisung einen Refresh der Oberfläche
-	 * anstoßen sollen. Vorher verzögerte Tracker werden ebenfalls
-	 * berücksichtigt.
+	 * @return Tracker, die zum Abschluss der Anweisung einen Refresh der
+	 *         Oberfläche anstoßen sollen. Vorher verzögerte Tracker werden
+	 *         ebenfalls berücksichtigt.
 	 *
-	 * @return
 	 */
 	public Set<ExecutionTracker> afterExecutionGuiRefresh() {
-		pendingUpdates.addAll(delayedTrackersForPhase(
-				ExecutionLifecyclePhase.AFTER, trackers));
-		return immediateTrackersForPhase(ExecutionLifecyclePhase.AFTER,
-				trackers);
+		pendingUpdates.addAll(delayedTrackersForPhase(ExecutionLifecyclePhase.AFTER, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.AFTER, trackers);
 	}
 
 	/**
-	 * Tracker, die im Fall eines Fehlers bei der Ausführung einen Refresh der
-	 * Oberfläche anstoßen sollen. Vorher verzögerte Tracker werden ebenfalls
-	 * berücksichtigt.
-	 *
-	 * @return
+	 * @return Tracker, die im Fall eines Fehlers bei der Ausführung einen
+	 *         Refresh der Oberfläche anstoßen sollen. Vorher verzögerte Tracker
+	 *         werden ebenfalls berücksichtigt.
 	 */
 	public Set<ExecutionTracker> errorExecutionGuiRefresh() {
-		pendingUpdates.addAll(delayedTrackersForPhase(
-				ExecutionLifecyclePhase.ERROR, trackers));
-		return immediateTrackersForPhase(ExecutionLifecyclePhase.ERROR,
-				trackers);
+		pendingUpdates.addAll(delayedTrackersForPhase(ExecutionLifecyclePhase.ERROR, trackers));
+		return immediateTrackersForPhase(ExecutionLifecyclePhase.ERROR, trackers);
 	}
 
 	/**
-	 * Tracker, die in vorherigen Phasen für eine verzögerte Ausgabe vorgemerkt
-	 * wurden.
-	 *
-	 * @return
+	 * @return Tracker, die in vorherigen Phasen für eine verzögerte Ausgabe
+	 *         vorgemerkt wurden.
 	 */
 	public Set<ExecutionTracker> delayedExecutionGuiRefresh() {
 		final Set<ExecutionTracker> delayed = new HashSet<>(pendingUpdates);

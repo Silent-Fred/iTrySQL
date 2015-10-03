@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,26 @@ package de.kuehweg.sqltool.dialog.images;
 import javafx.scene.image.Image;
 
 /**
- * Bilder, Icons,... ansprechbar machen
- * 
+ * Bilder, Icons,... ansprechbar machen.
+ *
  * @author Michael Kühweg
  */
 public enum ImagePack {
 
-	APP_ICON("AppIcon.png"),
-	MSG_ERROR("msg_error.png"),
-	MSG_INFO("msg_info.png"),
-	MSG_QUESTION("msg_question.png"),
-	MSG_WARNING("msg_warning.png");
-	private static final String resourcePath = "/resources/images/";
+	APP_ICON("AppIcon.png"), MSG_ERROR("msg_error.png"), MSG_INFO("msg_info.png"), MSG_QUESTION(
+			"msg_question.png"), MSG_WARNING("msg_warning.png");
+
+	private static final String RESOURCE_PATH = "/resources/images/";
 	private final String imageName;
 
 	private ImagePack(final String imageName) {
 		this.imageName = imageName;
 	}
 
+	/**
+	 * @return Enum-Element als fertiges Image-Objekt
+	 */
 	public Image getAsImage() {
-		return new Image(this.getClass().getResourceAsStream(
-				resourcePath + imageName));
+		return new Image(this.getClass().getResourceAsStream(RESOURCE_PATH + imageName));
 	}
 }

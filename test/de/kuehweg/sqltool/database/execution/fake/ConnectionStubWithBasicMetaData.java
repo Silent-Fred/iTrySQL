@@ -29,24 +29,24 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
- * Connection, die Testinhalte zurückgeben kann
+ * Connection, die Testinhalte zurückgeben kann.
  *
  * @author Michael Kühweg
  */
 public class ConnectionStubWithBasicMetaData extends FakeConnection {
 
-    private DatabaseMetaData metaData;
+	private DatabaseMetaData metaData;
 
-    public void setMetaData(final DatabaseMetaData metaData) {
-        this.metaData = metaData;
-    }
+	public void setMetaData(final DatabaseMetaData metaData) {
+		this.metaData = metaData;
+	}
 
-    @Override
-    public DatabaseMetaData getMetaData() throws SQLException {
-        if (metaData == null) {
-            throw new SQLException();
-        }
-        return metaData;
-    }
+	@Override
+	public DatabaseMetaData getMetaData() throws SQLException {
+		if (metaData == null) {
+			throw new SQLException();
+		}
+		return metaData;
+	}
 
 }

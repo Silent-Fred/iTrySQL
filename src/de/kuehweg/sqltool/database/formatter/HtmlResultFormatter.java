@@ -25,176 +25,171 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
+import java.text.MessageFormat;
+import java.util.Date;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import java.text.MessageFormat;
-import java.util.Date;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
- * Abfrageergebnis als HTML aufbereitet
+ * Abfrageergebnis als HTML aufbereitet.
  *
  * @author Michael Kühweg
  */
 public class HtmlResultFormatter extends ResultFormatter {
 
-    /**
-     * Im Konstruktor wird das Abfrageergebnis übergeben
-     *
-     * @param info
-     */
-    public HtmlResultFormatter(final StatementExecutionInformation info) {
-        super(info);
-    }
+	/**
+	 * Im Konstruktor wird das Abfrageergebnis übergeben.
+	 *
+	 * @param info
+	 */
+	public HtmlResultFormatter(final StatementExecutionInformation info) {
+		super(info);
+	}
 
-    /**
-     * Formatiert einen Text als Tabellenzelle
-     *
-     * @param value Text wird in HTML Format gewandelt, muss also noch "naturbelassen"
-     * sein
-     * @return
-     */
-    private String formatAsTableData(final String value) {
-        return new StringBuilder().append("<td>")
-                .append(StringEscapeUtils.escapeHtml4(value)).append("</td>")
-                .toString();
-    }
+	/**
+	 * Formatiert einen Text als Tabellenzelle.
+	 *
+	 * @param value
+	 *            Text wird in HTML Format gewandelt, muss also noch
+	 *            "naturbelassen" sein
+	 * @return
+	 */
+	private String formatAsTableData(final String value) {
+		return new StringBuilder().append("<td>").append(StringEscapeUtils.escapeHtml4(value)).append("</td>")
+				.toString();
+	}
 
-    /**
-     * Formatiert eine Liste von ResultRows als HTML-Tabellenzeile
-     *
-     * @param resultRow Liste von ResultRows, die in HTML umgewandelt werden
-     * @return
-     */
-    private String formatAsTableRow(final ResultRow resultRow) {
-        final StringBuilder builder = new StringBuilder("<tr>");
-        for (final String column : resultRow.columnsAsString()) {
-            builder.append(formatAsTableData(column));
-        }
-        builder.append("</tr>\n");
-        return builder.toString();
-    }
+	/**
+	 * Formatiert eine Liste von ResultRows als HTML-Tabellenzeile.
+	 *
+	 * @param resultRow
+	 *            Liste von ResultRows, die in HTML umgewandelt werden
+	 * @return
+	 */
+	private String formatAsTableRow(final ResultRow resultRow) {
+		final StringBuilder builder = new StringBuilder("<tr>");
+		for (final String column : resultRow.columnsAsString()) {
+			builder.append(formatAsTableData(column));
+		}
+		builder.append("</tr>\n");
+		return builder.toString();
+	}
 
-    /**
-     * Formatiert einen Text als Tabellenüberschrift.
-     *
-     * @param value Text wird in HTML Format gewandelt, muss also noch "naturbelassen"
-     * sein
-     * @return
-     */
-    private String formatAsTableHeader(final String value) {
-        return new StringBuilder().append("<th>")
-                .append(StringEscapeUtils.escapeHtml4(value)).append("</th>")
-                .toString();
-    }
+	/**
+	 * Formatiert einen Text als Tabellenüberschrift.
+	 *
+	 * @param value
+	 *            Text wird in HTML Format gewandelt, muss also noch
+	 *            "naturbelassen" sein
+	 * @return
+	 */
+	private String formatAsTableHeader(final String value) {
+		return new StringBuilder().append("<th>").append(StringEscapeUtils.escapeHtml4(value)).append("</th>")
+				.toString();
+	}
 
-    /**
-     * Erzeugt den Tabellenkopf
-     *
-     * @return Tabellenkopf als String
-     */
-    private String formatTableHeader() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<thead><tr>");
-        // Spaltenüberschriften aufbauen
-        for (final String header
-                : getStatementExecutionInformation().getStatementResult().getHeader().
-                getColumnHeaders()) {
-            builder.append(formatAsTableHeader(header));
-        }
-        builder.append("</tr></thead>");
-        return builder.toString();
-    }
+	/**
+	 * Erzeugt den Tabellenkopf.
+	 *
+	 * @return Tabellenkopf als String
+	 */
+	private String formatTableHeader() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("<thead><tr>");
+		// Spaltenüberschriften aufbauen
+		for (final String header : getStatementExecutionInformation().getStatementResult().getHeader()
+				.getColumnHeaders()) {
+			builder.append(formatAsTableHeader(header));
+		}
+		builder.append("</tr></thead>");
+		return builder.toString();
+	}
 
-    /**
-     * Formatiert die Ergebniszeilen als Tabellenrumpf
-     *
-     * @return Tabellenrumpf als String
-     */
-    private String formatRowsAsTableBody() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<tbody>\n");
-        // Inhalte aufbauen
-        for (final ResultRow row
-                : getStatementExecutionInformation().getStatementResult().getRows()) {
-            builder.append(formatAsTableRow(row));
-        }
-        builder.append("</tbody>\n");
-        return builder.toString();
-    }
+	/**
+	 * Formatiert die Ergebniszeilen als Tabellenrumpf.
+	 *
+	 * @return Tabellenrumpf als String
+	 */
+	private String formatRowsAsTableBody() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("<tbody>\n");
+		// Inhalte aufbauen
+		for (final ResultRow row : getStatementExecutionInformation().getStatementResult().getRows()) {
+			builder.append(formatAsTableRow(row));
+		}
+		builder.append("</tbody>\n");
+		return builder.toString();
+	}
 
-    /**
-     * Bereitet den kompletten Inhalt des ResultFormatters als HTML-Tabelle auf
-     *
-     * @return
-     */
-    private String formatResultAsTable() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<table>\n");
-        builder.append(formatTableHeader());
-        builder.append(formatRowsAsTableBody());
-        builder.append("</table>\n");
-        return builder.toString();
-    }
+	/**
+	 * Bereitet den kompletten Inhalt des ResultFormatters als HTML-Tabelle auf.
+	 *
+	 * @return
+	 */
+	private String formatResultAsTable() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("<table>\n");
+		builder.append(formatTableHeader());
+		builder.append(formatRowsAsTableBody());
+		builder.append("</table>\n");
+		return builder.toString();
+	}
 
-    private Date startOfExecutionAsDate() {
-        return getStatementExecutionInformation() != null ? new Date(
-                getStatementExecutionInformation().getStartOfExecution()) : new Date();
-    }
+	private Date startOfExecutionAsDate() {
+		return getStatementExecutionInformation() != null
+				? new Date(getStatementExecutionInformation().getStartOfExecution()) : new Date();
+	}
 
-    private String executedByWithConnectionDescription() {
-        final StatementExecutionInformation info = getStatementExecutionInformation();
-        return info != null ? info.getExecutedBy() + "@" + info.
-                getConnectionDescription() : DialogDictionary.LABEL_UNKNOWN_USER.
-                toString();
-    }
+	private String executedByWithConnectionDescription() {
+		final StatementExecutionInformation info = getStatementExecutionInformation();
+		return info != null && info.getExecutedBy() != null && info.getConnectionDescription() != null
+				? info.getExecutedBy() + "@" + info.getConnectionDescription()
+				: DialogDictionary.LABEL_UNKNOWN_USER.toString();
+	}
 
-    private String formatGeneralExecutionInformation() {
-        final Date when = startOfExecutionAsDate();
-        final String who = executedByWithConnectionDescription();
-        final String statementExecution = MessageFormat.format(
-                DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER
-                .toString(), when, who);
-        return StringEscapeUtils.escapeHtml4(statementExecution);
-    }
+	private String formatGeneralExecutionInformation() {
+		final Date when = startOfExecutionAsDate();
+		final String who = executedByWithConnectionDescription();
+		final String statementExecution = MessageFormat
+				.format(DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER.toString(), when, who);
+		return StringEscapeUtils.escapeHtml4(statementExecution);
+	}
 
-    private String formatEmptyResult(final ResultTemplate template) {
-        template.setExecutionInformation(formatGeneralExecutionInformation());
+	private String formatEmptyResult(final ResultTemplate template) {
+		template.setExecutionInformation(formatGeneralExecutionInformation());
 
-        template.setRowCount(StringEscapeUtils.escapeHtml4(
-                getStatementExecutionInformation().getSummary()));
+		template.setRowCount(StringEscapeUtils.escapeHtml4(getStatementExecutionInformation().getSummary()));
 
-        template.setResultTable(null);
-        template.setLimitedRows(null);
+		template.setResultTable(null);
+		template.setLimitedRows(null);
 
-        return template.buildWithTemplate();
-    }
+		return template.buildWithTemplate();
+	}
 
-    private String formatWithResult(final ResultTemplate template) {
-        template.setExecutionInformation(formatGeneralExecutionInformation());
-        template.setResultTable(formatResultAsTable());
+	private String formatWithResult(final ResultTemplate template) {
+		template.setExecutionInformation(formatGeneralExecutionInformation());
+		template.setResultTable(formatResultAsTable());
 
-        int selectedRows = getStatementExecutionInformation().getStatementResult().
-                getRows().size();
-        final String rowCount = MessageFormat.format(
-                DialogDictionary.PATTERN_ROWCOUNT.toString(),
-                selectedRows);
-        template.setRowCount(StringEscapeUtils.escapeHtml4(rowCount));
-        if (!getStatementExecutionInformation().isLimitMaxRowsReached()) {
-            template.setLimitedRows(null);
-        } else {
-            final String limitedRows = MessageFormat.format(
-                    DialogDictionary.PATTERN_MAX_ROWS.toString(),
-                    selectedRows);
-            template.setLimitedRows(StringEscapeUtils.escapeHtml4(limitedRows));
-        }
+		final int selectedRows = getStatementExecutionInformation().getStatementResult().getRows().size();
+		final String rowCount = MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(), selectedRows);
+		template.setRowCount(StringEscapeUtils.escapeHtml4(rowCount));
+		if (!getStatementExecutionInformation().isLimitMaxRowsReached()) {
+			template.setLimitedRows(null);
+		} else {
+			final String limitedRows = MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.toString(), selectedRows);
+			template.setLimitedRows(StringEscapeUtils.escapeHtml4(limitedRows));
+		}
 
-        return template.buildWithTemplate();
-    }
+		return template.buildWithTemplate();
+	}
 
-    public String format(final ResultTemplate template) {
-        return getStatementExecutionInformation().getStatementResult() != null ? formatWithResult(
-                template) : formatEmptyResult(template);
-    }
+	@Override
+	public String format(final ResultTemplate template) {
+		return getStatementExecutionInformation().getStatementResult() != null ? formatWithResult(template)
+				: formatEmptyResult(template);
+	}
 }

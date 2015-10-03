@@ -25,13 +25,14 @@
  */
 package de.kuehweg.sqltool.itrysql;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.dialog.images.ImagePack;
-import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.dialog.images.ImagePack;
+import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -39,29 +40,36 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Weitere Fenster der Applikation (wenn nicht als primary stage geöffnet)
- * 
+ * Weitere Fenster der Applikation (wenn nicht als primary stage geöffnet).
+ *
  * @author Michael Kühweg
  */
 public class ITrySQLStage extends Stage {
 
-	private final static double X_OFFSET = 48;
-	private final static double Y_OFFSET = 32;
+	private static final double X_OFFSET = 48;
+	private static final double Y_OFFSET = 32;
 
+	/**
+	 * @param callerStage
+	 *            Aufrufende Stage
+	 */
 	public ITrySQLStage(final Stage callerStage) {
 		this(callerStage, DialogDictionary.APPLICATION.toString());
 	}
 
+	/**
+	 * @param callerStage
+	 *            Aufrufende Stage
+	 * @param title
+	 *            Fenstertitel
+	 */
 	public ITrySQLStage(final Stage callerStage, final String title) {
 		try {
 			final FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setResources(ResourceBundle.getBundle("dictionary"));
-			fxmlLoader.setLocation(getClass().getResource(
-					"/resources/fxml/iTrySQL.fxml"));
+			fxmlLoader.setLocation(getClass().getResource("/resources/fxml/iTrySQL.fxml"));
 			final Parent root = (Parent) fxmlLoader.load();
-			root.getStylesheets().add(
-					getClass().getResource("/resources/css/itrysql.css")
-							.toExternalForm());
+			root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
 
 			final iTrySQLController controller = fxmlLoader.getController();
 			setOnHiding(controller);
@@ -69,7 +77,7 @@ public class ITrySQLStage extends Stage {
 
 			final Scene scene = new Scene(root);
 
-            setScene(scene);
+			setScene(scene);
 			getIcons().add(ImagePack.APP_ICON.getAsImage());
 			setTitle(title);
 			if (callerStage != null) {
@@ -78,16 +86,14 @@ public class ITrySQLStage extends Stage {
 				setWidth(callerStage.getWidth());
 				setHeight(callerStage.getHeight());
 			} else {
-				final Rectangle2D calculatedSize = StageSizerUtil
-						.calculateSizeDependingOnScreenSize();
+				final Rectangle2D calculatedSize = StageSizerUtil.calculateSizeDependingOnScreenSize();
 				setX(calculatedSize.getMinX());
 				setY(calculatedSize.getMinY());
 				setWidth(calculatedSize.getWidth());
 				setHeight(calculatedSize.getHeight());
 			}
 		} catch (final IOException ex) {
-			Logger.getLogger(ITrySQLStage.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Logger.getLogger(ITrySQLStage.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 }

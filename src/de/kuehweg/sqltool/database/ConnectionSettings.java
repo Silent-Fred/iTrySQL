@@ -27,6 +27,7 @@ package de.kuehweg.sqltool.database;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -36,7 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Verwaltung der vom Anwender angelegten Verbindungsdaten (ConnectionSetting)
  * über Preferences. Die Verbindungsdaten stehen beim nächsten Programmstart
  * wieder zur Verfügung.
- * 
+ *
  * @author Michael Kühweg
  */
 @XmlRootElement
@@ -50,8 +51,8 @@ public class ConnectionSettings {
 	}
 
 	/**
-	 * Bestehende Verbindungsdaten auslesen
-	 * 
+	 * Bestehende Verbindungsdaten auslesen.
+	 *
 	 * @return
 	 */
 	@XmlElement(name = "connection")
@@ -62,12 +63,11 @@ public class ConnectionSettings {
 	/**
 	 * Fügt eine neue Verbindungsbeschreibung hinzu und liefert die entsprechend
 	 * erweiterte Liste der Verbindungsdaten zurück.
-	 * 
+	 *
 	 * @param connectionSetting
 	 * @return
 	 */
-	public Set<ConnectionSetting> addConnectionSetting(
-			final ConnectionSetting connectionSetting) {
+	public Set<ConnectionSetting> addConnectionSetting(final ConnectionSetting connectionSetting) {
 		if (connectionSetting != null) {
 			connectionSettings.add(connectionSetting);
 		}
@@ -77,12 +77,11 @@ public class ConnectionSettings {
 	/**
 	 * Entfernt eine Verbindungsbeschreibung und liefert die entsprechend
 	 * bereinigte Liste der Verbindungsdaten zurück.
-	 * 
+	 *
 	 * @param connectionSetting
 	 * @return
 	 */
-	public Set<ConnectionSetting> removeConnectionSetting(
-			final ConnectionSetting connectionSetting) {
+	public Set<ConnectionSetting> removeConnectionSetting(final ConnectionSetting connectionSetting) {
 		if (connectionSetting != null) {
 			connectionSettings.remove(connectionSetting);
 		}

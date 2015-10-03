@@ -26,14 +26,14 @@
 package de.kuehweg.sqltool.dialog.base;
 
 /**
- * Interface zum Setzen der Schriftgröße
+ * Interface zum Setzen der Schriftgröße.
  *
  * @author Michael Kühweg
  */
 public interface FontResizer {
 
-    int getFontSize();
+	int getFontSize();
 
-    void setFontSize(final int size);
+	void setFontSize(final int size);
 
 }

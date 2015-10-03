@@ -29,7 +29,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Dictionary als enum zur Ausgabe internationalisierbarer Dialogtexte
+ * Dictionary als enum zur Ausgabe internationalisierbarer Dialogtexte.
  *
  * @author Michael Kühweg
  */

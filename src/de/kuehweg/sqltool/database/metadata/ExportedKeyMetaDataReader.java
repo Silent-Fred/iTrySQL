@@ -25,34 +25,31 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.description.ExportedKeyColumnDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.ExportedKeyColumnDescription;
+
 /**
- * Metadaten der Foreign Key Constraints aufbereiten
+ * Metadaten der Foreign Key Constraints aufbereiten.
  *
  * @author Michael Kühweg
  */
 public class ExportedKeyMetaDataReader extends AbstractMetaDataReader {
 
-    public ExportedKeyMetaDataReader(DatabaseDescription root) {
-        super(root);
-    }
+	public ExportedKeyMetaDataReader(final DatabaseDescription root) {
+		super(root);
+	}
 
-    @Override
-    protected void readAndAddDescription(ResultSet foreignKeyConstraint) throws SQLException {
-        findParent(foreignKeyConstraint.getString("PKTABLE_CAT"),
-                foreignKeyConstraint.getString("PKTABLE_SCHEM"),
-                foreignKeyConstraint.getString("PKTABLE_NAME")).adoptOrphan(
-                        new ExportedKeyColumnDescription(
-                                foreignKeyConstraint.getString("FK_NAME"),
-                                foreignKeyConstraint.getString("PKCOLUMN_NAME"),
-                                foreignKeyConstraint.getString("FKTABLE_CAT"),
-                                foreignKeyConstraint.getString("FKTABLE_SCHEM"),
-                                foreignKeyConstraint.getString("FKTABLE_NAME"),
-                                foreignKeyConstraint.getString("FKCOLUMN_NAME")));
-    }
+	@Override
+	protected void readAndAddDescription(final ResultSet foreignKeyConstraint) throws SQLException {
+		findParent(foreignKeyConstraint.getString("PKTABLE_CAT"), foreignKeyConstraint.getString("PKTABLE_SCHEM"),
+				foreignKeyConstraint.getString("PKTABLE_NAME")).adoptOrphan(new ExportedKeyColumnDescription(
+						foreignKeyConstraint.getString("FK_NAME"), foreignKeyConstraint.getString("PKCOLUMN_NAME"),
+						foreignKeyConstraint.getString("FKTABLE_CAT"), foreignKeyConstraint.getString("FKTABLE_SCHEM"),
+						foreignKeyConstraint.getString("FKTABLE_NAME"),
+						foreignKeyConstraint.getString("FKCOLUMN_NAME")));
+	}
 
 }

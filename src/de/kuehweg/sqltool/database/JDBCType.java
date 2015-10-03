@@ -26,58 +26,48 @@
 package de.kuehweg.sqltool.database;
 
 /**
- * Unterstützte JDBC-Treiber
+ * Unterstützte JDBC-Treiber.
  *
  * @author Michael Kühweg
  */
 public enum JDBCType {
 
-    HSQL_IN_MEMORY(
-            "HSQL Database Engine In-Memory",
-            "org.hsqldb.jdbcDriver",
-            "jdbc:hsqldb:",
-            "mem:"),
-    HSQL_STANDALONE(
-            "HSQL Database Engine Standalone",
-            "org.hsqldb.jdbcDriver",
-            "jdbc:hsqldb:",
-            "file:"),
-    HSQL_SERVER(
-            "HSQL Database Engine Server",
-            "org.hsqldb.jdbcDriver",
-            "jdbc:hsqldb:",
-            "hsql:");
-    private final String name;
-    private final String driverClass;
-    private final String urlPrefix;
-    private final String dbType;
+	HSQL_IN_MEMORY("HSQL Database Engine In-Memory", "org.hsqldb.jdbcDriver", "jdbc:hsqldb:", "mem:"),
 
-    private JDBCType(final String name, final String driverClass,
-            final String urlPrefix, final String dbType) {
-        this.name = name;
-        this.driverClass = driverClass;
-        this.urlPrefix = urlPrefix;
-        this.dbType = dbType;
-    }
+	HSQL_STANDALONE("HSQL Database Engine Standalone", "org.hsqldb.jdbcDriver", "jdbc:hsqldb:", "file:"),
 
-    public String getName() {
-        return name;
-    }
+	HSQL_SERVER("HSQL Database Engine Server", "org.hsqldb.jdbcDriver", "jdbc:hsqldb:", "hsql:");
 
-    public String getDriverClass() {
-        return driverClass;
-    }
+	private final String name;
+	private final String driverClass;
+	private final String urlPrefix;
+	private final String dbType;
 
-    public String getUrlPrefix() {
-        return urlPrefix;
-    }
+	private JDBCType(final String name, final String driverClass, final String urlPrefix, final String dbType) {
+		this.name = name;
+		this.driverClass = driverClass;
+		this.urlPrefix = urlPrefix;
+		this.dbType = dbType;
+	}
 
-    public String getDbType() {
-        return dbType;
-    }
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	public String getDriverClass() {
+		return driverClass;
+	}
+
+	public String getUrlPrefix() {
+		return urlPrefix;
+	}
+
+	public String getDbType() {
+		return dbType;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }

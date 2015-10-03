@@ -30,29 +30,29 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Einzelne Ergebniszeile einer SQL-Anweisung
+ * Einzelne Ergebniszeile einer SQL-Anweisung.
  *
  * @author Michael Kühweg
  */
 public class ResultRow {
 
-    public static final String NULL_STR = "[null]";
+	public static final String NULL_STR = "[null]";
 
-    private final Object[] columns;
+	private final Object[] columns;
 
-    public ResultRow(final Object... columns) {
-        if (columns == null) {
-            this.columns = new Object[]{null};
-        } else {
-            this.columns = Arrays.copyOf(columns, columns.length);
-        }
-    }
+	public ResultRow(final Object... columns) {
+		if (columns == null) {
+			this.columns = new Object[] { null };
+		} else {
+			this.columns = Arrays.copyOf(columns, columns.length);
+		}
+	}
 
-    public List<String> columnsAsString() {
-        List<String> result = new ArrayList<>(columns.length);
-        for (Object column : columns) {
-            result.add(column != null ? column.toString() : NULL_STR);
-        }
-        return result;
-    }
+	public List<String> columnsAsString() {
+		final List<String> result = new ArrayList<>(columns.length);
+		for (final Object column : columns) {
+			result.add(column != null ? column.toString() : NULL_STR);
+		}
+		return result;
+	}
 }

@@ -28,20 +28,20 @@ package de.kuehweg.sqltool.database.metadata.description;
 import java.util.Comparator;
 
 /**
- * Comparator mit dem IndexColumnDescriptions nach ordinal position der Spalten im Index
- * sortiert werden können.
+ * Comparator mit dem IndexColumnDescriptions nach ordinal position der Spalten
+ * im Index sortiert werden können.
  *
  * @author Michael Kühweg
  */
 public class IndexColumnByOrdinalPosition implements Comparator<IndexColumnDescription> {
 
-    @Override
-    public int compare(IndexColumnDescription o1, IndexColumnDescription o2) {
-        int result = o1.compareTo(o2);
-        if (result == 0) {
-            result = o1.getOrdinalPosition() - o2.getOrdinalPosition();
-        }
-        return result;
-    }
+	@Override
+	public int compare(final IndexColumnDescription o1, final IndexColumnDescription o2) {
+		int result = o1.compareTo(o2);
+		if (result == 0) {
+			result = o1.getOrdinalPosition() - o2.getOrdinalPosition();
+		}
+		return result;
+	}
 
 }

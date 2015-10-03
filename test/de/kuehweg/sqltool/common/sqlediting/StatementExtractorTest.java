@@ -33,103 +33,88 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test für die Zerlegung der Eingabe in Anweisungen
+ * Test für die Zerlegung der Eingabe in Anweisungen.
  *
  * @author Michael Kühweg
  */
 public class StatementExtractorTest {
 
-    public StatementExtractorTest() {
-    }
+	public StatementExtractorTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void splitWithComments() {
-        Assert.assertEquals(1, new StatementExtractor().
-                getStatementsFromScript(
-                        "/* start here... with a confusing ';' */\ncreate table test (test numeric(1));\n").
-                size());
-        Assert.assertEquals(1, new StatementExtractor().
-                getStatementsFromScript(
-                        "-- select * from test;\nselect ';' from test;").
-                size());
-    }
+	@Test
+	public void splitWithComments() {
+		Assert.assertEquals(1,
+				new StatementExtractor()
+						.getStatementsFromScript(
+								"/* start here... with a confusing ';' */\ncreate table test (test numeric(1));\n")
+						.size());
+		Assert.assertEquals(1, new StatementExtractor()
+				.getStatementsFromScript("-- select * from test;\nselect ';' from test;").size());
+	}
 
-    @Test
-    public void splitEmpty() {
-        // Kommentare nach einer Anweisung beginnen laut derzeitiger Definition ein neues Statement
-        Assert.assertEquals(2, new StatementExtractor().
-                getStatementsFromScript(
-                        "-- select * from test;\nselect ';' from test; -- an open end as empty statement").
-                size());
-        Assert.assertTrue(new StatementExtractor().
-                getStatementsFromScript(
-                        "-- select * from test;\nselect ';' from test; -- an open end as empty statement").
-                get(1).isEmpty());
-        // nur Leerzeichen liefern nach Ende kein neues Statement
-        Assert.assertEquals(1, new StatementExtractor().
-                getStatementsFromScript(
-                        "select ';' from test; ").
-                size());
-        Assert.assertEquals(2, new StatementExtractor().
-                getStatementsFromScript(
-                        "select ';' from test;;").
-                size());
-        Assert.assertTrue(new StatementExtractor().
-                getStatementsFromScript(
-                        "select ';' from test;;").get(1).isEmpty());
-    }
+	@Test
+	public void splitEmpty() {
+		// Kommentare nach einer Anweisung beginnen laut derzeitiger Definition
+		// ein neues Statement
+		Assert.assertEquals(2,
+				new StatementExtractor()
+						.getStatementsFromScript(
+								"-- select * from test;\nselect ';' from test; -- an open end as empty statement")
+						.size());
+		Assert.assertTrue(new StatementExtractor()
+				.getStatementsFromScript(
+						"-- select * from test;\nselect ';' from test; -- an open end as empty statement")
+				.get(1).isEmpty());
+		// nur Leerzeichen liefern nach Ende kein neues Statement
+		Assert.assertEquals(1, new StatementExtractor().getStatementsFromScript("select ';' from test; ").size());
+		Assert.assertEquals(2, new StatementExtractor().getStatementsFromScript("select ';' from test;;").size());
+		Assert.assertTrue(new StatementExtractor().getStatementsFromScript("select ';' from test;;").get(1).isEmpty());
+	}
 
-    @Test
-    public void insideSpecial() {
-        Assert.assertEquals(1, new StatementExtractor().
-                getStatementsFromScript(
-                        "-- select * from test;\nselect ';' /* ; */ from test;").
-                size());
-    }
+	@Test
+	public void insideSpecial() {
+		Assert.assertEquals(1, new StatementExtractor()
+				.getStatementsFromScript("-- select * from test;\nselect ';' /* ; */ from test;").size());
+	}
 
-    @Test
-    public void positioning() {
-        final String firstStatement
-                = "-- select * from test;\nselect ';' /* ; */ from test;";
-        final String secondStatement = "values(current_date)   ";
-        final String script = firstStatement + secondStatement;
-        Assert.assertEquals(firstStatement.trim(), new StatementExtractor().
-                extractStatementAtCaretPosition(script, 0));
-        Assert.assertEquals(firstStatement.trim(), new StatementExtractor().
-                extractStatementAtCaretPosition(script, 1));
-        Assert.assertEquals(firstStatement.trim(), new StatementExtractor().
-                extractStatementAtCaretPosition(script, firstStatement.length()
-                        - 1));
+	@Test
+	public void positioning() {
+		final String firstStatement = "-- select * from test;\nselect ';' /* ; */ from test;";
+		final String secondStatement = "values(current_date)   ";
+		final String script = firstStatement + secondStatement;
+		Assert.assertEquals(firstStatement.trim(), new StatementExtractor().extractStatementAtCaretPosition(script, 0));
+		Assert.assertEquals(firstStatement.trim(), new StatementExtractor().extractStatementAtCaretPosition(script, 1));
+		Assert.assertEquals(firstStatement.trim(),
+				new StatementExtractor().extractStatementAtCaretPosition(script, firstStatement.length() - 1));
 
-        Assert.assertEquals(secondStatement.trim(), new StatementExtractor().
-                extractStatementAtCaretPosition(script, firstStatement.length()));
-        Assert.assertEquals(secondStatement.trim(), new StatementExtractor().
-                extractStatementAtCaretPosition(script, script.length() - 1));
-    }
+		Assert.assertEquals(secondStatement.trim(),
+				new StatementExtractor().extractStatementAtCaretPosition(script, firstStatement.length()));
+		Assert.assertEquals(secondStatement.trim(),
+				new StatementExtractor().extractStatementAtCaretPosition(script, script.length() - 1));
+	}
 
-    @Test
-    public void emptyStatement() {
-        Assert.assertNotNull(new StatementExtractor().getStatementsFromScript(null));
-        Assert.
-                assertTrue(new StatementExtractor().getStatementsFromScript(null).
-                        isEmpty());
-        Assert.assertTrue(new StatementExtractor().getStatementsFromScript("").isEmpty());
-        Assert.assertTrue(new StatementExtractor().getStatementsFromScript(" ").isEmpty());
-    }
+	@Test
+	public void emptyStatement() {
+		Assert.assertNotNull(new StatementExtractor().getStatementsFromScript(null));
+		Assert.assertTrue(new StatementExtractor().getStatementsFromScript(null).isEmpty());
+		Assert.assertTrue(new StatementExtractor().getStatementsFromScript("").isEmpty());
+		Assert.assertTrue(new StatementExtractor().getStatementsFromScript(" ").isEmpty());
+	}
 }

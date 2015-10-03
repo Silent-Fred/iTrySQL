@@ -25,10 +25,9 @@
  */
 package de.kuehweg.sqltool.dialog;
 
-import de.kuehweg.sqltool.dialog.images.ImagePack;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
+import de.kuehweg.sqltool.dialog.images.ImagePack;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -41,102 +40,100 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 /**
- * Allgemeine Dialogboxen mit Standardaufbau
+ * Allgemeine Dialogboxen mit Standardaufbau.
  *
  * @author Michael Kühweg
  */
 public abstract class CommonDialog extends Stage {
 
-    private String activatedButton;
+	private String activatedButton;
 
-    /**
-     * Dialog enthält grundsätzlich einen Meldungstext
-     *
-     * @param message
-     */
-    public CommonDialog(final String message) {
-        super();
-        Scene scene;
-        try {
-            final Parent root = FXMLLoader
-                    .load(getClass().getResource(
-                                    "/resources/fxml/CommonDialog.fxml"),
-                            ResourceBundle.getBundle("dictionary"));
-            root.getStylesheets().add(
-                    getClass().getResource("/resources/css/itrysql.css")
-                    .toExternalForm());
-            scene = new Scene(root);
-        } catch (final Exception ex) {
-            scene = FallbackSceneFactory.createNewInstance();
-        }
-        final Label messageLabel = (Label) scene.lookup("#message");
-        if (messageLabel != null) {
-            messageLabel.setText(message);
-        }
-        setScene(scene);
-        initStyle(StageStyle.UTILITY);
-        initModality(Modality.APPLICATION_MODAL);
+	/**
+	 * Der Dialog enthält grundsätzlich einen Meldungstext.
+	 *
+	 * @param message
+	 *            Nachricht für den Anwender
+	 */
+	public CommonDialog(final String message) {
+		super();
+		Scene scene;
+		try {
+			final Parent root = FXMLLoader.load(getClass().getResource("/resources/fxml/CommonDialog.fxml"),
+					ResourceBundle.getBundle("dictionary"));
+			root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
+			scene = new Scene(root);
+		} catch (final Exception ex) {
+			scene = FallbackSceneFactory.createNewInstance();
+		}
+		final Label messageLabel = (Label) scene.lookup("#message");
+		if (messageLabel != null) {
+			messageLabel.setText(message);
+		}
+		setScene(scene);
+		initStyle(StageStyle.UTILITY);
+		initModality(Modality.APPLICATION_MODAL);
 
-        centerOnScreen();
-        setResizable(false);
-    }
+		centerOnScreen();
+		setResizable(false);
+	}
 
-    /**
-     * Dialogtitel setzen
-     *
-     * @param titleText
-     */
-    public void specializeDialogTitle(final String titleText) {
-        setTitle(titleText);
-    }
+	/**
+	 * Dialogtitel setzen.
+	 *
+	 * @param titleText
+	 *            Dialogtitel
+	 */
+	public void specializeDialogTitle(final String titleText) {
+		setTitle(titleText);
+	}
 
-    /**
-     * Dialogicon setzen
-     *
-     * @param image
-     */
-    public void specializeDialogIcon(final ImagePack image) {
-        final ImageView icon = (ImageView) getScene().lookup("#icon");
-        if (icon != null) {
-            icon.setImage(image.getAsImage());
-        }
-    }
+	/**
+	 * Dialogicon setzen.
+	 *
+	 * @param image
+	 *            Bild aus dem vordefinierten Satz an Icons - zur schnellen
+	 *            visuellen Unterscheidung zwischen verschiedenen Typen von
+	 *            Rückfragedialogen.
+	 */
+	public void specializeDialogIcon(final ImagePack image) {
+		final ImageView icon = (ImageView) getScene().lookup("#icon");
+		if (icon != null) {
+			icon.setImage(image.getAsImage());
+		}
+	}
 
-    /**
-     * Buttons hinzufügen. Die Anzeige erfolgt "von rechts nach links". Der
-     * erste Button in der Parameterliste wird links außen als Defaultbutton
-     * angezeigt, weitere Buttons werden der Reihe nach links davor einsortiert.
-     *
-     * @param buttons
-     */
-    public void addDialogButtons(final String... buttons) {
-        final HBox buttonBox = (HBox) getScene().lookup("#buttonBox");
-        if (buttonBox != null) {
-            boolean first = true;
-            for (final String button : buttons) {
-                final Button buttonNode = new Button(button);
-                buttonNode.setDefaultButton(first);
-                first = false;
-                buttonNode.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(final ActionEvent event) {
-                        activatedButton = button;
-                        close();
-                    }
-                });
-                buttonBox.getChildren().add(0, buttonNode);
-            }
-        }
-    }
+	/**
+	 * Buttons hinzufügen.
+	 * 
+	 * @param buttons
+	 *            Beschriftung der Buttons, in Reihenfolge von rechts nach
+	 *            links. Erster Eintrag wird als Default-Button markiert.
+	 */
+	public void addDialogButtons(final String... buttons) {
+		final HBox buttonBox = (HBox) getScene().lookup("#buttonBox");
+		if (buttonBox != null) {
+			boolean first = true;
+			for (final String button : buttons) {
+				final Button buttonNode = new Button(button);
+				buttonNode.setDefaultButton(first);
+				first = false;
+				buttonNode.setOnAction(event -> {
+					activatedButton = button;
+					close();
+				});
+				buttonBox.getChildren().add(0, buttonNode);
+			}
+		}
+	}
 
-    /**
-     * Dialog anzeigen und auf Anwenderaktion warten.
-     *
-     * @return Buttontext des angeklickten Buttons, wie er beim Aufbau mit
-     * addDialogButtons() angegeben wurde
-     */
-    public String askUserFeedback() {
-        showAndWait();
-        return activatedButton;
-    }
+	/**
+	 * Dialog anzeigen und auf Anwenderaktion warten.
+	 *
+	 * @return Buttontext des angeklickten Buttons, wie er beim Aufbau mit
+	 *         addDialogButtons() angegeben wurde
+	 */
+	public String askUserFeedback() {
+		showAndWait();
+		return activatedButton;
+	}
 }

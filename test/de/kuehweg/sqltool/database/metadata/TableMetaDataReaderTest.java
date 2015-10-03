@@ -42,7 +42,7 @@ import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 
 /**
- * Metadaten von Tabellen testen
+ * Metadaten von Tabellen testen.
  *
  * @author Michael Kühweg
  */
@@ -81,9 +81,7 @@ public class TableMetaDataReaderTest {
 	@Test
 	public void readMetaData() throws SQLException {
 		final TableMetaDataReader metaDataReader = new TableMetaDataReader(db);
-		metaDataReader
-				.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2,
-						"TABLE_NAME"));
+		metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2, "TABLE_NAME"));
 
 		assertEquals(2, schema.getTables().size());
 

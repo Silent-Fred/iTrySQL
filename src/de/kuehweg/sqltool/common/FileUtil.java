@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@ package de.kuehweg.sqltool.common;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,8 +40,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 /**
- * Dateioperationen
- * 
+ * Dateioperationen.
+ *
  * @author Michael Kühweg
  */
 public class FileUtil {
@@ -52,47 +51,44 @@ public class FileUtil {
 	}
 
 	/**
-	 * Textdatei mit dem angegebenen Dateinamen einlesen und als String
-	 * zurückliefern
-	 * 
-	 * @param file
-	 * @return
+	 * Liest die Daten aus einer URL ein und gibt sie als String zurück.
+	 * Voraussetzung sind daher Textdateien (wird jedoch nicht verifiziert).
+	 * Convenience für das Nachlesen von Vorlagedateien, Snippets,...
+	 *
+	 * @param url
+	 *            URL der zu ladenden Datei / Ressource
+	 * @return Den Dateiinhalt / die Resource als String
 	 * @throws URISyntaxException
+	 *             Bei fehlerhafter Angabe der URL.
 	 * @throws IOException
+	 *             Wenn Fehler beim Zugriff auf die Datei/Ressource auftreten.
 	 */
-	public static String readFile(final URL file) throws URISyntaxException,
-			IOException {
-		// die neue Variante mit Path und Files und allem Drum und Dran
-		// ist zwar hübscher - hilft aber nix, wenn es dann in manchen
-		// Konstellationen keine Umlaute in Dateinamen kann :-(
-		// (Mac OS X 10.9.1 mit Java 7u45 - Applikation als Standalone jar)
-		final File theFile = new File(file.toURI());
-		final InputStream inputStream = new FileInputStream(theFile);
-		final StringBuffer b;
-		final InputStreamReader reader = new InputStreamReader(inputStream,
-				"UTF-8");
-        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
-            b = new StringBuffer();
-            String s;
-            while ((s = bufferedReader.readLine()) != null) {
-                b.append(s);
-                b.append('\n');
-            }
-        }
-		return b.toString();
+	public static String readFile(final URL url) throws URISyntaxException, IOException {
+		try (final InputStream inputStream = url.openStream()) {
+			final StringBuffer b;
+			final InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+			try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+				b = new StringBuffer();
+				String s;
+				while ((s = bufferedReader.readLine()) != null) {
+					b.append(s);
+					b.append('\n');
+				}
+			}
+			return b.toString();
+		}
 	}
 
 	/**
 	 * Text in die Datei mit dem angegebenen Dateinamen ausgeben.
-	 * 
+	 *
 	 * @param file
 	 *            Dateiname
 	 * @param text
 	 *            Textinhalt der ausgegeben werden soll
 	 * @throws IOException
 	 */
-	public static void writeFile(final URL file, final String text)
-			throws IOException {
+	public static void writeFile(final URL file, final String text) throws IOException {
 		Path path = null;
 		try {
 			path = Paths.get(file.toURI());
@@ -102,25 +98,21 @@ public class FileUtil {
 			// verpackt
 			throw new IOException(ex);
 		}
-		Files.write(path, text.getBytes(), StandardOpenOption.CREATE,
-				StandardOpenOption.TRUNCATE_EXISTING);
+		Files.write(path, text.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
 	/**
 	 * Datei lesen, die als Ressource im Paket eingebettet ist (z.B. vorgegebene
 	 * Initialisierungsskripte für die Datenbankinhalte)
-	 * 
+	 *
 	 * @param resourceName
 	 * @return
 	 * @throws IOException
 	 */
-	public static String readResourceFile(final String resourceName)
-			throws IOException {
-		final InputStream tutorialStream = FileUtil.class
-				.getResourceAsStream(resourceName);
+	public static String readResourceFile(final String resourceName) throws IOException {
+		final InputStream tutorialStream = FileUtil.class.getResourceAsStream(resourceName);
 		final StringBuffer b;
-		final InputStreamReader reader = new InputStreamReader(tutorialStream,
-				"UTF-8");
+		final InputStreamReader reader = new InputStreamReader(tutorialStream, "UTF-8");
 		final BufferedReader bufferedReader = new BufferedReader(reader);
 		b = new StringBuffer();
 		String s = null;
@@ -135,7 +127,7 @@ public class FileUtil {
 	/**
 	 * Dateinamenserweiterung an einen Dateinamen anhängen, sofern nicht bereits
 	 * vorhanden.
-	 * 
+	 *
 	 * @param filename
 	 *            Bisheriger Dateiname
 	 * @param ext
@@ -147,13 +139,11 @@ public class FileUtil {
 			return filename;
 		}
 		final String trimmedExt = ext.trim();
-		if (filename.getFile().toLowerCase()
-				.endsWith("." + trimmedExt.toLowerCase())) {
+		if (filename.getFile().toLowerCase().endsWith("." + trimmedExt.toLowerCase())) {
 			return filename;
 		}
 		try {
-			return new URL(filename.toExternalForm()
-					+ (trimmedExt.startsWith(".") ? "" : ".") + ext);
+			return new URL(filename.toExternalForm() + (trimmedExt.startsWith(".") ? "" : ".") + ext);
 		} catch (final MalformedURLException ex) {
 			return filename;
 		}
@@ -163,7 +153,7 @@ public class FileUtil {
 	 * Konvertierung in URI für ein File. Falls der Dateiname schon als URI
 	 * vorliegt, wird nicht doppelt gewandelt (würde bei file.toURI()
 	 * passieren).
-	 * 
+	 *
 	 * @param file
 	 * @return URI der Datei
 	 */

@@ -21,7 +21,7 @@
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-text-fill: #067db7;
+    -fx-text-fill: rgba(52, 101, 164, 1.0);
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
     -fx-font-family: 'iTryIcons';
@@ -88,7 +88,7 @@
 
 #schemaTreeView .tree-cell .label {
     -fx-font-family: 'iTryIcons';
-    -fx-font-size: 18;
+    -fx-font-size: 20;
     -fx-padding: 0;
 }
 

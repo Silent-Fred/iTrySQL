@@ -25,12 +25,19 @@
  */
 package de.kuehweg.sqltool.itrysql;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.dialog.images.ImagePack;
-import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
+import java.util.Collection;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import de.kuehweg.gamification.AchievementCounter;
+import de.kuehweg.gamification.AchievementPersister;
+import de.kuehweg.gamification.ObfuscatedAchievementXmlFilePersister;
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.achievement.AchievementManager;
+import de.kuehweg.sqltool.common.achievement.DefaultRankingPoints;
+import de.kuehweg.sqltool.dialog.images.ImagePack;
+import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -41,83 +48,121 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- * Zentrale Klasse der "iTry SQL" Applikation
+ * Zentrale Klasse der "iTry SQL" Applikation.
  *
  * @author Michael Kühweg
  */
 public class ITrySQL extends Application {
 
-    private iTrySQLController controller;
+	private static final int BASE_FONT_SIZE = 12;
 
-    @Override
-    public void init() throws Exception {
-        super.init();
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMono.ttf")
-                .toExternalForm(), 12);
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoIt.ttf")
-                .toExternalForm(), 12);
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBd.ttf")
-                .toExternalForm(), 12);
-        Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBI.ttf")
-                .toExternalForm(), 12);
-        // spezieller Icon-Font
-        Font.loadFont(getClass().getResource("/resources/fonts/iTryIcons-Roman.ttf")
-                .toExternalForm(), 12);
-    }
+	private iTrySQLController controller;
 
-    @Override
-    public void start(final Stage primaryStage) throws Exception {
-        final FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setResources(ResourceBundle.getBundle("dictionary"));
-        fxmlLoader.setLocation(getClass().getResource(
-                "/resources/fxml/iTrySQL.fxml"));
-        final Parent root = (Parent) fxmlLoader.load();
-        root.getStylesheets().add(
-                getClass().getResource("/resources/css/itrysql.css")
-                .toExternalForm());
+	@Override
+	public final void init() throws Exception {
+		super.init();
+		initFonts();
+		initGamification();
+	}
 
-        controller = (iTrySQLController) fxmlLoader.getController();
+	/**
+	 * Initialisierung der speziellen Fonts, die in der Anwendung verwendet
+	 * werden.
+	 */
+	private void initFonts() {
+		Font.loadFont(getClass().getResource("/resources/fonts/VeraMono.ttf").toExternalForm(), BASE_FONT_SIZE);
+		Font.loadFont(getClass().getResource("/resources/fonts/VeraMoIt.ttf").toExternalForm(), BASE_FONT_SIZE);
+		Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBd.ttf").toExternalForm(), BASE_FONT_SIZE);
+		Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBI.ttf").toExternalForm(), BASE_FONT_SIZE);
+		// spezieller Icon-Font
+		Font.loadFont(getClass().getResource("/resources/fonts/iTryIcons-Roman.ttf").toExternalForm(), BASE_FONT_SIZE);
+		// Font für die Achievements
+		Font.loadFont(getClass().getResource("/resources/fonts/Laurel_wreath.ttf").toExternalForm(), BASE_FONT_SIZE);
+	}
 
-        final Scene scene = new Scene(root);
+	/**
+	 * Achievements vorbereiten, bestehenden Fortschritt einlesen.
+	 */
+	private void initGamification() {
+		final String achievementsFilename = System.getProperty("user.home") + "/" + "SQLTutorialAchievements";
+		AchievementManager.getInstance().setPersister(
+				new ObfuscatedAchievementXmlFilePersister(achievementsFilename, System.getProperty("user.name")));
+		applyProgress();
+		AchievementManager.getInstance().setPointsSystem(new DefaultRankingPoints());
+	}
 
-        primaryStage.setScene(scene);
-        final Rectangle2D calculatedSize = StageSizerUtil
-                .calculateSizeDependingOnScreenSize();
-        primaryStage.setX(calculatedSize.getMinX());
-        primaryStage.setY(calculatedSize.getMinY());
-        primaryStage.setWidth(calculatedSize.getWidth());
-        primaryStage.setHeight(calculatedSize.getHeight());
-        primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
-        primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
-        primaryStage.setOnCloseRequest((WindowEvent ev) -> {
-            if (!controller.quit()) {
-                ev.consume();
-            }
-        });
-        primaryStage.show();
-    }
+	/**
+	 * Bisher erreichten Fortschritt bei den Achievements einlesen und auf den
+	 * aktuellen Stand des AchievementManagers anwenden. In der Regel sollte
+	 * dazu der AchievementManager vorher auf den Ausgangszustand zurückgesetzt
+	 * worden sein.
+	 */
+	private void applyProgress() {
+		final AchievementManager achievementManager = AchievementManager.getInstance();
+		final Collection<AchievementCounter> achievedSoFar = achievementManager.getPersister().read();
+		// die jetzt auf den Ausgangszustand angewandten Änderungen sollen nicht
+		// persistiert werden, da sie ja genau zu dem Stand führen, der gerade
+		// eben gelesen wurde.
+		final AchievementPersister persister = achievementManager.getPersister();
+		achievementManager.setPersister(null);
+		// vom Ausgangszustand ausgehend den erreichten Fortschritt anwenden
+		achievementManager.resetAllAchievements();
+		for (final AchievementCounter counter : achievedSoFar) {
+			achievementManager.fireEvent(counter.getEvent(), counter.getCounter());
+		}
+		// Änderungen ab jetzt wieder persistieren
+		achievementManager.setPersister(persister);
+	}
 
-    @Override
-    public void stop() throws Exception {
-        try {
-            if (controller != null) {
-                controller.stop();
-            }
-        } catch (final Throwable ex) {
-            Logger.getLogger(ITrySQL.class.getName()).log(Level.SEVERE, null,
-                    ex);
-        }
-    }
+	@Override
+	public final void start(final Stage primaryStage) throws Exception {
+		final FXMLLoader fxmlLoader = new FXMLLoader();
+		fxmlLoader.setResources(ResourceBundle.getBundle("dictionary"));
+		fxmlLoader.setLocation(getClass().getResource("/resources/fxml/iTrySQL.fxml"));
+		final Parent root = (Parent) fxmlLoader.load();
+		root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
 
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application. main()
-     * serves only as fallback in case the application can not be launched through
-     * deployment artifacts, e.g., in IDEs with limited FX support. NetBeans ignores
-     * main().
-     *
-     * @param args the command line arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
+		controller = (iTrySQLController) fxmlLoader.getController();
+
+		final Scene scene = new Scene(root);
+
+		primaryStage.setScene(scene);
+		final Rectangle2D calculatedSize = StageSizerUtil.calculateSizeDependingOnScreenSize();
+		primaryStage.setX(calculatedSize.getMinX());
+		primaryStage.setY(calculatedSize.getMinY());
+		primaryStage.setWidth(calculatedSize.getWidth());
+		primaryStage.setHeight(calculatedSize.getHeight());
+		primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
+		primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
+		primaryStage.setOnCloseRequest((final WindowEvent ev) -> {
+			if (!controller.quit()) {
+				ev.consume();
+			}
+		});
+		primaryStage.show();
+	}
+
+	@Override
+	public final void stop() throws Exception {
+		try {
+			if (controller != null) {
+				controller.stop();
+			}
+		} catch (final Throwable ex) {
+			Logger.getLogger(ITrySQL.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	/**
+	 * The main() method is ignored in correctly deployed JavaFX application.
+	 * main() serves only as fallback in case the application can not be
+	 * launched through deployment artifacts, e.g., in IDEs with limited FX
+	 * support. NetBeans ignores main().
+	 *
+	 * @param args
+	 *            the command line arguments
+	 */
+	public static void main(final String[] args) {
+		launch(args);
+	}
 }

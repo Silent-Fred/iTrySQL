@@ -33,25 +33,28 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 /**
- * Dialoginhalt wenn der normale Dialogaufbau scheitert
+ * Dialoginhalt wenn der normale Dialogaufbau scheitert.
  *
  * @author Michael Kühweg
  */
-public class FallbackSceneFactory {
+public final class FallbackSceneFactory {
 
-    private FallbackSceneFactory() {
-    }
+	private FallbackSceneFactory() {
+	}
 
-    public static Scene createNewInstance() {
-        VBox vBox = new VBox();
-        vBox.getChildren().add(new Text(
-                DialogDictionary.APPLICATION
-                .toString()));
-        vBox.getChildren().add(new Text(DialogDictionary.ERR_LOAD_FXML
-                .toString()));
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setPadding(new Insets(50));
-        return new Scene(vBox);
-    }
+	/**
+	 * Erezugt eine Scene für den Fall, dass die FXML Dateien aus den Ressourcen
+	 * nicht geladen werden konnten.
+	 *
+	 * @return Scene mit rudimentären Elementen zur Anzeige der Fehlersituation
+	 */
+	public static Scene createNewInstance() {
+		final VBox vBox = new VBox();
+		vBox.getChildren().add(new Text(DialogDictionary.APPLICATION.toString()));
+		vBox.getChildren().add(new Text(DialogDictionary.ERR_LOAD_FXML.toString()));
+		vBox.setAlignment(Pos.CENTER);
+		vBox.setPadding(new Insets(50));
+		return new Scene(vBox);
+	}
 
 }

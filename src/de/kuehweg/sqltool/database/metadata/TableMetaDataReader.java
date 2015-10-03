@@ -25,28 +25,26 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.TableDescription;
+
 /**
- * Metadaten für Datenbanktabellen aufbereiten
+ * Metadaten für Datenbanktabellen aufbereiten.
  *
  * @author Michael Kühweg
  */
 public class TableMetaDataReader extends AbstractMetaDataReader {
 
-    public TableMetaDataReader(DatabaseDescription root) {
-        super(root);
-    }
+	public TableMetaDataReader(final DatabaseDescription root) {
+		super(root);
+	}
 
-    @Override
-    protected void readAndAddDescription(final ResultSet table) throws SQLException {
-        findParent(table.getString("TABLE_CAT"), table.getString("TABLE_SCHEM")).
-                adoptOrphan(new TableDescription(
-                                table.getString("TABLE_NAME"),
-                                table.getString("TABLE_TYPE"),
-                                table.getString("REMARKS")));
-    }
+	@Override
+	protected void readAndAddDescription(final ResultSet table) throws SQLException {
+		findParent(table.getString("TABLE_CAT"), table.getString("TABLE_SCHEM")).adoptOrphan(new TableDescription(
+				table.getString("TABLE_NAME"), table.getString("TABLE_TYPE"), table.getString("REMARKS")));
+	}
 }

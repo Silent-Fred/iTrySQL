@@ -28,16 +28,16 @@ package de.kuehweg.sqltool.database.metadata.description;
 import java.util.Comparator;
 
 /**
- * Comparator mit dem ForeignKeyColumnDescriptions nach dem Namen der fkColumn sortiert
- * werden können.
+ * Comparator mit dem ForeignKeyColumnDescriptions nach dem Namen der fkColumn
+ * sortiert werden können.
  *
  * @author Michael Kühweg
  */
 public class ForeignKeyColumnByColumnName implements Comparator<ForeignKeyColumnDescription> {
 
-    @Override
-    public int compare(ForeignKeyColumnDescription o1, ForeignKeyColumnDescription o2) {
-        return o1.getInsideColumnName().compareTo(o2.getInsideColumnName());
-    }
+	@Override
+	public int compare(final ForeignKeyColumnDescription o1, final ForeignKeyColumnDescription o2) {
+		return o1.getInsideColumnName().compareTo(o2.getInsideColumnName());
+	}
 
 }

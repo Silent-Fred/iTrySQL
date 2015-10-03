@@ -31,108 +31,110 @@ package de.kuehweg.sqltool.common;
  */
 public interface UserPreferencesI {
 
-    /**
-     * Benachrichtigungston wenn Aktionen abgeschlossen sind.
-     *
-     * @return
-     */
-    ProvidedAudioClip getBeepAudioClip();
+	/**
+	 * Benachrichtigungston wenn Aktionen abgeschlossen sind.
+	 *
+	 * @return
+	 */
+	ProvidedAudioClip getBeepAudioClip();
 
-    /**
-     * Lautstärke des Benachrichtigungstons wenn Aktionen abgeschlossen sind.
-     *
-     * @return
-     */
-    double getBeepVolume();
+	/**
+	 * Lautstärke des Benachrichtigungstons wenn Aktionen abgeschlossen sind.
+	 *
+	 * @return
+	 */
+	double getBeepVolume();
 
-    /**
-     * Ausgewählte Schriftgröße für die DB-Ausgaben
-     *
-     * @return
-     */
-    int getFontSizeDbOutput();
+	/**
+	 * Ausgewählte Schriftgröße für die DB-Ausgaben.
+	 *
+	 * @return
+	 */
+	int getFontSizeDbOutput();
 
-    /**
-     * Ausgewählte Schriftgröße für die Eingabe der SQL-Anweisungen
-     *
-     * @return
-     */
-    int getFontSizeStatementInput();
+	/**
+	 * Ausgewählte Schriftgröße für die Eingabe der SQL-Anweisungen.
+	 *
+	 * @return
+	 */
+	int getFontSizeStatementInput();
 
-    /**
-     * Datenbankabfragen begrenzt?
-     *
-     * @return
-     */
-    boolean isLimitMaxRows();
+	/**
+	 * Datenbankabfragen begrenzt?
+	 *
+	 * @return
+	 */
+	boolean isLimitMaxRows();
 
-    /**
-     * Benachrichtgungston setzen.
-     *
-     * @param beepAudioClip
-     */
-    void setBeepAudioClip(final ProvidedAudioClip beepAudioClip);
+	/**
+	 * Benachrichtgungston setzen.
+	 *
+	 * @param beepAudioClip
+	 */
+	void setBeepAudioClip(final ProvidedAudioClip beepAudioClip);
 
-    /**
-     * Lautstärke des Benachrichtgungstons setzen.
-     *
-     * @param beepVolume
-     */
-    void setBeepVolume(final double beepVolume);
+	/**
+	 * Lautstärke des Benachrichtgungstons setzen.
+	 *
+	 * @param beepVolume
+	 */
+	void setBeepVolume(final double beepVolume);
 
-    /**
-     * Schriftgröße für die DB-Ausgaben in den Voreinstellungen setzen
-     *
-     * @param fontSize
-     */
-    void setFontSizeDbOutput(final int fontSize);
+	/**
+	 * Schriftgröße für die DB-Ausgaben in den Voreinstellungen setzen.
+	 *
+	 * @param fontSize
+	 */
+	void setFontSizeDbOutput(final int fontSize);
 
-    /**
-     * Schriftgröße für die Eingabe der SQL-Anweisungen in den Voreinstellungen setzen
-     *
-     * @param fontSize
-     */
-    void setFontSizeStatementInput(final int fontSize);
+	/**
+	 * Schriftgröße für die Eingabe der SQL-Anweisungen in den Voreinstellungen
+	 * setzen.
+	 *
+	 * @param fontSize
+	 */
+	void setFontSizeStatementInput(final int fontSize);
 
-    /**
-     * Begrenzung der Ergebnismengen ein- oder ausschalten
-     *
-     * @param limitMaxRows
-     */
-    void setLimitMaxRows(final boolean limitMaxRows);
+	/**
+	 * Begrenzung der Ergebnismengen ein- oder ausschalten.
+	 *
+	 * @param limitMaxRows
+	 */
+	void setLimitMaxRows(final boolean limitMaxRows);
 
-    /**
-     * Standard-Benachrichtigungston wenn Aktionen abgeschlossen sind.
-     *
-     * @return
-     */
-    ProvidedAudioClip getDefaultBeepAudioClip();
+	/**
+	 * Standard-Benachrichtigungston wenn Aktionen abgeschlossen sind.
+	 *
+	 * @return
+	 */
+	ProvidedAudioClip getDefaultBeepAudioClip();
 
-    /**
-     * Standard-Lautstärke des Benachrichtigungstons wenn Aktionen abgeschlossen sind.
-     *
-     * @return
-     */
-    double getDefaultBeepVolume();
+	/**
+	 * Standard-Lautstärke des Benachrichtigungstons wenn Aktionen abgeschlossen
+	 * sind.
+	 *
+	 * @return
+	 */
+	double getDefaultBeepVolume();
 
-    /**
-     * Standard-Schriftgröße der DB-Ausgaben
-     *
-     * @return
-     */
-    int getDefaultFontSizeDbOutput();
+	/**
+	 * Standard-Schriftgröße der DB-Ausgaben.
+	 *
+	 * @return
+	 */
+	int getDefaultFontSizeDbOutput();
 
-    /**
-     * Standard-Schriftgröße für die Eingabe der SQL-Anweisungen
-     *
-     * @return
-     */
-    int getDefaultFontSizeStatementInput();
+	/**
+	 * Standard-Schriftgröße für die Eingabe der SQL-Anweisungen.
+	 *
+	 * @return
+	 */
+	int getDefaultFontSizeStatementInput();
 
-    /**
-     * Standardeinstellung begrenzter Datenbankabfragen
-     *
-     * @return
-     */
-    boolean isDefaultLimitMaxRows();
+	/**
+	 * Standardeinstellung begrenzter Datenbankabfragen.
+	 *
+	 * @return
+	 */
+	boolean isDefaultLimitMaxRows();
 }

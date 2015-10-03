@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.dialog;
 
+import java.util.ResourceBundle;
+
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.ConnectionSetting;
-import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -36,45 +37,52 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 /**
- * Dialog zur Auswahl einer Datenbankverbindung
+ * Dialog zur Auswahl einer Datenbankverbindung.
  *
  * @author Michael Kühweg
  */
 public class ConnectionDialog extends Stage {
 
-    private ConnectionSetting connectionSetting;
+	private ConnectionSetting connectionSetting;
 
-    public ConnectionDialog() {
-        super();
-        Scene scene;
-        try {
-            final Parent root;
-            root = FXMLLoader.load(
-                    getClass().getResource(
-                            "/resources/fxml/ConnectionDialog.fxml"),
-                    ResourceBundle.getBundle("dictionary"));
-            root.getStylesheets().add(
-                    getClass().getResource("/resources/css/itrysql.css")
-                    .toExternalForm());
-            scene = new Scene(root);
-        } catch (final Exception ex) {
-            scene = FallbackSceneFactory.createNewInstance();
-        }
-        setScene(scene);
-        initStyle(StageStyle.UTILITY);
-        initModality(Modality.APPLICATION_MODAL);
+	/**
+	 * Konstruktor für den Verbindungsdialog.
+	 */
+	public ConnectionDialog() {
+		super();
+		Scene scene;
+		try {
+			final Parent root;
+			root = FXMLLoader.load(getClass().getResource("/resources/fxml/ConnectionDialog.fxml"),
+					ResourceBundle.getBundle("dictionary"));
+			root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
+			scene = new Scene(root);
+		} catch (final Exception ex) {
+			scene = FallbackSceneFactory.createNewInstance();
+		}
+		setScene(scene);
+		initStyle(StageStyle.UTILITY);
+		initModality(Modality.APPLICATION_MODAL);
 
-        centerOnScreen();
-        setResizable(false);
-        setTitle(DialogDictionary.LABEL_TITLE_CONNECT.toString());
-    }
+		centerOnScreen();
+		setResizable(false);
+		setTitle(DialogDictionary.LABEL_TITLE_CONNECT.toString());
+	}
 
-    protected void setConnectionSetting(
-            final ConnectionSetting connectionSetting) {
-        this.connectionSetting = connectionSetting;
-    }
+	/**
+	 * Verbindungsdaten im Dialog setzen.
+	 *
+	 * @param connectionSetting
+	 *            Verbindungsdaten
+	 */
+	protected void setConnectionSetting(final ConnectionSetting connectionSetting) {
+		this.connectionSetting = connectionSetting;
+	}
 
-    public ConnectionSetting getConnectionSetting() {
-        return connectionSetting;
-    }
+	/**
+	 * @return Die im Dialog ausgewählten Verbindungsdaten
+	 */
+	public ConnectionSetting getConnectionSetting() {
+		return connectionSetting;
+	}
 }

@@ -28,22 +28,22 @@ package de.kuehweg.sqltool.dialog.action;
 import de.kuehweg.sqltool.dialog.base.FontResizer;
 
 /**
- * Stub für Schriftgößenänderungen in JUnit-Test
+ * Stub für Schriftgößenänderungen in JUnit-Test.
  *
  * @author Michael Kühweg
  */
 public class FontResizerStub implements FontResizer {
 
-    private int fontSize;
+	private int fontSize;
 
-    @Override
-    public int getFontSize() {
-        return fontSize;
-    }
+	@Override
+	public int getFontSize() {
+		return fontSize;
+	}
 
-    @Override
-    public void setFontSize(int size) {
-        fontSize = size;
-    }
+	@Override
+	public void setFontSize(final int size) {
+		fontSize = size;
+	}
 
 }

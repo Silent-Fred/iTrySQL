@@ -38,7 +38,7 @@ import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
 
 /**
- * Test der Ausführung von SQL-Anweisungen
+ * Test der Ausführung von SQL-Anweisungen.
  *
  * @author Michael Kühweg
  */
@@ -66,27 +66,22 @@ public class ExecuteActionTest {
 	@Test
 	public void handlingProblemsInGeneral() throws SQLException {
 		Assert.assertNotNull(action.startExecution(null, null));
-		Assert.assertNotNull(action.startExecution("select * from wherever;",
-				null));
+		Assert.assertNotNull(action.startExecution("select * from wherever;", null));
 	}
 
 	@Test
 	public void specificMessages() throws SQLException {
+		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.startExecution(null, null));
+		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.startExecution("   \n   \t ", null));
 		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
-				action.startExecution(null, null));
-		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
-				action.startExecution("   \n   \t ", null));
-		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
-				action.startExecution("   \n   \t ",
-						new ConnectionStubWithBasicMetaData()));
+				action.startExecution("   \n   \t ", new ConnectionStubWithBasicMetaData()));
 		Assert.assertEquals(DialogDictionary.MSG_NO_DB_CONNECTION,
 				action.startExecution("select * from wherever ", null));
 	}
 
 	@Test(expected = SQLException.class)
 	public void handlingException() throws SQLException {
-		action.startExecution("select * from wherever;",
-				new ConnectionStubWithBasicMetaData());
+		action.startExecution("select * from wherever;", new ConnectionStubWithBasicMetaData());
 	}
 
 }

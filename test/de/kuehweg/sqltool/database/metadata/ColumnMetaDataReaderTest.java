@@ -25,6 +25,18 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import de.kuehweg.sqltool.database.execution.fake.ResultSetStubForMetaDataReader;
 import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.description.ColumnDescription;
@@ -32,113 +44,103 @@ import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import de.kuehweg.sqltool.database.metadata.description.Nullability;
 import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
-import java.sql.SQLException;
-import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
+ * Test für die Aufbereitung der Metadaten zu Datenbankspalten.
  *
  * @author Michael Kühweg
  */
 public class ColumnMetaDataReaderTest {
 
-    private DatabaseDescription db;
-    private CatalogDescription catalog;
-    private SchemaDescription schema;
-    private TableDescription table;
-    private TableDescription tableUntouched;
+	private DatabaseDescription db;
+	private CatalogDescription catalog;
+	private SchemaDescription schema;
+	private TableDescription table;
+	private TableDescription tableUntouched;
 
-    public ColumnMetaDataReaderTest() {
-    }
+	public ColumnMetaDataReaderTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-        db = new DatabaseDescription("db", "product", "version");
+	@Before
+	public void setUp() {
+		db = new DatabaseDescription("db", "product", "version");
 
-        catalog = new CatalogDescription("TABLE_CAT");
-        db.adoptOrphan(catalog);
+		catalog = new CatalogDescription("TABLE_CAT");
+		db.adoptOrphan(catalog);
 
-        schema = new SchemaDescription("TABLE_SCHEM");
-        catalog.adoptOrphan(schema);
+		schema = new SchemaDescription("TABLE_SCHEM");
+		catalog.adoptOrphan(schema);
 
-        table = new TableDescription("TABLE_NAME", "TABLE", "REMARKS");
-        tableUntouched = new TableDescription("TABLE1", "TABLE", "REMARKS");
+		table = new TableDescription("TABLE_NAME", "TABLE", "REMARKS");
+		tableUntouched = new TableDescription("TABLE1", "TABLE", "REMARKS");
 
-        schema.adoptOrphan(table);
-        schema.adoptOrphan(tableUntouched);
-    }
+		schema.adoptOrphan(table);
+		schema.adoptOrphan(tableUntouched);
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void readMetaData() throws SQLException {
-        ColumnMetaDataReader metaDataReader = new ColumnMetaDataReader(db);
-        metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2,
-                "COLUMN_NAME"));
+	@Test
+	public void readMetaData() throws SQLException {
+		final ColumnMetaDataReader metaDataReader = new ColumnMetaDataReader(db);
+		metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2, "COLUMN_NAME"));
 
-        assertTrue(tableUntouched.getColumns().isEmpty());
+		assertTrue(tableUntouched.getColumns().isEmpty());
 
-        assertEquals(2, table.getColumns().size());
+		assertEquals(2, table.getColumns().size());
 
-        int count = 1;
-        for (ColumnDescription column : table.getColumns()) {
-            assertTrue(isCorrectColumn(column, count++));
-        }
+		int count = 1;
+		for (final ColumnDescription column : table.getColumns()) {
+			assertTrue(isCorrectColumn(column, count++));
+		}
 
-    }
+	}
 
-    @Test
-    public void wrongWay() throws SQLException {
-        DatabaseDescription wrongWayDb = new DatabaseDescription();
-        ColumnMetaDataReader metaDataReader = new ColumnMetaDataReader(wrongWayDb);
-        metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2,
-                "COLUMN_NAME"));
+	@Test
+	public void wrongWay() throws SQLException {
+		final DatabaseDescription wrongWayDb = new DatabaseDescription();
+		final ColumnMetaDataReader metaDataReader = new ColumnMetaDataReader(wrongWayDb);
+		metaDataReader.readAndAddDescriptions(new ResultSetStubForMetaDataReader(2, "COLUMN_NAME"));
 
-        assertEquals(1, wrongWayDb.getCatalogs().size());
-        assertEquals("TABLE_CAT", wrongWayDb.getCatalogs().iterator().next().getName());
+		assertEquals(1, wrongWayDb.getCatalogs().size());
+		assertEquals("TABLE_CAT", wrongWayDb.getCatalogs().iterator().next().getName());
 
-        assertEquals(1, wrongWayDb.getCatalogs().iterator().next().getSchemas().size());
-        assertEquals("TABLE_SCHEM", wrongWayDb.getCatalogs().iterator().next().
-                getSchemas().iterator().next().getName());
+		assertEquals(1, wrongWayDb.getCatalogs().iterator().next().getSchemas().size());
+		assertEquals("TABLE_SCHEM",
+				wrongWayDb.getCatalogs().iterator().next().getSchemas().iterator().next().getName());
 
-        List<TableDescription> tables = wrongWayDb.getCatalogs().iterator().next().
-                getSchemas().iterator().next().getTables();
-        assertEquals(1, tables.size());
-        assertEquals("TABLE_NAME", tables.iterator().next().getName());
+		final List<TableDescription> tables = wrongWayDb.getCatalogs().iterator().next().getSchemas().iterator().next()
+				.getTables();
+		assertEquals(1, tables.size());
+		assertEquals("TABLE_NAME", tables.iterator().next().getName());
 
-        assertEquals("UNKNOWN", tables.iterator().next().getTableType());
-        assertEquals(
-                "This table's description was built by accident. Some subobject was created first. The description is incomplete.",
-                tables.iterator().next().getRemarks());
-    }
+		assertEquals("UNKNOWN", tables.iterator().next().getTableType());
+		assertEquals(
+				"This table's description was built by accident. Some subobject was created first. The description is incomplete.",
+				tables.iterator().next().getRemarks());
+	}
 
-    private boolean isCorrectColumn(ColumnDescription column, int count) {
-        boolean correct = column.getRemarks().equals("REMARKS");
+	private boolean isCorrectColumn(final ColumnDescription column, final int count) {
+		boolean correct = column.getRemarks().equals("REMARKS");
 
-        // der Spaltenname wird im Stub mit fortlaufender Nummer erzeugt
-        correct = correct && column.getName().equals("COLUMN_NAME" + count);
+		// der Spaltenname wird im Stub mit fortlaufender Nummer erzeugt
+		correct = correct && column.getName().equals("COLUMN_NAME" + count);
 
-        correct = correct && column.getSize() == 0;
-        correct = correct && column.getDecimalDigits() == 1;
-        correct = correct && column.getType().equals("TYPE_NAME");
-        correct = correct && Nullability.MAYBE == column.getNullable();
-        correct = correct && column.getDefaultValue().equals("COLUMN_DEF");
-        return correct;
-    }
+		correct = correct && column.getSize() == 0;
+		correct = correct && column.getDecimalDigits() == 1;
+		correct = correct && column.getType().equals("TYPE_NAME");
+		correct = correct && Nullability.MAYBE == column.getNullable();
+		correct = correct && column.getDefaultValue().equals("COLUMN_DEF");
+		return correct;
+	}
 }

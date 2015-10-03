@@ -25,52 +25,34 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
-import de.kuehweg.sqltool.common.FileUtil;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import de.kuehweg.sqltool.common.FileUtil;
+
 /**
- * Standardvorlage für HTML-Ausgabe
+ * Standardvorlage für HTML-Ausgabe.
  *
  * @author Michael Kühweg
  */
 public class DefaultHtmlResultTemplate extends ResultTemplate {
 
-    private static final String DEFAULT_TEMPLATE_URL
-            = "/resources/html/exporttemplate.html";
+	private static final long serialVersionUID = -713360041375851444L;
 
-    private static final String DEFAULT_PLACEHOLDER_EXECUTION
-            = "statement execution goes here";
+	private static final String DEFAULT_TEMPLATE_URL = "/resources/templates/exporttemplate_html.txt";
 
-    private static final String DEFAULT_PLACEHOLDER_RESULT_TABLE
-            = "result table goes here";
-
-    private static final String DEFAULT_PLACEHOLDER_ROW_COUNT = "row count goes here";
-
-    private static final String DEFAULT_PLACEHOLDER_LIMIT_ROWS = "limit rows goes here";
-
-    public DefaultHtmlResultTemplate() {
-        super();
-        // Vorlagendatei nicht im Konstruktor lesen, restliche Parameter können aber gesetzt werden
-        setPlaceholderExecution(DEFAULT_PLACEHOLDER_EXECUTION);
-        setPlaceholderResultTable(DEFAULT_PLACEHOLDER_RESULT_TABLE);
-        setPlaceholderRowCount(DEFAULT_PLACEHOLDER_ROW_COUNT);
-        setPlaceholderLimitRows(DEFAULT_PLACEHOLDER_LIMIT_ROWS);
-    }
-
-    @Override
-    public String getTemplate() {
-        if (super.getTemplate() == null) {
-            try {
-                setTemplate(FileUtil.readResourceFile(DEFAULT_TEMPLATE_URL));
-            } catch (IOException ex) {
-                Logger.getLogger(DefaultHtmlResultTemplate.class.getName()).
-                        log(Level.SEVERE, "Could not read template file for HTML export",
-                                ex);
-                setTemplate(ex.getLocalizedMessage());
-            }
-        }
-        return super.getTemplate();
-    }
+	@Override
+	public String getTemplate() {
+		if (super.getTemplate() == null) {
+			try {
+				setTemplate(FileUtil.readResourceFile(DEFAULT_TEMPLATE_URL));
+			} catch (final IOException ex) {
+				Logger.getLogger(DefaultHtmlResultTemplate.class.getName()).log(Level.SEVERE,
+						"Could not read template file for HTML export", ex);
+				setTemplate(ex.getLocalizedMessage());
+			}
+		}
+		return super.getTemplate();
+	}
 }

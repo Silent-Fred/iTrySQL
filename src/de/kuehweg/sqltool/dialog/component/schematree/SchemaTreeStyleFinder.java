@@ -28,7 +28,7 @@ package de.kuehweg.sqltool.dialog.component.schematree;
 import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode;
 
 /**
- * Styles für Knoten in der Strukturansicht
+ * Styles für Knoten in der Strukturansicht.
  *
  * @author Michael Kühweg
  */

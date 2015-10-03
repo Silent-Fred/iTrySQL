@@ -36,77 +36,76 @@ import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 import javafx.scene.control.TextArea;
 
 /**
- * Verlauf der SQL-Ausgaben in Textform
+ * Verlauf der SQL-Ausgaben in Textform.
  *
  * @author Michael Kühweg
  */
-@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.INTERMEDIATE, refreshPolicy
-        = ExecutionLifecycleRefreshPolicy.DELAYED)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.INTERMEDIATE, refreshPolicy = ExecutionLifecycleRefreshPolicy.DELAYED)
 @ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR)
 public class QueryResultTextView implements ExecutionTracker {
 
-    private static final int MAX_DBOUTPUT_LENGTH = 256 * 1024;
+	private static final int MAX_DBOUTPUT_LENGTH = 256 * 1024;
 
-    private static final String TRUNCATED = "[...]";
+	private static final String TRUNCATED = "[...]";
 
-    private final ResultTemplate resultTemplate;
+	private final ResultTemplate resultTemplate;
 
-    private String dbOutput;
+	private String dbOutput;
 
-    private final TextArea outputTextArea;
+	private final TextArea outputTextArea;
 
-    public QueryResultTextView(final TextArea outputTextArea) {
-        super();
-        this.outputTextArea = outputTextArea;
-        dbOutput = outputTextArea.getText();
-        resultTemplate = new DefaultTextResultTemplate();
-    }
+	public QueryResultTextView(final TextArea outputTextArea) {
+		super();
+		this.outputTextArea = outputTextArea;
+		dbOutput = outputTextArea.getText();
+		resultTemplate = new DefaultTextResultTemplate();
+	}
 
-    private String buildNewContent(final String currentContent, final String appendix) {
-        String newContent = "";
-        if (currentContent == null) {
-            newContent = appendix != null ? appendix : "";
-        } else if (appendix == null) {
-            newContent = currentContent; // not null ist durch den ersten Zweig schon geklärt
-        } else {
-            if (appendix.length() >= MAX_DBOUTPUT_LENGTH) {
-                newContent = TRUNCATED
-                        + appendix.substring(appendix.length() - MAX_DBOUTPUT_LENGTH);
-            } else if (currentContent.length() + appendix.length() >= MAX_DBOUTPUT_LENGTH) {
-                newContent = TRUNCATED + currentContent.substring(currentContent.length()
-                        - (MAX_DBOUTPUT_LENGTH - appendix.length())) + appendix;
-            } else {
-                newContent = currentContent + appendix;
-            }
-        }
-        return newContent + "\n";
-    }
+	private String buildNewContent(final String currentContent, final String appendix) {
+		String newContent = "";
+		if (currentContent == null) {
+			newContent = appendix != null ? appendix : "";
+		} else if (appendix == null) {
+			newContent = currentContent; // not null ist durch den ersten Zweig
+											// schon geklärt
+		} else {
+			if (appendix.length() >= MAX_DBOUTPUT_LENGTH) {
+				newContent = TRUNCATED + appendix.substring(appendix.length() - MAX_DBOUTPUT_LENGTH);
+			} else if (currentContent.length() + appendix.length() >= MAX_DBOUTPUT_LENGTH) {
+				newContent = TRUNCATED
+						+ currentContent.substring(currentContent.length() - (MAX_DBOUTPUT_LENGTH - appendix.length()))
+						+ appendix;
+			} else {
+				newContent = currentContent + appendix;
+			}
+		}
+		return newContent + "\n";
+	}
 
-    @Override
-    public void beforeExecution() {
-    }
+	@Override
+	public void beforeExecution() {
+	}
 
-    @Override
-    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
-        if (executionInfo != null) {
-            dbOutput = buildNewContent(dbOutput, new TextResultFormatter(executionInfo).
-                    format(resultTemplate));
-        }
-    }
+	@Override
+	public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+		if (executionInfo != null) {
+			dbOutput = buildNewContent(dbOutput, new TextResultFormatter(executionInfo).format(resultTemplate));
+		}
+	}
 
-    @Override
-    public void afterExecution() {
-    }
+	@Override
+	public void afterExecution() {
+	}
 
-    @Override
-    public void errorOnExecution(String message) {
-        dbOutput = buildNewContent(dbOutput, message);
-    }
+	@Override
+	public void errorOnExecution(final String message) {
+		dbOutput = buildNewContent(dbOutput, message);
+	}
 
-    @Override
-    public void show() {
-        outputTextArea.setText(dbOutput);
-        outputTextArea.positionCaret(outputTextArea.getLength());
-    }
+	@Override
+	public void show() {
+		outputTextArea.setText(dbOutput);
+		outputTextArea.positionCaret(outputTextArea.getLength());
+	}
 
 }

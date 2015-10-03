@@ -25,79 +25,78 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
+import java.math.BigDecimal;
+import java.text.MessageFormat;
+
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
-import java.math.BigDecimal;
-import java.text.MessageFormat;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
 /**
- * Komponente zur Anzeige des Fortschritts beim Ausführen von SQL-Anweisungen
+ * Komponente zur Anzeige des Fortschritts beim Ausführen von SQL-Anweisungen.
  *
  * @author Michael Kühweg
  */
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.BEFORE)
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.BEFORE)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR)
 public class ExecutionProgressComponent implements ExecutionTracker {
 
-    private static final double PROGRESS_RUNNING = -1;
-    private static final double PROGRESS_FINISHED = 1;
-    private static final double PROGRESS_INITIAL = 0;
+	private static final double PROGRESS_RUNNING = -1;
+	private static final double PROGRESS_FINISHED = 1;
+	private static final double PROGRESS_INITIAL = 0;
 
-    private final ProgressBar progressBar;
-    private final Label executionDuration;
+	private final ProgressBar progressBar;
+	private final Label executionDuration;
 
-    private long startOfExecution;
-    private long endOfExecution;
+	private long startOfExecution;
+	private long endOfExecution;
 
-    private double progressToShow;
-    private String durationToShow;
+	private double progressToShow;
+	private String durationToShow;
 
-    public ExecutionProgressComponent(final ProgressBar progressBar,
-            final Label executionDuration) {
-        this.progressBar = progressBar;
-        this.executionDuration = executionDuration;
-        this.progressToShow = PROGRESS_INITIAL;
-    }
+	public ExecutionProgressComponent(final ProgressBar progressBar, final Label executionDuration) {
+		this.progressBar = progressBar;
+		this.executionDuration = executionDuration;
+		progressToShow = PROGRESS_INITIAL;
+	}
 
-    @Override
-    public void beforeExecution() {
-        startOfExecution = System.currentTimeMillis();
-        progressToShow = PROGRESS_RUNNING;
-        durationToShow = DialogDictionary.LABEL_EXECUTING.toString();
-    }
+	@Override
+	public void beforeExecution() {
+		startOfExecution = System.currentTimeMillis();
+		progressToShow = PROGRESS_RUNNING;
+		durationToShow = DialogDictionary.LABEL_EXECUTING.toString();
+	}
 
-    @Override
-    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
-        // derzeit keine Updates während Ausführung - ist als "laufend"
-        // visualisiert
-    }
+	@Override
+	public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+		// derzeit keine Updates während Ausführung - ist als "laufend"
+		// visualisiert
+	}
 
-    @Override
-    public void afterExecution() {
-        endOfExecution = System.currentTimeMillis();
-        progressToShow = PROGRESS_FINISHED;
-        final BigDecimal executionTimeInSeconds = BigDecimal.valueOf(
-                endOfExecution - startOfExecution).divide(
-                        BigDecimal.valueOf(1000));
-        durationToShow = MessageFormat.format(DialogDictionary.PATTERN_EXECUTION_TIME.
-                toString(), executionTimeInSeconds.toString());
-    }
+	@Override
+	public void afterExecution() {
+		endOfExecution = System.currentTimeMillis();
+		progressToShow = PROGRESS_FINISHED;
+		final BigDecimal executionTimeInSeconds = BigDecimal.valueOf(endOfExecution - startOfExecution)
+				.divide(BigDecimal.valueOf(1000));
+		durationToShow = MessageFormat.format(DialogDictionary.PATTERN_EXECUTION_TIME.toString(),
+				executionTimeInSeconds.toString());
+	}
 
-    @Override
-    public void errorOnExecution(String message) {
-        // gleiches Verfahren wie bei einem normalen Abschluss
-        afterExecution();
-    }
+	@Override
+	public void errorOnExecution(final String message) {
+		// gleiches Verfahren wie bei einem normalen Abschluss
+		afterExecution();
+	}
 
-    @Override
-    public void show() {
-        progressBar.setProgress(progressToShow);
-        executionDuration.setText(durationToShow);
-    }
+	@Override
+	public void show() {
+		progressBar.setProgress(progressToShow);
+		executionDuration.setText(durationToShow);
+	}
 }

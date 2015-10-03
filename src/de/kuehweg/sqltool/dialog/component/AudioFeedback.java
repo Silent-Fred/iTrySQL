@@ -33,45 +33,44 @@ import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 
 /**
- * Akustische Rückmeldung zu SQL-Anweisungen
+ * Akustische Rückmeldung zu SQL-Anweisungen.
  *
  * @author Michael Kühweg
  */
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.AFTER)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.AFTER)
 public class AudioFeedback implements ExecutionTracker {
 
-    @Override
-    public void beforeExecution() {
-        // kein Audio Feedback vor der Ausführung
-    }
+	@Override
+	public void beforeExecution() {
+		// kein Audio Feedback vor der Ausführung
+	}
 
-    @Override
-    public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
-        // kein Audio Feedback während der Ausführung
-    }
+	@Override
+	public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+		// kein Audio Feedback während der Ausführung
+	}
 
-    @Override
-    public void afterExecution() {
-        // kein inhaltlicher Update, show() - naja... in dem Fall wenig passender Name -
-        // gibt den Ton aus
-    }
+	@Override
+	public void afterExecution() {
+		// kein inhaltlicher Update, show() - naja... in dem Fall wenig
+		// passender Name -
+		// gibt den Ton aus
+	}
 
-    @Override
-    public void errorOnExecution(String message) {
-        // derzeit kein Ton bei Fehler vorgesehen
-    }
+	@Override
+	public void errorOnExecution(final String message) {
+		// derzeit kein Ton bei Fehler vorgesehen
+	}
 
-    @Override
-    public void show() {
-        final ProvidedAudioClip audioClip = UserPreferencesManager
-                .getSharedInstance().getBeepAudioClip();
-        if (audioClip != null) {
-            final double volume = UserPreferencesManager.getSharedInstance()
-                    .getBeepVolume();
-            if (volume > 0.0) {
-                audioClip.play(volume);
-            }
-        }
-    }
+	@Override
+	public void show() {
+		final ProvidedAudioClip audioClip = UserPreferencesManager.getSharedInstance().getBeepAudioClip();
+		if (audioClip != null) {
+			final double volume = UserPreferencesManager.getSharedInstance().getBeepVolume();
+			if (volume > 0.0) {
+				audioClip.play(volume);
+			}
+		}
+	}
 
 }

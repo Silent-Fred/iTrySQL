@@ -25,46 +25,24 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test für die Ausgabeaufbereitung
+ * Test für die Ausgabeaufbereitung.
  *
  * @author Michael Kühweg
  */
 public class ResultTemplateTest {
 
-	private static final String BASE_TEMPLATE_TEXT = "Test: @execution @resultTable @rowCount @limitRows.";
+	private static final String BASE_TEMPLATE_TEXT = "Test: {0} {1} {2} {3}.";
 
 	private ResultTemplate template;
-
-	public ResultTemplateTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() {
-	}
-
-	@AfterClass
-	public static void tearDownClass() {
-	}
 
 	@Before
 	public void setUp() {
 		template = new ResultTemplate(BASE_TEMPLATE_TEXT);
-		template.setPlaceholderExecution("@execution");
-		template.setPlaceholderResultTable("@resultTable");
-		template.setPlaceholderRowCount("@rowCount");
-		template.setPlaceholderLimitRows("@limitRows");
-	}
-
-	@After
-	public void tearDown() {
 	}
 
 	@Test
@@ -82,8 +60,7 @@ public class ResultTemplateTest {
 	public void emptyResult() {
 		template.setExecutionInformation("happily executed");
 		template.setRowCount("happy rows counted");
-		Assert.assertEquals("Test: happily executed  happy rows counted .",
-				template.buildWithTemplate());
+		Assert.assertEquals("Test: happily executed  happy rows counted .", template.buildWithTemplate());
 	}
 
 	@Test
@@ -91,9 +68,16 @@ public class ResultTemplateTest {
 		template.setExecutionInformation("happily executed");
 		template.setResultTable("happy results");
 		template.setRowCount("happy rows counted");
-		Assert.assertEquals(
-				"Test: happily executed happy results happy rows counted .",
-				template.buildWithTemplate());
+		Assert.assertEquals("Test: happily executed happy results happy rows counted .", template.buildWithTemplate());
+	}
+
+	@Test
+	public void placeholderInReplacedText() {
+		template.setExecutionInformation("{3}");
+		template.setResultTable("{0}");
+		template.setRowCount("{2}");
+		template.setLimitedRows("{1}");
+		Assert.assertEquals("Test: {3} {0} {2} {1}.", template.buildWithTemplate());
 	}
 
 	@Test
@@ -102,23 +86,20 @@ public class ResultTemplateTest {
 		template.setResultTable("happy results");
 		template.setRowCount("happy rows counted");
 		template.setLimitedRows("happy limitations");
-		Assert.assertEquals(
-				"Test: happily executed happy results happy rows counted happy limitations.",
+		Assert.assertEquals("Test: happily executed happy results happy rows counted happy limitations.",
 				template.buildWithTemplate());
 	}
 
 	@Test
 	public void damagedTemplate() {
-		template.setPlaceholderExecution("#execution");
-		template.setPlaceholderResultTable("#resultTable");
-		template.setPlaceholderRowCount("#rowCount");
-		template.setPlaceholderLimitRows("#limitRows");
+
+		template.setTemplate("Test: {0} {1} {2 {3}.");
 
 		template.setExecutionInformation("happily executed");
 		template.setResultTable("happy results");
 		template.setRowCount("happy rows counted");
 		template.setLimitedRows("happy limitations");
 
-		Assert.assertEquals(BASE_TEMPLATE_TEXT, template.buildWithTemplate());
+		Assert.assertEquals(template.buildWithFallbackTemplate(), template.buildWithTemplate());
 	}
 }

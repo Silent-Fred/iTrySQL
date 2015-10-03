@@ -26,28 +26,16 @@
 package de.kuehweg.sqltool.database.formatter;
 
 /**
- * Standardvorlage für Textausgabe
+ * Standardvorlage für Textausgabe.
  *
  * @author Michael Kühweg
  */
 public class DefaultTextResultTemplate extends ResultTemplate {
 
-    private static final String DEFAULT_PLACEHOLDER_EXECUTION = "F";
+	private static final long serialVersionUID = 5520107096506648750L;
 
-    private static final String DEFAULT_PLACEHOLDER_RESULT_TABLE = "T";
-
-    private static final String DEFAULT_PLACEHOLDER_ROW_COUNT = "W";
-
-    private static final String DEFAULT_PLACEHOLDER_LIMIT_ROWS = "!";
-
-    public DefaultTextResultTemplate() {
-        super();
-        setPlaceholderExecution(DEFAULT_PLACEHOLDER_EXECUTION);
-        setPlaceholderResultTable(DEFAULT_PLACEHOLDER_RESULT_TABLE);
-        setPlaceholderRowCount(DEFAULT_PLACEHOLDER_ROW_COUNT);
-        setPlaceholderLimitRows(DEFAULT_PLACEHOLDER_LIMIT_ROWS);
-        setTemplate(DEFAULT_PLACEHOLDER_EXECUTION + "\n\n"
-                + DEFAULT_PLACEHOLDER_RESULT_TABLE + "\n\n" + DEFAULT_PLACEHOLDER_ROW_COUNT
-                + "\n" + DEFAULT_PLACEHOLDER_LIMIT_ROWS + "\n");
-    }
+	public DefaultTextResultTemplate() {
+		super();
+		setTemplate("{0}\n\n{1}\n\n{2}\n{3}\n");
+	}
 }

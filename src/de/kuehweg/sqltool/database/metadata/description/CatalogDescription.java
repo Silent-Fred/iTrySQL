@@ -38,36 +38,36 @@ import java.util.Set;
  */
 public class CatalogDescription extends DatabaseObjectDescription {
 
-    private final Set<SchemaDescription> schemas;
+	private final Set<SchemaDescription> schemas;
 
-    public CatalogDescription(final String catalog) {
-        super(catalog);
-        schemas = new HashSet<>();
-    }
+	public CatalogDescription(final String catalog) {
+		super(catalog);
+		schemas = new HashSet<>();
+	}
 
-    /**
-     * Schemas im Catalog, sortiert nach Schemaname.
-     *
-     * @return
-     */
-    public List<SchemaDescription> getSchemas() {
-        final List<SchemaDescription> result = new ArrayList<>(schemas);
-        Collections.sort(result);
-        return result;
-    }
+	/**
+	 * Schemas im Catalog, sortiert nach Schemaname.
+	 *
+	 * @return
+	 */
+	public List<SchemaDescription> getSchemas() {
+		final List<SchemaDescription> result = new ArrayList<>(schemas);
+		Collections.sort(result);
+		return result;
+	}
 
-    private void addSchemas(final SchemaDescription... schemas) {
-        for (final SchemaDescription schema : schemas) {
-            this.schemas.add(schema);
-        }
-    }
+	private void addSchemas(final SchemaDescription... schemas) {
+		for (final SchemaDescription schema : schemas) {
+			this.schemas.add(schema);
+		}
+	}
 
-    @Override
-    protected void appendChild(DatabaseObjectDescription child) {
-        if (SchemaDescription.class.isAssignableFrom(child.getClass())) {
-            addSchemas((SchemaDescription) child);
-        } else {
-            super.appendChild(child);
-        }
-    }
+	@Override
+	protected void appendChild(final DatabaseObjectDescription child) {
+		if (SchemaDescription.class.isAssignableFrom(child.getClass())) {
+			addSchemas((SchemaDescription) child);
+		} else {
+			super.appendChild(child);
+		}
+	}
 }

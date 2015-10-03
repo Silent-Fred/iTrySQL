@@ -28,20 +28,43 @@ package de.kuehweg.sqltool.dialog.updater;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 
 /**
- * Schnittstelle für Oberflächenbestandteile, deren Zustand sich ändert, wenn eine
- * SQL-Anweisung ausgeführt wird
+ * Schnittstelle für Oberflächenbestandteile, deren Zustand sich ändert, wenn
+ * eine SQL-Anweisung ausgeführt wird. Während einzelner Phasen der Ausführung
+ * kann der innere Zustand des Trackers aktualisiert werden, die UI zu einem
+ * späteren Zeitpunkt.
  *
  * @author Michael Kühweg
  */
 public interface ExecutionTracker {
 
-    void beforeExecution();
+	/**
+	 * Wird vor dem Beginn der Ausführung aufgerufen.
+	 */
+	void beforeExecution();
 
-    void intermediateUpdate(final StatementExecutionInformation executionInfo);
+	/**
+	 * Wird nach jeder einzelnen Anweisung aufgerufen.
+	 *
+	 * @param executionInfo
+	 *            Das Ergebnis der zuletzt ausgeführen SQL Anweisung
+	 */
+	void intermediateUpdate(final StatementExecutionInformation executionInfo);
 
-    void afterExecution();
+	/**
+	 * Wird nach Abschluss aller SQL Anweisungen aufgerufen.
+	 */
+	void afterExecution();
 
-    void errorOnExecution(String message);
-    
-    void show();
+	/**
+	 * Wird aufgerufen, wenn ein Fehler bei der Ausführung aufgetreten ist.
+	 *
+	 * @param message
+	 *            Fehlermeldung, z.B. SQL-State
+	 */
+	void errorOnExecution(String message);
+
+	/**
+	 * Aktualisierung der UI.
+	 */
+	void show();
 }

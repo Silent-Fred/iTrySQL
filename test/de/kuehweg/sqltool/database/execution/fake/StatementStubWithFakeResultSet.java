@@ -30,7 +30,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- *
+ * Statement Stub für Tests. Liefert ein definiertes, im Konstruktor übergebenes
+ * ResultSet für Test zurück.
+ * 
  * @author Michael Kühweg
  */
 public class StatementStubWithFakeResultSet extends FakeStatement {
@@ -41,8 +43,7 @@ public class StatementStubWithFakeResultSet extends FakeStatement {
 
 	private int maxRows;
 
-	public StatementStubWithFakeResultSet(final Connection connection,
-			final ResultSet resultSet) {
+	public StatementStubWithFakeResultSet(final Connection connection, final ResultSet resultSet) {
 		super();
 		this.connection = connection;
 		this.resultSet = resultSet;

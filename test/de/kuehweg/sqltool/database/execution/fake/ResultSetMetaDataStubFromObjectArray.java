@@ -29,47 +29,49 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
- *
+ * ResultSet Stub, dem das Test ResultSet als zweidimensionales Array übergeben
+ * wird.
+ * 
  * @author Michael Kühweg
  */
 public class ResultSetMetaDataStubFromObjectArray extends FakeResultSetMetaData {
 
-    private final Object[][] resultSet;
+	private final Object[][] resultSet;
 
-    public ResultSetMetaDataStubFromObjectArray(final Object[][] fakeResultSetContent) {
-        super();
-        this.resultSet = fakeResultSetContent;
-    }
+	public ResultSetMetaDataStubFromObjectArray(final Object[][] fakeResultSetContent) {
+		super();
+		resultSet = fakeResultSetContent;
+	}
 
-    @Override
-    public int getColumnCount() throws SQLException {
-        if (resultSet == null || resultSet.length == 0) {
-            throw new SQLException();
-        }
-        return resultSet[0].length;
-    }
+	@Override
+	public int getColumnCount() throws SQLException {
+		if (resultSet == null || resultSet.length == 0) {
+			throw new SQLException();
+		}
+		return resultSet[0].length;
+	}
 
-    @Override
-    public int isNullable(int column) throws SQLException {
-        // nullable, wenn im Fake-Result in einer der Zeilen in der Spalte ein NULL-Wert enthalten ist
-        if (resultSet == null || column < 0 || column >= resultSet[0].length) {
-            throw new SQLException();
-        }
-        for (Object[] row : resultSet) {
-            if (row[column] == null) {
-                return ResultSetMetaData.columnNullable;
-            }
-        }
-        return ResultSetMetaData.columnNullableUnknown;
-    }
+	@Override
+	public int isNullable(final int column) throws SQLException {
+		// nullable, wenn im Fake-Result in einer der Zeilen in der Spalte ein
+		// NULL-Wert enthalten ist
+		if (resultSet == null || column < 0 || column >= resultSet[0].length) {
+			throw new SQLException();
+		}
+		for (final Object[] row : resultSet) {
+			if (row[column] == null) {
+				return ResultSetMetaData.columnNullable;
+			}
+		}
+		return ResultSetMetaData.columnNullableUnknown;
+	}
 
-    @Override
-    public String getColumnLabel(int column) throws SQLException {
-        if (resultSet == null || resultSet.length == 0 || column < 1 || column
-                > resultSet[0].length) {
-            throw new SQLException();
-        }
-        return resultSet[0][column - 1].toString();
-    }
+	@Override
+	public String getColumnLabel(final int column) throws SQLException {
+		if (resultSet == null || resultSet.length == 0 || column < 1 || column > resultSet[0].length) {
+			throw new SQLException();
+		}
+		return resultSet[0][column - 1].toString();
+	}
 
 }

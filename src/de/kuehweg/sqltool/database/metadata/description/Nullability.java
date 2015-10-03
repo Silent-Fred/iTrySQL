@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,8 @@
 package de.kuehweg.sqltool.database.metadata.description;
 
 /**
- * Mögliche Werte für die Nullability von Tabellenspalten
- * 
+ * Mögliche Werte für die Nullability von Tabellenspalten.
+ *
  * @author Michael Kühweg
  */
 public enum Nullability {

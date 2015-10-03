@@ -25,18 +25,19 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.FileUtil;
-import de.kuehweg.sqltool.dialog.ErrorMessage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.FileUtil;
+import de.kuehweg.sqltool.dialog.ErrorMessage;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 
 /**
- * SQL-Skripte laden und speichern
- * 
+ * SQL-Skripte laden und speichern.
+ *
  * @author Michael Kühweg
  */
 public class ScriptAction {
@@ -44,8 +45,8 @@ public class ScriptAction {
 	private final TextArea statementInput;
 
 	/**
-	 * Quelle und Ziel ist jeweils die übergebene TextArea
-	 * 
+	 * Quelle und Ziel ist jeweils die übergebene TextArea.
+	 *
 	 * @param statementInput
 	 */
 	public ScriptAction(final TextArea statementInput) {
@@ -53,46 +54,37 @@ public class ScriptAction {
 	}
 
 	/**
-	 * Datei auswählen, laden und in der TextArea anzeigen
+	 * Datei auswählen, laden und in der TextArea anzeigen.
 	 */
 	public void loadScript() {
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(DialogDictionary.LABEL_OPEN_SCRIPT.toString());
-		final File file = fileChooser.showOpenDialog(statementInput.getScene()
-				.getWindow());
+		final File file = fileChooser.showOpenDialog(statementInput.getScene().getWindow());
 		if (file != null) {
 			try {
-				final String script = FileUtil.readFile(FileUtil.convertToURI(
-                        file).toURL());
+				final String script = FileUtil.readFile(FileUtil.convertToURI(file).toURL());
 				statementInput.setText(script);
 			} catch (final IOException | URISyntaxException ex) {
-				final ErrorMessage msg = new ErrorMessage(
-						DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(),
-						DialogDictionary.COMMON_BUTTON_OK.toString());
+				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
 				msg.askUserFeedback();
 			}
 		}
 	}
 
 	/**
-	 * Inhalt der TextArea als Datei speichern (mit Dateiauswahl)
+	 * Inhalt der TextArea als Datei speichern (mit Dateiauswahl).
 	 */
 	public void saveScript() {
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(DialogDictionary.LABEL_SAVE_SCRIPT.toString());
-		final File file = fileChooser.showSaveDialog(statementInput.getScene()
-				.getWindow());
+		final File file = fileChooser.showSaveDialog(statementInput.getScene().getWindow());
 		if (file != null) {
 			try {
-                FileUtil.writeFile(FileUtil.enforceExtension(
-                        file.toURI().toURL(), "sql"),
-                        statementInput.getText());
-            } catch (final IOException ex) {
-				final ErrorMessage msg = new ErrorMessage(
-						DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(),
-						DialogDictionary.COMMON_BUTTON_OK.toString());
+				FileUtil.writeFile(FileUtil.enforceExtension(file.toURI().toURL(), "sql"), statementInput.getText());
+			} catch (final IOException ex) {
+				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
 				msg.askUserFeedback();
 
 			}

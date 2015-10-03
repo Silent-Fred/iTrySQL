@@ -27,42 +27,50 @@ package de.kuehweg.sqltool.dialog.updater;
 
 import java.util.Collection;
 import java.util.HashSet;
+
 import javafx.application.Platform;
 
 /**
- * GUI passend zur Ausführung von SQL-Anweisungen aktualisieren
+ * GUI passend zur Ausführung von SQL-Anweisungen aktualisieren.
  *
  * @author Michael Kühweg
  */
 public class ExecutionGuiRefresh implements Runnable {
 
-    private final Collection<ExecutionTracker> trackers;
+	private final Collection<ExecutionTracker> trackers;
 
-    public ExecutionGuiRefresh(Collection<ExecutionTracker> trackers) {
-        this.trackers = new HashSet<>(trackers);
-    }
+	/**
+	 * @param trackers
+	 *            Collection der jeweils neu zu zeichnenden Komponenten.
+	 */
+	public ExecutionGuiRefresh(final Collection<ExecutionTracker> trackers) {
+		this.trackers = new HashSet<>(trackers);
+	}
 
-    private void showAllAttachedTrackers() {
-        trackers.stream().
-                forEach((tracker) -> {
-                    tracker.show();
-                });
-    }
+	/**
+	 * Den Inhalt aller registrierten Tracker aktualisieren.
+	 */
+	private void showAllAttachedTrackers() {
+		trackers.stream().forEach((tracker) -> {
+			tracker.show();
+		});
+	}
 
-    /**
-     * Aktualisierung der Oberfläche - Einstiegspunkt für den Aufruf.
-     */
-    public void show() {
-        // Aktualisierung mit dem UI-Thread abstimmen
-        if (trackers != null && !trackers.isEmpty()) {
-            Platform.runLater(this);
-        }
-    }
+	/**
+	 * Aktualisierung der Oberfläche - Einstiegspunkt für den Aufruf.
+	 */
+	public void show() {
+		// Aktualisierung mit dem UI-Thread abstimmen
+		if (trackers != null && !trackers.isEmpty()) {
+			Platform.runLater(this);
+		}
+	}
 
-    @Override
-    // Runnable Interface implementiert, um synchron mit dem UI-Thread zu arbeiten
-    public void run() {
-        showAllAttachedTrackers();
-    }
+	@Override
+	// Runnable Interface implementiert, um synchron mit dem UI-Thread zu
+	// arbeiten
+	public void run() {
+		showAllAttachedTrackers();
+	}
 
 }

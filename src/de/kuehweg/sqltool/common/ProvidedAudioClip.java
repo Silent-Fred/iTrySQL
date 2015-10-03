@@ -28,7 +28,7 @@ package de.kuehweg.sqltool.common;
 import javafx.scene.media.AudioClip;
 
 /**
- * AudioClips, die die Anwendung selbst mitbringt
+ * AudioClips, die die Anwendung selbst mitbringt.
  * 
  * @author Michael Kühweg
  */

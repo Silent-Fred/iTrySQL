@@ -28,25 +28,32 @@ package de.kuehweg.sqltool.dialog.base;
 import javafx.scene.control.TextArea;
 
 /**
- * Klasse zum Setzen der Schriftgröße einer Textarea
+ * Klasse zum Setzen der Schriftgröße einer Textarea.
  *
  * @author Michael Kühweg
  */
 public class TextAreaFontResizer implements FontResizer {
 
-    private final TextArea textArea;
+	private static final int DEFAULT_FONT_SIZE = 12;
 
-    public TextAreaFontResizer(final TextArea textArea) {
-        this.textArea = textArea;
-    }
+	private final TextArea textArea;
 
-    @Override
-    public int getFontSize() {
-        return (int) Math.round(textArea.getFont().getSize());
-    }
+	/**
+	 * @param textArea
+	 *            Der Resizer bezieht sich immer auf eine definierte TextArea im
+	 *            Dialog
+	 */
+	public TextAreaFontResizer(final TextArea textArea) {
+		this.textArea = textArea;
+	}
 
-    @Override
-    public void setFontSize(final int size) {
-        textArea.setStyle("-fx-font-size: " + size + ";");
-    }
+	@Override
+	public int getFontSize() {
+		return textArea != null ? (int) Math.round(textArea.getFont().getSize()) : DEFAULT_FONT_SIZE;
+	}
+
+	@Override
+	public void setFontSize(final int size) {
+		textArea.setStyle("-fx-font-size: " + size + ";");
+	}
 }

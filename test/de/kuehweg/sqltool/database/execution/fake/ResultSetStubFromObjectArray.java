@@ -36,62 +36,62 @@ import java.sql.SQLException;
  */
 public class ResultSetStubFromObjectArray extends FakeResultSet {
 
-    private final Object[][] resultSet;
+	private final Object[][] resultSet;
 
-    private boolean closed;
+	private boolean closed;
 
-    private int currentRow;
+	private int currentRow;
 
-    private int currentColumn;
+	private int currentColumn;
 
-    public ResultSetStubFromObjectArray(final Object[][] fakeResultSetContent) {
-        super();
-        resultSet = fakeResultSetContent;
-    }
+	public ResultSetStubFromObjectArray(final Object[][] fakeResultSetContent) {
+		super();
+		resultSet = fakeResultSetContent;
+	}
 
-    @Override
-    public boolean next() throws SQLException {
-        // erste Zeile sind die Spaltenüberschriften - überspringen
-        currentRow++;
-        currentColumn = 0;
-        return currentRow < resultSet.length;
-    }
+	@Override
+	public boolean next() throws SQLException {
+		// erste Zeile sind die Spaltenüberschriften - überspringen
+		currentRow++;
+		currentColumn = 0;
+		return currentRow < resultSet.length;
+	}
 
-    @Override
-    public void close() throws SQLException {
-        closed = true;
-        currentRow = 0;
-        currentColumn = 0;
-    }
+	@Override
+	public void close() throws SQLException {
+		closed = true;
+		currentRow = 0;
+		currentColumn = 0;
+	}
 
-    @Override
-    public boolean wasNull() throws SQLException {
-        if (resultSet == null || currentRow < 0 || currentRow >= resultSet.length
-                || currentColumn < 0 || currentColumn >= resultSet[0].length) {
-            throw new SQLException();
-        }
-        return resultSet[currentRow][currentColumn] == null;
-    }
+	@Override
+	public boolean wasNull() throws SQLException {
+		if (resultSet == null || currentRow < 0 || currentRow >= resultSet.length || currentColumn < 0
+				|| currentColumn >= resultSet[0].length) {
+			throw new SQLException();
+		}
+		return resultSet[currentRow][currentColumn] == null;
+	}
 
-    @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
-        return new ResultSetMetaDataStubFromObjectArray(resultSet);
-    }
+	@Override
+	public ResultSetMetaData getMetaData() throws SQLException {
+		return new ResultSetMetaDataStubFromObjectArray(resultSet);
+	}
 
-    @Override
-    public Object getObject(int columnIndex) throws SQLException {
-        // columnIndex ist nicht 0 based
-        if (resultSet == null || currentRow < 0 || currentRow >= resultSet.length
-                || columnIndex < 1 || columnIndex > resultSet[0].length) {
-            throw new SQLException();
-        }
-        currentColumn = columnIndex - 1;
-        return resultSet[currentRow][currentColumn];
-    }
+	@Override
+	public Object getObject(final int columnIndex) throws SQLException {
+		// columnIndex ist nicht 0 based
+		if (resultSet == null || currentRow < 0 || currentRow >= resultSet.length || columnIndex < 1
+				|| columnIndex > resultSet[0].length) {
+			throw new SQLException();
+		}
+		currentColumn = columnIndex - 1;
+		return resultSet[currentRow][currentColumn];
+	}
 
-    @Override
-    public boolean isClosed() throws SQLException {
-        return closed;
-    }
+	@Override
+	public boolean isClosed() throws SQLException {
+		return closed;
+	}
 
 }

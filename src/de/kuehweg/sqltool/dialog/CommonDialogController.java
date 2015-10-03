@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 /**
- * Controller für Dialogboxen
- * 
+ * Controller für Dialogboxen.
+ *
  * @author michael
  */
 public class CommonDialogController implements Initializable {
@@ -51,8 +51,7 @@ public class CommonDialogController implements Initializable {
 	private Label title;
 
 	@Override
-	public void initialize(final URL fxmlFileLocation,
-			final ResourceBundle resources) {
+	public void initialize(final URL fxmlFileLocation, final ResourceBundle resources) {
 		assert buttonBox != null : "fx:id=\"buttonBox\" was not injected: check your FXML file 'CommonDialog.fxml'.";
 		assert icon != null : "fx:id=\"icon\" was not injected: check your FXML file 'CommonDialog.fxml'.";
 		assert message != null : "fx:id=\"message\" was not injected: check your FXML file 'CommonDialog.fxml'.";

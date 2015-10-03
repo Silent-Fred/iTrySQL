@@ -28,54 +28,54 @@ package de.kuehweg.sqltool.database.execution.fake;
 import java.sql.SQLException;
 
 /**
- * ResultSet zum Test der Metadatenaufbereitung
+ * ResultSet zum Test der Metadatenaufbereitung.
  *
  * @author Michael Kühweg
  */
 public class ResultSetStubForMetaDataReader extends FakeResultSet {
 
-    private static final String[] COLUMN_LABELS_RETURNING_INT
-            = new String[]{"COLUMN_SIZE", "DECIMAL_DIGITS", "ORDINAL_POSITION"};
+	private static final String[] COLUMN_LABELS_RETURNING_INT = new String[] { "COLUMN_SIZE", "DECIMAL_DIGITS",
+			"ORDINAL_POSITION" };
 
-    private int count;
+	private int count;
 
-    private String columnLabelToAppendAutoIncrease;
-    private int autoIncrease = 1;
+	private final String columnLabelToAppendAutoIncrease;
+	private int autoIncrease = 1;
 
-    public ResultSetStubForMetaDataReader(int count) {
-        this(count, null);
-    }
+	public ResultSetStubForMetaDataReader(final int count) {
+		this(count, null);
+	}
 
-    public ResultSetStubForMetaDataReader(int count,
-            String columnLabelToAppendAutoIncrease) {
-        this.count = count;
-        this.columnLabelToAppendAutoIncrease = columnLabelToAppendAutoIncrease;
-    }
+	public ResultSetStubForMetaDataReader(final int count, final String columnLabelToAppendAutoIncrease) {
+		this.count = count;
+		this.columnLabelToAppendAutoIncrease = columnLabelToAppendAutoIncrease;
+	}
 
-    @Override
-    public boolean next() throws SQLException {
-        return --count >= 0;
-    }
+	@Override
+	public boolean next() throws SQLException {
+		return --count >= 0;
+	}
 
-    @Override
-    public String getString(String columnLabel) throws SQLException {
-        return columnLabel + (columnLabelToAppendAutoIncrease != null
-                && columnLabelToAppendAutoIncrease.equals(columnLabel) ? autoIncrease++ : "");
-    }
+	@Override
+	public String getString(final String columnLabel) throws SQLException {
+		return columnLabel
+				+ (columnLabelToAppendAutoIncrease != null && columnLabelToAppendAutoIncrease.equals(columnLabel)
+						? autoIncrease++ : "");
+	}
 
-    @Override
-    public int getInt(String columnLabel) throws SQLException {
-        for (int i = 0; i < COLUMN_LABELS_RETURNING_INT.length; i++) {
-            if (COLUMN_LABELS_RETURNING_INT[i].equals(columnLabel)) {
-                return i;
-            }
-        }
-        return 0xC01;
-    }
+	@Override
+	public int getInt(final String columnLabel) throws SQLException {
+		for (int i = 0; i < COLUMN_LABELS_RETURNING_INT.length; i++) {
+			if (COLUMN_LABELS_RETURNING_INT[i].equals(columnLabel)) {
+				return i;
+			}
+		}
+		return 0xC01;
+	}
 
-    @Override
-    public boolean getBoolean(String columnLabel) throws SQLException {
-        return true; // Hauptsache nicht Defaultwert für Boolean ;-)
-    }
+	@Override
+	public boolean getBoolean(final String columnLabel) throws SQLException {
+		return true; // Hauptsache nicht Defaultwert für Boolean ;-)
+	}
 
 }

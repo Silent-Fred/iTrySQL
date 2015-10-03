@@ -30,41 +30,41 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Oberflächenunabhäbgige Respräsentation eines Knotens in der Strukturansicht
+ * Oberflächenunabhäbgige Respräsentation eines Knotens in der Strukturansicht.
  *
  * @author Michael Kühweg
  */
 public class SchemaTreeNode {
 
-    private final SchemaTreeNodeType type;
-    private final String title;
-    private final List<SchemaTreeNode> children;
+	private final SchemaTreeNodeType type;
+	private final String title;
+	private final List<SchemaTreeNode> children;
 
-    public SchemaTreeNode(SchemaTreeNodeType type, String title) {
-        this.type = type;
-        this.title = title;
-        children = new LinkedList<>();
-    }
+	public SchemaTreeNode(final SchemaTreeNodeType type, final String title) {
+		this.type = type;
+		this.title = title;
+		children = new LinkedList<>();
+	}
 
-    public SchemaTreeNodeType getType() {
-        return type;
-    }
+	public SchemaTreeNodeType getType() {
+		return type;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public List<SchemaTreeNode> getChildren() {
-        return new ArrayList<>(children);
-    }
+	public List<SchemaTreeNode> getChildren() {
+		return new ArrayList<>(children);
+	}
 
-    /**
-     * Fügt einen weiteren Knoten am Ende an. Leere Knoten (null) werden dabei ignoriert
-     * und nicht hinzugefügt.
-     *
-     * @param child
-     */
-    public void appendChild(final SchemaTreeNode child) {
-        children.add(child);
-    }
+	/**
+	 * Fügt einen weiteren Knoten am Ende an. Leere Knoten (null) werden dabei
+	 * ignoriert und nicht hinzugefügt.
+	 *
+	 * @param child
+	 */
+	public void appendChild(final SchemaTreeNode child) {
+		children.add(child);
+	}
 }

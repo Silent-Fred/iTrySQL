@@ -33,69 +33,63 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test für die Verlaufseinträge
+ * Test für die Verlaufseinträge.
  *
  * @author Michael Kühweg
  */
 public class SQLHistoryTest {
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void sqlForDisplayReplaceLinebreaks() {
-        Assert.assertEquals("just one  line",
-                new SQLHistory(" \njust\none\n\nline\n\n\n").getSqlForDisplay());
-    }
+	@Test
+	public void sqlForDisplayReplaceLinebreaks() {
+		Assert.assertEquals("just one  line", new SQLHistory(" \njust\none\n\nline\n\n\n").getSqlForDisplay());
+	}
 
-    @Test
-    public void sqlForDisplayReplaceTabs() {
-        Assert.assertEquals("just plain  blanks", new SQLHistory(
-                " \tjust\tplain\n\nblanks\t\t\t").getSqlForDisplay());
-    }
+	@Test
+	public void sqlForDisplayReplaceTabs() {
+		Assert.assertEquals("just plain  blanks", new SQLHistory(" \tjust\tplain\n\nblanks\t\t\t").getSqlForDisplay());
+	}
 
-    @Test
-    public void sqlForDisplayLengthRestricted() {
-        // short enough
-        Assert.assertEquals(
-                "12345678901234567890123456789012345678901234567890123456789012345678901234567890",
-                new SQLHistory(
-                        "12345678901234567890123456789012345678901234567890123456789012345678901234567890").
-                getSqlForDisplay());
-        // far too long
-        Assert.assertEquals(
-                "12345678901234567890123456789012345678901234567890123456789012345678901234567...",
-                new SQLHistory(
-                        "123456789012345678901234567890123456789012345678901234567890123456789012345678901").
-                getSqlForDisplay());
-    }
+	@Test
+	public void sqlForDisplayLengthRestricted() {
+		// short enough
+		Assert.assertEquals("12345678901234567890123456789012345678901234567890123456789012345678901234567890",
+				new SQLHistory("12345678901234567890123456789012345678901234567890123456789012345678901234567890")
+						.getSqlForDisplay());
+		// far too long
+		Assert.assertEquals("12345678901234567890123456789012345678901234567890123456789012345678901234567...",
+				new SQLHistory("123456789012345678901234567890123456789012345678901234567890123456789012345678901")
+						.getSqlForDisplay());
+	}
 
-    @Test
-    public void originalSQL() {
-        Assert.assertEquals(" \njust\none\n\nline\n\n\n", new SQLHistory(
-                " \njust\none\n\nline\n\n\n").getOriginalSQL());
-        Assert.assertEquals(" \tjust\tplain\n\nblanks\t\t\t", new SQLHistory(
-                " \tjust\tplain\n\nblanks\t\t\t").getOriginalSQL());
-    }
+	@Test
+	public void originalSQL() {
+		Assert.assertEquals(" \njust\none\n\nline\n\n\n",
+				new SQLHistory(" \njust\none\n\nline\n\n\n").getOriginalSQL());
+		Assert.assertEquals(" \tjust\tplain\n\nblanks\t\t\t",
+				new SQLHistory(" \tjust\tplain\n\nblanks\t\t\t").getOriginalSQL());
+	}
 
-    @Test
-    public void timestamp() {
-        long before = System.currentTimeMillis();
-        SQLHistory history = new SQLHistory("as time goes by...");
-        Assert.assertTrue(history.getTimestamp() >= before);
-        Assert.assertTrue(history.getTimestamp() <= System.currentTimeMillis());
-    }
+	@Test
+	public void timestamp() {
+		final long before = System.currentTimeMillis();
+		final SQLHistory history = new SQLHistory("as time goes by...");
+		Assert.assertTrue(history.getTimestamp() >= before);
+		Assert.assertTrue(history.getTimestamp() <= System.currentTimeMillis());
+	}
 }

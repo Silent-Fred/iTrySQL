@@ -33,7 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javafx.concurrent.Task;
+import de.kuehweg.sqltool.common.achievement.AchievementManager;
+import de.kuehweg.sqltool.common.achievement.NamedAchievementEvent;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
 import de.kuehweg.sqltool.database.execution.StatementExecution;
@@ -41,9 +42,10 @@ import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.updater.ExecutionGuiRefresh;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleGuiRefreshProvider;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
+import javafx.concurrent.Task;
 
 /**
- * Task zur Ausführung von SQL-Anweisungen und Aktualisierung der Oberfläche
+ * Task zur Ausführung von SQL-Anweisungen und Aktualisierung der Oberfläche.
  *
  * @author Michael Kühweg
  */
@@ -87,8 +89,7 @@ public class ExecutionTask extends Task<Void> {
 		}
 	}
 
-	private void intermediateUpdate(
-			final StatementExecutionInformation executionInfo) {
+	private void intermediateUpdate(final StatementExecutionInformation executionInfo) {
 		for (final ExecutionTracker tracker : trackers) {
 			tracker.intermediateUpdate(executionInfo);
 		}
@@ -111,8 +112,7 @@ public class ExecutionTask extends Task<Void> {
 		final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh = new ExecutionLifecycleGuiRefreshProvider(
 				trackers);
 		try {
-			final List<StatementString> statements = new StatementExtractor()
-					.getStatementsFromScript(sql);
+			final List<StatementString> statements = new StatementExtractor().getStatementsFromScript(sql);
 			statement.setMaxRows(maxRows);
 
 			// before execution
@@ -121,13 +121,11 @@ public class ExecutionTask extends Task<Void> {
 
 			// during execution
 			long lastDelayedRefresh = System.currentTimeMillis();
-			final Iterator<StatementString> queryIterator = statements
-					.iterator();
+			final Iterator<StatementString> queryIterator = statements.iterator();
 			while (queryIterator.hasNext() && !isCancelled()) {
 				final StatementString singleQuery = queryIterator.next();
 				if (!singleQuery.isEmpty()) {
-					intermediateUpdate(new StatementExecution(singleQuery)
-							.execute(statement));
+					intermediateUpdate(new StatementExecution(singleQuery).execute(statement));
 					// UI immediate
 					refresh(lifecycleRefresh.intermediateExecutionGuiRefresh());
 					// UI delayed
@@ -144,9 +142,12 @@ public class ExecutionTask extends Task<Void> {
 			afterExecution();
 			refreshAfterPhase(lifecycleRefresh);
 		} catch (final SQLException ex) {
-			final String message = ex.getLocalizedMessage() + " (SQL-State: "
-					+ ex.getSQLState() + ")";
+			final String message = ex.getLocalizedMessage() + " (SQL-State: " + ex.getSQLState() + ")";
 			errorUpdate(message);
+			if ("40001".equals(ex.getSQLState())) {
+				AchievementManager.getInstance()
+						.fireEvent(NamedAchievementEvent.EXECUTION_DEADLOCK.asAchievementEvent(), 1);
+			}
 			refreshErrorPhase(lifecycleRefresh);
 		} finally {
 			statement.close();
@@ -160,32 +161,26 @@ public class ExecutionTask extends Task<Void> {
 		}
 	}
 
-	private void refreshErrorPhase(
-			final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
+	private void refreshErrorPhase(final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
 		Set<ExecutionTracker> trackersForRefresh;
 		trackersForRefresh = lifecycleRefresh.errorExecutionGuiRefresh();
-		trackersForRefresh
-				.addAll(lifecycleRefresh.delayedExecutionGuiRefresh());
+		trackersForRefresh.addAll(lifecycleRefresh.delayedExecutionGuiRefresh());
 		refresh(trackersForRefresh);
 	}
 
-	private void refreshAfterPhase(
-			final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
+	private void refreshAfterPhase(final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
 		Set<ExecutionTracker> trackersForRefresh;
 		// UI am Ende der AFTER Phase komplett refreshed
 		trackersForRefresh = lifecycleRefresh.afterExecutionGuiRefresh();
-		trackersForRefresh
-				.addAll(lifecycleRefresh.delayedExecutionGuiRefresh());
+		trackersForRefresh.addAll(lifecycleRefresh.delayedExecutionGuiRefresh());
 		refresh(trackersForRefresh);
 	}
 
-	private void refreshBeforePhase(
-			final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
+	private void refreshBeforePhase(final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh) {
 		Set<ExecutionTracker> trackersForRefresh;
 		// UI am Ende der BEFORE Phase komplett refreshed
 		trackersForRefresh = lifecycleRefresh.beforeExecutionGuiRefresh();
-		trackersForRefresh
-				.addAll(lifecycleRefresh.delayedExecutionGuiRefresh());
+		trackersForRefresh.addAll(lifecycleRefresh.delayedExecutionGuiRefresh());
 		refresh(trackersForRefresh);
 	}
 

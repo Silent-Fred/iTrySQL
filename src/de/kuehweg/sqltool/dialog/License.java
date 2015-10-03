@@ -25,8 +25,9 @@
  */
 package de.kuehweg.sqltool.dialog;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
 import java.util.ResourceBundle;
+
+import de.kuehweg.sqltool.common.DialogDictionary;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -41,27 +42,27 @@ import javafx.stage.StageStyle;
  */
 public class License extends Stage {
 
-    public License() {
-        super();
-        Scene scene;
-        try {
-            final Parent root;
-            root = FXMLLoader.load(
-                    getClass().getResource("/resources/fxml/License.fxml"),
-                    ResourceBundle.getBundle("dictionary"));
-            root.getStylesheets().add(
-                    getClass().getResource("/resources/css/itrysql.css")
-                    .toExternalForm());
-            scene = new Scene(root);
-        } catch (final Exception ex) {
-            scene = FallbackSceneFactory.createNewInstance();
-        }
-        setScene(scene);
-        initStyle(StageStyle.UTILITY);
-        initModality(Modality.APPLICATION_MODAL);
+	/**
+	 * Dialog zur Lizenzanzeige aufbauen.
+	 */
+	public License() {
+		super();
+		Scene scene;
+		try {
+			final Parent root;
+			root = FXMLLoader.load(getClass().getResource("/resources/fxml/License.fxml"),
+					ResourceBundle.getBundle("dictionary"));
+			root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
+			scene = new Scene(root);
+		} catch (final Exception ex) {
+			scene = FallbackSceneFactory.createNewInstance();
+		}
+		setScene(scene);
+		initStyle(StageStyle.UTILITY);
+		initModality(Modality.APPLICATION_MODAL);
 
-        centerOnScreen();
-        setResizable(false);
-        setTitle(DialogDictionary.APPLICATION.toString());
-    }
+		centerOnScreen();
+		setResizable(false);
+		setTitle(DialogDictionary.APPLICATION.toString());
+	}
 }

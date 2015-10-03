@@ -26,22 +26,22 @@
 package de.kuehweg.sqltool.common;
 
 /**
- * Zentraler Zugriff auf die Benutzereinstellungen
+ * Zentraler Zugriff auf die Benutzereinstellungen.
  *
  * @author Michael Kühweg
  */
 public class UserPreferencesManager {
 
-    private static final UserPreferencesI sharedInstance;
+	private static final UserPreferencesI sharedInstance;
 
-    static {
-        sharedInstance = new UserPreferences();
-    }
+	static {
+		sharedInstance = new UserPreferences();
+	}
 
-    private UserPreferencesManager() {
-    }
+	private UserPreferencesManager() {
+	}
 
-    public static UserPreferencesI getSharedInstance() {
-        return sharedInstance;
-    }
+	public static UserPreferencesI getSharedInstance() {
+		return sharedInstance;
+	}
 }

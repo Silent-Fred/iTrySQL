@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,27 +29,32 @@ import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 
 /**
- * Initiale Ausmaße des Fensters berechnen
+ * Initiale Ausmaße des Fensters berechnen.
  *
  * @author Michael Kühweg
  */
-public class StageSizerUtil {
+public final class StageSizerUtil {
 
-    private StageSizerUtil() {
-        // util - no instances
-    }
+	private static final int TOP_FRACTION = 4;
 
-    public static Rectangle2D calculateSizeDependingOnScreenSize() {
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+	private StageSizerUtil() {
+		// util - no instances
+	}
 
-        double horizontalMargin = Math.max(16, primaryScreenBounds.getWidth()
-                * 0.1);
-        double verticalMargin = Math.max(16, primaryScreenBounds.getWidth()
-                * 0.1);
+	/**
+	 * Initiale Größe des Anwendungsfensters auf Basis der verfügbaren
+	 * Bildschirmgröße berechnen.
+	 *
+	 * @return Rechteck mit den berechneten Abmessungen
+	 */
+	public static Rectangle2D calculateSizeDependingOnScreenSize() {
+		final Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
-        return new Rectangle2D(primaryScreenBounds.getMinX() + horizontalMargin
-                / 2, primaryScreenBounds.getMinY() + verticalMargin / 4,
-                primaryScreenBounds.getWidth() - horizontalMargin,
-                primaryScreenBounds.getHeight() - verticalMargin);
-    }
+		final double horizontalMargin = Math.max(16, primaryScreenBounds.getWidth() * 0.1);
+		final double verticalMargin = Math.max(16, primaryScreenBounds.getWidth() * 0.1);
+
+		return new Rectangle2D(primaryScreenBounds.getMinX() + horizontalMargin / 2,
+				primaryScreenBounds.getMinY() + verticalMargin / TOP_FRACTION,
+				primaryScreenBounds.getWidth() - horizontalMargin, primaryScreenBounds.getHeight() - verticalMargin);
+	}
 }

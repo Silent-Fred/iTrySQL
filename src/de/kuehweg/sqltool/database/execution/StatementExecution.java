@@ -35,7 +35,7 @@ import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
 
 /**
- * Klasse zur Ausführung einer SQL-Anweisung mit Aufbereitung des Ergebnisses
+ * Klasse zur Ausführung einer SQL-Anweisung mit Aufbereitung des Ergebnisses.
  *
  * @author Michael Kühweg
  */
@@ -48,15 +48,12 @@ public class StatementExecution {
 		info.setSql(sql);
 	}
 
-	public StatementExecutionInformation execute(final Statement statement)
-			throws SQLException {
+	public StatementExecutionInformation execute(final Statement statement) throws SQLException {
 		if (info.getSql() == null) {
 			erroneousResult();
 		} else {
-			info.setExecutedBy(statement.getConnection().getMetaData()
-					.getUserName());
-			info.setConnectionDescription(statement.getConnection()
-					.getMetaData().getURL());
+			info.setExecutedBy(statement.getConnection().getMetaData().getUserName());
+			info.setConnectionDescription(statement.getConnection().getMetaData().getURL());
 			info.setStartOfExecution(System.currentTimeMillis());
 			if (statement.execute(info.getSql().uncommentedStatement())) {
 				retrieveResult(statement);
@@ -77,11 +74,9 @@ public class StatementExecution {
 				retrieveHeader(resultSet);
 				retrieveRows(resultSet);
 				final int maxRows = statement.getMaxRows();
-				info.setLimitMaxRowsReached(maxRows > 0
-						&& info.getStatementResult().getRows().size() >= maxRows);
-				info.setSummary(MessageFormat.format(
-						DialogDictionary.PATTERN_ROWCOUNT.toString(), info
-								.getStatementResult().getRows().size()));
+				info.setLimitMaxRowsReached(maxRows > 0 && info.getStatementResult().getRows().size() >= maxRows);
+				info.setSummary(MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(),
+						info.getStatementResult().getRows().size()));
 			}
 		} catch (final SQLException ex) {
 			erroneousResult();
@@ -121,12 +116,9 @@ public class StatementExecution {
 	private void headOnlyResult(final int updateCount) {
 		info.setStatementResult(null);
 		if (info.getSql().isDataManipulationStatement()) {
-			info.setSummary(MessageFormat.format(
-					DialogDictionary.PATTERN_UPDATECOUNT.toString(),
-					updateCount));
+			info.setSummary(MessageFormat.format(DialogDictionary.PATTERN_UPDATECOUNT.toString(), updateCount));
 		} else {
-			info.setSummary(MessageFormat.format(
-					DialogDictionary.PATTERN_EXECUTED_STATEMENT.toString(),
+			info.setSummary(MessageFormat.format(DialogDictionary.PATTERN_EXECUTED_STATEMENT.toString(),
 					info.getSql().firstKeyword()));
 		}
 	}

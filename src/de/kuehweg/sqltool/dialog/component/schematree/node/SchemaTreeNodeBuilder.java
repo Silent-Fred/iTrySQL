@@ -25,6 +25,12 @@
  */
 package de.kuehweg.sqltool.dialog.component.schematree.node;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.description.ColumnDescription;
@@ -38,274 +44,246 @@ import de.kuehweg.sqltool.database.metadata.description.Nullability;
 import de.kuehweg.sqltool.database.metadata.description.PrimaryKeyColumnDescription;
 import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
- * Aufbau der kompletten Strukturansicht, ohne direkten Bezug zu Oberfkächenklassen.
+ * Aufbau der kompletten Strukturansicht, ohne direkten Bezug zu
+ * Oberfkächenklassen.
  *
  * @author Michael Kühweg
  */
 public class SchemaTreeNodeBuilder {
 
-    private final DatabaseDescription db;
+	private final DatabaseDescription db;
 
-    public SchemaTreeNodeBuilder(final DatabaseDescription db) {
-        this.db = db;
-    }
+	public SchemaTreeNodeBuilder(final DatabaseDescription db) {
+		this.db = db;
+	}
 
-    public SchemaTreeNode getRootOfPopulatedTree() {
-        SchemaTreeNode root = buildDatabaseNode(db);
+	public SchemaTreeNode getRootOfPopulatedTree() {
+		final SchemaTreeNode root = buildDatabaseNode(db);
 
-        return root;
-    }
+		return root;
+	}
 
-    private SchemaTreeNode buildDatabaseNode(final DatabaseDescription db) {
-        SchemaTreeNode node
-                = new SchemaTreeNode(SchemaTreeNodeType.DATABASE, db.getName());
-        node.appendChild(
-                new SchemaTreeNode(SchemaTreeNodeType.PLAIN, getDbProductInfo(db)));
-        for (CatalogDescription catalog : db.getCatalogs()) {
-            node.appendChild(buildCatalogNode(catalog));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildDatabaseNode(final DatabaseDescription db) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.DATABASE, db.getName());
+		node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, getDbProductInfo(db)));
+		for (final CatalogDescription catalog : db.getCatalogs()) {
+			node.appendChild(buildCatalogNode(catalog));
+		}
+		return node;
+	}
 
-    private String getDbProductInfo(final DatabaseDescription db) {
-        return db.getDbProductName() + " " + db.getDbProductVersion();
-    }
+	private String getDbProductInfo(final DatabaseDescription db) {
+		return db.getDbProductName() + " " + db.getDbProductVersion();
+	}
 
-    private SchemaTreeNode buildCatalogNode(final CatalogDescription catalog) {
-        SchemaTreeNode node
-                = new SchemaTreeNode(SchemaTreeNodeType.CATALOG, catalog.getName());
-        for (SchemaDescription schema : catalog.getSchemas()) {
-            node.appendChild(buildSchemaNode(schema));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildCatalogNode(final CatalogDescription catalog) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.CATALOG, catalog.getName());
+		for (final SchemaDescription schema : catalog.getSchemas()) {
+			node.appendChild(buildSchemaNode(schema));
+		}
+		return node;
+	}
 
-    private SchemaTreeNode buildSchemaNode(final SchemaDescription schema) {
-        SchemaTreeNode node
-                = new SchemaTreeNode(SchemaTreeNodeType.SCHEMA, schema.getName());
-        for (String tableType : schema.getTableTypes()) {
-            SchemaTreeNode typeNode = new SchemaTreeNode(SchemaTreeNodeType.TABLE_TYPE,
-                    tableType);
-            node.appendChild(typeNode);
-            for (TableDescription table : schema.getTablesByType(tableType)) {
-                typeNode.appendChild(buildTableNode(table));
-            }
-        }
-        return node;
-    }
+	private SchemaTreeNode buildSchemaNode(final SchemaDescription schema) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.SCHEMA, schema.getName());
+		for (final String tableType : schema.getTableTypes()) {
+			final SchemaTreeNode typeNode = new SchemaTreeNode(SchemaTreeNodeType.TABLE_TYPE, tableType);
+			node.appendChild(typeNode);
+			for (final TableDescription table : schema.getTablesByType(tableType)) {
+				typeNode.appendChild(buildTableNode(table));
+			}
+		}
+		return node;
+	}
 
-    private SchemaTreeNode buildTableNode(final TableDescription table) {
-        SchemaTreeNode node
-                = new SchemaTreeNode(SchemaTreeNodeType.TABLE, table.getName());
-        if (table.getRemarks() != null && !table.getRemarks().isEmpty()) {
-            node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, table.
-                    getRemarks()));
-        }
-        for (ColumnDescription column : table.getColumns()) {
-            node.appendChild(buildColumnNode(column));
-        }
-        SchemaTreeNode importedKeys = buildImportedKeysNode(table);
-        if (!importedKeys.getChildren().isEmpty()) {
-            node.appendChild(importedKeys);
-        }
-        SchemaTreeNode exportedKeys = buildExportedKeysNode(table);
-        if (!exportedKeys.getChildren().isEmpty()) {
-            node.appendChild(exportedKeys);
-        }
-        SchemaTreeNode indices = buildIndicesNode(table);
-        if (!indices.getChildren().isEmpty()) {
-            node.appendChild(indices);
-        }
-        return node;
-    }
+	private SchemaTreeNode buildTableNode(final TableDescription table) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.TABLE, table.getName());
+		if (table.getRemarks() != null && !table.getRemarks().isEmpty()) {
+			node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, table.getRemarks()));
+		}
+		for (final ColumnDescription column : table.getColumns()) {
+			node.appendChild(buildColumnNode(column));
+		}
+		final SchemaTreeNode importedKeys = buildImportedKeysNode(table);
+		if (!importedKeys.getChildren().isEmpty()) {
+			node.appendChild(importedKeys);
+		}
+		final SchemaTreeNode exportedKeys = buildExportedKeysNode(table);
+		if (!exportedKeys.getChildren().isEmpty()) {
+			node.appendChild(exportedKeys);
+		}
+		final SchemaTreeNode indices = buildIndicesNode(table);
+		if (!indices.getChildren().isEmpty()) {
+			node.appendChild(indices);
+		}
+		return node;
+	}
 
-    private SchemaTreeNode buildColumnNode(final ColumnDescription column) {
-        SchemaTreeNode node;
-        if (isPrimaryKeyColumnInTable(column)) {
-            node = new SchemaTreeNode(SchemaTreeNodeType.PRIMARY_KEY_COLUMN, column.
-                    getName());
-        } else {
-            node = new SchemaTreeNode(SchemaTreeNodeType.COLUMN, column.getName());
-        }
-        if (column.getRemarks() != null && !column.getRemarks().isEmpty()) {
-            node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, column.
-                    getRemarks()));
-        }
-        node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN,
-                dataTypeDescription(column)));
-        if (column.getNullable() == Nullability.YES) {
-            node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, "NULLABLE"));
-        }
-        if (column.getDefaultValue() != null && !column.getDefaultValue().isEmpty()) {
-            node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN,
-                    defaultDescription(column)));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildColumnNode(final ColumnDescription column) {
+		SchemaTreeNode node;
+		if (isPrimaryKeyColumnInTable(column)) {
+			node = new SchemaTreeNode(SchemaTreeNodeType.PRIMARY_KEY_COLUMN, column.getName());
+		} else {
+			node = new SchemaTreeNode(SchemaTreeNodeType.COLUMN, column.getName());
+		}
+		if (column.getRemarks() != null && !column.getRemarks().isEmpty()) {
+			node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, column.getRemarks()));
+		}
+		node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, dataTypeDescription(column)));
+		if (column.getNullable() == Nullability.YES) {
+			node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, "NULLABLE"));
+		}
+		if (column.getDefaultValue() != null && !column.getDefaultValue().isEmpty()) {
+			node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.PLAIN, defaultDescription(column)));
+		}
+		return node;
+	}
 
-    private boolean isPrimaryKeyColumnInTable(final ColumnDescription column) {
-        TableDescription table = (TableDescription) column.getParent();
-        for (PrimaryKeyColumnDescription pk : table.getPrimaryKeyColumns()) {
-            if (pk.getColumnName().equals(column.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private boolean isPrimaryKeyColumnInTable(final ColumnDescription column) {
+		final TableDescription table = (TableDescription) column.getParent();
+		for (final PrimaryKeyColumnDescription pk : table.getPrimaryKeyColumns()) {
+			if (pk.getColumnName().equals(column.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private String dataTypeDescription(final ColumnDescription column) {
-        return column.getType() + dataTypeLengthDescription(column);
-    }
+	private String dataTypeDescription(final ColumnDescription column) {
+		return column.getType() + dataTypeLengthDescription(column);
+	}
 
-    private String dataTypeLengthDescription(final ColumnDescription column) {
-        if (column.getSize() != 0 || column.getDecimalDigits() != 0) {
-            return "(" + column.getSize() + (column.getDecimalDigits() != 0 ? (","
-                    + column.getDecimalDigits()) : "")
-                    + ")";
-        }
-        return "";
-    }
+	private String dataTypeLengthDescription(final ColumnDescription column) {
+		if (column.getSize() != 0 || column.getDecimalDigits() != 0) {
+			return "(" + column.getSize() + (column.getDecimalDigits() != 0 ? "," + column.getDecimalDigits() : "")
+					+ ")";
+		}
+		return "";
+	}
 
-    private String defaultDescription(final ColumnDescription column) {
-        return "DEFAULT: " + column.getDefaultValue();
-    }
+	private String defaultDescription(final ColumnDescription column) {
+		return "DEFAULT: " + column.getDefaultValue();
+	}
 
-    private SchemaTreeNode buildImportedKeysNode(final TableDescription table) {
-        SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.IMPORTED_KEYS,
-                DialogDictionary.LABEL_TREE_REFERENCES.toString());
-        for (String fkName : extractAndSortNames(table.getImportedKeyColumns())) {
-            node.appendChild(buildImportedKeyNode(extractAndSortByColumnName(table.
-                    getImportedKeyColumns(), fkName)));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildImportedKeysNode(final TableDescription table) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.IMPORTED_KEYS,
+				DialogDictionary.LABEL_TREE_REFERENCES.toString());
+		for (final String fkName : extractAndSortNames(table.getImportedKeyColumns())) {
+			node.appendChild(buildImportedKeyNode(extractAndSortByColumnName(table.getImportedKeyColumns(), fkName)));
+		}
+		return node;
+	}
 
-    private SchemaTreeNode buildExportedKeysNode(final TableDescription table) {
-        SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.EXPORTED_KEYS,
-                DialogDictionary.LABEL_TREE_REFERENCED_BY.toString());
-        for (String fkName : extractAndSortNames(table.getExportedKeyColumns())) {
-            node.appendChild(buildExportedKeyNode(extractAndSortByColumnName(table.
-                    getExportedKeyColumns(), fkName)));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildExportedKeysNode(final TableDescription table) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.EXPORTED_KEYS,
+				DialogDictionary.LABEL_TREE_REFERENCED_BY.toString());
+		for (final String fkName : extractAndSortNames(table.getExportedKeyColumns())) {
+			node.appendChild(buildExportedKeyNode(extractAndSortByColumnName(table.getExportedKeyColumns(), fkName)));
+		}
+		return node;
+	}
 
-    private SchemaTreeNode buildImportedKeyNode(
-            final List<ForeignKeyColumnDescription> fkColumns) {
-        SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.IMPORTED_KEY,
-                foreignKeyDescription(fkColumns));
-        for (ForeignKeyColumnDescription fkColumn : fkColumns) {
-            node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.IMPORTED_KEY_COLUMN,
-                    importedKeyColumnDescription(fkColumn)));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildImportedKeyNode(final List<ForeignKeyColumnDescription> fkColumns) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.IMPORTED_KEY,
+				foreignKeyDescription(fkColumns));
+		for (final ForeignKeyColumnDescription fkColumn : fkColumns) {
+			node.appendChild(
+					new SchemaTreeNode(SchemaTreeNodeType.IMPORTED_KEY_COLUMN, importedKeyColumnDescription(fkColumn)));
+		}
+		return node;
+	}
 
-    private SchemaTreeNode buildExportedKeyNode(
-            final List<ForeignKeyColumnDescription> fkColumns) {
-        SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.EXPORTED_KEY,
-                foreignKeyDescription(fkColumns));
-        for (ForeignKeyColumnDescription fkColumn : fkColumns) {
-            node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.EXPORTED_KEY_COLUMN,
-                    exportedKeyColumnDescription(fkColumn)));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildExportedKeyNode(final List<ForeignKeyColumnDescription> fkColumns) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.EXPORTED_KEY,
+				foreignKeyDescription(fkColumns));
+		for (final ForeignKeyColumnDescription fkColumn : fkColumns) {
+			node.appendChild(
+					new SchemaTreeNode(SchemaTreeNodeType.EXPORTED_KEY_COLUMN, exportedKeyColumnDescription(fkColumn)));
+		}
+		return node;
+	}
 
-    private String foreignKeyDescription(final List<ForeignKeyColumnDescription> fkColumns) {
-        return fkColumns.isEmpty() ? "n/a" : fkColumns.iterator().next().getName();
-    }
+	private String foreignKeyDescription(final List<ForeignKeyColumnDescription> fkColumns) {
+		return fkColumns.isEmpty() ? "n/a" : fkColumns.iterator().next().getName();
+	}
 
-    private String importedKeyColumnDescription(final ForeignKeyColumnDescription fkColumn) {
-        StringBuilder description = new StringBuilder(fkColumn.getInsideColumnName());
-        description.append(" -> ");
-        description.append(fkColumn.referencesFarOutside() ? fkColumn.
-                getFullyQualifiedOutsideColumn() : fkColumn.getQualifiedOutsideColumn());
-        return description.toString();
-    }
+	private String importedKeyColumnDescription(final ForeignKeyColumnDescription fkColumn) {
+		final StringBuilder description = new StringBuilder(fkColumn.getInsideColumnName());
+		description.append(" -> ");
+		description.append(fkColumn.referencesFarOutside() ? fkColumn.getFullyQualifiedOutsideColumn()
+				: fkColumn.getQualifiedOutsideColumn());
+		return description.toString();
+	}
 
-    private String exportedKeyColumnDescription(final ForeignKeyColumnDescription fkColumn) {
-        StringBuilder description = new StringBuilder(fkColumn.getInsideColumnName());
-        description.append(" <- ");
-        description.append(fkColumn.referencesFarOutside() ? fkColumn.
-                getFullyQualifiedOutsideColumn() : fkColumn.getQualifiedOutsideColumn());
-        return description.toString();
-    }
+	private String exportedKeyColumnDescription(final ForeignKeyColumnDescription fkColumn) {
+		final StringBuilder description = new StringBuilder(fkColumn.getInsideColumnName());
+		description.append(" <- ");
+		description.append(fkColumn.referencesFarOutside() ? fkColumn.getFullyQualifiedOutsideColumn()
+				: fkColumn.getQualifiedOutsideColumn());
+		return description.toString();
+	}
 
-    private List<String> extractAndSortNames(
-            final List<? extends DatabaseObjectDescription> objs) {
-        Set<String> filtered = new HashSet<>();
-        for (DatabaseObjectDescription obj : objs) {
-            filtered.add(obj.getName());
-        }
-        List<String> sorted = new ArrayList<>(filtered);
-        Collections.sort(sorted);
-        return sorted;
-    }
+	private List<String> extractAndSortNames(final List<? extends DatabaseObjectDescription> objs) {
+		final Set<String> filtered = new HashSet<>();
+		for (final DatabaseObjectDescription obj : objs) {
+			filtered.add(obj.getName());
+		}
+		final List<String> sorted = new ArrayList<>(filtered);
+		Collections.sort(sorted);
+		return sorted;
+	}
 
-    private <TYPE extends DatabaseObjectDescription> List<TYPE> extractByName(
-            final List<TYPE> objs, String name) {
-        List<TYPE> filtered = new ArrayList<>(objs.size());
-        for (TYPE obj : objs) {
-            if (obj.getName().equals(name)) {
-                filtered.add(obj);
-            }
-        }
-        return filtered;
-    }
+	private <TYPE extends DatabaseObjectDescription> List<TYPE> extractByName(final List<TYPE> objs,
+			final String name) {
+		final List<TYPE> filtered = new ArrayList<>(objs.size());
+		for (final TYPE obj : objs) {
+			if (obj.getName().equals(name)) {
+				filtered.add(obj);
+			}
+		}
+		return filtered;
+	}
 
-    private List<ForeignKeyColumnDescription> extractAndSortByColumnName(
-            final List<ForeignKeyColumnDescription> fkColumns, String fkName) {
-        List<ForeignKeyColumnDescription> sorted = new ArrayList<>(
-                extractByName(fkColumns, fkName));
-        Collections.sort(sorted, new ForeignKeyColumnByColumnName());
-        return sorted;
-    }
+	private List<ForeignKeyColumnDescription> extractAndSortByColumnName(
+			final List<ForeignKeyColumnDescription> fkColumns, final String fkName) {
+		final List<ForeignKeyColumnDescription> sorted = new ArrayList<>(extractByName(fkColumns, fkName));
+		Collections.sort(sorted, new ForeignKeyColumnByColumnName());
+		return sorted;
+	}
 
-    private SchemaTreeNode buildIndicesNode(final TableDescription table) {
-        SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.INDICES,
-                DialogDictionary.LABEL_TREE_INDICES.toString());
-        for (String idxName : extractAndSortNames(table.getIndices())) {
-            node.appendChild(buildIndexNode(extractAndSortByOrdinalPosition(table.
-                    getIndices(), idxName), idxName));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildIndicesNode(final TableDescription table) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.INDICES,
+				DialogDictionary.LABEL_TREE_INDICES.toString());
+		for (final String idxName : extractAndSortNames(table.getIndices())) {
+			node.appendChild(buildIndexNode(extractAndSortByOrdinalPosition(table.getIndices(), idxName), idxName));
+		}
+		return node;
+	}
 
-    private SchemaTreeNode buildIndexNode(
-            final List<IndexColumnDescription> idxColumns, String idxName) {
-        SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.INDEX,
-                indexDescription(idxColumns));
-        for (IndexColumnDescription idxColumn : idxColumns) {
-            node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.INDEX_COLUMN,
-                    idxColumn.getColumnName()));
-        }
-        return node;
-    }
+	private SchemaTreeNode buildIndexNode(final List<IndexColumnDescription> idxColumns, final String idxName) {
+		final SchemaTreeNode node = new SchemaTreeNode(SchemaTreeNodeType.INDEX, indexDescription(idxColumns));
+		for (final IndexColumnDescription idxColumn : idxColumns) {
+			node.appendChild(new SchemaTreeNode(SchemaTreeNodeType.INDEX_COLUMN, idxColumn.getColumnName()));
+		}
+		return node;
+	}
 
-    private String indexDescription(final List<IndexColumnDescription> idxColumns) {
-        String baseName = idxColumns.isEmpty() ? "n/a" : idxColumns.iterator().next().
-                getName();
-        return isNonUniqueIndex(idxColumns) ? baseName + " (NON UNIQUE)" : baseName;
-    }
+	private String indexDescription(final List<IndexColumnDescription> idxColumns) {
+		final String baseName = idxColumns.isEmpty() ? "n/a" : idxColumns.iterator().next().getName();
+		return isNonUniqueIndex(idxColumns) ? baseName + " (NON UNIQUE)" : baseName;
+	}
 
-    private boolean isNonUniqueIndex(final List<IndexColumnDescription> idxColumns) {
-        return !idxColumns.isEmpty() && idxColumns.iterator().next().isNonUnique();
-    }
+	private boolean isNonUniqueIndex(final List<IndexColumnDescription> idxColumns) {
+		return !idxColumns.isEmpty() && idxColumns.iterator().next().isNonUnique();
+	}
 
-    private List<IndexColumnDescription> extractAndSortByOrdinalPosition(
-            final List<IndexColumnDescription> idxColumns, String idxName) {
-        List<IndexColumnDescription> sorted = new ArrayList<>(extractByName(idxColumns,
-                idxName));
-        Collections.sort(sorted, new IndexColumnByOrdinalPosition());
-        return sorted;
-    }
+	private List<IndexColumnDescription> extractAndSortByOrdinalPosition(final List<IndexColumnDescription> idxColumns,
+			final String idxName) {
+		final List<IndexColumnDescription> sorted = new ArrayList<>(extractByName(idxColumns, idxName));
+		Collections.sort(sorted, new IndexColumnByOrdinalPosition());
+		return sorted;
+	}
 
 }

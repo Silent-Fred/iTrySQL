@@ -26,7 +26,7 @@
 package de.kuehweg.sqltool.database.metadata;
 
 /**
- * Exception für den Fall, dass die Suche nach einem Parent fehlschlägt
+ * Exception für den Fall, dass die Suche nach einem Parent fehlschlägt.
  *
  * @author Michael Kühweg
  */

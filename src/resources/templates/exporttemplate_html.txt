@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+'<!DOCTYPE html>
 <html>
     <head>
-        <title>statement execution goes here</title>
+        <title>'{0}'</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <style>
             body {
@@ -41,8 +41,8 @@
         </style>
     </head>
     <body>
-        <div>result table goes here</div>
-        <div>row count goes here</div>
-        <div>limit rows goes here</div>
+        <div>'{1}'</div>
+        <div>'{2}'</div>
+        <div>'{3}'</div>
     </body>
-</html>
+</html>'

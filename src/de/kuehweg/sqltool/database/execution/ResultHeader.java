@@ -28,23 +28,23 @@ package de.kuehweg.sqltool.database.execution;
 import java.util.Arrays;
 
 /**
- * Titelzeile einer SQL-Anweisung
+ * Titelzeile einer SQL-Anweisung.
  *
  * @author Michael Kühweg
  */
 public class ResultHeader {
 
-    private final String[] columns;
+	private final String[] columns;
 
-    public ResultHeader(final String... columns) {
-        if (columns == null) {
-            this.columns = new String[]{null};
-        } else {
-            this.columns = Arrays.copyOf(columns, columns.length);
-        }
-    }
+	public ResultHeader(final String... columns) {
+		if (columns == null) {
+			this.columns = new String[] { null };
+		} else {
+			this.columns = Arrays.copyOf(columns, columns.length);
+		}
+	}
 
-    public String[] getColumnHeaders() {
-        return Arrays.copyOf(columns, columns.length);
-    }
+	public String[] getColumnHeaders() {
+		return Arrays.copyOf(columns, columns.length);
+	}
 }

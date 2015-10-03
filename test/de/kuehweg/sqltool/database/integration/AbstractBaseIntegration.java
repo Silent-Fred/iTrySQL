@@ -25,53 +25,53 @@
  */
 package de.kuehweg.sqltool.database.integration;
 
-import de.kuehweg.sqltool.database.DatabaseConstants;
-import de.kuehweg.sqltool.database.JDBCType;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import de.kuehweg.sqltool.database.DatabaseConstants;
+import de.kuehweg.sqltool.database.JDBCType;
+
 /**
- *
+ * Basisklasse für Integrationstests mit der HSQLDB-Datenbank.
+ * 
  * @author Michael Kühweg
  */
 public abstract class AbstractBaseIntegration {
 
-    private Connection connection;
+	private Connection connection;
 
-    protected Connection getTestConnection() {
-        return connection;
-    }
+	protected Connection getTestConnection() {
+		return connection;
+	}
 
-    protected void openTestConnection() throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        final Properties properties = new Properties();
-        properties.setProperty("user", "JOHN_DOE");
-        properties.setProperty("password", "secret");
-        properties.setProperty("shutdown", "true");
-        // Transaktionsmanagements wie in der Applikation verwenden
-        properties.setProperty(
-                DatabaseConstants.HSQLDB_PROPERTY_TX_CONTROL,
-                DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
-        properties.setProperty("hsqldb.files_readonly", "true");
-        connection = DriverManager.getConnection(JDBCType.HSQL_IN_MEMORY.getUrlPrefix()
-                + "mem", properties);
-    }
+	protected void openTestConnection() throws SQLException {
+		final Properties properties = new Properties();
+		properties.setProperty("user", "JOHN_DOE");
+		properties.setProperty("password", "secret");
+		properties.setProperty("shutdown", "true");
+		// Transaktionsmanagements wie in der Applikation verwenden
+		properties.setProperty(DatabaseConstants.HSQLDB_PROPERTY_TX_CONTROL,
+				DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
+		properties.setProperty("hsqldb.files_readonly", "true");
+		connection = DriverManager.getConnection(JDBCType.HSQL_IN_MEMORY.getUrlPrefix() + "mem", properties);
+	}
 
-    protected void closeTestConnection() throws SQLException {
-        if (connection != null) {
-            connection.close();
-        }
-    }
+	protected void closeTestConnection() throws SQLException {
+		if (connection != null) {
+			connection.close();
+		}
+	}
 
-    protected void dropSchema(String schema) throws SQLException {
-        if (connection != null) {
-            connection.createStatement().execute("DROP SCHEMA " + schema + " CASCADE");
-        }
-    }
+	protected void dropSchema(final String schema) throws SQLException {
+		if (connection != null) {
+			connection.createStatement().execute("DROP SCHEMA " + schema + " CASCADE");
+		}
+	}
 
-    protected void dropPublicSchema() throws SQLException {
-        dropSchema("PUBLIC");
-    }
+	protected void dropPublicSchema() throws SQLException {
+		dropSchema("PUBLIC");
+	}
 
 }

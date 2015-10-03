@@ -33,8 +33,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation zur Steuerung des Refresh-Verhaltens einer Komponente im Dialog während
- * Anweisungen ausgeführt werden
+ * Annotation zur Steuerung des Refresh-Verhaltens einer Komponente im Dialog
+ * während Anweisungen ausgeführt werden.
  *
  * @author Michael Kühweg
  */
@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ExecutionLifecycleRefresh {
 
-    ExecutionLifecyclePhase phase();
+	ExecutionLifecyclePhase phase();
 
-    ExecutionLifecycleRefreshPolicy refreshPolicy() default ExecutionLifecycleRefreshPolicy.IMMEDIATE;
+	ExecutionLifecycleRefreshPolicy refreshPolicy() default ExecutionLifecycleRefreshPolicy.IMMEDIATE;
 }

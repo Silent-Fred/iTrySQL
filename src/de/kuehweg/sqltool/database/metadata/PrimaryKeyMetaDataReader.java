@@ -25,30 +25,29 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.PrimaryKeyColumnDescription;
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.PrimaryKeyColumnDescription;
+
 /**
- * Metadaten der Primary Key Constraints aufbereiten
+ * Metadaten der Primary Key Constraints aufbereiten.
  *
  * @author Michael Kühweg
  */
 public class PrimaryKeyMetaDataReader extends AbstractMetaDataReader {
 
-    public PrimaryKeyMetaDataReader(DatabaseDescription root) {
-        super(root);
-    }
+	public PrimaryKeyMetaDataReader(final DatabaseDescription root) {
+		super(root);
+	}
 
-    @Override
-    protected void readAndAddDescription(ResultSet primaryKeyConstraint) throws SQLException {
-        findParent(primaryKeyConstraint.getString("TABLE_CAT"),
-                primaryKeyConstraint.getString("TABLE_SCHEM"),
-                primaryKeyConstraint.getString("TABLE_NAME")).adoptOrphan(
-                        new PrimaryKeyColumnDescription(
-                                primaryKeyConstraint.getString("PK_NAME"),
-                                primaryKeyConstraint.getString("COLUMN_NAME")));
-    }
+	@Override
+	protected void readAndAddDescription(final ResultSet primaryKeyConstraint) throws SQLException {
+		findParent(primaryKeyConstraint.getString("TABLE_CAT"), primaryKeyConstraint.getString("TABLE_SCHEM"),
+				primaryKeyConstraint.getString("TABLE_NAME"))
+						.adoptOrphan(new PrimaryKeyColumnDescription(primaryKeyConstraint.getString("PK_NAME"),
+								primaryKeyConstraint.getString("COLUMN_NAME")));
+	}
 
 }

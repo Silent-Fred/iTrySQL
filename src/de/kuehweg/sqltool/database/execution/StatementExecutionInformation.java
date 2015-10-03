@@ -28,90 +28,90 @@ package de.kuehweg.sqltool.database.execution;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
 
 /**
- * Daten zu einer ausgeführten SQL-Anweisung
+ * Daten zu einer ausgeführten SQL-Anweisung.
  *
  * @author Michael Kühweg
  */
 public class StatementExecutionInformation {
 
-    private StatementString sql;
+	private StatementString sql;
 
-    private long startOfExecution;
+	private long startOfExecution;
 
-    private long endOfExecution;
+	private long endOfExecution;
 
-    private String executedBy;
+	private String executedBy;
 
-    private String connectionDescription;
+	private String connectionDescription;
 
-    private StatementResult statementResult;
+	private StatementResult statementResult;
 
-    private String summary;
+	private String summary;
 
-    private boolean limitMaxRowsReached;
+	private boolean limitMaxRowsReached;
 
-    public StatementString getSql() {
-        return sql;
-    }
+	public StatementString getSql() {
+		return sql;
+	}
 
-    public void setSql(StatementString sql) {
-        this.sql = sql;
-    }
+	public void setSql(final StatementString sql) {
+		this.sql = sql;
+	}
 
-    public long getStartOfExecution() {
-        return startOfExecution;
-    }
+	public long getStartOfExecution() {
+		return startOfExecution;
+	}
 
-    public void setStartOfExecution(long startOfExecution) {
-        this.startOfExecution = startOfExecution;
-    }
+	public void setStartOfExecution(final long startOfExecution) {
+		this.startOfExecution = startOfExecution;
+	}
 
-    public long getEndOfExecution() {
-        return endOfExecution;
-    }
+	public long getEndOfExecution() {
+		return endOfExecution;
+	}
 
-    public void setEndOfExecution(long endOfExecution) {
-        this.endOfExecution = endOfExecution;
-    }
+	public void setEndOfExecution(final long endOfExecution) {
+		this.endOfExecution = endOfExecution;
+	}
 
-    public String getExecutedBy() {
-        return executedBy;
-    }
+	public String getExecutedBy() {
+		return executedBy;
+	}
 
-    public void setExecutedBy(String executedBy) {
-        this.executedBy = executedBy;
-    }
+	public void setExecutedBy(final String executedBy) {
+		this.executedBy = executedBy;
+	}
 
-    public String getConnectionDescription() {
-        return connectionDescription;
-    }
+	public String getConnectionDescription() {
+		return connectionDescription;
+	}
 
-    public void setConnectionDescription(String connectionDescription) {
-        this.connectionDescription = connectionDescription;
-    }
+	public void setConnectionDescription(final String connectionDescription) {
+		this.connectionDescription = connectionDescription;
+	}
 
-    public StatementResult getStatementResult() {
-        return statementResult;
-    }
+	public StatementResult getStatementResult() {
+		return statementResult;
+	}
 
-    public void setStatementResult(StatementResult statementResult) {
-        this.statementResult = statementResult;
-    }
+	public void setStatementResult(final StatementResult statementResult) {
+		this.statementResult = statementResult;
+	}
 
-    public String getSummary() {
-        return summary;
-    }
+	public String getSummary() {
+		return summary;
+	}
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
+	public void setSummary(final String summary) {
+		this.summary = summary;
+	}
 
-    public boolean isLimitMaxRowsReached() {
-        return limitMaxRowsReached;
-    }
+	public boolean isLimitMaxRowsReached() {
+		return limitMaxRowsReached;
+	}
 
-    public void setLimitMaxRowsReached(boolean limitMaxRowsReached) {
-        this.limitMaxRowsReached = limitMaxRowsReached;
-    }
+	public void setLimitMaxRowsReached(final boolean limitMaxRowsReached) {
+		this.limitMaxRowsReached = limitMaxRowsReached;
+	}
 
 }

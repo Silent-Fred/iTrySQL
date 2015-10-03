@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2015, Michael Kühweg
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package de.kuehweg.sqltool.common.achievement;
+
+import de.kuehweg.gamification.AchievementEvent;
+
+/**
+ * @author Michael Kühweg
+ */
+public enum NamedAchievementEvent {
+
+	SELECT_STATEMENT,
+
+	INSERT_STATEMENT, UPDATE_STATEMENT, DELETE_STATEMENT,
+
+	COMMITTED, ROLLED_BACK,
+
+	GRANT_STATEMENT, REVOKE_STATEMENT,
+
+	CREATE_STATEMENT, ALTER_STATEMENT, DROP_STATEMENT,
+
+	STATEMENT_GROUP_DML, STATEMENT_GROUP_TCL, STATEMENT_GROUP_DDL, STATEMENT_GROUP_DCL,
+
+	STATEMENT_EXECUTED, LENGTHY_STATEMENT, STATEMENT_WITH_COMMENT, STATEMENT_UNCOMMENTED_LENGTH,
+
+	SINGLE_ROW_RESULT, SHORT_RESULT, LARGE_RESULT, HUGE_RESULT,
+
+	EXECUTION_SUCCESSFUL, EXECUTION_RESULT_ROWS, EXECUTION_ERROR, EXECUTION_DEADLOCK,
+
+	CONNECTION_ESTABLISHED, TUTORIAL_BUILT, SCRIPT_EXECUTED, FONT_SIZE_CHANGED, EXPORTED_RESULT, SCRIPT_SAVED, READ_ABOUT,
+
+	THE_NEVER_HAPPENING_EVENT;
+
+	public AchievementEvent asAchievementEvent() {
+		return new AchievementEvent(name());
+	}
+}

@@ -25,110 +25,104 @@
  */
 package de.kuehweg.sqltool.database;
 
-import de.kuehweg.sqltool.common.exception.DatabaseConnectionException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+
+import de.kuehweg.sqltool.common.exception.DatabaseConnectionException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 /**
- * Hält die Verbindung zur Datenbank
+ * Hält die Verbindung zur Datenbank.
  *
  * @author Michael Kühweg
  */
 public class ConnectionHolder {
 
-    private Connection connection;
-    private final BooleanProperty connectedProperty;
+	private Connection connection;
+	private final BooleanProperty connectedProperty;
 
-    public ConnectionHolder() {
-        connectedProperty = new SimpleBooleanProperty(false);
-    }
+	public ConnectionHolder() {
+		connectedProperty = new SimpleBooleanProperty(false);
+	}
 
-    /**
-     * Baut die "richtige" Verbindung auf, abgeleitet aus den "benutzertauglichen"
-     * Verbindungsdaten
-     *
-     * @param connection
-     */
-    private void connect(final Connection connection) {
-        if (this.connection != null && this.connection != connection) {
-            disconnect();
-        }
-        this.connection = connection;
-    }
+	/**
+	 * Baut die "richtige" Verbindung auf, abgeleitet aus den
+	 * "benutzertauglichen" Verbindungsdaten.
+	 *
+	 * @param connection
+	 */
+	private void connect(final Connection connection) {
+		if (this.connection != null && this.connection != connection) {
+			disconnect();
+		}
+		this.connection = connection;
+	}
 
-    /**
-     * Baut die Verbindung auf Basis der übergebenen Verbindungsdaten auf
-     *
-     * @param connectionSetting
-     * @throws de.kuehweg.sqltool.common.exception.DatabaseConnectionException
-     */
-    public void connect(final ConnectionSetting connectionSetting) throws DatabaseConnectionException {
-        try {
-            Class.forName(connectionSetting.getType().getDriverClass())
-                    .newInstance();
-            final Properties properties = new Properties();
-            properties.setProperty(
-                    "user",
-                    connectionSetting.getUser() != null ? connectionSetting
-                            .getUser() : "");
-            properties.setProperty(
-                    "password",
-                    connectionSetting.getPassword() != null ? connectionSetting
-                            .getPassword() : "");
-            // in den Schulungsunterlagen wird das Verhalten des DBMS
-            // auf Grundlage eines bestimmten Transaktionsmanagements
-            // beschrieben - dieses wird daher explizit gesetzt
-            properties.setProperty(
-                    DatabaseConstants.HSQLDB_PROPERTY_TX_CONTROL,
-                    DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
-            if (connectionSetting.getType() == JDBCType.HSQL_STANDALONE) {
+	/**
+	 * Baut die Verbindung auf Basis der übergebenen Verbindungsdaten auf.
+	 *
+	 * @param connectionSetting
+	 * @throws de.kuehweg.sqltool.common.exception.DatabaseConnectionException
+	 */
+	public void connect(final ConnectionSetting connectionSetting) throws DatabaseConnectionException {
+		try {
+			Class.forName(connectionSetting.getType().getDriverClass()).newInstance();
+			final Properties properties = new Properties();
+			properties.setProperty("user", connectionSetting.getUser() != null ? connectionSetting.getUser() : "");
+			properties.setProperty("password",
+					connectionSetting.getPassword() != null ? connectionSetting.getPassword() : "");
+			// in den Schulungsunterlagen wird das Verhalten des DBMS
+			// auf Grundlage eines bestimmten Transaktionsmanagements
+			// beschrieben - dieses wird daher explizit gesetzt
+			properties.setProperty(DatabaseConstants.HSQLDB_PROPERTY_TX_CONTROL,
+					DatabaseConstants.DEFAULT_TRANSACTION_CONTROL);
+			if (connectionSetting.getType() == JDBCType.HSQL_STANDALONE) {
 				// TODO von den beiden folgenden Properties wird eigentlich nur
-                // eines benötigt. Bei Gelegenheit mal ein bisschen genauer
-                // untersuchen, welcher Ansatz der bessere ist.
+				// eines benötigt. Bei Gelegenheit mal ein bisschen genauer
+				// untersuchen, welcher Ansatz der bessere ist.
 
-                // als Schulungsclient wird mit kleinen Datenbanken gearbeitet, den
-                // automatischen Checkpoint daher recht niedrig ansetzen
-                properties.setProperty(
-                        DatabaseConstants.HSQLDB_PROPERTY_LOG_SIZE_MB,
-                        DatabaseConstants.DEFAULT_LOG_SIZE_MB);
-                // der automatische Shutdown ist zwar für "echte" DB-Clients
-                // nicht wirklich empfehlenswert, aber für die Zwecke der Schulung
-                // eigentlich genau das richtige Verhalten
-                properties.setProperty(
-                        DatabaseConstants.HSQLDB_PROPERTY_SHUTDOWN,
-                        DatabaseConstants.DEFAULT_SHUTDOWN_STANDALONE_DB);
-            }
-            connect(DriverManager.getConnection(connectionSetting.getUrl(),
-                    properties));
-            connectedProperty.set(true);
-        } catch (NullPointerException | ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
-            connectedProperty.set(false);
-            throw new DatabaseConnectionException(ex);
-        }
-    }
+				// als Schulungsclient wird mit kleinen Datenbanken gearbeitet,
+				// den
+				// automatischen Checkpoint daher recht niedrig ansetzen
+				properties.setProperty(DatabaseConstants.HSQLDB_PROPERTY_LOG_SIZE_MB,
+						DatabaseConstants.DEFAULT_LOG_SIZE_MB);
+				// der automatische Shutdown ist zwar für "echte" DB-Clients
+				// nicht wirklich empfehlenswert, aber für die Zwecke der
+				// Schulung
+				// eigentlich genau das richtige Verhalten
+				properties.setProperty(DatabaseConstants.HSQLDB_PROPERTY_SHUTDOWN,
+						DatabaseConstants.DEFAULT_SHUTDOWN_STANDALONE_DB);
+			}
+			connect(DriverManager.getConnection(connectionSetting.getUrl(), properties));
+			connectedProperty.set(true);
+		} catch (NullPointerException | ClassNotFoundException | InstantiationException | IllegalAccessException
+				| SQLException ex) {
+			connectedProperty.set(false);
+			throw new DatabaseConnectionException(ex);
+		}
+	}
 
-    public void disconnect() {
-        if (connection != null) {
-            new DatabaseDisconnector(connection).disconnect();
-            connectedProperty.set(false);
-            connection = null;
-        }
-    }
+	public void disconnect() {
+		if (connection != null) {
+			new DatabaseDisconnector(connection).disconnect();
+			connectedProperty.set(false);
+			connection = null;
+		}
+	}
 
-    public BooleanProperty connectedProperty() {
-        return connectedProperty;
-    }
+	public BooleanProperty connectedProperty() {
+		return connectedProperty;
+	}
 
-    public Connection getConnection() {
-        return connection;
-    }
+	public Connection getConnection() {
+		return connection;
+	}
 
-    public Statement getStatement() throws SQLException {
-        return connection.createStatement();
-    }
+	public Statement getStatement() throws SQLException {
+		return connection.createStatement();
+	}
 }

@@ -38,44 +38,43 @@ import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
  *
  * @author Michael Kühweg
  */
-@ExecutionLifecycleRefresh(phase=ExecutionLifecyclePhase.ERROR)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR)
 public class ErrorOnExecutionMessage implements ExecutionTracker {
 
-    private String message;
+	private String message;
 
-    public ErrorOnExecutionMessage() {
-    }
+	public ErrorOnExecutionMessage() {
+	}
 
-    public ErrorOnExecutionMessage(String message) {
-        this.message = message;
-    }
+	public ErrorOnExecutionMessage(final String message) {
+		this.message = message;
+	}
 
-    @Override
-    public void beforeExecution() {
-        // nix
-    }
+	@Override
+	public void beforeExecution() {
+		// nix
+	}
 
-    @Override
-    public void intermediateUpdate(StatementExecutionInformation executionInfo) {
-        // nada
-    }
+	@Override
+	public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+		// nada
+	}
 
-    @Override
-    public void afterExecution() {
-        // niente
-    }
+	@Override
+	public void afterExecution() {
+		// niente
+	}
 
-    @Override
-    public void errorOnExecution(String message) {
-        this.message = message;
-    }
+	@Override
+	public void errorOnExecution(final String message) {
+		this.message = message;
+	}
 
-    @Override
-    public void show() {
-        CommonDialog error = new ErrorMessage(
-                DialogDictionary.MESSAGEBOX_ERROR.toString(), message,
-                DialogDictionary.COMMON_BUTTON_OK.toString());
-        error.askUserFeedback();
-    }
+	@Override
+	public void show() {
+		final CommonDialog error = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(), message,
+				DialogDictionary.COMMON_BUTTON_OK.toString());
+		error.askUserFeedback();
+	}
 
 }

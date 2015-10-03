@@ -27,53 +27,52 @@ package de.kuehweg.sqltool.dialog.component.schematree;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
 /**
- * Verwaltung der geöffneten Elemente der Schema-Baumansicht
+ * Verwaltung der geöffneten Elemente der Schema-Baumansicht.
  *
  * @author Michael Kühweg
  */
 public class SchemaTreeExpandedStateSaver {
 
-    private Set<String> expanded = new HashSet<>();
+	private final Set<String> expanded = new HashSet<>();
 
-    public void readExpandedStateFrom(final TreeView<String> tree) {
-        expanded.clear();
-        if (tree != null && tree.getRoot() != null) {
-            recurseRead(tree.getRoot(), tree.getRoot().getValue());
-        }
-    }
+	public void readExpandedStateFrom(final TreeView<String> tree) {
+		expanded.clear();
+		if (tree != null && tree.getRoot() != null) {
+			recurseRead(tree.getRoot(), tree.getRoot().getValue());
+		}
+	}
 
-    public void expandFromSavedState(final TreeView<String> tree) {
-        if (tree != null && tree.getRoot() != null) {
-            recurseExpand(tree.getRoot(), tree.getRoot().getValue());
-        }
-    }
+	public void expandFromSavedState(final TreeView<String> tree) {
+		if (tree != null && tree.getRoot() != null) {
+			recurseExpand(tree.getRoot(), tree.getRoot().getValue());
+		}
+	}
 
-    private void recurseRead(final TreeItem<String> parent,
-            final String parentKey) {
-        if (parent != null) {
-            if (parent.isExpanded()) {
-                expanded.add(parentKey);
-                ObservableList<TreeItem<String>> children = parent.getChildren();
-                for (final TreeItem<String> child : children) {
-                    recurseRead(child, parentKey + "." + child.getValue());
-                }
-            }
-        }
-    }
+	private void recurseRead(final TreeItem<String> parent, final String parentKey) {
+		if (parent != null) {
+			if (parent.isExpanded()) {
+				expanded.add(parentKey);
+				final ObservableList<TreeItem<String>> children = parent.getChildren();
+				for (final TreeItem<String> child : children) {
+					recurseRead(child, parentKey + "." + child.getValue());
+				}
+			}
+		}
+	}
 
-    private void recurseExpand(final TreeItem<String> parent,
-            final String parentKey) {
-        if (parent != null) {
-            parent.setExpanded(expanded.contains(parentKey));
-            ObservableList<TreeItem<String>> children = parent.getChildren();
-            for (final TreeItem<String> child : children) {
-                recurseExpand(child, parentKey + "." + child.getValue());
-            }
-        }
-    }
+	private void recurseExpand(final TreeItem<String> parent, final String parentKey) {
+		if (parent != null) {
+			parent.setExpanded(expanded.contains(parentKey));
+			final ObservableList<TreeItem<String>> children = parent.getChildren();
+			for (final TreeItem<String> child : children) {
+				recurseExpand(child, parentKey + "." + child.getValue());
+			}
+		}
+	}
 }

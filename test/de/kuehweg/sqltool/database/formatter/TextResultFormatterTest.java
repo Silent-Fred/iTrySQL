@@ -25,14 +25,10 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.database.execution.ResultHeader;
-import de.kuehweg.sqltool.database.execution.ResultRow;
-import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import de.kuehweg.sqltool.database.execution.StatementResult;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -40,140 +36,137 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.database.execution.ResultHeader;
+import de.kuehweg.sqltool.database.execution.ResultRow;
+import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
+import de.kuehweg.sqltool.database.execution.StatementResult;
+
 /**
- *
+ * Test für die Textformatierung von Abfrageergebnissen.
+ * 
  * @author Michael Kühweg
  */
 public class TextResultFormatterTest {
 
-    private StatementExecutionInformation info;
+	private StatementExecutionInformation info;
 
-    public TextResultFormatterTest() {
-    }
+	public TextResultFormatterTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-        info = new StatementExecutionInformation();
+	@Before
+	public void setUp() {
+		info = new StatementExecutionInformation();
 
-        info.setExecutedBy("executor");
-        info.setConnectionDescription("quelle_connerie");
-        info.setStartOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9,
-                30, 13).getTimeInMillis());
-        info.setEndOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9,
-                30, 42).getTimeInMillis());
-        info.setSummary("all's well that ends well");
+		info.setExecutedBy("executor");
+		info.setConnectionDescription("quelle_connerie");
+		info.setStartOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9, 30, 13).getTimeInMillis());
+		info.setEndOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9, 30, 42).getTimeInMillis());
+		info.setSummary("all's well that ends well");
 
-        StatementResult statementResult = new StatementResult();
-        statementResult.setHeader(new ResultHeader("col1", "col2", "col3"));
-        statementResult.addRow(new ResultRow(1, "1", "ABCDE"));
-        statementResult.addRow(new ResultRow(2, "1234567890", "A"));
+		final StatementResult statementResult = new StatementResult();
+		statementResult.setHeader(new ResultHeader("col1", "col2", "col3"));
+		statementResult.addRow(new ResultRow(1, "1", "ABCDE"));
+		statementResult.addRow(new ResultRow(2, "1234567890", "A"));
 
-        info.setStatementResult(statementResult);
-    }
+		info.setStatementResult(statementResult);
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void fullTemplate() {
+	@Test
+	public void fullTemplate() {
 
-        ResultTemplate template = new ResultTemplate();
-        template.setPlaceholderExecution("E");
-        template.setPlaceholderResultTable("R");
-        template.setPlaceholderRowCount("C");
-        template.setPlaceholderLimitRows("L");
-        template.setTemplate("E\nR\nC\nL\n");
+		final ResultTemplate template = new ResultTemplate();
+		template.setTemplate("{0}\n{1}\n{2}\n{3}\n");
 
-        final String whenAndWho = "[24.01.1984 09:30:13 executor@quelle_connerie]";
-        final String header = "col1 col2       col3 \n---- ---------- -----";
-        final String row1 = "1    1          ABCDE";
-        final String row2 = "2    1234567890 A    ";
-        final String rowCount = MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.
-                toString(), 2);
-        final String limited = MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.
-                toString(), 2);
+		final String whenAndWho = "[24.01.1984 09:30:13 executor@quelle_connerie]";
+		final String header = "col1 col2       col3 \n---- ---------- -----";
+		final String row1 = "1    1          ABCDE";
+		final String row2 = "2    1234567890 A    ";
+		final String rowCount = MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(), 2);
+		final String limited = MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.toString(), 2);
 
-        final String expectedBasicResult = whenAndWho + "\n" + header + "\n" + row1 + "\n"
-                + row2 + "\n" + rowCount + "\n";
-        final String expectedResultUnlimited = expectedBasicResult + "" + "\n";
-        Assert.assertEquals(expectedResultUnlimited, new TextResultFormatter(info).format(template));
+		final String expectedBasicResult = whenAndWho + "\n" + header + "\n" + row1 + "\n" + row2 + "\n" + rowCount
+				+ "\n";
+		final String expectedResultUnlimited = expectedBasicResult + "" + "\n";
+		Assert.assertEquals(expectedResultUnlimited, new TextResultFormatter(info).format(template));
 
-        info.setLimitMaxRowsReached(true);
-        final String expectedResultLimited = expectedBasicResult + limited + "\n";
-        Assert.assertEquals(expectedResultLimited, new TextResultFormatter(info).format(template));
-    }
+		info.setLimitMaxRowsReached(true);
+		final String expectedResultLimited = expectedBasicResult + limited + "\n";
+		Assert.assertEquals(expectedResultLimited, new TextResultFormatter(info).format(template));
+	}
 
-    @Test
-    public void partialTemplate() {
+	@Test
+	public void partialTemplate() {
 
-        ResultTemplate template = new ResultTemplate();
-        template.setPlaceholderExecution("E");
-        template.setPlaceholderResultTable("R");
-        template.setPlaceholderRowCount("C");
-        template.setPlaceholderLimitRows("L");
+		final ResultTemplate template = new ResultTemplate();
 
-        final String whenAndWho = "[24.01.1984 09:30:13 executor@quelle_connerie]";
-        final String header = "col1 col2       col3 \n---- ---------- -----";
-        final String row1 = "1    1          ABCDE";
-        final String row2 = "2    1234567890 A    ";
-        final String rowCount = MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.
-                toString(), 2);
-        final String limited = MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.
-                toString(), 2);
+		final String whenAndWho = "[24.01.1984 09:30:13 executor@quelle_connerie]";
+		final String header = "col1 col2       col3 \n---- ---------- -----";
+		final String row1 = "1    1          ABCDE";
+		final String row2 = "2    1234567890 A    ";
+		final String rowCount = MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(), 2);
+		final String limited = MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.toString(), 2);
 
-        template.setTemplate("E\nR\n");
-        String expectedResult = whenAndWho + "\n" + header + "\n" + row1 + "\n"
-                + row2 + "\n";
-        Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		template.setTemplate("{0}\n{1}\n");
+		String expectedResult = whenAndWho + "\n" + header + "\n" + row1 + "\n" + row2 + "\n";
+		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 
-        template.setTemplate("E\nC\n");
-        expectedResult = whenAndWho + "\n" + rowCount + "\n";
-        Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		template.setTemplate("{0}\n{2}\n");
+		expectedResult = whenAndWho + "\n" + rowCount + "\n";
+		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 
-        template.setTemplate("R\nC\n");
-        expectedResult = header + "\n" + row1 + "\n" + row2 + "\n" + rowCount + "\n";
-        Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
-    }
+		template.setTemplate("{1}\n{2}\n");
+		expectedResult = header + "\n" + row1 + "\n" + row2 + "\n" + rowCount + "\n";
+		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 
-    @Test
-    public void unknownUser() {
+		template.setTemplate("{0}\n{3}\n");
+		expectedResult = whenAndWho + "\n\n";
+		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		info.setLimitMaxRowsReached(true);
+		expectedResult = whenAndWho + "\n" + limited + "\n";
+		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+	}
 
-        ResultTemplate template = new ResultTemplate();
-        template.setPlaceholderExecution("E");
+	@Test
+	public void unknownUser() {
 
-        info.setExecutedBy(null);
-        final String whenAndWho = "[24.01.1984 09:30:13 "
-                + DialogDictionary.LABEL_UNKNOWN_USER.toString() + "]";
-    }
+		final ResultTemplate template = new ResultTemplate();
+		template.setTemplate("{0}");
 
-    @Test
-    public void emptyResult() {
+		info.setExecutedBy(null);
+		final String whenAndWho = "[24.01.1984 09:30:13 " + DialogDictionary.LABEL_UNKNOWN_USER.toString() + "]";
 
-        info.setStatementResult(null);
+		Assert.assertEquals(whenAndWho, new TextResultFormatter(info).format(template));
+	}
 
-        ResultTemplate template = new ResultTemplate();
-        template.setPlaceholderExecution("E");
-        template.setPlaceholderResultTable("R");
-        template.setPlaceholderRowCount("C");
-        template.setPlaceholderLimitRows("L");
-        template.setTemplate("E\nR\nC\nL\n");
+	@Test
+	public void emptyResult() {
 
-        final String whenAndWho = "[24.01.1984 09:30:13 executor@quelle_connerie]";
+		info.setStatementResult(null);
 
-        // summary wird an der Position des rowcount eingesetzt - mit vorgegebenem
-        // Template also zwei Leerzeilen zwischen allgemeinen Ausführungsdaten und der
-        // Zusammenfassung
-        final String expectedResult = whenAndWho + "\n\n" + "all's well that ends well"
-                + "\n\n";
-        Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
-    }
+		final ResultTemplate template = new ResultTemplate();
+		template.setTemplate("{0}\n{1}\n{2}\n{3}\n");
+
+		final String whenAndWho = "[24.01.1984 09:30:13 executor@quelle_connerie]";
+
+		// summary wird an der Position des rowcount eingesetzt - mit
+		// vorgegebenem
+		// Template also zwei Leerzeilen zwischen allgemeinen Ausführungsdaten
+		// und der
+		// Zusammenfassung
+		final String expectedResult = whenAndWho + "\n\n" + "all's well that ends well" + "\n\n";
+		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+	}
 }

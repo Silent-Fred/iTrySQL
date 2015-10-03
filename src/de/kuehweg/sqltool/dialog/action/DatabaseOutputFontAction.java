@@ -30,28 +30,50 @@ import de.kuehweg.sqltool.dialog.base.TextAreaFontResizer;
 import javafx.scene.control.TextArea;
 
 /**
- * Action zum Ändern der Schriftgröße in der Datenbankausgabe
+ * Action zum Ändern der Schriftgröße in der Datenbankausgabe.
  *
  * @author Michael Kühweg
  */
 public class DatabaseOutputFontAction extends FontAction {
 
-    private final TextArea textArea;
+	private final TextArea textArea;
 
-    public DatabaseOutputFontAction(final TextArea textArea) {
-        super();
-        this.textArea = textArea;
-    }
+	/**
+	 * FontAction, die die eingestellte Schriftgröße in den Preferences als
+	 * Schriftgröße für den DB-Output speichert.
+	 *
+	 * @param textArea
+	 *            TextArea, auf die die Schriftgröße angewendet wird.
+	 */
+	public DatabaseOutputFontAction(final TextArea textArea) {
+		this(textArea, 0);
+	}
 
-    @Override
-    public void storeToPreferences(final int size) {
-        if (getUserPreferences() != null) {
-            getUserPreferences().setFontSizeDbOutput(size);
-        }
-    }
+	/**
+	 * FontAction, die die eingestellte Schriftgröße in den Preferences als
+	 * Schriftgröße für den DB-Output speichert.
+	 *
+	 * @param textArea
+	 *            TextArea, auf die die Schriftgröße angewendet wird.
+	 * @param diff
+	 *            Größenveränderung - kann setDiff() später überschrieben
+	 *            werden.
+	 */
+	public DatabaseOutputFontAction(final TextArea textArea, final int diff) {
+		super();
+		this.textArea = textArea;
+		setDiff(diff);
+	}
 
-    @Override
-    public FontResizer getDefaultFontResizer() {
-        return new TextAreaFontResizer(textArea);
-    }
+	@Override
+	public void storeToPreferences(final int size) {
+		if (getUserPreferences() != null) {
+			getUserPreferences().setFontSizeDbOutput(size);
+		}
+	}
+
+	@Override
+	public FontResizer getDefaultFontResizer() {
+		return new TextAreaFontResizer(textArea);
+	}
 }

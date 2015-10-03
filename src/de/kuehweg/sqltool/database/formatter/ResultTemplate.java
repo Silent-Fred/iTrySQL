@@ -26,168 +26,92 @@
 package de.kuehweg.sqltool.database.formatter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.MessageFormat;
 
 /**
- * Vorlage für den HTML-Export eines Abfrageergebnisses
+ * Vorlage für den Export eines Abfrageergebnisses.
  *
  * @author Michael Kühweg
  */
 public class ResultTemplate implements Serializable {
 
-    private static final long serialVersionUID = 7747205068436233754L;
+	private static final long serialVersionUID = 7747205068436233755L;
 
-    private String template;
-    private String placeholderExecution;
-    private String placeholderResultTable;
-    private String placeholderRowCount;
-    private String placeholderLimitRows;
+	private static final String FALLBACK_TEMPLATE = "{0}\n{1}\n{2}\n{3}\n";
 
-    private String executionInformation;
-    private String resultTable;
-    private String rowCount;
-    private String limitedRows;
+	private String template;
 
-    public ResultTemplate() {
-    }
+	private String executionInformation;
+	private String resultTable;
+	private String rowCount;
+	private String limitedRows;
 
-    public ResultTemplate(final String template) {
-        this.template = template;
-    }
+	public ResultTemplate() {
+	}
 
-    public String getTemplate() {
-        return template;
-    }
+	public ResultTemplate(final String template) {
+		this.template = template;
+	}
 
-    public void setTemplate(String template) {
-        this.template = template;
-    }
+	public String getTemplate() {
+		return template;
+	}
 
-    public String getPlaceholderExecution() {
-        return placeholderExecution;
-    }
+	public void setTemplate(final String template) {
+		this.template = template;
+	}
 
-    public void setPlaceholderExecution(String placeholderExecution) {
-        this.placeholderExecution = placeholderExecution;
-    }
+	public String getExecutionInformation() {
+		return executionInformation;
+	}
 
-    public String getPlaceholderResultTable() {
-        return placeholderResultTable;
-    }
+	public void setExecutionInformation(final String executionInformation) {
+		this.executionInformation = executionInformation;
+	}
 
-    public void setPlaceholderResultTable(String placeholderResultTable) {
-        this.placeholderResultTable = placeholderResultTable;
-    }
+	public String getResultTable() {
+		return resultTable;
+	}
 
-    public String getPlaceholderRowCount() {
-        return placeholderRowCount;
-    }
+	public void setResultTable(final String resultTable) {
+		this.resultTable = resultTable;
+	}
 
-    public void setPlaceholderRowCount(String placeholderRowCount) {
-        this.placeholderRowCount = placeholderRowCount;
-    }
+	public String getRowCount() {
+		return rowCount;
+	}
 
-    public String getPlaceholderLimitRows() {
-        return placeholderLimitRows;
-    }
+	public void setRowCount(final String rowCount) {
+		this.rowCount = rowCount;
+	}
 
-    public void setPlaceholderLimitRows(String placeholderLimitRows) {
-        this.placeholderLimitRows = placeholderLimitRows;
-    }
+	public String getLimitedRows() {
+		return limitedRows;
+	}
 
-    public String getExecutionInformation() {
-        return executionInformation;
-    }
+	public void setLimitedRows(final String limitedRows) {
+		this.limitedRows = limitedRows;
+	}
 
-    public void setExecutionInformation(String executionInformation) {
-        this.executionInformation = executionInformation;
-    }
+	protected final String buildWithFallbackTemplate() {
+		return MessageFormat.format(FALLBACK_TEMPLATE,
+				getExecutionInformation() != null ? getExecutionInformation() : "",
+				getResultTable() != null ? getResultTable() : "", getRowCount() != null ? getRowCount() : "",
+				getLimitedRows() != null ? getLimitedRows() : "");
+	}
 
-    public String getResultTable() {
-        return resultTable;
-    }
-
-    public void setResultTable(String resultTable) {
-        this.resultTable = resultTable;
-    }
-
-    public String getRowCount() {
-        return rowCount;
-    }
-
-    public void setRowCount(String rowCount) {
-        this.rowCount = rowCount;
-    }
-
-    public String getLimitedRows() {
-        return limitedRows;
-    }
-
-    public void setLimitedRows(String limitedRows) {
-        this.limitedRows = limitedRows;
-    }
-
-    private List<String> splitTemplate(final String part, final String placeholder) {
-        List<String> split = new LinkedList<>();
-        if (part != null && placeholder != null) {
-            int pos = part.indexOf(placeholder);
-            if (pos < 0) {
-                split.add(part);
-            } else {
-                if (pos > 0) {
-                    split.add(part.substring(0, pos));
-                }
-                split.add(placeholder);
-                if (pos + placeholder.length() < part.length()) {
-                    split.addAll(splitTemplate(part.substring(pos + placeholder.length()),
-                            placeholder));
-                }
-            }
-        }
-        return split;
-    }
-
-    private List<String> splitTemplate(final List<String> parts, final String placeholder) {
-        List<String> split = new LinkedList<>();
-        for (String part : parts) {
-            split.addAll(splitTemplate(part, placeholder));
-        }
-        return split;
-    }
-
-    private List<String> fillInPlaceholder(final List<String> parts,
-            final String placeholder, final String replacement) {
-        List<String> withReplacements = new ArrayList<>(parts.size());
-        for (String part : parts) {
-            if (placeholder.equals(part)) {
-                withReplacements.add(replacement != null ? replacement : "");
-            } else {
-                withReplacements.add(part);
-            }
-        }
-        return withReplacements;
-    }
-
-    public String buildWithTemplate() {
-        String buildWithMe = getTemplate() != null ? getTemplate() : "";
-        List<String> parts = new LinkedList<>();
-        parts.add(buildWithMe);
-        parts = splitTemplate(parts, placeholderExecution);
-        parts = splitTemplate(parts, placeholderResultTable);
-        parts = splitTemplate(parts, placeholderRowCount);
-        parts = splitTemplate(parts, placeholderLimitRows);
-
-        parts = fillInPlaceholder(parts, placeholderExecution, getExecutionInformation());
-        parts = fillInPlaceholder(parts, placeholderResultTable, getResultTable());
-        parts = fillInPlaceholder(parts, placeholderRowCount, getRowCount());
-        parts = fillInPlaceholder(parts, placeholderLimitRows, getLimitedRows());
-
-        StringBuilder builder = new StringBuilder();
-        for (String part : parts) {
-            builder.append(part);
-        }
-        return builder.toString();
-    }
+	public String buildWithTemplate() {
+		if (getTemplate() == null) {
+			return "";
+		}
+		try {
+			return MessageFormat.format(getTemplate(),
+					getExecutionInformation() != null ? getExecutionInformation() : "",
+					getResultTable() != null ? getResultTable() : "", getRowCount() != null ? getRowCount() : "",
+					getLimitedRows() != null ? getLimitedRows() : "");
+		} catch (final IllegalArgumentException e) {
+			// bei defektem Template wird eine Standardformatierung verwendet
+			return buildWithFallbackTemplate();
+		}
+	}
 }

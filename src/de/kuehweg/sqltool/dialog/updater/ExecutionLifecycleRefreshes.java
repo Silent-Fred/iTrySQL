@@ -32,7 +32,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Container für mehrfache Refresh-Angaben pro Klasse
+ * Container für mehrfache Refresh-Angaben pro Klasse.
  *
  * @author Michael Kühweg
  */
@@ -41,5 +41,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ExecutionLifecycleRefreshes {
 
-    ExecutionLifecycleRefresh[] value();
+	ExecutionLifecycleRefresh[]value();
 }

@@ -56,8 +56,7 @@ public class MetaDataReaderIntegrationTest extends AbstractBaseIntegration {
 	}
 
 	@Before
-	public void setUp() throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException, SQLException {
+	public void setUp() throws SQLException {
 		openTestConnection();
 	}
 
@@ -69,55 +68,42 @@ public class MetaDataReaderIntegrationTest extends AbstractBaseIntegration {
 
 	@Test
 	public void readMetaData() {
-		final DatabaseDescription db = new MetaDataReader()
-				.readMetaData(getTestConnection());
+		final DatabaseDescription db = new MetaDataReader().readMetaData(getTestConnection());
 		// Standardanmeldung: 1 Catalog mit 2 System-Schemas und einem PUBLIC
 		// Schema
 		Assert.assertEquals(1, db.getCatalogs().size());
-		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas()
-				.size());
+		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
 	}
 
 	@Test
 	public void createTableAndReadMetaData() throws SQLException {
-		getTestConnection().createStatement().execute(
-				"create table test (test numeric(10))");
-		final DatabaseDescription db = new MetaDataReader()
-				.readMetaData(getTestConnection());
+		getTestConnection().createStatement().execute("create table test (test numeric(10))");
+		final DatabaseDescription db = new MetaDataReader().readMetaData(getTestConnection());
 		// Standardanmeldung: 1 Catalog mit 2 System-Schemas und einem PUBLIC
 		// Schema
 		Assert.assertEquals(1, db.getCatalogs().size());
-		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas()
-				.size());
+		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
 
-		for (final SchemaDescription schema : db.getCatalogs().iterator()
-				.next().getSchemas()) {
+		for (final SchemaDescription schema : db.getCatalogs().iterator().next().getSchemas()) {
 			if (schema.getName().equals("PUBLIC")) {
 				Assert.assertEquals(1, schema.getTables().size());
-				Assert.assertEquals("TEST", schema.getTables().iterator()
-						.next().getName());
-				Assert.assertEquals("TABLE", schema.getTables().iterator()
-						.next().getTableType());
+				Assert.assertEquals("TEST", schema.getTables().iterator().next().getName());
+				Assert.assertEquals("TABLE", schema.getTables().iterator().next().getTableType());
 			}
 		}
 	}
 
 	@Test
 	public void createTableAndViewAndReadMetaData() throws SQLException {
-		getTestConnection().createStatement().execute(
-				"create table test_table (test numeric(10))");
-		getTestConnection().createStatement().execute(
-				"create view test_view as select * from test_table");
-		final DatabaseDescription db = new MetaDataReader()
-				.readMetaData(getTestConnection());
+		getTestConnection().createStatement().execute("create table test_table (test numeric(10))");
+		getTestConnection().createStatement().execute("create view test_view as select * from test_table");
+		final DatabaseDescription db = new MetaDataReader().readMetaData(getTestConnection());
 		// Standardanmeldung: 1 Catalog mit 2 System-Schemas
 		// zusätzliches Benutzerschema
 		Assert.assertEquals(1, db.getCatalogs().size());
-		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas()
-				.size());
+		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
 
-		for (final SchemaDescription schema : db.getCatalogs().iterator()
-				.next().getSchemas()) {
+		for (final SchemaDescription schema : db.getCatalogs().iterator().next().getSchemas()) {
 			if (schema.getName().equals("PUBLIC")) {
 				Assert.assertEquals(2, schema.getTables().size());
 				Assert.assertEquals(1, schema.getTablesByType("TABLE").size());

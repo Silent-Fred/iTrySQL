@@ -33,38 +33,35 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextArea;
 
 /**
- * Button in TableView des SQL-Verlaufs
+ * Button in TableView des SQL-Verlaufs.
  *
  * @author Michael Kühweg
  */
 public class SQLHistoryButtonCell extends TableCell<SQLHistory, String> {
 
-    private final Button button;
+	private final Button button;
 
-    private SQLHistory historyItem;
+	private SQLHistory historyItem;
 
-    public SQLHistoryButtonCell(final TextArea appendTo) {
-        super();
-        button = new Button(
-                DialogDictionary.LABEL_APPEND_HISTORY_ITEM_TO_EDITOR.
-                toString());
-        button.setOnAction((ActionEvent event) -> {
-            if (appendTo != null && historyItem != null) {
-                appendTo.appendText("\n" + historyItem.getOriginalSQL());
-            }
-        });
-    }
+	public SQLHistoryButtonCell(final TextArea appendTo) {
+		super();
+		button = new Button(DialogDictionary.LABEL_APPEND_HISTORY_ITEM_TO_EDITOR.toString());
+		button.setOnAction((final ActionEvent event) -> {
+			if (appendTo != null && historyItem != null) {
+				appendTo.appendText("\n" + historyItem.getOriginalSQL());
+			}
+		});
+	}
 
-    @Override
-    protected void updateItem(String text, boolean empty) {
-        if (!empty) {
-            setGraphic(button);
-            historyItem = (SQLHistory) tableRowProperty().getValue().
-                    getItem();
-        } else {
-            setGraphic(null);
-            historyItem = null;
-        }
-    }
+	@Override
+	protected void updateItem(final String text, final boolean empty) {
+		if (!empty) {
+			setGraphic(button);
+			historyItem = (SQLHistory) tableRowProperty().getValue().getItem();
+		} else {
+			setGraphic(null);
+			historyItem = null;
+		}
+	}
 
 }

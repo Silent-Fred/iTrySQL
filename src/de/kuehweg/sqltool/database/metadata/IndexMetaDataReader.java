@@ -25,30 +25,27 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.IndexColumnDescription;
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.IndexColumnDescription;
+
 /**
- * Metadaten für Indizes aufbereiten
+ * Metadaten für Indizes aufbereiten.
  *
  * @author Michael Kühweg
  */
 public class IndexMetaDataReader extends AbstractMetaDataReader {
 
-    public IndexMetaDataReader(DatabaseDescription root) {
-        super(root);
-    }
+	public IndexMetaDataReader(final DatabaseDescription root) {
+		super(root);
+	}
 
-    @Override
-    protected void readAndAddDescription(final ResultSet index) throws SQLException {
-        findParent(index.getString("TABLE_CAT"),
-                index.getString("TABLE_SCHEM"),
-                index.getString("TABLE_NAME")).adoptOrphan(new IndexColumnDescription(
-                                index.getString("INDEX_NAME"),
-                                index.getString("COLUMN_NAME"),
-                                index.getInt("ORDINAL_POSITION"),
-                                index.getBoolean("NON_UNIQUE")));
-    }
+	@Override
+	protected void readAndAddDescription(final ResultSet index) throws SQLException {
+		findParent(index.getString("TABLE_CAT"), index.getString("TABLE_SCHEM"), index.getString("TABLE_NAME"))
+				.adoptOrphan(new IndexColumnDescription(index.getString("INDEX_NAME"), index.getString("COLUMN_NAME"),
+						index.getInt("ORDINAL_POSITION"), index.getBoolean("NON_UNIQUE")));
+	}
 }

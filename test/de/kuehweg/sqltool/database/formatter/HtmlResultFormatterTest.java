@@ -25,121 +25,104 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
+import java.text.MessageFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.ResultHeader;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.database.execution.StatementResult;
-import java.text.MessageFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
+ * Test für die HTML-Aufbereitung von Abfrageergebnissen.
  *
  * @author Michael Kühweg
  */
 public class HtmlResultFormatterTest {
 
-    private StatementExecutionInformation info;
+	private StatementExecutionInformation info;
 
-    public HtmlResultFormatterTest() {
-    }
+	@Before
+	public void setUp() {
+		info = new StatementExecutionInformation();
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+		info.setExecutedBy("<ex>");
+		info.setConnectionDescription("<connerie>");
+		info.setStartOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9, 30, 13).getTimeInMillis());
+		info.setEndOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9, 30, 42).getTimeInMillis());
+		info.setSummary("<all's well that ends well>");
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+		final StatementResult statementResult = new StatementResult();
+		statementResult.setHeader(new ResultHeader("<col1>", "<col2>"));
+		statementResult.addRow(new ResultRow(1, "<BCD>"));
 
-    @Before
-    public void setUp() {
-        info = new StatementExecutionInformation();
+		info.setStatementResult(statementResult);
+	}
 
-        info.setExecutedBy("<ex>");
-        info.setConnectionDescription("<connerie>");
-        info.setStartOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9,
-                30, 13).getTimeInMillis());
-        info.setEndOfExecution(new GregorianCalendar(1984, Calendar.JANUARY, 24, 9,
-                30, 42).getTimeInMillis());
-        info.setSummary("<all's well that ends well>");
+	@After
+	public void tearDown() {
+	}
 
-        StatementResult statementResult = new StatementResult();
-        statementResult.setHeader(new ResultHeader("<col1>", "<col2>"));
-        statementResult.addRow(new ResultRow(1, "<BCD>"));
+	@Test
+	public void fullTemplate() {
 
-        info.setStatementResult(statementResult);
-    }
+		final ResultTemplate template = new ResultTemplate();
 
-    @After
-    public void tearDown() {
-    }
+		template.setTemplate("{0}");
+		Assert.assertEquals("[24.01.1984 09:30:13 &lt;ex&gt;@&lt;connerie&gt;]",
+				new HtmlResultFormatter(info).format(template));
 
-    @Test
-    public void fullTemplate() {
+		template.setTemplate("{1}");
+		final String resultHeader = "<thead><tr><th>&lt;col1&gt;</th><th>&lt;col2&gt;</th></tr></thead>";
+		final String resultRow = "<tbody>\n<tr><td>1</td><td>&lt;BCD&gt;</td></tr>\n</tbody>\n";
+		final String expectedResult = "<table>\n" + resultHeader + resultRow + "</table>\n";
+		Assert.assertEquals(expectedResult, new HtmlResultFormatter(info).format(template));
 
-        ResultTemplate template = new ResultTemplate();
-        template.setPlaceholderExecution("E");
-        template.setPlaceholderResultTable("R");
-        template.setPlaceholderRowCount("C");
-        template.setPlaceholderLimitRows("L");
+		template.setTemplate("{2}");
+		Assert.assertEquals(MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(), 1),
+				new HtmlResultFormatter(info).format(template));
 
-        template.setTemplate("E");
-        Assert.assertEquals("[24.01.1984 09:30:13 &lt;ex&gt;@&lt;connerie&gt;]",
-                new HtmlResultFormatter(info).format(template));
+		info.setLimitMaxRowsReached(true);
+		template.setTemplate("{3}");
+		Assert.assertEquals(MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.toString(), 1),
+				new HtmlResultFormatter(info).format(template));
+	}
 
-        template.setTemplate("R");
-        String resultHeader
-                = "<thead><tr><th>&lt;col1&gt;</th><th>&lt;col2&gt;</th></tr></thead>";
-        String resultRow = "<tbody>\n<tr><td>1</td><td>&lt;BCD&gt;</td></tr>\n</tbody>\n";
-        String expectedResult = "<table>\n" + resultHeader + resultRow + "</table>\n";
-        Assert.
-                assertEquals(expectedResult, new HtmlResultFormatter(info).
-                        format(template));
+	@Test
+	public void emptyResult() {
 
-        template.setTemplate("C");
-        Assert.
-                assertEquals(MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.
-                                toString(), 1), new HtmlResultFormatter(info).
-                        format(template));
+		info.setStatementResult(null);
 
-        info.setLimitMaxRowsReached(true);
-        template.setTemplate("L");
-        Assert.
-                assertEquals(MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.
-                                toString(), 1), new HtmlResultFormatter(info).
-                        format(template));
-    }
+		final ResultTemplate template = new ResultTemplate();
+		template.setTemplate("{0}\n{1}\n{2}\n{3}\n");
 
-    @Test
-    public void emptyResult() {
+		final String whenAndWho = "[24.01.1984 09:30:13 &lt;ex&gt;@&lt;connerie&gt;]";
 
-        info.setStatementResult(null);
+		// summary wird an der Position des rowcount eingesetzt - mit
+		// vorgegebenem
+		// Template also zwei Leerzeilen zwischen allgemeinen Ausführungsdaten
+		// und der
+		// Zusammenfassung
+		final String expectedResult = whenAndWho + "\n\n" + "&lt;all's well that ends well&gt;" + "\n\n";
+		Assert.assertEquals(expectedResult, new HtmlResultFormatter(info).format(template));
+	}
 
-        ResultTemplate template = new ResultTemplate();
-        template.setPlaceholderExecution("E");
-        template.setPlaceholderResultTable("R");
-        template.setPlaceholderRowCount("C");
-        template.setPlaceholderLimitRows("L");
-        template.setTemplate("E\nR\nC\nL\n");
-
-        final String whenAndWho = "[24.01.1984 09:30:13 &lt;ex&gt;@&lt;connerie&gt;]";
-
-        // summary wird an der Position des rowcount eingesetzt - mit vorgegebenem
-        // Template also zwei Leerzeilen zwischen allgemeinen Ausführungsdaten und der
-        // Zusammenfassung
-        final String expectedResult = whenAndWho + "\n\n"
-                + "&lt;all's well that ends well&gt;"
-                + "\n\n";
-        Assert.
-                assertEquals(expectedResult, new HtmlResultFormatter(info).
-                        format(template));
-    }
+	/**
+	 * Absicherung, dass die Vorlagendatei für HTML-Export von MessageFormat
+	 * korrekt verarbeitet werden kann (bei Verarbeitungsfehlern wird mit dem
+	 * Fallback-Template gearbeitet).
+	 */
+	@Test
+	public void testDefaultTemplate() {
+		final ResultTemplate template = new DefaultHtmlResultTemplate();
+		final ResultFormatter formatter = new HtmlResultFormatter(info);
+		Assert.assertNotEquals(formatter.format(template), template.buildWithFallbackTemplate());
+	}
 }

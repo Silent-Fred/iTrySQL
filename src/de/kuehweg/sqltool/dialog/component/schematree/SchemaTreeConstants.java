@@ -26,30 +26,30 @@
 package de.kuehweg.sqltool.dialog.component.schematree;
 
 /**
- * Konstanten für die Strukturansicht
+ * Konstanten für die Strukturansicht.
  *
  * @author Michael Kühweg
  */
-public class SchemaTreeConstants {
+public final class SchemaTreeConstants {
 
-    public static final String DATABASE = "d";
-    public static final String USER = "u";
-    public static final String TABLE = "t";
-    public static final String COLUMN = "c";
-    public static final String PRIMARY_KEY = "p";
-    public static final String FOREIGN_KEY_CONSTRAINT = "f";
-    public static final String REFERENCES = "r";
-    public static final String INDEX = "i";
+	public static final String DATABASE = "d";
+	public static final String USER = "u";
+	public static final String TABLE = "t";
+	public static final String COLUMN = "c";
+	public static final String PRIMARY_KEY = "p";
+	public static final String FOREIGN_KEY_CONSTRAINT = "f";
+	public static final String REFERENCES = "r";
+	public static final String INDEX = "i";
 
-    public static final String STYLE_DATABASE = "schema-tree-database";
-    public static final String STYLE_USER = "schema-tree-user";
-    public static final String STYLE_TABLE = "schema-tree-table";
-    public static final String STYLE_COLUMN = "schema-tree-column";
-    public static final String STYLE_PRIMARY_KEY = "schema-tree-primary-key";
-    public static final String STYLE_FOREIGN_KEY_CONSTRAINT = "schema-tree-foreign-key-constraint";
-    public static final String STYLE_REFERENCES = "schema-tree-references";
-    public static final String STYLE_INDEX = "schema-tree-index";
-    
-    private SchemaTreeConstants() {
-    }
+	public static final String STYLE_DATABASE = "schema-tree-database";
+	public static final String STYLE_USER = "schema-tree-user";
+	public static final String STYLE_TABLE = "schema-tree-table";
+	public static final String STYLE_COLUMN = "schema-tree-column";
+	public static final String STYLE_PRIMARY_KEY = "schema-tree-primary-key";
+	public static final String STYLE_FOREIGN_KEY_CONSTRAINT = "schema-tree-foreign-key-constraint";
+	public static final String STYLE_REFERENCES = "schema-tree-references";
+	public static final String STYLE_INDEX = "schema-tree-index";
+
+	private SchemaTreeConstants() {
+	}
 }

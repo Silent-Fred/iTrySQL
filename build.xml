@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="iTrySQL" default="do-deploy" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+
+	<property name="ProjectBase" value="." />
+	<property name="BuildPath" value="./build" />
+	<property name="ReferencedLibrariesPath" value="${user.home}/JavaProjects" />
+
+	<target name="init-fx-tasks">
+		<path id="fxant">
+			<filelist>
+				<file name="${java.home}\..\lib\ant-javafx.jar" />
+				<file name="${java.home}\lib\jfxrt.jar" />
+				<file name="${BuildPath}" />
+				<file name="${basedir}" />
+			</filelist>
+		</path>
+
+		<taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant" classpathref="fxant" />
+	</target>
+	<target name="setup-staging-area">
+		<delete dir="${BuildPath}/externalLibs" />
+		<delete dir="${BuildPath}/project" />
+		<delete dir="${BuildPath}/projectRefs" />
+
+		<mkdir dir="${BuildPath}/externalLibs" />
+
+		<copy todir="${BuildPath}/externalLibs">
+			<fileset dir="${ReferencedLibrariesPath}">
+				<filename name="hsqldb.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${BuildPath}/externalLibs">
+			<fileset dir="${ReferencedLibrariesPath}">
+				<filename name="commons-lang3-3.4.jar" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${BuildPath}/project" />
+		<copy todir="${BuildPath}/project">
+			<fileset dir="${ProjectBase}">
+				<include name="src/**" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${BuildPath}/package" />
+		<copy todir="${BuildPath}/package">
+			<fileset dir="${ProjectBase}/src/package">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${BuildPath}/projectRefs" />
+	</target>
+	<target name='do-compile'>
+		<delete dir="${BuildPath}/build" />
+		<mkdir dir="${BuildPath}/build/src" />
+		<mkdir dir="${BuildPath}/build/libs" />
+		<mkdir dir="${BuildPath}/build/classes" />
+
+		<!-- Copy project-libs references -->
+		<copy todir="${BuildPath}/build/libs">
+			<fileset dir="${BuildPath}/externalLibs">
+				<include name="commons-lang3-3.4.jar" />
+				<include name="hsqldb.jar" />
+			</fileset>
+		</copy>
+
+		<!-- Copy project references -->
+
+		<!-- Copy project sources itself -->
+		<copy todir="${BuildPath}/build/src">
+			<fileset dir="${BuildPath}/project/src">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<javac includeantruntime="false" source="1.8" target="1.8" srcdir="${BuildPath}/build/src" destdir="${BuildPath}/build/classes" encoding="UTF-8">
+			<classpath>
+				<fileset dir="${BuildPath}/build/libs">
+					<include name="*" />
+				</fileset>
+			</classpath>
+		</javac>
+
+		<!-- Copy over none Java-Files -->
+		<copy todir="${BuildPath}/build/classes">
+			<fileset dir="${BuildPath}/project/src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+	</target>
+	<target name="do-deploy" depends="setup-staging-area, do-compile, init-fx-tasks">
+		<delete file="${BuildPath}/dist" />
+		<delete file="${BuildPath}/deploy" />
+
+		<mkdir dir="${BuildPath}/dist" />
+		<mkdir dir="${BuildPath}/dist/libs" />
+
+		<copy todir="${BuildPath}/dist/libs">
+			<fileset dir="${BuildPath}/externalLibs">
+				<include name="*" />
+			</fileset>
+		</copy>
+
+
+		<fx:resources id="appRes">
+			<fx:fileset dir="${BuildPath}/dist" includes="iTrySQL.jar" />
+			<fx:fileset dir="${BuildPath}/dist" includes="libs/*" />
+			<fx:fileset dir="${BuildPath}/dist" includes="resources/**" />
+		</fx:resources>
+
+		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="3.0" />
+
+		<mkdir dir="${BuildPath}/build/classes/META-INF" />
+
+		<fx:jar destfile="${BuildPath}/dist/iTrySQL.jar">
+			<fx:application refid="fxApplication" />
+			<fileset dir="${BuildPath}/build/classes">
+			</fileset>
+			<fx:resources refid="appRes" />
+
+			<manifest>
+				<attribute name="Implementation-Vendor" value="kuehweg.de" />
+				<attribute name="Implementation-Title" value="iTrySQL" />
+				<attribute name="Implementation-Version" value="3.0" />
+				<attribute name="JavaFX-Feature-Proxy" value="None" />
+			</manifest>
+		</fx:jar>
+
+
+		<mkdir dir="${BuildPath}/deploy" />
+		<!-- Need to use ${basedir} because somehow the ant task is calculating the directory differently -->
+		<!-- fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${basedir}/deploy" outfile="iTrySQL" nativeBundles="dmg" updatemode="background" -->
+		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BuildPath}/deploy" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
+
+			<fx:platform basedir="${java.home}" />
+			<fx:info title="iTrySQL" vendor="kuehweg.de" />
+
+			<fx:application refId="fxApplication" />
+			<fx:resources refid="appRes" />
+		</fx:deploy>
+
+
+	</target>
+</project>

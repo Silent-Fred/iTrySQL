@@ -35,60 +35,57 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
 /**
- * Baumansicht der Datenbankstruktur
+ * Baumansicht der Datenbankstruktur.
  *
  * @author Michael Kühweg
  */
 public class SchemaTreeBuilder implements Runnable {
 
-    private final DatabaseDescription db;
-    private final TreeView<String> treeToUpdate;
+	private final DatabaseDescription db;
+	private final TreeView<String> treeToUpdate;
 
-    private final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
-    private final SchemaTreeIconFinder iconFinder = new SchemaTreeIconFinder();
+	private final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
+	private final SchemaTreeIconFinder iconFinder = new SchemaTreeIconFinder();
 
-    public SchemaTreeBuilder(final DatabaseDescription db,
-            final TreeView<String> treeToUpdate) {
-        this.db = db;
-        this.treeToUpdate = treeToUpdate;
-    }
+	public SchemaTreeBuilder(final DatabaseDescription db, final TreeView<String> treeToUpdate) {
+		this.db = db;
+		this.treeToUpdate = treeToUpdate;
+	}
 
-    @Override
-    public void run() {
-        refreshSchemaTree(db, treeToUpdate);
-        // FIXME
-        WebViewWithHSQLDBBugfix.fix();
-    }
+	@Override
+	public void run() {
+		refreshSchemaTree(db, treeToUpdate);
+		// FIXME
+		WebViewWithHSQLDBBugfix.fix();
+	}
 
-    private void refreshSchemaTree(final DatabaseDescription db,
-            final TreeView<String> treeToUpdate) {
-        final SchemaTreeExpandedStateSaver stateSaver = new SchemaTreeExpandedStateSaver();
-        stateSaver.readExpandedStateFrom(treeToUpdate);
+	private void refreshSchemaTree(final DatabaseDescription db, final TreeView<String> treeToUpdate) {
+		final SchemaTreeExpandedStateSaver stateSaver = new SchemaTreeExpandedStateSaver();
+		stateSaver.readExpandedStateFrom(treeToUpdate);
 
-        treeToUpdate.setRoot(createTreeItem(new SchemaTreeNodeBuilder(db).
-                getRootOfPopulatedTree()));
+		treeToUpdate.setRoot(createTreeItem(new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree()));
 
-        stateSaver.expandFromSavedState(treeToUpdate);
-    }
+		stateSaver.expandFromSavedState(treeToUpdate);
+	}
 
-    private TreeItem<String> createTreeItem(final SchemaTreeNode node) {
-        final TreeItem<String> treeItem = new TreeItem<>();
-        treeItem.setValue(node.getTitle());
-        treeItem.setGraphic(createIcon(node));
-        for (SchemaTreeNode child : node.getChildren()) {
-            treeItem.getChildren().add(createTreeItem(child));
-        }
-        return treeItem;
-    }
+	private TreeItem<String> createTreeItem(final SchemaTreeNode node) {
+		final TreeItem<String> treeItem = new TreeItem<>();
+		treeItem.setValue(node.getTitle());
+		treeItem.setGraphic(createIcon(node));
+		for (final SchemaTreeNode child : node.getChildren()) {
+			treeItem.getChildren().add(createTreeItem(child));
+		}
+		return treeItem;
+	}
 
-    private Node createIcon(final SchemaTreeNode node) {
-        final String iconCharacter = iconFinder.iconCharacter(node);
-        if (iconCharacter.isEmpty()) {
-            return null;
-        }
-        final Label icon = new Label(iconCharacter);
-        icon.getStyleClass().add(styleFinder.styleClass(node));
-        return icon;
-    }
+	private Node createIcon(final SchemaTreeNode node) {
+		final String iconCharacter = iconFinder.iconCharacter(node);
+		if (iconCharacter.isEmpty()) {
+			return null;
+		}
+		final Label icon = new Label(iconCharacter);
+		icon.getStyleClass().add(styleFinder.styleClass(node));
+		return icon;
+	}
 
 }

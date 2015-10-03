@@ -28,37 +28,37 @@ package de.kuehweg.sqltool.database.metadata.description;
 import java.util.Objects;
 
 /**
- * Beschreibung der Primärschlüssel-Metadaten
+ * Beschreibung der Primärschlüssel-Metadaten.
  *
  * @author Michael Kühweg
  */
 public class PrimaryKeyColumnDescription extends DatabaseObjectDescription {
 
-    private final String columnName;
+	private final String columnName;
 
-    public PrimaryKeyColumnDescription(String primaryKeyName, String columnName) {
-        super(primaryKeyName);
-        this.columnName = columnName == null ? "" : columnName;
-    }
+	public PrimaryKeyColumnDescription(final String primaryKeyName, final String columnName) {
+		super(primaryKeyName);
+		this.columnName = columnName == null ? "" : columnName;
+	}
 
-    public String getColumnName() {
-        return columnName;
-    }
+	public String getColumnName() {
+		return columnName;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = super.hashCode();
-        hash = 79 * hash + Objects.hashCode(this.columnName);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		hash = 79 * hash + Objects.hashCode(columnName);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            final PrimaryKeyColumnDescription other = (PrimaryKeyColumnDescription) obj;
-            return Objects.equals(this.columnName, other.columnName);
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (super.equals(obj)) {
+			final PrimaryKeyColumnDescription other = (PrimaryKeyColumnDescription) obj;
+			return Objects.equals(columnName, other.columnName);
+		}
+		return false;
+	}
 
 }

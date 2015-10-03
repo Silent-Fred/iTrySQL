@@ -29,37 +29,37 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Ergebnismenge einer SELECT-Anweisung
+ * Ergebnismenge einer SELECT-Anweisung.
  *
  * @author Michael Kühweg
  */
 public class StatementResult {
 
-    private ResultHeader header;
+	private ResultHeader header;
 
-    private List<ResultRow> rows = new LinkedList<>();
+	private List<ResultRow> rows = new LinkedList<>();
 
-    public ResultHeader getHeader() {
-        return header;
-    }
+	public ResultHeader getHeader() {
+		return header;
+	}
 
-    public void setHeader(final ResultHeader header) {
-        this.header = header;
-    }
+	public void setHeader(final ResultHeader header) {
+		this.header = header;
+	}
 
-    public List<ResultRow> getRows() {
-        return rows;
-    }
+	public List<ResultRow> getRows() {
+		return rows;
+	}
 
-    public void setRows(final List<ResultRow> rows) {
-        this.rows = rows;
-    }
+	public void setRows(final List<ResultRow> rows) {
+		this.rows = rows;
+	}
 
-    public void clearRows() {
-        rows.clear();
-    }
+	public void clearRows() {
+		rows.clear();
+	}
 
-    public boolean addRow(final ResultRow row) {
-        return row != null ? rows.add(row) : false;
-    }
+	public boolean addRow(final ResultRow row) {
+		return row != null ? rows.add(row) : false;
+	}
 }

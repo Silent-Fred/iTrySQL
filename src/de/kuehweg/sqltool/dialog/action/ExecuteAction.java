@@ -38,7 +38,7 @@ import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 
 /**
- * Dialogaktion: SQL-Anweisung(en) ausführen
+ * Dialogaktion: SQL-Anweisung(en) ausführen.
  *
  * @author Michael Kühweg
  */
@@ -69,25 +69,21 @@ public class ExecuteAction {
 	}
 
 	/**
-	 * SQL ausführen, Dialog aktualisieren, Rückmeldung an Anwender
+	 * SQL ausführen, Dialog aktualisieren, Rückmeldung an Anwender.
 	 *
 	 * @param sql
 	 * @param connection
 	 */
-	public void handleExecuteAction(final String sql,
-			final Connection connection) {
+	public void handleExecuteAction(final String sql, final Connection connection) {
 		try {
 			final DialogDictionary feedback = startExecution(sql, connection);
 			if (feedback != null) {
-				final CommonDialog alert = new AlertBox(
-						DialogDictionary.MESSAGEBOX_WARNING.toString(),
-						feedback.toString(),
-						DialogDictionary.COMMON_BUTTON_OK.toString());
+				final CommonDialog alert = new AlertBox(DialogDictionary.MESSAGEBOX_WARNING.toString(),
+						feedback.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
 				alert.askUserFeedback();
 			}
 		} catch (final SQLException ex) {
-			final CommonDialog error = new ErrorMessage(
-					DialogDictionary.MESSAGEBOX_ERROR.toString(),
+			final CommonDialog error = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 					ex.getLocalizedMessage() + " (" + ex.getSQLState() + ")",
 					DialogDictionary.COMMON_BUTTON_OK.toString());
 			error.askUserFeedback();
@@ -109,8 +105,7 @@ public class ExecuteAction {
 	 *             Connection). SQLExceptions während der Ausführung werden über
 	 *             die mitgegebenen ExecutionTracker abgebildet.
 	 */
-	protected DialogDictionary startExecution(final String sql,
-			final Connection connection) throws SQLException {
+	protected DialogDictionary startExecution(final String sql, final Connection connection) throws SQLException {
 		if (sql == null || sql.trim().length() == 0) {
 			return DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE;
 		}
@@ -121,8 +116,7 @@ public class ExecuteAction {
 		// und bekommt alle Informationen mit auf den Weg, um
 		// während und zum Abschluss der Ausführung die Oberfläche
 		// aktualisieren zu können.
-		final ExecutionTask executionTask = new ExecutionTask(
-				connection.createStatement(), sql);
+		final ExecutionTask executionTask = new ExecutionTask(connection.createStatement(), sql);
 		executionTask.attach(trackers);
 		if (limitMaxRows) {
 			executionTask.setMaxRows(DatabaseConstants.MAX_ROWS);

@@ -32,95 +32,94 @@ import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefreshPolicy;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 
 /**
- * Stub für Tests mit ExecutionTracker. Ohne Refresh, wird daher nicht an den UI-Thread
- * verwiesen.
+ * Stub für Tests mit ExecutionTracker. Ohne Refresh, wird daher nicht an den
+ * UI-Thread verwiesen.
  *
  * @author Michael Kühweg
  */
-@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR, refreshPolicy
-        = ExecutionLifecycleRefreshPolicy.NONE)
+@ExecutionLifecycleRefresh(phase = ExecutionLifecyclePhase.ERROR, refreshPolicy = ExecutionLifecycleRefreshPolicy.NONE)
 public class ExecutionTrackerStub implements ExecutionTracker {
 
-    private int beforeExecutionCalls;
-    private int intermediateUpdateCalls;
-    private int afterExecutionCalls;
-    private int errorOnExecutionCalls;
-    private int showCalls;
+	private int beforeExecutionCalls;
+	private int intermediateUpdateCalls;
+	private int afterExecutionCalls;
+	private int errorOnExecutionCalls;
+	private int showCalls;
 
-    private String message;
+	private String message;
 
-    @Override
-    public void beforeExecution() {
-        beforeExecutionCalls++;
-    }
+	@Override
+	public void beforeExecution() {
+		beforeExecutionCalls++;
+	}
 
-    @Override
-    public void intermediateUpdate(StatementExecutionInformation executionInfo) {
-        intermediateUpdateCalls++;
-    }
+	@Override
+	public void intermediateUpdate(final StatementExecutionInformation executionInfo) {
+		intermediateUpdateCalls++;
+	}
 
-    @Override
-    public void afterExecution() {
-        afterExecutionCalls++;
-    }
+	@Override
+	public void afterExecution() {
+		afterExecutionCalls++;
+	}
 
-    @Override
-    public void errorOnExecution(String message) {
-        this.message = message;
-        errorOnExecutionCalls++;
-    }
+	@Override
+	public void errorOnExecution(final String message) {
+		this.message = message;
+		errorOnExecutionCalls++;
+	}
 
-    @Override
-    public void show() {
-        showCalls++;
-    }
+	@Override
+	public void show() {
+		showCalls++;
+	}
 
-    public int getBeforeExecutionCalls() {
-        return beforeExecutionCalls;
-    }
+	public int getBeforeExecutionCalls() {
+		return beforeExecutionCalls;
+	}
 
-    public void setBeforeExecutionCalls(int beforeExecutionCalls) {
-        this.beforeExecutionCalls = beforeExecutionCalls;
-    }
+	public void setBeforeExecutionCalls(final int beforeExecutionCalls) {
+		this.beforeExecutionCalls = beforeExecutionCalls;
+	}
 
-    public int getIntermediateUpdateCalls() {
-        return intermediateUpdateCalls;
-    }
+	public int getIntermediateUpdateCalls() {
+		return intermediateUpdateCalls;
+	}
 
-    public void setIntermediateUpdateCalls(int intermediateUpdateCalls) {
-        this.intermediateUpdateCalls = intermediateUpdateCalls;
-    }
+	public void setIntermediateUpdateCalls(final int intermediateUpdateCalls) {
+		this.intermediateUpdateCalls = intermediateUpdateCalls;
+	}
 
-    public int getAfterExecutionCalls() {
-        return afterExecutionCalls;
-    }
+	public int getAfterExecutionCalls() {
+		return afterExecutionCalls;
+	}
 
-    public void setAfterExecutionCalls(int afterExecutionCalls) {
-        this.afterExecutionCalls = afterExecutionCalls;
-    }
+	public void setAfterExecutionCalls(final int afterExecutionCalls) {
+		this.afterExecutionCalls = afterExecutionCalls;
+	}
 
-    public int getErrorOnExecutionCalls() {
-        return errorOnExecutionCalls;
-    }
+	public int getErrorOnExecutionCalls() {
+		return errorOnExecutionCalls;
+	}
 
-    public void setErrorOnExecutionCalls(int errorOnExecutionCalls) {
-        this.errorOnExecutionCalls = errorOnExecutionCalls;
-    }
+	public void setErrorOnExecutionCalls(final int errorOnExecutionCalls) {
+		this.errorOnExecutionCalls = errorOnExecutionCalls;
+	}
 
-    public int getShowCalls() {
-        return showCalls;
-    }
+	public int getShowCalls() {
+		return showCalls;
+	}
 
-    public void setShowCalls(int showCalls) {
-        this.showCalls = showCalls;
-    }
+	public void setShowCalls(final int showCalls) {
+		this.showCalls = showCalls;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setMessage(final String message) {
+		this.message = message;
+	}
 
 }

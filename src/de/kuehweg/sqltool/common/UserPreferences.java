@@ -32,200 +32,196 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
 /**
- * Abbildung der vom Anwender steuerbaren Einstellungen, die beim nächsten Programmstart
- * wiederhergestellt werden.
+ * Abbildung der vom Anwender steuerbaren Einstellungen, die beim nächsten
+ * Programmstart wiederhergestellt werden.
  *
  * @author Michael Kühweg
  */
 public class UserPreferences implements UserPreferencesI {
 
-    // Keys der Preferences als Konstanten definiert
-    private static final String LIMIT_MAX_ROWS = "limitMaxRows";
-    private static final String FONT_SIZE_STATEMENT_INPUT = "fontSize.statementInput";
-    private static final String FONT_SIZE_DB_OUTPUT = "fontSize.dbOutput";
-    private static final String BEEP_AUDIO_CLIP = "beepAudioClip";
-    private static final String BEEP_VOLUME = "beepVolume";
-    // Preferences mit Defaultwerten
-    private boolean limitMaxRows = isDefaultLimitMaxRows();
-    private int fontSizeStatementInput = getDefaultFontSizeStatementInput();
-    private int fontSizeDbOutput = getDefaultFontSizeDbOutput();
-    private double beepVolume = getDefaultBeepVolume();
-    private ProvidedAudioClip beepAudioClip = getDefaultBeepAudioClip();
+	// Keys der Preferences als Konstanten definiert
+	private static final String LIMIT_MAX_ROWS = "limitMaxRows";
+	private static final String FONT_SIZE_STATEMENT_INPUT = "fontSize.statementInput";
+	private static final String FONT_SIZE_DB_OUTPUT = "fontSize.dbOutput";
+	private static final String BEEP_AUDIO_CLIP = "beepAudioClip";
+	private static final String BEEP_VOLUME = "beepVolume";
+	// Preferences mit Defaultwerten
+	private boolean limitMaxRows = isDefaultLimitMaxRows();
+	private int fontSizeStatementInput = getDefaultFontSizeStatementInput();
+	private int fontSizeDbOutput = getDefaultFontSizeDbOutput();
+	private double beepVolume = getDefaultBeepVolume();
+	private ProvidedAudioClip beepAudioClip = getDefaultBeepAudioClip();
 
-    private final Preferences preferences;
+	private final Preferences preferences;
 
-    public UserPreferences() {
-        preferences = Preferences.userNodeForPackage(getClass()).node(
-                getClass().getSimpleName());
-        initialize();
-        addChangeListener();
-    }
+	public UserPreferences() {
+		preferences = Preferences.userNodeForPackage(getClass()).node(getClass().getSimpleName());
+		initialize();
+		addChangeListener();
+	}
 
-    private void initialize() {
-        limitMaxRows = preferences.getBoolean(LIMIT_MAX_ROWS, isDefaultLimitMaxRows());
-        fontSizeStatementInput = preferences.getInt(FONT_SIZE_STATEMENT_INPUT,
-                getDefaultFontSizeStatementInput());
-        fontSizeDbOutput = preferences.getInt(FONT_SIZE_DB_OUTPUT,
-                getDefaultFontSizeDbOutput());
-        beepVolume = preferences.getDouble(BEEP_VOLUME, getDefaultBeepVolume());
-        try {
-            final String beepAudioClipName = preferences.get(
-                    BEEP_AUDIO_CLIP, getDefaultBeepAudioClip().name());
-            beepAudioClip = ProvidedAudioClip.valueOf(beepAudioClipName);
-        } catch (final IllegalArgumentException ex) {
-            beepAudioClip = getDefaultBeepAudioClip();
-        }
-    }
+	private void initialize() {
+		limitMaxRows = preferences.getBoolean(LIMIT_MAX_ROWS, isDefaultLimitMaxRows());
+		fontSizeStatementInput = preferences.getInt(FONT_SIZE_STATEMENT_INPUT, getDefaultFontSizeStatementInput());
+		fontSizeDbOutput = preferences.getInt(FONT_SIZE_DB_OUTPUT, getDefaultFontSizeDbOutput());
+		beepVolume = preferences.getDouble(BEEP_VOLUME, getDefaultBeepVolume());
+		try {
+			final String beepAudioClipName = preferences.get(BEEP_AUDIO_CLIP, getDefaultBeepAudioClip().name());
+			beepAudioClip = ProvidedAudioClip.valueOf(beepAudioClipName);
+		} catch (final IllegalArgumentException ex) {
+			beepAudioClip = getDefaultBeepAudioClip();
+		}
+	}
 
-    private void addChangeListener() {
-        preferences.addPreferenceChangeListener((PreferenceChangeEvent evt) -> {
-            try {
-                evt.getNode().flush();
-            } catch (BackingStoreException ex) {
-                Logger.getLogger(UserPreferences.class.getName()).
-                        log(Level.WARNING, evt.getKey(), ex);
-            }
-        });
-    }
+	private void addChangeListener() {
+		preferences.addPreferenceChangeListener((final PreferenceChangeEvent evt) -> {
+			try {
+				evt.getNode().flush();
+			} catch (final BackingStoreException ex) {
+				Logger.getLogger(UserPreferences.class.getName()).log(Level.WARNING, evt.getKey(), ex);
+			}
+		});
+	}
 
-    /**
-     * Datenbankabfragen begrenzt?
-     *
-     * @return
-     */
-    @Override
-    public boolean isLimitMaxRows() {
-        return limitMaxRows;
-    }
+	/**
+	 * Datenbankabfragen begrenzt?
+	 *
+	 * @return
+	 */
+	@Override
+	public boolean isLimitMaxRows() {
+		return limitMaxRows;
+	}
 
-    /**
-     * Begrenzung der Ergebnismengen ein- oder ausschalten
-     *
-     * @param limitMaxRows
-     */
-    @Override
-    public void setLimitMaxRows(final boolean limitMaxRows) {
-        if (this.limitMaxRows != limitMaxRows) {
-            this.limitMaxRows = limitMaxRows;
-            preferences.putBoolean(LIMIT_MAX_ROWS, limitMaxRows);
-        }
-    }
+	/**
+	 * Begrenzung der Ergebnismengen ein- oder ausschalten.
+	 *
+	 * @param limitMaxRows
+	 */
+	@Override
+	public void setLimitMaxRows(final boolean limitMaxRows) {
+		if (this.limitMaxRows != limitMaxRows) {
+			this.limitMaxRows = limitMaxRows;
+			preferences.putBoolean(LIMIT_MAX_ROWS, limitMaxRows);
+		}
+	}
 
-    /**
-     * Ausgewählte Schriftgröße für die Eingabe der SQL-Anweisungen
-     *
-     * @return
-     */
-    @Override
-    public int getFontSizeStatementInput() {
-        return fontSizeStatementInput;
-    }
+	/**
+	 * Ausgewählte Schriftgröße für die Eingabe der SQL-Anweisungen.
+	 *
+	 * @return
+	 */
+	@Override
+	public int getFontSizeStatementInput() {
+		return fontSizeStatementInput;
+	}
 
-    /**
-     * Schriftgröße für die Eingabe der SQL-Anweisungen in den Voreinstellungen setzen
-     *
-     * @param fontSize
-     */
-    @Override
-    public void setFontSizeStatementInput(final int fontSize) {
-        if (fontSizeStatementInput != fontSize) {
-            fontSizeStatementInput = fontSize;
-            preferences.putInt(FONT_SIZE_STATEMENT_INPUT, fontSize);
-        }
-    }
+	/**
+	 * Schriftgröße für die Eingabe der SQL-Anweisungen in den Voreinstellungen
+	 * setzen.
+	 *
+	 * @param fontSize
+	 */
+	@Override
+	public void setFontSizeStatementInput(final int fontSize) {
+		if (fontSizeStatementInput != fontSize) {
+			fontSizeStatementInput = fontSize;
+			preferences.putInt(FONT_SIZE_STATEMENT_INPUT, fontSize);
+		}
+	}
 
-    /**
-     * Ausgewählte Schriftgröße für die DB-Ausgaben
-     *
-     * @return
-     */
-    @Override
-    public int getFontSizeDbOutput() {
-        return fontSizeDbOutput;
-    }
+	/**
+	 * Ausgewählte Schriftgröße für die DB-Ausgaben.
+	 *
+	 * @return
+	 */
+	@Override
+	public int getFontSizeDbOutput() {
+		return fontSizeDbOutput;
+	}
 
-    /**
-     * Schriftgröße für die DB-Ausgaben in den Voreinstellungen setzen
-     *
-     * @param fontSize
-     */
-    @Override
-    public void setFontSizeDbOutput(final int fontSize) {
-        if (fontSizeDbOutput != fontSize) {
-            fontSizeDbOutput = fontSize;
-            preferences.putInt(FONT_SIZE_DB_OUTPUT, fontSize);
-        }
-    }
+	/**
+	 * Schriftgröße für die DB-Ausgaben in den Voreinstellungen setzen.
+	 *
+	 * @param fontSize
+	 */
+	@Override
+	public void setFontSizeDbOutput(final int fontSize) {
+		if (fontSizeDbOutput != fontSize) {
+			fontSizeDbOutput = fontSize;
+			preferences.putInt(FONT_SIZE_DB_OUTPUT, fontSize);
+		}
+	}
 
-    /**
-     * Lautstärke des Benachrichtigungstons wenn Aktionen abgeschlossen sind.
-     *
-     * @return
-     */
-    @Override
-    public double getBeepVolume() {
-        return beepVolume;
-    }
+	/**
+	 * Lautstärke des Benachrichtigungstons wenn Aktionen abgeschlossen sind.
+	 *
+	 * @return
+	 */
+	@Override
+	public double getBeepVolume() {
+		return beepVolume;
+	}
 
-    /**
-     * Lautstärke des Benachrichtgungstons setzen.
-     *
-     * @param beepVolume
-     */
-    @Override
-    public void setBeepVolume(final double beepVolume) {
-        if (this.beepVolume != beepVolume) {
-            this.beepVolume = beepVolume;
-            preferences.putDouble(BEEP_VOLUME, beepVolume);
-        }
-    }
+	/**
+	 * Lautstärke des Benachrichtgungstons setzen.
+	 *
+	 * @param beepVolume
+	 */
+	@Override
+	public void setBeepVolume(final double beepVolume) {
+		if (this.beepVolume != beepVolume) {
+			this.beepVolume = beepVolume;
+			preferences.putDouble(BEEP_VOLUME, beepVolume);
+		}
+	}
 
-    /**
-     * Benachrichtigungston wenn Aktionen abgeschlossen sind.
-     *
-     * @return
-     */
-    @Override
-    public ProvidedAudioClip getBeepAudioClip() {
-        return beepAudioClip;
-    }
+	/**
+	 * Benachrichtigungston wenn Aktionen abgeschlossen sind.
+	 *
+	 * @return
+	 */
+	@Override
+	public ProvidedAudioClip getBeepAudioClip() {
+		return beepAudioClip;
+	}
 
-    /**
-     * Benachrichtgungston setzen.
-     *
-     * @param beepAudioClip
-     */
-    @Override
-    public void setBeepAudioClip(final ProvidedAudioClip beepAudioClip) {
-        if (this.beepAudioClip != beepAudioClip) {
-            this.beepAudioClip = beepAudioClip;
-            preferences.put(BEEP_AUDIO_CLIP, beepAudioClip.name());
-        }
-    }
+	/**
+	 * Benachrichtgungston setzen.
+	 *
+	 * @param beepAudioClip
+	 */
+	@Override
+	public void setBeepAudioClip(final ProvidedAudioClip beepAudioClip) {
+		if (this.beepAudioClip != beepAudioClip) {
+			this.beepAudioClip = beepAudioClip;
+			preferences.put(BEEP_AUDIO_CLIP, beepAudioClip.name());
+		}
+	}
 
-    @Override
-    public ProvidedAudioClip getDefaultBeepAudioClip() {
-        return ProvidedAudioClip.BEEP;
-    }
+	@Override
+	public ProvidedAudioClip getDefaultBeepAudioClip() {
+		return ProvidedAudioClip.BEEP;
+	}
 
-    @Override
-    public double getDefaultBeepVolume() {
-        return 0.0;
-    }
+	@Override
+	public double getDefaultBeepVolume() {
+		return 0.0;
+	}
 
-    @Override
-    public int getDefaultFontSizeDbOutput() {
-        return 12;
-    }
+	@Override
+	public int getDefaultFontSizeDbOutput() {
+		return 12;
+	}
 
-    @Override
-    public int getDefaultFontSizeStatementInput() {
-        return 12;
-    }
+	@Override
+	public int getDefaultFontSizeStatementInput() {
+		return 12;
+	}
 
-    @Override
-    public boolean isDefaultLimitMaxRows() {
-        return true;
-    }
+	@Override
+	public boolean isDefaultLimitMaxRows() {
+		return true;
+	}
 
 }

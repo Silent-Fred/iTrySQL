@@ -12,7 +12,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.kuehweg.sqltool.itrysql.iTrySQLController">
+<AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.kuehweg.sqltool.itrysql.iTrySQLController">
   <children>
     <AnchorPane id="AnchorPane" prefHeight="576.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="24.0">
       <children>
@@ -130,6 +130,15 @@
                         </ScrollPane>
                       </content>
                     </TitledPane>
+                              <TitledPane animated="false" text="%label_achievements">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <WebView fx:id="achievementsView" prefHeight="595.0" prefWidth="288.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </TitledPane>
                   </panes>
                 </Accordion>
               </children>
@@ -305,15 +314,6 @@
                                         <TableColumn fx:id="sqlHistoryColumnStatement" editable="false" prefWidth="200.0" text="%label_sqlHistoryItem" />
                                       </columns>
                                     </TableView>
-                                  </children>
-                                </AnchorPane>
-                              </content>
-                            </Tab>
-                            <Tab closable="false" text="%label_tabSyntaxDefinition">
-                              <content>
-                                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                  <children>
-                                    <WebView fx:id="syntaxDefinitionView" prefHeight="318.0" prefWidth="887.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                   </children>
                                 </AnchorPane>
                               </content>
