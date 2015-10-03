@@ -17,5 +17,3 @@ Gleiches gilt für das Attribut `Implementation Version`im `<manifest>` Bereich 
 
 Im Tag `fx:deploy` muss je nach Plattform das Attribut `nativeBundles` auf einen anderen Wert als `dmg`
 gesetzt werden (siehe dazu die entsprechende Dokumentation z.B. bei Oracle).
-
-
