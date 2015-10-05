@@ -31,7 +31,7 @@
 
 		<copy todir="${BuildPath}/externalLibs">
 			<fileset dir="${ReferencedLibrariesPath}">
-				<filename name="hsqldb.jar" />
+				<filename name="hsqldb-2.3.3.jar" />
 			</fileset>
 		</copy>
 		<copy todir="${BuildPath}/externalLibs">
@@ -66,7 +66,7 @@
 		<copy todir="${BuildPath}/build/libs">
 			<fileset dir="${BuildPath}/externalLibs">
 				<include name="commons-lang3-3.4.jar" />
-				<include name="hsqldb.jar" />
+				<include name="hsqldb-2.3.3.jar" />
 			</fileset>
 		</copy>
 
