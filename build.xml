@@ -5,6 +5,11 @@
 	<property name="BuildPath" value="./build" />
 	<property name="ReferencedLibrariesPath" value="${user.home}/JavaProjects" />
 
+	<target name="get-dependencies">
+		<get src="http://central.maven.org/maven2/org/hsqldb/hsqldb/2.3.3/hsqldb-2.3.3.jar" dest="${ReferencedLibrariesPath}/hsqldb-2.3.3.jar" usetimestamp="false" ignoreerrors="true" />
+		<get src="http://central.maven.org/maven2/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar" dest="${ReferencedLibrariesPath}/commons-lang3-3.4.jar" usetimestamp="false" ignoreerrors="true" />
+	</target>
+
 	<target name="init-fx-tasks">
 		<path id="fxant">
 			<filelist>

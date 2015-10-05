@@ -122,7 +122,6 @@ import javafx.stage.WindowEvent;
  * Hauptcontroller für den SQL Schulungsclient iTry SQL.
  *
  * @author Michael Kühweg
- *
  */
 public class iTrySQLController implements Initializable, EventHandler<WindowEvent> {
 
