@@ -70,6 +70,10 @@ public class ITrySQL extends Application {
 	 * werden.
 	 */
 	private void initFonts() {
+		Font.loadFont(
+				getClass().getResource("/resources/fonts/source-code-pro/SourceCodePro-Regular.ttf").toExternalForm(),
+				BASE_FONT_SIZE);
+
 		Font.loadFont(getClass().getResource("/resources/fonts/VeraMono.ttf").toExternalForm(), BASE_FONT_SIZE);
 		Font.loadFont(getClass().getResource("/resources/fonts/VeraMoIt.ttf").toExternalForm(), BASE_FONT_SIZE);
 		Font.loadFont(getClass().getResource("/resources/fonts/VeraMoBd.ttf").toExternalForm(), BASE_FONT_SIZE);

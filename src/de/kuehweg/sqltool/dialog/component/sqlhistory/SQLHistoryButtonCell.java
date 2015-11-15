@@ -26,7 +26,6 @@
 package de.kuehweg.sqltool.dialog.component.sqlhistory;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
@@ -37,11 +36,11 @@ import javafx.scene.control.TextArea;
  *
  * @author Michael Kühweg
  */
-public class SQLHistoryButtonCell extends TableCell<SQLHistory, String> {
+public class SQLHistoryButtonCell extends TableCell<SqlHistoryEntry, String> {
 
 	private final Button button;
 
-	private SQLHistory historyItem;
+	private SqlHistoryEntry historyItem;
 
 	public SQLHistoryButtonCell(final TextArea appendTo) {
 		super();
@@ -57,7 +56,7 @@ public class SQLHistoryButtonCell extends TableCell<SQLHistory, String> {
 	protected void updateItem(final String text, final boolean empty) {
 		if (!empty) {
 			setGraphic(button);
-			historyItem = (SQLHistory) tableRowProperty().getValue().getItem();
+			historyItem = (SqlHistoryEntry) tableRowProperty().getValue().getItem();
 		} else {
 			setGraphic(null);
 			historyItem = null;

@@ -44,7 +44,7 @@ import java.nio.file.StandardOpenOption;
  *
  * @author Michael Kühweg
  */
-public class FileUtil {
+public final class FileUtil {
 
 	private FileUtil() {
 		// no instances
@@ -103,10 +103,12 @@ public class FileUtil {
 
 	/**
 	 * Datei lesen, die als Ressource im Paket eingebettet ist (z.B. vorgegebene
-	 * Initialisierungsskripte für die Datenbankinhalte)
+	 * Initialisierungsskripte für die Datenbankinhalte). Es wird erwartet, dass
+	 * die Datei Text enthält.
 	 *
 	 * @param resourceName
-	 * @return
+	 *            Name der Datei innerhalb des Pakets (Pfadangabe erforderlich)
+	 * @return Inhalt der Datei als String
 	 * @throws IOException
 	 */
 	public static String readResourceFile(final String resourceName) throws IOException {

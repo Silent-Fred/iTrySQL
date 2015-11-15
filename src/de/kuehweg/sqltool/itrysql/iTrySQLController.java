@@ -44,7 +44,6 @@ import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.achievement.AchievementManager;
 import de.kuehweg.sqltool.common.achievement.NamedAchievementEvent;
 import de.kuehweg.sqltool.common.exception.DatabaseConnectionException;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.ConnectionHolder;
 import de.kuehweg.sqltool.database.ConnectionSetting;
@@ -75,6 +74,7 @@ import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeModificationDetector;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryButtonCell;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryComponent;
+import de.kuehweg.sqltool.dialog.component.sqlhistory.SqlHistoryEntry;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -192,13 +192,13 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private TreeView<String> schemaTreeView;
 	@FXML
-	private TableView<SQLHistory> sqlHistory;
+	private TableView<SqlHistoryEntry> sqlHistory;
 	@FXML
-	private TableColumn<SQLHistory, String> sqlHistoryColumnAction;
+	private TableColumn<SqlHistoryEntry, String> sqlHistoryColumnAction;
 	@FXML
-	private TableColumn<SQLHistory, String> sqlHistoryColumnStatement;
+	private TableColumn<SqlHistoryEntry, String> sqlHistoryColumnStatement;
 	@FXML
-	private TableColumn<SQLHistory, String> sqlHistoryColumnTimestamp;
+	private TableColumn<SqlHistoryEntry, String> sqlHistoryColumnTimestamp;
 	@FXML
 	private TextArea statementInput;
 	@FXML
@@ -967,7 +967,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		sqlHistoryColumnStatement.setCellValueFactory(new PropertyValueFactory<>("sqlForDisplay"));
 
 		sqlHistoryColumnAction
-				.setCellFactory((final TableColumn<SQLHistory, String> p) -> new SQLHistoryButtonCell(statementInput));
+				.setCellFactory((final TableColumn<SqlHistoryEntry, String> p) -> new SQLHistoryButtonCell(statementInput));
 	}
 
 	/**

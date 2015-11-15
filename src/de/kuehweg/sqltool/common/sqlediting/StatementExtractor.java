@@ -38,69 +38,72 @@ import java.util.List;
  */
 public class StatementExtractor {
 
-    /**
-     * Ermittelt die SQL-Anweisung, in der sich die Eingabemarkierung aktuell
-     * befindet.
-     *
-     * @param script
-     * @param caretPosition
-     * @return
-     */
-    public String extractStatementAtCaretPosition(final String script,
-            final int caretPosition) {
-        final Iterator<String> statementIterator = splitIntoRawStatements(
-                script).iterator();
-        int pos = 0;
-        String lastNotEmptyStatement = "";
-        while (pos <= caretPosition && statementIterator.hasNext()) {
-            String statement = statementIterator.next();
-            if (statement.trim().length() > 0) {
-                lastNotEmptyStatement = statement.trim();
-            }
-            pos += statement.length();
-        }
-        return lastNotEmptyStatement;
-    }
+	/**
+	 * Ermittelt die SQL-Anweisung, in der sich die Eingabemarkierung aktuell
+	 * befindet.
+	 *
+	 * @param script
+	 *            Eingabetext
+	 * @param caretPosition
+	 *            Position der Eingabemarke innerhalb des Eingabetexts
+	 * @return Die SQL Anweisung innerhalb derer sich die Eingabemarkierung
+	 *         befindet (inkl. Randbetrachtung, wenn die Eingabemarke z.B.
+	 *         hinter der letzte Anweisung steht)
+	 */
+	public String extractStatementAtCaretPosition(final String script, final int caretPosition) {
+		final Iterator<String> statementIterator = splitIntoRawStatements(script).iterator();
+		int pos = 0;
+		String lastNotEmptyStatement = "";
+		while (pos <= caretPosition && statementIterator.hasNext()) {
+			final String statement = statementIterator.next();
+			if (statement.trim().length() > 0) {
+				lastNotEmptyStatement = statement.trim();
+			}
+			pos += statement.length();
+		}
+		return lastNotEmptyStatement;
+	}
 
-    /**
-     * Extrahiert alle SQL-Anweisungen aus einem Skript.
-     *
-     * @param script SQL-Skript
-     * @return Liste der enthaltenen SQL-Anweisungen
-     */
-    public List<StatementString> getStatementsFromScript(final String script) {
-        final List<StatementString> statements = new LinkedList<>();
-        for (String statement : splitIntoRawStatements(script)) {
-            String trimmed = statement.trim();
-            if (trimmed.length() > 0) {
-                statements.add(new StatementString(statement));
-            }
-        }
-        return statements;
-    }
+	/**
+	 * Extrahiert alle SQL-Anweisungen aus einem Skript.
+	 *
+	 * @param script
+	 *            SQL-Skript
+	 * @return Liste der enthaltenen SQL-Anweisungen
+	 */
+	public List<StatementString> getStatementsFromScript(final String script) {
+		final List<StatementString> statements = new LinkedList<>();
+		for (final String statement : splitIntoRawStatements(script)) {
+			final String trimmed = statement.trim();
+			if (trimmed.length() > 0) {
+				statements.add(new StatementString(statement));
+			}
+		}
+		return statements;
+	}
 
-    private List<String> splitIntoRawStatements(final String script) {
-        if (script == null || script.trim().length() == 0) {
-            return Collections.emptyList();
-        }
-        final char[] input = script.toCharArray();
-        final List<String> statements = new LinkedList<>();
-        StatementExtractionStates state = StatementExtractionStates.START;
-        int lastPos = 0;
-        int pos = 0;
-        while (pos < input.length) {
-            while (state != StatementExtractionStates.STATEMENT_TERMINATION_FOUND
-                    && pos < input.length) {
-                state = state.evaluate(input[pos++]);
-            }
-            final String statement = new String(input, lastPos, pos - lastPos);
-            lastPos = pos;
-            if (statement.length() > 0) {
-                statements.add(statement);
-            }
-            state = StatementExtractionStates.START;
-        }
-        return statements;
-    }
+	private String statementStartingAtCurrentPosition(final ScannerI scanner) {
+		StatementExtractionStates state = StatementExtractionStates.START;
+		scanner.startToken();
+		do {
+			state = state.evaluate(scanner);
+		} while (state != StatementExtractionStates.STATEMENT_TERMINATION_FOUND);
+		return new String(scanner.currentToken());
+	}
+
+	private List<String> splitIntoRawStatements(final String script) {
+		if (script == null || script.trim().length() == 0) {
+			return Collections.emptyList();
+		}
+		final List<String> statements = new LinkedList<>();
+		final ScannerI scanner = new DefaultScanner(script);
+		while (scanner.hasMoreElements()) {
+			final String statement = statementStartingAtCurrentPosition(scanner);
+			if (statement.length() > 0) {
+				statements.add(statement);
+			}
+		}
+		return statements;
+	}
 
 }

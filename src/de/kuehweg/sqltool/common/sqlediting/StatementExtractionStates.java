@@ -36,96 +36,128 @@ package de.kuehweg.sqltool.common.sqlediting;
  */
 public enum StatementExtractionStates {
 
-    /**
-     * Mit diesem Status wird immer begonnen...
-     */
-    START {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '/') {
-                        return MAYBE_BLOCK_COMMENT;
-                    } else if (input == '-') {
-                        return MAYBE_LINE_COMMENT;
-                    } else if (input == '\'') {
-                        return STRING_LITERAL;
-                    } else if (input == '\"') {
-                        return QUOTED_NAME;
-                    } else if (input == ';') {
-                        return STATEMENT_TERMINATION_FOUND;
-                    }
-                    return START;
-                }
-            },
-    MAYBE_BLOCK_COMMENT {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '*') {
-                        return INSIDE_BLOCK_COMMENT;
-                    }
-                    return START;
-                }
-            },
-    INSIDE_BLOCK_COMMENT {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '*') {
-                        return MAYBE_END_OF_BLOCK_COMMENT;
-                    }
-                    return INSIDE_BLOCK_COMMENT;
-                }
-            },
-    MAYBE_END_OF_BLOCK_COMMENT {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '/') {
-                        return START;
-                    }
-                    return INSIDE_BLOCK_COMMENT;
-                }
-            },
-    MAYBE_LINE_COMMENT {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '-') {
-                        return INSIDE_LINE_COMMENT;
-                    }
-                    return START;
-                }
-            },
-    INSIDE_LINE_COMMENT {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '\n' || input == '\r') {
-                        return START;
-                    }
-                    return INSIDE_LINE_COMMENT;
-                }
-            },
-    STRING_LITERAL {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '\'') {
-                        return START;
-                    }
-                    return STRING_LITERAL;
-                }
-            },
-    QUOTED_NAME {
-                @Override
-                public StatementExtractionStates evaluate(final char input) {
-                    if (input == '\"') {
-                        return START;
-                    }
-                    return QUOTED_NAME;
-                }
-            },
-    /**
-     * wenn dieser Status erreicht ist, ist das Ende einer SQL-Anweisung (oder
-     * des Eingabetexts) erreicht.
-     */
-    STATEMENT_TERMINATION_FOUND;
+	/**
+	 * Mit diesem Status wird immer begonnen...
+	 */
+	START {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '/') {
+					return MAYBE_BLOCK_COMMENT;
+				} else if (input == '-') {
+					return MAYBE_LINE_COMMENT;
+				} else if (input == '\'') {
+					return STRING_LITERAL;
+				} else if (input == '\"') {
+					return QUOTED_NAME;
+				} else if (input == ';') {
+					return STATEMENT_TERMINATION_FOUND;
+				}
+				return START;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	MAYBE_BLOCK_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '*') {
+					return INSIDE_BLOCK_COMMENT;
+				}
+				return START;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	INSIDE_BLOCK_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '*') {
+					return MAYBE_END_OF_BLOCK_COMMENT;
+				}
+				return INSIDE_BLOCK_COMMENT;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	MAYBE_END_OF_BLOCK_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '/') {
+					return START;
+				}
+				return INSIDE_BLOCK_COMMENT;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	MAYBE_LINE_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '-') {
+					return INSIDE_LINE_COMMENT;
+				}
+				return START;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	INSIDE_LINE_COMMENT {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '\n' || input == '\r') {
+					return START;
+				}
+				return INSIDE_LINE_COMMENT;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	STRING_LITERAL {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '\'') {
+					return START;
+				}
+				return STRING_LITERAL;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	QUOTED_NAME {
+		@Override
+		public StatementExtractionStates evaluate(final ScannerI scanner) {
+			if (scanner.hasMoreElements()) {
+				final char input = scanner.read();
+				if (input == '\"') {
+					return START;
+				}
+				return QUOTED_NAME;
+			}
+			return STATEMENT_TERMINATION_FOUND;
+		}
+	},
+	/**
+	 * wenn dieser Status erreicht ist, ist das Ende einer SQL-Anweisung (oder
+	 * des Eingabetexts) erreicht.
+	 */
+	STATEMENT_TERMINATION_FOUND;
 
-    public StatementExtractionStates evaluate(final char input) {
-        throw new IllegalArgumentException(name());
-    }
+	public StatementExtractionStates evaluate(final ScannerI scanner) {
+		throw new IllegalArgumentException(name());
+	}
 }

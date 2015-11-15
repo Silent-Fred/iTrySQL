@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common.sqlediting;
+package de.kuehweg.sqltool.dialog.component.sqlhistory;
 
 import java.text.MessageFormat;
 import java.util.Calendar;
@@ -37,44 +37,58 @@ import javafx.beans.property.SimpleStringProperty;
  *
  * @author Michael Kühweg
  */
-public class SQLHistory {
+public class SqlHistoryEntry {
 
 	private static final int DEFAULT_LENGTH_FOR_SHORT_FORM = 80;
 	private static final String ELLIPSIS = "...";
+
 	private final long timestamp;
 	private final SimpleStringProperty sqlForDisplay;
 	private final String originalSQL;
 
 	/**
-	 * Eintrag erstellen.
+	 * @param sql
+	 *            SQL Anweisung, für die ein Eintrag im Verlauf erstellt werden
+	 *            soll.
+	 */
+	public SqlHistoryEntry(final String sql) {
+		timestamp = System.currentTimeMillis();
+		sqlForDisplay = new SimpleStringProperty(prepareSqlForDisplay(sql));
+		originalSQL = sql;
+	}
+
+	/**
+	 * Aufbereitung für die verkürzte, einzeilige Anzeige der ausgeführten
+	 * Anweisung.
 	 *
 	 * @param sql
+	 *            Originaltext der Anweisung
+	 * @return Einzeiliger Text, auf die maximale Länge
+	 *         {@link SqlHistoryEntry#DEFAULT_LENGTH_FOR_SHORT_FORM} gekürzt.
 	 */
-	public SQLHistory(final String sql) {
-		timestamp = System.currentTimeMillis();
+	private String prepareSqlForDisplay(final String sql) {
 		String oneLiner = sql.replace("\n", " ");
 		oneLiner = oneLiner.replace("\t", " ");
 		if (oneLiner.trim().length() > DEFAULT_LENGTH_FOR_SHORT_FORM) {
 			oneLiner = oneLiner.trim().substring(0, DEFAULT_LENGTH_FOR_SHORT_FORM - ELLIPSIS.length()) + ELLIPSIS;
 		}
-		sqlForDisplay = new SimpleStringProperty(oneLiner.trim());
-		originalSQL = sql;
+		return oneLiner.trim();
 	}
 
 	/**
 	 * Verkürzte Variante der ausgeführten SQL-Anweisung (für Übersicht).
 	 *
-	 * @return
+	 * @return Die Kurzform der Anweisung.
 	 */
 	public String getSqlForDisplay() {
 		return sqlForDisplay.get();
 	}
 
 	/**
-	 * Zeitstempel, wann die SQL-Anweisung in die Historie aufgenommen wurde
-	 * (das ist also NICHT der exakte Ausführungszeitpunkt).
+	 * Zeitstempel, wann die SQL-Anweisung in die Historie aufgenommen wurde.
+	 * (das ist also NICHT der exakte Ausführungszeitpunkt)
 	 *
-	 * @return
+	 * @return Timestamp als String aufbereitet.
 	 */
 	public String getTimestampFormatted() {
 		final Calendar cal = new GregorianCalendar();
@@ -83,19 +97,17 @@ public class SQLHistory {
 	}
 
 	/**
-	 * Zeitstempel, wann die SQL-Anweisung in die Historie aufgenommen wurde
-	 * (das ist also NICHT der exakte Ausführungszeitpunkt) in Systemzeit.
+	 * Zeitstempel, wann die SQL-Anweisung in die Historie aufgenommen wurde.
+	 * (das ist also NICHT der exakte Ausführungszeitpunkt)
 	 *
-	 * @return
+	 * @return Zeitstempel als long Wert.
 	 */
 	public long getTimestamp() {
 		return timestamp;
 	}
 
 	/**
-	 * Originaltext der ausgeführten SQL-Anweisung.
-	 *
-	 * @return
+	 * @return Originaltext der SQL Anweisung
 	 */
 	public String getOriginalSQL() {
 		return originalSQL;

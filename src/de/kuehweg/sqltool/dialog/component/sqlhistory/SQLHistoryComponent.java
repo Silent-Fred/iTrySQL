@@ -28,7 +28,6 @@ package de.kuehweg.sqltool.dialog.component.sqlhistory;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
@@ -46,13 +45,13 @@ public class SQLHistoryComponent implements ExecutionTracker {
 
 	private static final int MAX_HISTORY_ENTRIES = 100;
 
-	private final TableView<SQLHistory> sqlHistory;
+	private final TableView<SqlHistoryEntry> sqlHistory;
 
 	private final List<StatementExecutionInformation> statementBacklog = new LinkedList<>();
 
 	private final List<StatementExecutionInformation> useForNextRefresh = new LinkedList<>();
 
-	public SQLHistoryComponent(final TableView<SQLHistory> sqlHistory) {
+	public SQLHistoryComponent(final TableView<SqlHistoryEntry> sqlHistory) {
 		super();
 		this.sqlHistory = sqlHistory;
 	}
@@ -80,10 +79,10 @@ public class SQLHistoryComponent implements ExecutionTracker {
 
 	@Override
 	public void show() {
-		final List<SQLHistory> historyEntriesFromBacklog = new LinkedList<>();
+		final List<SqlHistoryEntry> historyEntriesFromBacklog = new LinkedList<>();
 		for (final StatementExecutionInformation info : useForNextRefresh) {
 			if (info.getSql() != null) {
-				historyEntriesFromBacklog.add(0, new SQLHistory(info.getSql().uncommentedStatement()));
+				historyEntriesFromBacklog.add(0, new SqlHistoryEntry(info.getSql().uncommentedStatement()));
 			}
 		}
 		useForNextRefresh.clear();
