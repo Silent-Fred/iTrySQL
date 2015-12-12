@@ -17,9 +17,8 @@ Abhängigkeiten
 --------------
 
 - HSQLB (http://www.hsqldb.org)
-- Apache commons-lang3 (http://commons.apache.org)
 
-Diese können mit dem Target `get-dependencies` im Buildfile heruntergeladen werden.
+Mit dem Target `get-dependencies` im Buildfile können Abhängigkeiten heruntergeladen werden.
 Hierzu muss das in `ReferencedLibrariesPath` angegebene Verzeichnis bereits angelegt sein.
 (selbstverständlich können die Abhängigkeiten auch auf anderem Weg zur Verfügung gestellt
 werden, z.B. über Project Settings / Libraries in IntelliJ IDEA, direkte Downloads beim
