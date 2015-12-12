@@ -7,7 +7,6 @@
 
 	<target name="get-dependencies">
 		<get src="http://central.maven.org/maven2/org/hsqldb/hsqldb/2.3.3/hsqldb-2.3.3.jar" dest="${ReferencedLibrariesPath}/hsqldb-2.3.3.jar" usetimestamp="false" ignoreerrors="true" />
-		<get src="http://central.maven.org/maven2/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar" dest="${ReferencedLibrariesPath}/commons-lang3-3.4.jar" usetimestamp="false" ignoreerrors="true" />
 	</target>
 
 	<target name="init-fx-tasks">
@@ -133,7 +132,6 @@
 			</manifest>
 		</fx:jar>
 
-
 		<mkdir dir="${BuildPath}/deploy" />
 		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BuildPath}/deploy" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
 
@@ -143,7 +141,6 @@
 			<fx:application refId="fxApplication" />
 			<fx:resources refid="appRes" />
 		</fx:deploy>
-
 
 	</target>
 </project>
