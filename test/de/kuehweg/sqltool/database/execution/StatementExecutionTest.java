@@ -25,6 +25,23 @@
  */
 package de.kuehweg.sqltool.database.execution;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.sqlediting.StatementString;
 import de.kuehweg.sqltool.database.execution.fake.ConnectionStubWithBasicMetaData;
@@ -34,178 +51,160 @@ import de.kuehweg.sqltool.database.execution.fake.FakeStatementThrowingException
 import de.kuehweg.sqltool.database.execution.fake.FakeStatementUpdateCount42;
 import de.kuehweg.sqltool.database.execution.fake.ResultSetStubFromObjectArray;
 import de.kuehweg.sqltool.database.execution.fake.StatementStubWithFakeResultSet;
-import java.sql.SQLException;
-import java.text.MessageFormat;
-import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
- *
  * @author Michael Kühweg
  */
 public class StatementExecutionTest {
 
-    private static final String url = "db://localhost";
-    private static final String userName = "john_doe";
+	private static final String url = "db://localhost";
+	private static final String userName = "john_doe";
 
-    private Object[] columnLabels;
-    private Object[] columnContent;
+	private Object[] columnLabels;
+	private Object[] columnContent;
 
-    private DatabaseMetaDataStubWithUrlAndUser metaData;
-    private ConnectionStubWithBasicMetaData connection;
-    private ResultSetStubFromObjectArray resultSet;
-    private FakeStatement statement;
+	private DatabaseMetaDataStubWithUrlAndUser metaData;
+	private ConnectionStubWithBasicMetaData connection;
+	private ResultSetStubFromObjectArray resultSet;
+	private FakeStatement statement;
 
-    public StatementExecutionTest() {
-    }
+	public StatementExecutionTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-        columnLabels = new String[]{"does", "not", "compute"};
-        columnContent = new Object[]{" col1 ", null, 42};
-        metaData = new DatabaseMetaDataStubWithUrlAndUser();
-        metaData.setURL(url);
-        metaData.setUserName(userName);
-        connection = new ConnectionStubWithBasicMetaData();
-        connection.setMetaData(metaData);
-        resultSet = new ResultSetStubFromObjectArray(new Object[][]{columnLabels,
-            columnContent});
-    }
+	@Before
+	public void setUp() {
+		columnLabels = new String[] { "does", "not", "compute" };
+		columnContent = new Object[] { " col1 ", null, 42 };
+		metaData = new DatabaseMetaDataStubWithUrlAndUser();
+		metaData.setURL(url);
+		metaData.setUserName(userName);
+		connection = new ConnectionStubWithBasicMetaData();
+		connection.setMetaData(metaData);
+		resultSet = new ResultSetStubFromObjectArray(new Object[][] { columnLabels, columnContent });
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void emptyQuery() throws SQLException {
-        StatementExecution execution = new StatementExecution(null);
-        statement = new StatementStubWithFakeResultSet(connection, resultSet);
-        StatementExecutionInformation info = execution.execute(statement);
-        Assert.assertNull(info.getStatementResult());
-        Assert.assertEquals(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.
-                getSummary());
-    }
+	@Test
+	public void emptyQuery() throws SQLException {
+		final StatementExecution execution = new StatementExecution(null);
+		statement = new StatementStubWithFakeResultSet(connection, resultSet);
+		final StatementExecutionInformation info = execution.execute(statement);
+		assertNull(info.getStatementResult());
+		assertEquals(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.getSummary());
+	}
 
-    @Test
-    public void querySuccessfulWithResult() throws SQLException {
-        final String sql = "select * from wherever";
-        StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new StatementStubWithFakeResultSet(connection, resultSet);
-        StatementExecutionInformation info = execution.execute(statement);
-        Assert.assertNotNull(info.getStatementResult());
-        Assert.assertNotSame(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.
-                getSummary());
-        Assert.assertEquals(url, info.getConnectionDescription());
-        Assert.assertEquals(userName, info.getExecutedBy());
-        Assert.assertNotNull(info.getStartOfExecution());
-        Assert.assertNotNull(info.getEndOfExecution());
-        Assert.assertEquals(sql, info.getSql().originalStatement());
-        for (int col = 0; col < columnLabels.length; col++) {
-            Assert.assertEquals(columnLabels[col],
-                    info.getStatementResult().getHeader().getColumnHeaders()[col]);
-        }
-        Assert.assertEquals(1, info.getStatementResult().getRows().size());
-        ResultRow row = info.getStatementResult().getRows().iterator().next();
-        List<String> resultColumns = row.columnsAsString();
-        Assert.assertEquals(" col1 ", resultColumns.get(0));
-        Assert.assertEquals(ResultRow.NULL_STR, resultColumns.get(1));
-        Assert.assertEquals("42", resultColumns.get(2));
-    }
+	@Test
+	public void querySuccessfulWithResult() throws SQLException {
+		final String sql = "select * from wherever";
+		final StatementExecution execution = new StatementExecution(new StatementString(sql));
+		statement = new StatementStubWithFakeResultSet(connection, resultSet);
+		final StatementExecutionInformation info = execution.execute(statement);
+		assertNotNull(info.getStatementResult());
+		assertNotSame(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.getSummary());
+		assertEquals(url, info.getConnectionDescription());
+		assertEquals(userName, info.getExecutedBy());
+		assertNotNull(info.getStartOfExecution());
+		assertNotNull(info.getEndOfExecution());
+		assertEquals(sql, info.getSql().originalStatement());
+		for (int col = 0; col < columnLabels.length; col++) {
+			assertEquals(columnLabels[col], info.getStatementResult().getHeader().getColumnHeaders()[col]);
+		}
+		assertEquals(1, info.getStatementResult().getRows().size());
+		final ResultRow row = info.getStatementResult().getRows().iterator().next();
+		final List<String> resultColumns = row.columnsAsString();
+		assertEquals(" col1 ", resultColumns.get(0));
+		assertEquals(ResultRow.NULL_STR, resultColumns.get(1));
+		assertEquals("42", resultColumns.get(2));
+	}
 
-    @Test
-    public void maxRows() throws SQLException {
-        final String sql = "select * from wherever";
-        StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new StatementStubWithFakeResultSet(connection, resultSet);
-        StatementExecutionInformation info = execution.execute(statement);
-        Assert.assertFalse(info.isLimitMaxRowsReached());
-        statement.setMaxRows(2);
-        info = execution.execute(statement);
-        Assert.assertFalse(info.isLimitMaxRowsReached());
-        statement.setMaxRows(1);
-        info = execution.execute(statement);
-        Assert.assertTrue(info.isLimitMaxRowsReached());
-    }
+	@Test
+	public void maxRows() throws SQLException {
+		final String sql = "select * from wherever";
+		final StatementExecution execution = new StatementExecution(new StatementString(sql));
+		statement = new StatementStubWithFakeResultSet(connection, resultSet);
+		StatementExecutionInformation info = execution.execute(statement);
+		assertFalse(info.isLimitMaxRowsReached());
+		statement.setMaxRows(2);
+		info = execution.execute(statement);
+		assertFalse(info.isLimitMaxRowsReached());
+		statement.setMaxRows(1);
+		info = execution.execute(statement);
+		assertTrue(info.isLimitMaxRowsReached());
+	}
 
-    @Test
-    public void closedResultSetAfterExecution() throws SQLException {
-        final String sql = "select * from wherever";
-        StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new StatementStubWithFakeResultSet(connection, resultSet);
-        StatementExecutionInformation info = execution.execute(statement);
-        Assert.assertTrue(statement.getResultSet().isClosed());
-    }
+	@Test
+	public void closedResultSetAfterExecution() throws SQLException {
+		final String sql = "select * from wherever";
+		final StatementExecution execution = new StatementExecution(new StatementString(sql));
+		statement = new StatementStubWithFakeResultSet(connection, resultSet);
+		final StatementExecutionInformation info = execution.execute(statement);
+		assertTrue(statement.getResultSet().isClosed());
+	}
 
-    @Test
-    public void exceptionOnFetch() throws SQLException {
-        final String sql = "select * from wherever";
-        StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new StatementStubWithFakeResultSet(connection, null);
-        StatementExecutionInformation info = execution.execute(statement);
-        Assert.assertNull(info.getStatementResult());
-        Assert.assertEquals(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.
-                getSummary());
-    }
+	@Test
+	public void exceptionOnFetch() throws SQLException {
+		final String sql = "select * from wherever";
+		final StatementExecution execution = new StatementExecution(new StatementString(sql));
+		statement = new StatementStubWithFakeResultSet(connection, null);
+		final StatementExecutionInformation info = execution.execute(statement);
+		assertNull(info.getStatementResult());
+		assertEquals(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.getSummary());
+	}
 
-    @Test(expected = SQLException.class)
-    public void exceptionOnExecution() throws SQLException {
-        final String sql = "select * from wherever";
-        StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new FakeStatementThrowingExceptionOnExecute(connection, resultSet);
-        StatementExecutionInformation info = execution.execute(statement);
-    }
+	@Test(expected = SQLException.class)
+	public void exceptionOnExecution() throws SQLException {
+		final String sql = "select * from wherever";
+		final StatementExecution execution = new StatementExecution(new StatementString(sql));
+		statement = new FakeStatementThrowingExceptionOnExecute(connection, resultSet);
+		final StatementExecutionInformation info = execution.execute(statement);
+	}
 
-    @Test
-    public void updateCountForDML() throws SQLException {
-        for (String sql : StatementString.DML_COMMANDS) {
-            updateCountForDML(sql);
-        }
-    }
+	@Test
+	public void updateCountForDML() throws SQLException {
+		for (final String sql : StatementString.DML_COMMANDS) {
+			updateCountForDML(sql);
+		}
+	}
 
-    private void updateCountForDML(final String sql) throws SQLException {
-        StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new FakeStatementUpdateCount42(connection);
-        StatementExecutionInformation info = execution.execute(statement);
-        Assert.assertNull(info.getStatementResult());
-        Assert.assertEquals(MessageFormat.format(
-                DialogDictionary.PATTERN_UPDATECOUNT.toString(), 42), info.
-                getSummary());
-    }
+	private void updateCountForDML(final String sql) throws SQLException {
+		final StatementExecution execution = new StatementExecution(new StatementString(sql));
+		statement = new FakeStatementUpdateCount42(connection);
+		final StatementExecutionInformation info = execution.execute(statement);
+		assertNull(info.getStatementResult());
+		assertEquals(MessageFormat.format(DialogDictionary.PATTERN_UPDATECOUNT.toString(), 42), info.getSummary());
+	}
 
-    @Test
-    public void summaryForOtherThanDML() throws SQLException {
-        for (String sql : StatementString.DCL_COMMANDS) {
-            summaryForOtherThanDML(sql);
-        }
-        for (String sql : StatementString.DDL_COMMANDS) {
-            summaryForOtherThanDML(sql);
-        }
-        for (String sql : StatementString.TCL_COMMANDS) {
-            summaryForOtherThanDML(sql);
-        }
-    }
+	@Test
+	public void summaryForOtherThanDML() throws SQLException {
+		for (final String sql : StatementString.DCL_COMMANDS) {
+			summaryForOtherThanDML(sql);
+		}
+		for (final String sql : StatementString.DDL_COMMANDS) {
+			summaryForOtherThanDML(sql);
+		}
+		for (final String sql : StatementString.TCL_COMMANDS) {
+			summaryForOtherThanDML(sql);
+		}
+	}
 
-    private void summaryForOtherThanDML(final String sql) throws SQLException {
-        StatementExecution execution = new StatementExecution(new StatementString(sql));
-        statement = new FakeStatementUpdateCount42(connection);
-        StatementExecutionInformation info = execution.execute(statement);
-        Assert.assertNull(info.getStatementResult());
-        Assert.assertEquals(MessageFormat.format(
-                DialogDictionary.PATTERN_EXECUTED_STATEMENT.toString(), info.getSql().
-                firstKeyword()), info.getSummary());
-    }
+	private void summaryForOtherThanDML(final String sql) throws SQLException {
+		final StatementExecution execution = new StatementExecution(new StatementString(sql));
+		statement = new FakeStatementUpdateCount42(connection);
+		final StatementExecutionInformation info = execution.execute(statement);
+		assertNull(info.getStatementResult());
+		assertEquals(MessageFormat.format(DialogDictionary.PATTERN_EXECUTED_STATEMENT.toString(),
+				info.getSql().firstKeyword()), info.getSummary());
+	}
 
 }

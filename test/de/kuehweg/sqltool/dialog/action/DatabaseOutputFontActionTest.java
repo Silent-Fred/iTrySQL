@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,7 +38,6 @@ import de.kuehweg.sqltool.common.UserPreferencesStub;
 import de.kuehweg.sqltool.dialog.base.FontResizer;
 
 /**
- *
  * @author Michael Kühweg
  */
 public class DatabaseOutputFontActionTest {
@@ -74,7 +74,7 @@ public class DatabaseOutputFontActionTest {
 		action.setAlternativeFontResizer(fontResizer);
 		action.setDiff(1);
 		action.handleFontAction();
-		Assert.assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
+		assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class DatabaseOutputFontActionTest {
 		action.handleFontAction();
 		// hier dürfte nicht mehr weiter vergößert werden
 		action.handleFontAction();
-		Assert.assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
+		assertEquals(FontAction.MAX_FONT_SIZE, fontResizer.getFontSize());
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class DatabaseOutputFontActionTest {
 		action.setAlternativeFontResizer(fontResizer);
 		action.setDiff(-1);
 		action.handleFontAction();
-		Assert.assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
+		assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class DatabaseOutputFontActionTest {
 		action.handleFontAction();
 		// hier dürfte nicht mehr weiter verkleinert werden
 		action.handleFontAction();
-		Assert.assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
+		assertEquals(FontAction.MIN_FONT_SIZE, fontResizer.getFontSize());
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -122,11 +122,9 @@ public class DatabaseOutputFontActionTest {
 		action.setDiff(1);
 		action.setUserPreferences(userPreferences);
 		action.handleFontAction();
-		Assert.assertEquals(fontResizer.getFontSize(),
-				userPreferences.getFontSizeDbOutput());
+		assertEquals(fontResizer.getFontSize(), userPreferences.getFontSizeDbOutput());
 		action.handleFontAction();
-		Assert.assertEquals(fontResizer.getFontSize(),
-				userPreferences.getFontSizeDbOutput());
+		assertEquals(fontResizer.getFontSize(), userPreferences.getFontSizeDbOutput());
 	}
 
 }

@@ -123,3 +123,11 @@
 #schemaTreeView .schema-tree-index {
     -fx-text-fill: #C97100;
 }
+
+.itry-search-bar {
+	-fx-background-color: #f8f8f8;
+}
+
+.search-field {
+	-fx-background-radius: 14;
+}

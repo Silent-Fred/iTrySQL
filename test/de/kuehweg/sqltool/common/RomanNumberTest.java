@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.common;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,63 +38,63 @@ import org.junit.Test;
  * @author Michael Kühweg
  */
 public class RomanNumberTest {
-    
-    public RomanNumberTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
-    @Test
-    public void smallNumbers() {
-        Assert.assertEquals("I", new RomanNumber(1L).toString());
-        Assert.assertEquals("II", new RomanNumber(2L).toString());
-        Assert.assertEquals("III", new RomanNumber(3L).toString());
-        Assert.assertEquals("IV", new RomanNumber(4L).toString());
-        Assert.assertEquals("V", new RomanNumber(5L).toString());
-        Assert.assertEquals("VI", new RomanNumber(6L).toString());
-        Assert.assertEquals("VII", new RomanNumber(7L).toString());
-        Assert.assertEquals("VIII", new RomanNumber(8L).toString());
-        Assert.assertEquals("IX", new RomanNumber(9L).toString());
-    }
-    
-    @Test
-    public void usualSuspects() {
-        Assert.assertEquals("XL", new RomanNumber(40L).toString());
-        Assert.assertEquals("XLIX", new RomanNumber(49L).toString());
-        Assert.assertEquals("L", new RomanNumber(50L).toString());
-        Assert.assertEquals("XC", new RomanNumber(90L).toString());
-        Assert.assertEquals("XCIX", new RomanNumber(99L).toString());
-        Assert.assertEquals("C", new RomanNumber(100L).toString());
-        Assert.assertEquals("CXLIX", new RomanNumber(149L).toString());
-        Assert.assertEquals("CXCIX", new RomanNumber(199L).toString());
-        Assert.assertEquals("CC", new RomanNumber(200L).toString());
-        Assert.assertEquals("CD", new RomanNumber(400L).toString());
-        Assert.assertEquals("CM", new RomanNumber(900L).toString());
-        Assert.assertEquals("MM", new RomanNumber(2000L).toString());
-    }
-    
-    @Test
-    public void elvis() {
-        Assert.assertEquals("MCMXXXV", new RomanNumber(1935).toString());
-    }
+	public RomanNumberTest() {
+	}
 
-    @Test
-    public void goodOldRomansWerePositive() {
-        Assert.assertEquals("mendum", new RomanNumber(0).toString());
-        Assert.assertEquals("mendum", new RomanNumber(-1).toString());
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+	}
+
+	@Before
+	public void setUp() {
+	}
+
+	@After
+	public void tearDown() {
+	}
+
+	@Test
+	public void smallNumbers() {
+		assertEquals("I", new RomanNumber(1L).toString());
+		assertEquals("II", new RomanNumber(2L).toString());
+		assertEquals("III", new RomanNumber(3L).toString());
+		assertEquals("IV", new RomanNumber(4L).toString());
+		assertEquals("V", new RomanNumber(5L).toString());
+		assertEquals("VI", new RomanNumber(6L).toString());
+		assertEquals("VII", new RomanNumber(7L).toString());
+		assertEquals("VIII", new RomanNumber(8L).toString());
+		assertEquals("IX", new RomanNumber(9L).toString());
+	}
+
+	@Test
+	public void usualSuspects() {
+		assertEquals("XL", new RomanNumber(40L).toString());
+		assertEquals("XLIX", new RomanNumber(49L).toString());
+		assertEquals("L", new RomanNumber(50L).toString());
+		assertEquals("XC", new RomanNumber(90L).toString());
+		assertEquals("XCIX", new RomanNumber(99L).toString());
+		assertEquals("C", new RomanNumber(100L).toString());
+		assertEquals("CXLIX", new RomanNumber(149L).toString());
+		assertEquals("CXCIX", new RomanNumber(199L).toString());
+		assertEquals("CC", new RomanNumber(200L).toString());
+		assertEquals("CD", new RomanNumber(400L).toString());
+		assertEquals("CM", new RomanNumber(900L).toString());
+		assertEquals("MM", new RomanNumber(2000L).toString());
+	}
+
+	@Test
+	public void elvis() {
+		assertEquals("MCMXXXV", new RomanNumber(1935).toString());
+	}
+
+	@Test
+	public void goodOldRomansWerePositive() {
+		assertEquals("mendum", new RomanNumber(0).toString());
+		assertEquals("mendum", new RomanNumber(-1).toString());
+	}
 }

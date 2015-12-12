@@ -25,9 +25,12 @@
  */
 package de.kuehweg.sqltool.common.sqlediting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,12 +63,12 @@ public class StatementExtractorTest {
 
 	@Test
 	public void splitWithComments() {
-		Assert.assertEquals(1,
+		assertEquals(1,
 				new StatementExtractor()
 						.getStatementsFromScript(
 								"/* start here... with a confusing ';' */\ncreate table test (test numeric(1));\n")
 						.size());
-		Assert.assertEquals(1, new StatementExtractor()
+		assertEquals(1, new StatementExtractor()
 				.getStatementsFromScript("-- select * from test;\nselect ';' from test;").size());
 	}
 
@@ -73,24 +76,24 @@ public class StatementExtractorTest {
 	public void splitEmpty() {
 		// Kommentare nach einer Anweisung beginnen laut derzeitiger Definition
 		// ein neues Statement
-		Assert.assertEquals(2,
+		assertEquals(2,
 				new StatementExtractor()
 						.getStatementsFromScript(
 								"-- select * from test;\nselect ';' from test; -- an open end as empty statement")
 						.size());
-		Assert.assertTrue(new StatementExtractor()
+		assertTrue(new StatementExtractor()
 				.getStatementsFromScript(
 						"-- select * from test;\nselect ';' from test; -- an open end as empty statement")
 				.get(1).isEmpty());
 		// nur Leerzeichen liefern nach Ende kein neues Statement
-		Assert.assertEquals(1, new StatementExtractor().getStatementsFromScript("select ';' from test; ").size());
-		Assert.assertEquals(2, new StatementExtractor().getStatementsFromScript("select ';' from test;;").size());
-		Assert.assertTrue(new StatementExtractor().getStatementsFromScript("select ';' from test;;").get(1).isEmpty());
+		assertEquals(1, new StatementExtractor().getStatementsFromScript("select ';' from test; ").size());
+		assertEquals(2, new StatementExtractor().getStatementsFromScript("select ';' from test;;").size());
+		assertTrue(new StatementExtractor().getStatementsFromScript("select ';' from test;;").get(1).isEmpty());
 	}
 
 	@Test
 	public void insideSpecial() {
-		Assert.assertEquals(1, new StatementExtractor()
+		assertEquals(1, new StatementExtractor()
 				.getStatementsFromScript("-- select * from test;\nselect ';' /* ; */ from test;").size());
 	}
 
@@ -99,22 +102,22 @@ public class StatementExtractorTest {
 		final String firstStatement = "-- select * from test;\nselect ';' /* ; */ from test;";
 		final String secondStatement = "values(current_date)   ";
 		final String script = firstStatement + secondStatement;
-		Assert.assertEquals(firstStatement.trim(), new StatementExtractor().extractStatementAtCaretPosition(script, 0));
-		Assert.assertEquals(firstStatement.trim(), new StatementExtractor().extractStatementAtCaretPosition(script, 1));
-		Assert.assertEquals(firstStatement.trim(),
+		assertEquals(firstStatement.trim(), new StatementExtractor().extractStatementAtCaretPosition(script, 0));
+		assertEquals(firstStatement.trim(), new StatementExtractor().extractStatementAtCaretPosition(script, 1));
+		assertEquals(firstStatement.trim(),
 				new StatementExtractor().extractStatementAtCaretPosition(script, firstStatement.length() - 1));
 
-		Assert.assertEquals(secondStatement.trim(),
+		assertEquals(secondStatement.trim(),
 				new StatementExtractor().extractStatementAtCaretPosition(script, firstStatement.length()));
-		Assert.assertEquals(secondStatement.trim(),
+		assertEquals(secondStatement.trim(),
 				new StatementExtractor().extractStatementAtCaretPosition(script, script.length() - 1));
 	}
 
 	@Test
 	public void emptyStatement() {
-		Assert.assertNotNull(new StatementExtractor().getStatementsFromScript(null));
-		Assert.assertTrue(new StatementExtractor().getStatementsFromScript(null).isEmpty());
-		Assert.assertTrue(new StatementExtractor().getStatementsFromScript("").isEmpty());
-		Assert.assertTrue(new StatementExtractor().getStatementsFromScript(" ").isEmpty());
+		assertNotNull(new StatementExtractor().getStatementsFromScript(null));
+		assertTrue(new StatementExtractor().getStatementsFromScript(null).isEmpty());
+		assertTrue(new StatementExtractor().getStatementsFromScript("").isEmpty());
+		assertTrue(new StatementExtractor().getStatementsFromScript(" ").isEmpty());
 	}
 }

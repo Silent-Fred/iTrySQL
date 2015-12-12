@@ -27,11 +27,11 @@ package de.kuehweg.gamification;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -48,7 +48,7 @@ public class AchievementTest {
 				new AchievementCounter(eventB, 20));
 		final Achievement achievement2 = new Achievement("A", new AchievementCounter(eventA, 10),
 				new AchievementCounter(eventB, 20));
-		Assert.assertNotEquals(achievement1, achievement2);
+		assertNotEquals(achievement1, achievement2);
 	}
 
 	@Test

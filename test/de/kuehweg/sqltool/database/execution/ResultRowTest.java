@@ -25,9 +25,11 @@
  */
 package de.kuehweg.sqltool.database.execution;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,43 +40,43 @@ import org.junit.Test;
  */
 public class ResultRowTest {
 
-    public ResultRowTest() {
-    }
+	public ResultRowTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void nullSupport() {
-        ResultRow row = new ResultRow(" a ", null, 42);
-        Assert.assertEquals(3, row.columnsAsString().size());
-        Assert.assertEquals(" a ", row.columnsAsString().get(0));
-        Assert.assertEquals(ResultRow.NULL_STR, row.columnsAsString().get(1));
-        Assert.assertEquals("42", row.columnsAsString().get(2));
-    }
+	@Test
+	public void nullSupport() {
+		final ResultRow row = new ResultRow(" a ", null, 42);
+		assertEquals(3, row.columnsAsString().size());
+		assertEquals(" a ", row.columnsAsString().get(0));
+		assertEquals(ResultRow.NULL_STR, row.columnsAsString().get(1));
+		assertEquals("42", row.columnsAsString().get(2));
+	}
 
-    @Test
-    public void empty() {
-        ResultRow row = new ResultRow();
-        Assert.assertTrue(row.columnsAsString().isEmpty());
-    }
+	@Test
+	public void empty() {
+		final ResultRow row = new ResultRow();
+		assertTrue(row.columnsAsString().isEmpty());
+	}
 
-    @Test
-    public void nullSupportForConstructor() {
-        ResultRow row = new ResultRow((Object[])null);
-        Assert.assertEquals(1, row.columnsAsString().size());
-    }
+	@Test
+	public void nullSupportForConstructor() {
+		final ResultRow row = new ResultRow((Object[]) null);
+		assertEquals(1, row.columnsAsString().size());
+	}
 }

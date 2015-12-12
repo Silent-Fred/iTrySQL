@@ -25,12 +25,14 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -76,22 +78,22 @@ public class HtmlResultFormatterTest {
 		final ResultTemplate template = new ResultTemplate();
 
 		template.setTemplate("{0}");
-		Assert.assertEquals("[24.01.1984 09:30:13 &lt;ex&gt;@&lt;connerie&gt;]",
+		assertEquals("[24.01.1984 09:30:13 &lt;ex&gt;@&lt;connerie&gt;]",
 				new HtmlResultFormatter(info).format(template));
 
 		template.setTemplate("{1}");
 		final String resultHeader = "<thead><tr><th>&lt;col1&gt;</th><th>&lt;col2&gt;</th></tr></thead>";
 		final String resultRow = "<tbody>\n<tr><td>1</td><td>&lt;BCD&gt;</td></tr>\n</tbody>\n";
 		final String expectedResult = "<table>\n" + resultHeader + resultRow + "</table>\n";
-		Assert.assertEquals(expectedResult, new HtmlResultFormatter(info).format(template));
+		assertEquals(expectedResult, new HtmlResultFormatter(info).format(template));
 
 		template.setTemplate("{2}");
-		Assert.assertEquals(MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(), 1),
+		assertEquals(MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(), 1),
 				new HtmlResultFormatter(info).format(template));
 
 		info.setLimitMaxRowsReached(true);
 		template.setTemplate("{3}");
-		Assert.assertEquals(MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.toString(), 1),
+		assertEquals(MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.toString(), 1),
 				new HtmlResultFormatter(info).format(template));
 	}
 
@@ -111,7 +113,7 @@ public class HtmlResultFormatterTest {
 		// und der
 		// Zusammenfassung
 		final String expectedResult = whenAndWho + "\n\n" + "&lt;all's well that ends well&gt;" + "\n\n";
-		Assert.assertEquals(expectedResult, new HtmlResultFormatter(info).format(template));
+		assertEquals(expectedResult, new HtmlResultFormatter(info).format(template));
 	}
 
 	/**
@@ -123,6 +125,6 @@ public class HtmlResultFormatterTest {
 	public void testDefaultTemplate() {
 		final ResultTemplate template = new DefaultHtmlResultTemplate();
 		final ResultFormatter formatter = new HtmlResultFormatter(info);
-		Assert.assertNotEquals(formatter.format(template), template.buildWithFallbackTemplate());
+		assertNotEquals(formatter.format(template), template.buildWithFallbackTemplate());
 	}
 }

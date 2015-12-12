@@ -28,9 +28,8 @@ package de.kuehweg.sqltool.database.formatter;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.common.text.HtmlEncoder;
 import de.kuehweg.sqltool.database.execution.ResultRow;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
 
@@ -40,6 +39,8 @@ import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
  * @author Michael Kühweg
  */
 public class HtmlResultFormatter extends ResultFormatter {
+
+	private final HtmlEncoder htmlEncoder = new HtmlEncoder();
 
 	/**
 	 * Im Konstruktor wird das Abfrageergebnis übergeben.
@@ -59,8 +60,7 @@ public class HtmlResultFormatter extends ResultFormatter {
 	 * @return
 	 */
 	private String formatAsTableData(final String value) {
-		return new StringBuilder().append("<td>").append(StringEscapeUtils.escapeHtml4(value)).append("</td>")
-				.toString();
+		return new StringBuilder().append("<td>").append(htmlEncoder.encodeHtml(value)).append("</td>").toString();
 	}
 
 	/**
@@ -88,8 +88,7 @@ public class HtmlResultFormatter extends ResultFormatter {
 	 * @return
 	 */
 	private String formatAsTableHeader(final String value) {
-		return new StringBuilder().append("<th>").append(StringEscapeUtils.escapeHtml4(value)).append("</th>")
-				.toString();
+		return new StringBuilder().append("<th>").append(htmlEncoder.encodeHtml(value)).append("</th>").toString();
 	}
 
 	/**
@@ -156,13 +155,13 @@ public class HtmlResultFormatter extends ResultFormatter {
 		final String who = executedByWithConnectionDescription();
 		final String statementExecution = MessageFormat
 				.format(DialogDictionary.PATTERN_EXECUTION_TIMESTAMP_WITH_USER.toString(), when, who);
-		return StringEscapeUtils.escapeHtml4(statementExecution);
+		return htmlEncoder.encodeHtml(statementExecution);
 	}
 
 	private String formatEmptyResult(final ResultTemplate template) {
 		template.setExecutionInformation(formatGeneralExecutionInformation());
 
-		template.setRowCount(StringEscapeUtils.escapeHtml4(getStatementExecutionInformation().getSummary()));
+		template.setRowCount(htmlEncoder.encodeHtml(getStatementExecutionInformation().getSummary()));
 
 		template.setResultTable(null);
 		template.setLimitedRows(null);
@@ -176,12 +175,12 @@ public class HtmlResultFormatter extends ResultFormatter {
 
 		final int selectedRows = getStatementExecutionInformation().getStatementResult().getRows().size();
 		final String rowCount = MessageFormat.format(DialogDictionary.PATTERN_ROWCOUNT.toString(), selectedRows);
-		template.setRowCount(StringEscapeUtils.escapeHtml4(rowCount));
+		template.setRowCount(htmlEncoder.encodeHtml(rowCount));
 		if (!getStatementExecutionInformation().isLimitMaxRowsReached()) {
 			template.setLimitedRows(null);
 		} else {
 			final String limitedRows = MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS.toString(), selectedRows);
-			template.setLimitedRows(StringEscapeUtils.escapeHtml4(limitedRows));
+			template.setLimitedRows(htmlEncoder.encodeHtml(limitedRows));
 		}
 
 		return template.buildWithTemplate();

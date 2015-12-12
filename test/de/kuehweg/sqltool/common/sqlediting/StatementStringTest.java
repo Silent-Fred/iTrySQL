@@ -25,113 +25,111 @@
  */
 package de.kuehweg.sqltool.common.sqlediting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
  * @author Michael Kühweg
  */
 public class StatementStringTest {
 
-    public StatementStringTest() {
-    }
+	public StatementStringTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void empty() {
-        Assert.assertTrue(new StatementString(null).isEmpty());
-        Assert.assertTrue(new StatementString("").isEmpty());
-        Assert.assertTrue(new StatementString("     ").isEmpty());
-        Assert.assertTrue(new StatementString("\t").isEmpty());
-        Assert.assertTrue(new StatementString("\n").isEmpty());
+	@Test
+	public void empty() {
+		assertTrue(new StatementString(null).isEmpty());
+		assertTrue(new StatementString("").isEmpty());
+		assertTrue(new StatementString("     ").isEmpty());
+		assertTrue(new StatementString("\t").isEmpty());
+		assertTrue(new StatementString("\n").isEmpty());
 
-        Assert.assertTrue(new StatementString("--").isEmpty());
-        Assert.assertTrue(new StatementString("/* empty */").isEmpty());
+		assertTrue(new StatementString("--").isEmpty());
+		assertTrue(new StatementString("/* empty */").isEmpty());
 
-        Assert.assertTrue(new StatementString(" ; ").isEmpty());
-    }
+		assertTrue(new StatementString(" ; ").isEmpty());
+	}
 
-    @Test
-    public void notEmpty() {
-        Assert.assertFalse(new StatementString("values").isEmpty());
-    }
+	@Test
+	public void notEmpty() {
+		assertFalse(new StatementString("values").isEmpty());
+	}
 
-    @Test
-    public void uncomment() {
-        Assert.assertEquals("select * from table;", new StatementString(
-                "/* Test */ select * --\nfrom table;").uncommentedStatement());
-    }
+	@Test
+	public void uncomment() {
+		assertEquals("select * from table;",
+				new StatementString("/* Test */ select * --\nfrom table;").uncommentedStatement());
+	}
 
-    @Test
-    public void uncommentWithCommentInsideLiteral() {
-        Assert.assertEquals("select '/* literally a comment */' from table;",
-                new StatementString(
-                        "/* Test */ select '/* literally a comment */' --\nfrom table;").
-                uncommentedStatement());
-    }
+	@Test
+	public void uncommentWithCommentInsideLiteral() {
+		assertEquals("select '/* literally a comment */' from table;",
+				new StatementString("/* Test */ select '/* literally a comment */' --\nfrom table;")
+						.uncommentedStatement());
+	}
 
-    @Test
-    public void original() {
-        final String sql = "/* Test */ select * --\nfrom table;";
-        StatementString statement = new StatementString(sql);
-        Assert.assertEquals("select * from table;", statement.
-                uncommentedStatement());
-        Assert.assertEquals(sql, statement.originalStatement());
-    }
+	@Test
+	public void original() {
+		final String sql = "/* Test */ select * --\nfrom table;";
+		final StatementString statement = new StatementString(sql);
+		assertEquals("select * from table;", statement.uncommentedStatement());
+		assertEquals(sql, statement.originalStatement());
+	}
 
-    @Test
-    public void firstKeyword() {
-        Assert.assertEquals("SELECT", new StatementString(
-                "/* Test */ select * --\nfrom table;").firstKeyword());
-        Assert.assertEquals("DROP", new StatementString(
-                "/* select */ drop --\n table;").firstKeyword());
-    }
-    
-    @Test
-    public void statementType() {
-        Assert.assertTrue(new StatementString("/* select */ select * from table").isDataManipulationStatement());
-        Assert.assertTrue(new StatementString("/* select */ select(1+1) from table").isDataManipulationStatement());
-        // auch mit falscher Syntax bezogen auf die komplette Anweisung
-        Assert.assertTrue(new StatementString("/* comment */ insert into whatever").isDataManipulationStatement());
+	@Test
+	public void firstKeyword() {
+		assertEquals("SELECT", new StatementString("/* Test */ select * --\nfrom table;").firstKeyword());
+		assertEquals("DROP", new StatementString("/* select */ drop --\n table;").firstKeyword());
+	}
 
-        // auch mit falscher Syntax bezogen auf die komplette Anweisung
-        Assert.assertTrue(new StatementString("DROP SELECT").isDataDefinitionStatement());
-        Assert.assertTrue(new StatementString("ALTER TABLE").isDataDefinitionStatement());
+	@Test
+	public void statementType() {
+		assertTrue(new StatementString("/* select */ select * from table").isDataManipulationStatement());
+		assertTrue(new StatementString("/* select */ select(1+1) from table").isDataManipulationStatement());
+		// auch mit falscher Syntax bezogen auf die komplette Anweisung
+		assertTrue(new StatementString("/* comment */ insert into whatever").isDataManipulationStatement());
 
-        Assert.assertTrue(new StatementString("GRANT select").isDataControlStatement());
+		// auch mit falscher Syntax bezogen auf die komplette Anweisung
+		assertTrue(new StatementString("DROP SELECT").isDataDefinitionStatement());
+		assertTrue(new StatementString("ALTER TABLE").isDataDefinitionStatement());
 
-        Assert.assertTrue(new StatementString("COMMIT;").isTransactionControlStatement());
-    }
+		assertTrue(new StatementString("GRANT select").isDataControlStatement());
 
-    @Test
-    public void notMyStatementType() {
-        Assert.assertFalse(new StatementString("/* select */ select * from table").isDataControlStatement());
-        Assert.assertFalse(new StatementString("/* select */ select * from table").isDataDefinitionStatement());
-        Assert.assertFalse(new StatementString("/* select */ select * from table").isTransactionControlStatement());
+		assertTrue(new StatementString("COMMIT;").isTransactionControlStatement());
+	}
 
-        Assert.assertFalse(new StatementString("current_date").isDataControlStatement());
-        Assert.assertFalse(new StatementString("current_date").isDataDefinitionStatement());
-        Assert.assertFalse(new StatementString("current_date").isDataManipulationStatement());
-        Assert.assertFalse(new StatementString("current_date").isTransactionControlStatement());
-    }
+	@Test
+	public void notMyStatementType() {
+		assertFalse(new StatementString("/* select */ select * from table").isDataControlStatement());
+		assertFalse(new StatementString("/* select */ select * from table").isDataDefinitionStatement());
+		assertFalse(new StatementString("/* select */ select * from table").isTransactionControlStatement());
+
+		assertFalse(new StatementString("current_date").isDataControlStatement());
+		assertFalse(new StatementString("current_date").isDataDefinitionStatement());
+		assertFalse(new StatementString("current_date").isDataManipulationStatement());
+		assertFalse(new StatementString("current_date").isTransactionControlStatement());
+	}
 }

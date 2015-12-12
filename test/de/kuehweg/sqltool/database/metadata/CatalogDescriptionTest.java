@@ -25,57 +25,59 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
+
 /**
- *
  * @author Michael Kühweg
  */
 public class CatalogDescriptionTest {
 
-    public CatalogDescriptionTest() {
-    }
+	public CatalogDescriptionTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void sorting() {
-        List<CatalogDescription> catalogs = new LinkedList<>();
+	@Test
+	public void sorting() {
+		final List<CatalogDescription> catalogs = new LinkedList<>();
 
-        catalogs.add(new CatalogDescription("CATALOG2"));
-        catalogs.add(new CatalogDescription("CATALOG1"));
+		catalogs.add(new CatalogDescription("CATALOG2"));
+		catalogs.add(new CatalogDescription("CATALOG1"));
 
-        Collections.sort(catalogs);
+		Collections.sort(catalogs);
 
-        Assert.assertEquals("CATALOG1", catalogs.get(0).getName());
-        Assert.assertEquals("CATALOG2", catalogs.get(1).getName());
-    }
+		assertEquals("CATALOG1", catalogs.get(0).getName());
+		assertEquals("CATALOG2", catalogs.get(1).getName());
+	}
 
-    @Test
-    public void nullSafe() {
-        Assert.assertEquals("", new CatalogDescription(null).getName());
-    }
+	@Test
+	public void nullSafe() {
+		assertEquals("", new CatalogDescription(null).getName());
+	}
 }

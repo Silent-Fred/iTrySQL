@@ -26,7 +26,10 @@
 
 package de.kuehweg.sqltool.dialog.component.achievement;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import de.kuehweg.sqltool.common.achievement.NamedAchievement;
@@ -45,7 +48,7 @@ public class AchievementHtmlFormatterTest {
 	public void testGetResourceBundle() {
 		// Default Bundle ist definiert
 		final AchievementHtmlFormatter formatter = new AchievementHtmlFormatter();
-		Assert.assertEquals(AchievementHtmlFormatter.DEFAULT_RESOURCE_BUNDLE,
+		assertEquals(AchievementHtmlFormatter.DEFAULT_RESOURCE_BUNDLE,
 				formatter.getResourceBundle().getBaseBundleName());
 	}
 
@@ -56,9 +59,9 @@ public class AchievementHtmlFormatterTest {
 	@Test
 	public void testGetRankingPoints() {
 		final AchievementHtmlFormatter formatter = new AchievementHtmlFormatter();
-		Assert.assertNotNull(formatter.getRankingPoints());
+		assertNotNull(formatter.getRankingPoints());
 		for (final NamedAchievement namedAchievement : NamedAchievement.values()) {
-			Assert.assertTrue(
+			assertTrue(
 					formatter.getRankingPoints().pointsAchievableForAchievement(namedAchievement.asAchievement()) > 0);
 		}
 	}

@@ -26,7 +26,9 @@
 
 package de.kuehweg.sqltool.dialog.component.achievement;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import de.kuehweg.gamification.Achievement;
@@ -43,14 +45,12 @@ public class AchievementDefaultSortOrderTest {
 
 	@Test
 	public void testCompareNamedAchievements() {
-		Assert.assertTrue(
-				new AchievementDefaultSortOrder().compare(NamedAchievement.FRIEND_OF_THE_APPLICATION.asAchievement(),
-						NamedAchievement.ADVENTUROUS.asAchievement()) < 0);
-		Assert.assertEquals(0, new AchievementDefaultSortOrder().compare(NamedAchievement.ADVENTUROUS.asAchievement(),
+		assertTrue(new AchievementDefaultSortOrder().compare(NamedAchievement.FRIEND_OF_THE_APPLICATION.asAchievement(),
+				NamedAchievement.ADVENTUROUS.asAchievement()) < 0);
+		assertEquals(0, new AchievementDefaultSortOrder().compare(NamedAchievement.ADVENTUROUS.asAchievement(),
 				NamedAchievement.ADVENTUROUS.asAchievement()));
-		Assert.assertTrue(
-				new AchievementDefaultSortOrder().compare(NamedAchievement.BACHELOR_OF_MANIPULATION.asAchievement(),
-						NamedAchievement.THE_WALKING_DEADLOCK.asAchievement()) > 0);
+		assertTrue(new AchievementDefaultSortOrder().compare(NamedAchievement.BACHELOR_OF_MANIPULATION.asAchievement(),
+				NamedAchievement.THE_WALKING_DEADLOCK.asAchievement()) > 0);
 	}
 
 	@Test
@@ -58,13 +58,13 @@ public class AchievementDefaultSortOrderTest {
 		final AchievementCounter counter = new AchievementCounter(new AchievementEvent("A"), 1);
 		final Achievement achievement1 = new Achievement("ADVENTUROUS", counter);
 		final Achievement achievement2 = new Achievement("FRIEND_OF_THE_APPLICATION", counter);
-		Assert.assertTrue(new AchievementDefaultSortOrder().compare(achievement2, achievement1) < 0);
-		Assert.assertEquals(0,
+		assertTrue(new AchievementDefaultSortOrder().compare(achievement2, achievement1) < 0);
+		assertEquals(0,
 				new AchievementDefaultSortOrder().compare(NamedAchievement.ADVENTUROUS.asAchievement(), achievement1));
-		Assert.assertEquals(0, new AchievementDefaultSortOrder()
+		assertEquals(0, new AchievementDefaultSortOrder()
 				.compare(NamedAchievement.FRIEND_OF_THE_APPLICATION.asAchievement(), achievement2));
-		Assert.assertTrue(new AchievementDefaultSortOrder().compare(achievement1, achievement2) > 0);
-		Assert.assertTrue(new AchievementDefaultSortOrder().compare(achievement1,
+		assertTrue(new AchievementDefaultSortOrder().compare(achievement1, achievement2) > 0);
+		assertTrue(new AchievementDefaultSortOrder().compare(achievement1,
 				NamedAchievement.FRIEND_OF_THE_APPLICATION.asAchievement()) > 0);
 	}
 
@@ -75,9 +75,9 @@ public class AchievementDefaultSortOrderTest {
 		final Achievement achievement1 = new Achievement("A", counter1);
 		final Achievement achievement2 = new Achievement("B", counter1);
 		final Achievement achievement3 = new Achievement("A", counter2);
-		Assert.assertTrue(new AchievementDefaultSortOrder().compare(achievement1, achievement2) < 0);
-		Assert.assertEquals(0, new AchievementDefaultSortOrder().compare(achievement1, achievement3));
-		Assert.assertTrue(new AchievementDefaultSortOrder().compare(achievement2, achievement1) > 0);
+		assertTrue(new AchievementDefaultSortOrder().compare(achievement1, achievement2) < 0);
+		assertEquals(0, new AchievementDefaultSortOrder().compare(achievement1, achievement3));
+		assertTrue(new AchievementDefaultSortOrder().compare(achievement2, achievement1) > 0);
 	}
 
 	@Test
@@ -85,9 +85,9 @@ public class AchievementDefaultSortOrderTest {
 		final AchievementCounter counter = new AchievementCounter(new AchievementEvent("A"), 1);
 		final Achievement achievement1 = new Achievement("A", counter);
 		final Achievement achievement2 = new Achievement("B", counter);
-		Assert.assertTrue(new AchievementDefaultSortOrder().compare(achievement1,
+		assertTrue(new AchievementDefaultSortOrder().compare(achievement1,
 				NamedAchievement.FRIEND_OF_THE_APPLICATION.asAchievement()) < 0);
-		Assert.assertTrue(new AchievementDefaultSortOrder().compare(achievement2,
+		assertTrue(new AchievementDefaultSortOrder().compare(achievement2,
 				NamedAchievement.ADVENTUROUS.asAchievement()) > 0);
 	}
 }

@@ -25,9 +25,11 @@
  */
 package de.kuehweg.sqltool.dialog.component.schematree.node;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +46,6 @@ import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
 
 /**
- *
  * @author Michael Kühweg
  */
 public class SchemaTreeNodeBuilderTest {
@@ -72,24 +73,19 @@ public class SchemaTreeNodeBuilderTest {
 
 	@Test
 	public void basicDatabase() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
-		Assert.assertEquals("db", root.getTitle());
-		Assert.assertEquals(SchemaTreeNodeType.DATABASE, root.getType());
-		Assert.assertEquals("product version", root.getChildren().get(0)
-				.getTitle());
-		Assert.assertEquals(SchemaTreeNodeType.PLAIN, root.getChildren().get(0)
-				.getType());
+		assertEquals("db", root.getTitle());
+		assertEquals(SchemaTreeNodeType.DATABASE, root.getType());
+		assertEquals("product version", root.getChildren().get(0).getTitle());
+		assertEquals(SchemaTreeNodeType.PLAIN, root.getChildren().get(0).getType());
 	}
 
 	@Test
 	public void basicCatalog() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog2 = new CatalogDescription("catalog2");
 		final CatalogDescription catalog1 = new CatalogDescription("catalog1");
@@ -97,29 +93,24 @@ public class SchemaTreeNodeBuilderTest {
 		db.adoptOrphan(catalog2);
 		db.adoptOrphan(catalog1);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
-		Assert.assertEquals(3, root.getChildren().size());
+		assertEquals(3, root.getChildren().size());
 
-		Assert.assertEquals(SchemaTreeNodeType.PLAIN, root.getChildren().get(0)
-				.getType());
+		assertEquals(SchemaTreeNodeType.PLAIN, root.getChildren().get(0).getType());
 
 		final SchemaTreeNode accessCatalog1 = root.getChildren().get(1);
 		final SchemaTreeNode accessCatalog2 = root.getChildren().get(2);
 
-		Assert.assertEquals(SchemaTreeNodeType.CATALOG,
-				accessCatalog1.getType());
-		Assert.assertEquals(catalog1.getName(), accessCatalog1.getTitle());
-		Assert.assertEquals(SchemaTreeNodeType.CATALOG,
-				accessCatalog2.getType());
-		Assert.assertEquals(catalog2.getName(), accessCatalog2.getTitle());
+		assertEquals(SchemaTreeNodeType.CATALOG, accessCatalog1.getType());
+		assertEquals(catalog1.getName(), accessCatalog1.getTitle());
+		assertEquals(SchemaTreeNodeType.CATALOG, accessCatalog2.getType());
+		assertEquals(catalog2.getName(), accessCatalog2.getTitle());
 	}
 
 	@Test
 	public void basicSchema() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog2 = new CatalogDescription("catalog2");
 		final CatalogDescription catalog1 = new CatalogDescription("catalog1");
@@ -130,31 +121,27 @@ public class SchemaTreeNodeBuilderTest {
 		db.adoptOrphan(catalog2);
 		db.adoptOrphan(catalog1);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
 		final SchemaTreeNode accessCatalog1 = root.getChildren().get(1);
 		final SchemaTreeNode accessCatalog2 = root.getChildren().get(2);
 
 		final SchemaTreeNode accessSchema = accessCatalog1.getChildren().get(0);
 
-		Assert.assertEquals(SchemaTreeNodeType.SCHEMA, accessSchema.getType());
-		Assert.assertEquals(schema.getName(), accessSchema.getTitle());
-		Assert.assertTrue(accessCatalog2.getChildren().isEmpty());
+		assertEquals(SchemaTreeNodeType.SCHEMA, accessSchema.getType());
+		assertEquals(schema.getName(), accessSchema.getTitle());
+		assertTrue(accessCatalog2.getChildren().isEmpty());
 	}
 
 	@Test
 	public void basicTableTypes() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
 		final TableDescription view = new TableDescription("view", "VIEW", null);
-		final TableDescription view2 = new TableDescription("view2", "VIEW",
-				null);
+		final TableDescription view2 = new TableDescription("view2", "VIEW", null);
 
 		schema.adoptOrphan(view);
 		schema.adoptOrphan(view2);
@@ -162,40 +149,28 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
-		final SchemaTreeNode accessSchema = root.getChildren().get(1)
-				.getChildren().get(0);
+		final SchemaTreeNode accessSchema = root.getChildren().get(1).getChildren().get(0);
 
-		Assert.assertEquals(2, accessSchema.getChildren().size());
-		Assert.assertEquals(SchemaTreeNodeType.TABLE_TYPE, accessSchema
-				.getChildren().get(0).getType());
-		Assert.assertEquals("TABLE", accessSchema.getChildren().get(0)
-				.getTitle());
-		Assert.assertEquals(SchemaTreeNodeType.TABLE_TYPE, accessSchema
-				.getChildren().get(1).getType());
-		Assert.assertEquals("VIEW", accessSchema.getChildren().get(1)
-				.getTitle());
-		Assert.assertEquals(1, accessSchema.getChildren().get(0).getChildren()
-				.size());
-		Assert.assertEquals(2, accessSchema.getChildren().get(1).getChildren()
-				.size());
+		assertEquals(2, accessSchema.getChildren().size());
+		assertEquals(SchemaTreeNodeType.TABLE_TYPE, accessSchema.getChildren().get(0).getType());
+		assertEquals("TABLE", accessSchema.getChildren().get(0).getTitle());
+		assertEquals(SchemaTreeNodeType.TABLE_TYPE, accessSchema.getChildren().get(1).getType());
+		assertEquals("VIEW", accessSchema.getChildren().get(1).getTitle());
+		assertEquals(1, accessSchema.getChildren().get(0).getChildren().size());
+		assertEquals(2, accessSchema.getChildren().get(1).getChildren().size());
 	}
 
 	@Test
 	public void table() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
-		final TableDescription view1 = new TableDescription("view1", "VIEW",
-				null);
-		final TableDescription view2 = new TableDescription("view2", "VIEW",
-				null);
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
+		final TableDescription view1 = new TableDescription("view1", "VIEW", null);
+		final TableDescription view2 = new TableDescription("view2", "VIEW", null);
 
 		schema.adoptOrphan(view1);
 		schema.adoptOrphan(view2);
@@ -203,50 +178,41 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
-		final SchemaTreeNode accessSchema = root.getChildren().get(1)
-				.getChildren().get(0);
-		final SchemaTreeNode accessTableType = accessSchema.getChildren()
-				.get(0);
+		final SchemaTreeNode accessSchema = root.getChildren().get(1).getChildren().get(0);
+		final SchemaTreeNode accessTableType = accessSchema.getChildren().get(0);
 		final SchemaTreeNode accessViewType = accessSchema.getChildren().get(1);
 
 		final SchemaTreeNode accessTable = accessTableType.getChildren().get(0);
 		final SchemaTreeNode accessView1 = accessViewType.getChildren().get(0);
 		final SchemaTreeNode accessView2 = accessViewType.getChildren().get(1);
 
-		Assert.assertEquals(SchemaTreeNodeType.TABLE, accessTable.getType());
-		Assert.assertEquals(SchemaTreeNodeType.TABLE, accessView1.getType());
-		Assert.assertEquals(SchemaTreeNodeType.TABLE, accessView2.getType());
-		Assert.assertEquals(1, accessTableType.getChildren().size());
-		Assert.assertEquals(2, accessViewType.getChildren().size());
+		assertEquals(SchemaTreeNodeType.TABLE, accessTable.getType());
+		assertEquals(SchemaTreeNodeType.TABLE, accessView1.getType());
+		assertEquals(SchemaTreeNodeType.TABLE, accessView2.getType());
+		assertEquals(1, accessTableType.getChildren().size());
+		assertEquals(2, accessViewType.getChildren().size());
 
-		Assert.assertEquals(SchemaTreeNodeType.PLAIN, accessTable.getChildren()
-				.get(0).getType());
-		Assert.assertEquals("remarks", accessTable.getChildren().get(0)
-				.getTitle());
-		Assert.assertTrue(accessView1.getChildren().isEmpty());
-		Assert.assertTrue(accessView2.getChildren().isEmpty());
+		assertEquals(SchemaTreeNodeType.PLAIN, accessTable.getChildren().get(0).getType());
+		assertEquals("remarks", accessTable.getChildren().get(0).getTitle());
+		assertTrue(accessView1.getChildren().isEmpty());
+		assertTrue(accessView2.getChildren().isEmpty());
 	}
 
 	@Test
 	public void columns() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
-		final ColumnDescription column1 = new ColumnDescription("column1",
-				"type1", 42, 2, Nullability.NO, null, "remarks1");
-		final ColumnDescription column2 = new ColumnDescription("column2",
-				"type2", 42, 0, Nullability.YES, null, null);
-		final ColumnDescription column3 = new ColumnDescription("column3",
-				"type3", 0, 0, Nullability.YES, "default3", null);
-		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription(
-				"pk", "column1");
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
+		final ColumnDescription column1 = new ColumnDescription("column1", "type1", 42, 2, Nullability.NO, null,
+				"remarks1");
+		final ColumnDescription column2 = new ColumnDescription("column2", "type2", 42, 0, Nullability.YES, null, null);
+		final ColumnDescription column3 = new ColumnDescription("column3", "type3", 0, 0, Nullability.YES, "default3",
+				null);
+		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription("pk", "column1");
 
 		table.adoptOrphan(column1);
 		table.adoptOrphan(column2);
@@ -256,74 +222,55 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
-		final SchemaTreeNode accessSchema = root.getChildren().get(1)
-				.getChildren().get(0);
-		final SchemaTreeNode accessTableType = accessSchema.getChildren()
-				.get(0);
+		final SchemaTreeNode accessSchema = root.getChildren().get(1).getChildren().get(0);
+		final SchemaTreeNode accessTableType = accessSchema.getChildren().get(0);
 		final SchemaTreeNode accessTable = accessTableType.getChildren().get(0);
 		final SchemaTreeNode accessColumn1 = accessTable.getChildren().get(1);
 		final SchemaTreeNode accessColumn2 = accessTable.getChildren().get(2);
 		final SchemaTreeNode accessColumn3 = accessTable.getChildren().get(3);
 
-		Assert.assertEquals(SchemaTreeNodeType.PLAIN, accessTable.getChildren()
-				.get(0).getType());
-		Assert.assertEquals("remarks", accessTable.getChildren().get(0)
-				.getTitle());
-		Assert.assertEquals(SchemaTreeNodeType.PRIMARY_KEY_COLUMN,
-				accessColumn1.getType());
-		Assert.assertEquals("column1", accessColumn1.getTitle());
-		Assert.assertEquals(SchemaTreeNodeType.COLUMN, accessColumn2.getType());
-		Assert.assertEquals("column2", accessColumn2.getTitle());
+		assertEquals(SchemaTreeNodeType.PLAIN, accessTable.getChildren().get(0).getType());
+		assertEquals("remarks", accessTable.getChildren().get(0).getTitle());
+		assertEquals(SchemaTreeNodeType.PRIMARY_KEY_COLUMN, accessColumn1.getType());
+		assertEquals("column1", accessColumn1.getTitle());
+		assertEquals(SchemaTreeNodeType.COLUMN, accessColumn2.getType());
+		assertEquals("column2", accessColumn2.getTitle());
 
-		Assert.assertEquals(2, accessColumn1.getChildren().size());
-		Assert.assertEquals("remarks1", accessColumn1.getChildren().get(0)
-				.getTitle());
-		Assert.assertEquals("type1(42,2)", accessColumn1.getChildren().get(1)
-				.getTitle());
+		assertEquals(2, accessColumn1.getChildren().size());
+		assertEquals("remarks1", accessColumn1.getChildren().get(0).getTitle());
+		assertEquals("type1(42,2)", accessColumn1.getChildren().get(1).getTitle());
 
-		Assert.assertEquals(2, accessColumn2.getChildren().size());
-		Assert.assertEquals("type2(42)", accessColumn2.getChildren().get(0)
-				.getTitle());
-		Assert.assertEquals("NULLABLE", accessColumn2.getChildren().get(1)
-				.getTitle());
+		assertEquals(2, accessColumn2.getChildren().size());
+		assertEquals("type2(42)", accessColumn2.getChildren().get(0).getTitle());
+		assertEquals("NULLABLE", accessColumn2.getChildren().get(1).getTitle());
 
-		Assert.assertEquals(3, accessColumn3.getChildren().size());
-		Assert.assertEquals("type3", accessColumn3.getChildren().get(0)
-				.getTitle());
-		Assert.assertEquals("NULLABLE", accessColumn2.getChildren().get(1)
-				.getTitle());
-		Assert.assertEquals("DEFAULT: default3", accessColumn3.getChildren()
-				.get(2).getTitle());
+		assertEquals(3, accessColumn3.getChildren().size());
+		assertEquals("type3", accessColumn3.getChildren().get(0).getTitle());
+		assertEquals("NULLABLE", accessColumn2.getChildren().get(1).getTitle());
+		assertEquals("DEFAULT: default3", accessColumn3.getChildren().get(2).getTitle());
 
 	}
 
 	@Test
 	public void importedKeysOutsideSchema() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
-		final ColumnDescription column1 = new ColumnDescription("column1",
-				"type1", 42, 2, Nullability.NO, null, "remarks1");
-		final ColumnDescription column2 = new ColumnDescription("column2",
-				"type2", 42, 0, Nullability.YES, null, null);
-		final ColumnDescription column3 = new ColumnDescription("column3",
-				"type3", 0, 0, Nullability.YES, "default3", null);
-		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription(
-				"pk", "column1");
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
+		final ColumnDescription column1 = new ColumnDescription("column1", "type1", 42, 2, Nullability.NO, null,
+				"remarks1");
+		final ColumnDescription column2 = new ColumnDescription("column2", "type2", 42, 0, Nullability.YES, null, null);
+		final ColumnDescription column3 = new ColumnDescription("column3", "type3", 0, 0, Nullability.YES, "default3",
+				null);
+		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription("pk", "column1");
 
-		final ImportedKeyColumnDescription importedKey1 = new ImportedKeyColumnDescription(
-				"fk", "column2", "to_catalog", "to_schema", "to_table",
-				"to_column1");
-		final ImportedKeyColumnDescription importedKey2 = new ImportedKeyColumnDescription(
-				"fk", "column3", "to_catalog", "to_schema", "to_table",
-				"to_column2");
+		final ImportedKeyColumnDescription importedKey1 = new ImportedKeyColumnDescription("fk", "column2",
+				"to_catalog", "to_schema", "to_table", "to_column1");
+		final ImportedKeyColumnDescription importedKey2 = new ImportedKeyColumnDescription("fk", "column3",
+				"to_catalog", "to_schema", "to_table", "to_column2");
 
 		table.adoptOrphan(column1);
 		table.adoptOrphan(column2);
@@ -335,58 +282,46 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
 		final SchemaTreeNode accessCatalog = root.getChildren().get(1);
 		final SchemaTreeNode accessSchema = accessCatalog.getChildren().get(0);
-		final SchemaTreeNode accessTableType = accessSchema.getChildren()
-				.get(0);
+		final SchemaTreeNode accessTableType = accessSchema.getChildren().get(0);
 		final SchemaTreeNode accessTable = accessTableType.getChildren().get(0);
-		final SchemaTreeNode accessImportedKeys = accessTable.getChildren()
-				.get(4);
-		final SchemaTreeNode accessImportedKey = accessImportedKeys
-				.getChildren().get(0);
+		final SchemaTreeNode accessImportedKeys = accessTable.getChildren().get(4);
+		final SchemaTreeNode accessImportedKey = accessImportedKeys.getChildren().get(0);
 
-		Assert.assertEquals(SchemaTreeNodeType.IMPORTED_KEYS,
-				accessImportedKeys.getType());
-		Assert.assertEquals(1, accessImportedKeys.getChildren().size());
+		assertEquals(SchemaTreeNodeType.IMPORTED_KEYS, accessImportedKeys.getType());
+		assertEquals(1, accessImportedKeys.getChildren().size());
 
-		Assert.assertEquals(SchemaTreeNodeType.IMPORTED_KEY,
-				accessImportedKey.getType());
-		Assert.assertEquals("fk", accessImportedKey.getTitle());
-		Assert.assertEquals(2, accessImportedKey.getChildren().size());
+		assertEquals(SchemaTreeNodeType.IMPORTED_KEY, accessImportedKey.getType());
+		assertEquals("fk", accessImportedKey.getTitle());
+		assertEquals(2, accessImportedKey.getChildren().size());
 
-		Assert.assertEquals(
-				"column2 -> to_catalog.to_schema.to_table.to_column1",
+		assertEquals("column2 -> to_catalog.to_schema.to_table.to_column1",
 				accessImportedKey.getChildren().get(0).getTitle());
-		Assert.assertEquals(
-				"column3 -> to_catalog.to_schema.to_table.to_column2",
+		assertEquals("column3 -> to_catalog.to_schema.to_table.to_column2",
 				accessImportedKey.getChildren().get(1).getTitle());
 	}
 
 	@Test
 	public void importedKeysInsideSchema() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
-		final ColumnDescription column1 = new ColumnDescription("column1",
-				"type1", 42, 2, Nullability.NO, null, "remarks1");
-		final ColumnDescription column2 = new ColumnDescription("column2",
-				"type2", 42, 0, Nullability.YES, null, null);
-		final ColumnDescription column3 = new ColumnDescription("column3",
-				"type3", 0, 0, Nullability.YES, "default3", null);
-		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription(
-				"pk", "column1");
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
+		final ColumnDescription column1 = new ColumnDescription("column1", "type1", 42, 2, Nullability.NO, null,
+				"remarks1");
+		final ColumnDescription column2 = new ColumnDescription("column2", "type2", 42, 0, Nullability.YES, null, null);
+		final ColumnDescription column3 = new ColumnDescription("column3", "type3", 0, 0, Nullability.YES, "default3",
+				null);
+		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription("pk", "column1");
 
-		final ImportedKeyColumnDescription importedKey1 = new ImportedKeyColumnDescription(
-				"fk", "column2", "catalog", "schema", "to_table", "to_column1");
-		final ImportedKeyColumnDescription importedKey2 = new ImportedKeyColumnDescription(
-				"fk", "column3", "catalog", "schema", "to_table", "to_column2");
+		final ImportedKeyColumnDescription importedKey1 = new ImportedKeyColumnDescription("fk", "column2", "catalog",
+				"schema", "to_table", "to_column1");
+		final ImportedKeyColumnDescription importedKey2 = new ImportedKeyColumnDescription("fk", "column3", "catalog",
+				"schema", "to_table", "to_column2");
 
 		table.adoptOrphan(column1);
 		table.adoptOrphan(column2);
@@ -398,58 +333,44 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
 		final SchemaTreeNode accessCatalog = root.getChildren().get(1);
 		final SchemaTreeNode accessSchema = accessCatalog.getChildren().get(0);
-		final SchemaTreeNode accessTableType = accessSchema.getChildren()
-				.get(0);
+		final SchemaTreeNode accessTableType = accessSchema.getChildren().get(0);
 		final SchemaTreeNode accessTable = accessTableType.getChildren().get(0);
-		final SchemaTreeNode accessImportedKeys = accessTable.getChildren()
-				.get(4);
-		final SchemaTreeNode accessImportedKey = accessImportedKeys
-				.getChildren().get(0);
+		final SchemaTreeNode accessImportedKeys = accessTable.getChildren().get(4);
+		final SchemaTreeNode accessImportedKey = accessImportedKeys.getChildren().get(0);
 
-		Assert.assertEquals(SchemaTreeNodeType.IMPORTED_KEYS,
-				accessImportedKeys.getType());
-		Assert.assertEquals(1, accessImportedKeys.getChildren().size());
+		assertEquals(SchemaTreeNodeType.IMPORTED_KEYS, accessImportedKeys.getType());
+		assertEquals(1, accessImportedKeys.getChildren().size());
 
-		Assert.assertEquals(SchemaTreeNodeType.IMPORTED_KEY,
-				accessImportedKey.getType());
-		Assert.assertEquals("fk", accessImportedKey.getTitle());
-		Assert.assertEquals(2, accessImportedKey.getChildren().size());
+		assertEquals(SchemaTreeNodeType.IMPORTED_KEY, accessImportedKey.getType());
+		assertEquals("fk", accessImportedKey.getTitle());
+		assertEquals(2, accessImportedKey.getChildren().size());
 
-		Assert.assertEquals("column2 -> to_table.to_column1", accessImportedKey
-				.getChildren().get(0).getTitle());
-		Assert.assertEquals("column3 -> to_table.to_column2", accessImportedKey
-				.getChildren().get(1).getTitle());
+		assertEquals("column2 -> to_table.to_column1", accessImportedKey.getChildren().get(0).getTitle());
+		assertEquals("column3 -> to_table.to_column2", accessImportedKey.getChildren().get(1).getTitle());
 	}
 
 	@Test
 	public void exportedKeysOutsideSchema() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
-		final ColumnDescription column1 = new ColumnDescription("column1",
-				"type1", 42, 2, Nullability.NO, null, "remarks1");
-		final ColumnDescription column2 = new ColumnDescription("column2",
-				"type2", 42, 0, Nullability.YES, null, null);
-		final ColumnDescription column3 = new ColumnDescription("column3",
-				"type3", 0, 0, Nullability.YES, "default3", null);
-		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription(
-				"pk", "column1");
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
+		final ColumnDescription column1 = new ColumnDescription("column1", "type1", 42, 2, Nullability.NO, null,
+				"remarks1");
+		final ColumnDescription column2 = new ColumnDescription("column2", "type2", 42, 0, Nullability.YES, null, null);
+		final ColumnDescription column3 = new ColumnDescription("column3", "type3", 0, 0, Nullability.YES, "default3",
+				null);
+		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription("pk", "column1");
 
-		final ExportedKeyColumnDescription exportedKey1 = new ExportedKeyColumnDescription(
-				"fk", "column2", "from_catalog", "from_schema", "from_table",
-				"from_column1");
-		final ExportedKeyColumnDescription exportedKey2 = new ExportedKeyColumnDescription(
-				"fk", "column3", "from_catalog", "from_schema", "from_table",
-				"from_column2");
+		final ExportedKeyColumnDescription exportedKey1 = new ExportedKeyColumnDescription("fk", "column2",
+				"from_catalog", "from_schema", "from_table", "from_column1");
+		final ExportedKeyColumnDescription exportedKey2 = new ExportedKeyColumnDescription("fk", "column3",
+				"from_catalog", "from_schema", "from_table", "from_column2");
 
 		table.adoptOrphan(column1);
 		table.adoptOrphan(column2);
@@ -461,60 +382,46 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
 		final SchemaTreeNode accessCatalog = root.getChildren().get(1);
 		final SchemaTreeNode accessSchema = accessCatalog.getChildren().get(0);
-		final SchemaTreeNode accessTableType = accessSchema.getChildren()
-				.get(0);
+		final SchemaTreeNode accessTableType = accessSchema.getChildren().get(0);
 		final SchemaTreeNode accessTable = accessTableType.getChildren().get(0);
-		final SchemaTreeNode accessExportedKeys = accessTable.getChildren()
-				.get(4);
-		final SchemaTreeNode accessExportedKey = accessExportedKeys
-				.getChildren().get(0);
+		final SchemaTreeNode accessExportedKeys = accessTable.getChildren().get(4);
+		final SchemaTreeNode accessExportedKey = accessExportedKeys.getChildren().get(0);
 
-		Assert.assertEquals(SchemaTreeNodeType.EXPORTED_KEYS,
-				accessExportedKeys.getType());
-		Assert.assertEquals(1, accessExportedKeys.getChildren().size());
+		assertEquals(SchemaTreeNodeType.EXPORTED_KEYS, accessExportedKeys.getType());
+		assertEquals(1, accessExportedKeys.getChildren().size());
 
-		Assert.assertEquals(SchemaTreeNodeType.EXPORTED_KEY,
-				accessExportedKey.getType());
-		Assert.assertEquals("fk", accessExportedKey.getTitle());
-		Assert.assertEquals(2, accessExportedKey.getChildren().size());
+		assertEquals(SchemaTreeNodeType.EXPORTED_KEY, accessExportedKey.getType());
+		assertEquals("fk", accessExportedKey.getTitle());
+		assertEquals(2, accessExportedKey.getChildren().size());
 
-		Assert.assertEquals(
-				"column2 <- from_catalog.from_schema.from_table.from_column1",
+		assertEquals("column2 <- from_catalog.from_schema.from_table.from_column1",
 				accessExportedKey.getChildren().get(0).getTitle());
-		Assert.assertEquals(
-				"column3 <- from_catalog.from_schema.from_table.from_column2",
+		assertEquals("column3 <- from_catalog.from_schema.from_table.from_column2",
 				accessExportedKey.getChildren().get(1).getTitle());
 	}
 
 	@Test
 	public void exportedKeysInsideSchema() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
-		final ColumnDescription column1 = new ColumnDescription("column1",
-				"type1", 42, 2, Nullability.NO, null, "remarks1");
-		final ColumnDescription column2 = new ColumnDescription("column2",
-				"type2", 42, 0, Nullability.YES, null, null);
-		final ColumnDescription column3 = new ColumnDescription("column3",
-				"type3", 0, 0, Nullability.YES, "default3", null);
-		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription(
-				"pk", "column1");
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
+		final ColumnDescription column1 = new ColumnDescription("column1", "type1", 42, 2, Nullability.NO, null,
+				"remarks1");
+		final ColumnDescription column2 = new ColumnDescription("column2", "type2", 42, 0, Nullability.YES, null, null);
+		final ColumnDescription column3 = new ColumnDescription("column3", "type3", 0, 0, Nullability.YES, "default3",
+				null);
+		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription("pk", "column1");
 
-		final ExportedKeyColumnDescription exportedKey1 = new ExportedKeyColumnDescription(
-				"fk", "column2", "catalog", "schema", "from_table",
-				"from_column1");
-		final ExportedKeyColumnDescription exportedKey2 = new ExportedKeyColumnDescription(
-				"fk", "column3", "catalog", "schema", "from_table",
-				"from_column2");
+		final ExportedKeyColumnDescription exportedKey1 = new ExportedKeyColumnDescription("fk", "column2", "catalog",
+				"schema", "from_table", "from_column1");
+		final ExportedKeyColumnDescription exportedKey2 = new ExportedKeyColumnDescription("fk", "column3", "catalog",
+				"schema", "from_table", "from_column2");
 
 		table.adoptOrphan(column1);
 		table.adoptOrphan(column2);
@@ -526,58 +433,43 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
 		final SchemaTreeNode accessCatalog = root.getChildren().get(1);
 		final SchemaTreeNode accessSchema = accessCatalog.getChildren().get(0);
-		final SchemaTreeNode accessTableType = accessSchema.getChildren()
-				.get(0);
+		final SchemaTreeNode accessTableType = accessSchema.getChildren().get(0);
 		final SchemaTreeNode accessTable = accessTableType.getChildren().get(0);
-		final SchemaTreeNode accessExportedKeys = accessTable.getChildren()
-				.get(4);
-		final SchemaTreeNode accessExportedKey = accessExportedKeys
-				.getChildren().get(0);
+		final SchemaTreeNode accessExportedKeys = accessTable.getChildren().get(4);
+		final SchemaTreeNode accessExportedKey = accessExportedKeys.getChildren().get(0);
 
-		Assert.assertEquals(SchemaTreeNodeType.EXPORTED_KEYS,
-				accessExportedKeys.getType());
-		Assert.assertEquals(1, accessExportedKeys.getChildren().size());
+		assertEquals(SchemaTreeNodeType.EXPORTED_KEYS, accessExportedKeys.getType());
+		assertEquals(1, accessExportedKeys.getChildren().size());
 
-		Assert.assertEquals(SchemaTreeNodeType.EXPORTED_KEY,
-				accessExportedKey.getType());
-		Assert.assertEquals("fk", accessExportedKey.getTitle());
-		Assert.assertEquals(2, accessExportedKey.getChildren().size());
+		assertEquals(SchemaTreeNodeType.EXPORTED_KEY, accessExportedKey.getType());
+		assertEquals("fk", accessExportedKey.getTitle());
+		assertEquals(2, accessExportedKey.getChildren().size());
 
-		Assert.assertEquals("column2 <- from_table.from_column1",
-				accessExportedKey.getChildren().get(0).getTitle());
-		Assert.assertEquals("column3 <- from_table.from_column2",
-				accessExportedKey.getChildren().get(1).getTitle());
+		assertEquals("column2 <- from_table.from_column1", accessExportedKey.getChildren().get(0).getTitle());
+		assertEquals("column3 <- from_table.from_column2", accessExportedKey.getChildren().get(1).getTitle());
 	}
 
 	@Test
 	public void indices() {
-		final DatabaseDescription db = new DatabaseDescription("db", "product",
-				"version");
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
 		final CatalogDescription catalog = new CatalogDescription("catalog");
 		final SchemaDescription schema = new SchemaDescription("schema");
-		final TableDescription table = new TableDescription("table", "TABLE",
-				"remarks");
-		final ColumnDescription column1 = new ColumnDescription("column1",
-				"type1", 42, 2, Nullability.NO, null, "remarks1");
-		final ColumnDescription column2 = new ColumnDescription("column2",
-				"type2", 42, 0, Nullability.YES, null, null);
-		final ColumnDescription column3 = new ColumnDescription("column3",
-				"type3", 0, 0, Nullability.YES, "default3", null);
-		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription(
-				"pk", "column1");
+		final TableDescription table = new TableDescription("table", "TABLE", "remarks");
+		final ColumnDescription column1 = new ColumnDescription("column1", "type1", 42, 2, Nullability.NO, null,
+				"remarks1");
+		final ColumnDescription column2 = new ColumnDescription("column2", "type2", 42, 0, Nullability.YES, null, null);
+		final ColumnDescription column3 = new ColumnDescription("column3", "type3", 0, 0, Nullability.YES, "default3",
+				null);
+		final PrimaryKeyColumnDescription pk = new PrimaryKeyColumnDescription("pk", "column1");
 
-		final IndexColumnDescription indexNonUnique = new IndexColumnDescription(
-				"idx1", "column1", 1, true);
-		final IndexColumnDescription indexUnique1 = new IndexColumnDescription(
-				"idx2", "column2", 1, false);
-		final IndexColumnDescription indexUnique2 = new IndexColumnDescription(
-				"idx2", "column3", 2, false);
+		final IndexColumnDescription indexNonUnique = new IndexColumnDescription("idx1", "column1", 1, true);
+		final IndexColumnDescription indexUnique1 = new IndexColumnDescription("idx2", "column2", 1, false);
+		final IndexColumnDescription indexUnique2 = new IndexColumnDescription("idx2", "column3", 2, false);
 
 		table.adoptOrphan(column1);
 		table.adoptOrphan(column2);
@@ -590,41 +482,31 @@ public class SchemaTreeNodeBuilderTest {
 		catalog.adoptOrphan(schema);
 		db.adoptOrphan(catalog);
 
-		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db)
-				.getRootOfPopulatedTree();
+		final SchemaTreeNode root = new SchemaTreeNodeBuilder(db).getRootOfPopulatedTree();
 
 		final SchemaTreeNode accessCatalog = root.getChildren().get(1);
 		final SchemaTreeNode accessSchema = accessCatalog.getChildren().get(0);
-		final SchemaTreeNode accessTableType = accessSchema.getChildren()
-				.get(0);
+		final SchemaTreeNode accessTableType = accessSchema.getChildren().get(0);
 		final SchemaTreeNode accessTable = accessTableType.getChildren().get(0);
 		final SchemaTreeNode accessIndices = accessTable.getChildren().get(4);
-		final SchemaTreeNode accessIndexNonUnique = accessIndices.getChildren()
-				.get(0);
-		final SchemaTreeNode accessIndexUnique = accessIndices.getChildren()
-				.get(1);
+		final SchemaTreeNode accessIndexNonUnique = accessIndices.getChildren().get(0);
+		final SchemaTreeNode accessIndexUnique = accessIndices.getChildren().get(1);
 
-		Assert.assertEquals(SchemaTreeNodeType.INDICES, accessIndices.getType());
-		Assert.assertEquals(SchemaTreeNodeType.INDEX,
-				accessIndexNonUnique.getType());
-		Assert.assertEquals(SchemaTreeNodeType.INDEX,
-				accessIndexUnique.getType());
+		assertEquals(SchemaTreeNodeType.INDICES, accessIndices.getType());
+		assertEquals(SchemaTreeNodeType.INDEX, accessIndexNonUnique.getType());
+		assertEquals(SchemaTreeNodeType.INDEX, accessIndexUnique.getType());
 
-		Assert.assertEquals(2, accessIndices.getChildren().size());
+		assertEquals(2, accessIndices.getChildren().size());
 
-		Assert.assertEquals("idx1 (NON UNIQUE)",
-				accessIndexNonUnique.getTitle());
-		Assert.assertEquals("idx2", accessIndexUnique.getTitle());
+		assertEquals("idx1 (NON UNIQUE)", accessIndexNonUnique.getTitle());
+		assertEquals("idx2", accessIndexUnique.getTitle());
 
-		Assert.assertEquals(1, accessIndexNonUnique.getChildren().size());
-		Assert.assertEquals(2, accessIndexUnique.getChildren().size());
+		assertEquals(1, accessIndexNonUnique.getChildren().size());
+		assertEquals(2, accessIndexUnique.getChildren().size());
 
-		Assert.assertEquals(SchemaTreeNodeType.INDEX_COLUMN,
-				accessIndexNonUnique.getChildren().get(0).getType());
-		Assert.assertEquals(SchemaTreeNodeType.INDEX_COLUMN, accessIndexUnique
-				.getChildren().get(0).getType());
-		Assert.assertEquals(SchemaTreeNodeType.INDEX_COLUMN, accessIndexUnique
-				.getChildren().get(1).getType());
+		assertEquals(SchemaTreeNodeType.INDEX_COLUMN, accessIndexNonUnique.getChildren().get(0).getType());
+		assertEquals(SchemaTreeNodeType.INDEX_COLUMN, accessIndexUnique.getChildren().get(0).getType());
+		assertEquals(SchemaTreeNodeType.INDEX_COLUMN, accessIndexUnique.getChildren().get(1).getType());
 	}
 
 }

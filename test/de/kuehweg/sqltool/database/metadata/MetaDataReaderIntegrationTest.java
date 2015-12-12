@@ -25,11 +25,12 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,7 +40,6 @@ import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 
 /**
- *
  * @author Michael Kühweg
  */
 public class MetaDataReaderIntegrationTest extends AbstractBaseIntegration {
@@ -71,8 +71,8 @@ public class MetaDataReaderIntegrationTest extends AbstractBaseIntegration {
 		final DatabaseDescription db = new MetaDataReader().readMetaData(getTestConnection());
 		// Standardanmeldung: 1 Catalog mit 2 System-Schemas und einem PUBLIC
 		// Schema
-		Assert.assertEquals(1, db.getCatalogs().size());
-		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
+		assertEquals(1, db.getCatalogs().size());
+		assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
 	}
 
 	@Test
@@ -81,14 +81,14 @@ public class MetaDataReaderIntegrationTest extends AbstractBaseIntegration {
 		final DatabaseDescription db = new MetaDataReader().readMetaData(getTestConnection());
 		// Standardanmeldung: 1 Catalog mit 2 System-Schemas und einem PUBLIC
 		// Schema
-		Assert.assertEquals(1, db.getCatalogs().size());
-		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
+		assertEquals(1, db.getCatalogs().size());
+		assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
 
 		for (final SchemaDescription schema : db.getCatalogs().iterator().next().getSchemas()) {
 			if (schema.getName().equals("PUBLIC")) {
-				Assert.assertEquals(1, schema.getTables().size());
-				Assert.assertEquals("TEST", schema.getTables().iterator().next().getName());
-				Assert.assertEquals("TABLE", schema.getTables().iterator().next().getTableType());
+				assertEquals(1, schema.getTables().size());
+				assertEquals("TEST", schema.getTables().iterator().next().getName());
+				assertEquals("TABLE", schema.getTables().iterator().next().getTableType());
 			}
 		}
 	}
@@ -100,14 +100,14 @@ public class MetaDataReaderIntegrationTest extends AbstractBaseIntegration {
 		final DatabaseDescription db = new MetaDataReader().readMetaData(getTestConnection());
 		// Standardanmeldung: 1 Catalog mit 2 System-Schemas
 		// zusätzliches Benutzerschema
-		Assert.assertEquals(1, db.getCatalogs().size());
-		Assert.assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
+		assertEquals(1, db.getCatalogs().size());
+		assertEquals(3, db.getCatalogs().iterator().next().getSchemas().size());
 
 		for (final SchemaDescription schema : db.getCatalogs().iterator().next().getSchemas()) {
 			if (schema.getName().equals("PUBLIC")) {
-				Assert.assertEquals(2, schema.getTables().size());
-				Assert.assertEquals(1, schema.getTablesByType("TABLE").size());
-				Assert.assertEquals(1, schema.getTablesByType("VIEW").size());
+				assertEquals(2, schema.getTables().size());
+				assertEquals(1, schema.getTablesByType("TABLE").size());
+				assertEquals(1, schema.getTablesByType("VIEW").size());
 			}
 		}
 	}

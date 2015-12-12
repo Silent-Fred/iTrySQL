@@ -25,13 +25,14 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +45,7 @@ import de.kuehweg.sqltool.database.execution.StatementResult;
 
 /**
  * Test für die Textformatierung von Abfrageergebnissen.
- * 
+ *
  * @author Michael Kühweg
  */
 public class TextResultFormatterTest {
@@ -100,11 +101,11 @@ public class TextResultFormatterTest {
 		final String expectedBasicResult = whenAndWho + "\n" + header + "\n" + row1 + "\n" + row2 + "\n" + rowCount
 				+ "\n";
 		final String expectedResultUnlimited = expectedBasicResult + "" + "\n";
-		Assert.assertEquals(expectedResultUnlimited, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResultUnlimited, new TextResultFormatter(info).format(template));
 
 		info.setLimitMaxRowsReached(true);
 		final String expectedResultLimited = expectedBasicResult + limited + "\n";
-		Assert.assertEquals(expectedResultLimited, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResultLimited, new TextResultFormatter(info).format(template));
 	}
 
 	@Test
@@ -121,22 +122,22 @@ public class TextResultFormatterTest {
 
 		template.setTemplate("{0}\n{1}\n");
 		String expectedResult = whenAndWho + "\n" + header + "\n" + row1 + "\n" + row2 + "\n";
-		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 
 		template.setTemplate("{0}\n{2}\n");
 		expectedResult = whenAndWho + "\n" + rowCount + "\n";
-		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 
 		template.setTemplate("{1}\n{2}\n");
 		expectedResult = header + "\n" + row1 + "\n" + row2 + "\n" + rowCount + "\n";
-		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 
 		template.setTemplate("{0}\n{3}\n");
 		expectedResult = whenAndWho + "\n\n";
-		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 		info.setLimitMaxRowsReached(true);
 		expectedResult = whenAndWho + "\n" + limited + "\n";
-		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 	}
 
 	@Test
@@ -148,7 +149,7 @@ public class TextResultFormatterTest {
 		info.setExecutedBy(null);
 		final String whenAndWho = "[24.01.1984 09:30:13 " + DialogDictionary.LABEL_UNKNOWN_USER.toString() + "]";
 
-		Assert.assertEquals(whenAndWho, new TextResultFormatter(info).format(template));
+		assertEquals(whenAndWho, new TextResultFormatter(info).format(template));
 	}
 
 	@Test
@@ -167,6 +168,6 @@ public class TextResultFormatterTest {
 		// und der
 		// Zusammenfassung
 		final String expectedResult = whenAndWho + "\n\n" + "all's well that ends well" + "\n\n";
-		Assert.assertEquals(expectedResult, new TextResultFormatter(info).format(template));
+		assertEquals(expectedResult, new TextResultFormatter(info).format(template));
 	}
 }

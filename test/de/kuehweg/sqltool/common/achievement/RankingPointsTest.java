@@ -26,7 +26,10 @@
 
 package de.kuehweg.sqltool.common.achievement;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -70,11 +73,11 @@ public class RankingPointsTest {
 	 */
 	@Test
 	public void testRegister() {
-		Assert.assertEquals(3, rankingPoints.getRegisteredAchievements().size());
-		Assert.assertTrue(rankingPoints.getRegisteredAchievements().contains(achievement1));
-		Assert.assertTrue(rankingPoints.getRegisteredAchievements().contains(achievement2));
-		Assert.assertTrue(rankingPoints.getRegisteredAchievements().contains(achievement3));
-		Assert.assertFalse(rankingPoints.getRegisteredAchievements().contains(achievement4));
+		assertEquals(3, rankingPoints.getRegisteredAchievements().size());
+		assertTrue(rankingPoints.getRegisteredAchievements().contains(achievement1));
+		assertTrue(rankingPoints.getRegisteredAchievements().contains(achievement2));
+		assertTrue(rankingPoints.getRegisteredAchievements().contains(achievement3));
+		assertFalse(rankingPoints.getRegisteredAchievements().contains(achievement4));
 	}
 
 	/**
@@ -84,18 +87,18 @@ public class RankingPointsTest {
 	 */
 	@Test
 	public void testPointsAchievedAchievement() {
-		Assert.assertEquals(0, rankingPoints.pointsAchieved(achievement1));
-		Assert.assertEquals(0, rankingPoints.pointsAchieved(achievement2));
-		Assert.assertEquals(0, rankingPoints.pointsAchieved(achievement3));
+		assertEquals(0, rankingPoints.pointsAchieved(achievement1));
+		assertEquals(0, rankingPoints.pointsAchieved(achievement2));
+		assertEquals(0, rankingPoints.pointsAchieved(achievement3));
 
 		achievement1.event(new AchievementEvent("1"));
-		Assert.assertEquals(1, rankingPoints.pointsAchieved(achievement1));
+		assertEquals(1, rankingPoints.pointsAchieved(achievement1));
 
 		// derzeit keine prozentuale Punktevergabe
 		achievement2.event(new AchievementEvent("2"));
-		Assert.assertEquals(0, rankingPoints.pointsAchieved(achievement2));
+		assertEquals(0, rankingPoints.pointsAchieved(achievement2));
 		achievement2.event(new AchievementEvent("2"));
-		Assert.assertEquals(2, rankingPoints.pointsAchieved(achievement2));
+		assertEquals(2, rankingPoints.pointsAchieved(achievement2));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -115,12 +118,12 @@ public class RankingPointsTest {
 	 */
 	@Test
 	public void testPointsAchieved() {
-		Assert.assertEquals(0, rankingPoints.pointsAchieved());
+		assertEquals(0, rankingPoints.pointsAchieved());
 		achievement2.event(new AchievementEvent("2"));
 		// derzeit keine prozentuale Punktevergabe
-		Assert.assertEquals(0, rankingPoints.pointsAchieved());
+		assertEquals(0, rankingPoints.pointsAchieved());
 		achievement2.event(new AchievementEvent("2"));
-		Assert.assertEquals(2, rankingPoints.pointsAchieved());
+		assertEquals(2, rankingPoints.pointsAchieved());
 	}
 
 	/**
@@ -130,7 +133,7 @@ public class RankingPointsTest {
 	 */
 	@Test
 	public void testMaxPointsPossible() {
-		Assert.assertEquals(6, rankingPoints.maxPointsPossible());
+		assertEquals(6, rankingPoints.maxPointsPossible());
 	}
 
 	/**
@@ -140,9 +143,9 @@ public class RankingPointsTest {
 	 */
 	@Test
 	public void testPointsAchievable() {
-		Assert.assertEquals(1, rankingPoints.pointsAchievableForAchievement(achievement1));
-		Assert.assertEquals(2, rankingPoints.pointsAchievableForAchievement(achievement2));
-		Assert.assertEquals(3, rankingPoints.pointsAchievableForAchievement(achievement3));
+		assertEquals(1, rankingPoints.pointsAchievableForAchievement(achievement1));
+		assertEquals(2, rankingPoints.pointsAchievableForAchievement(achievement2));
+		assertEquals(3, rankingPoints.pointsAchievableForAchievement(achievement3));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

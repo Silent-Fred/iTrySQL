@@ -36,14 +36,13 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import de.kuehweg.gamification.Achievement;
 import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.common.achievement.AchievementManager;
 import de.kuehweg.sqltool.common.achievement.NamedAchievement;
 import de.kuehweg.sqltool.common.achievement.NamedRank;
 import de.kuehweg.sqltool.common.achievement.RankingPoints;
+import de.kuehweg.sqltool.common.text.HtmlEncoder;
 
 /**
  * Bereitet den erreichten Stand der Achievements als HTML auf.
@@ -59,6 +58,8 @@ public class AchievementHtmlFormatter {
 	private RankingPoints rankingPoints;
 
 	private final List<Achievement> achievements;
+
+	private final HtmlEncoder htmlEncoder = new HtmlEncoder();
 
 	/**
 	 * HTML Formatierung für den aktuellen Fortschritt. Der Default Konstruktor
@@ -136,7 +137,7 @@ public class AchievementHtmlFormatter {
 		try {
 			value = resourceBundle.getString(resourceKey);
 		} catch (final MissingResourceException | NullPointerException e) {
-			value = StringEscapeUtils.escapeHtml4(resourceKey);
+			value = htmlEncoder.encodeHtml(resourceKey);
 		}
 		return value;
 	}
@@ -176,7 +177,7 @@ public class AchievementHtmlFormatter {
 		try {
 			return MessageFormat.format(rankTemplate, rankName, rankLogo);
 		} catch (final IllegalArgumentException e) {
-			return StringEscapeUtils.escapeHtml4(rank.name());
+			return htmlEncoder.encodeHtml(rank.name());
 		}
 	}
 
@@ -205,7 +206,7 @@ public class AchievementHtmlFormatter {
 			return MessageFormat.format(achievementTemplate, achievementName, achievementDescription, achievementHint,
 					achievementLogo, achievementPoints, achievementPercentageAchieved);
 		} catch (final IllegalArgumentException e) {
-			return StringEscapeUtils.escapeHtml4(achievement.getName());
+			return htmlEncoder.encodeHtml(achievement.getName());
 		}
 	}
 
@@ -233,7 +234,7 @@ public class AchievementHtmlFormatter {
 		} catch (final IllegalArgumentException e) {
 			// TODO eigentlich ist das ja echt ziemlich unwahrscheinlich. Reicht
 			// dann eine solche testweise, lapidare Meldung?
-			return StringEscapeUtils.escapeHtml4("Oops.");
+			return htmlEncoder.encodeHtml("Oops.");
 		}
 	}
 
