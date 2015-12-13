@@ -126,6 +126,23 @@
 
 .itry-search-bar {
 	-fx-background-color: #f8f8f8;
+	-fx-padding: 2 8 2 8;
+}
+
+.itry-search-bar-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-text-fill: rgba(52, 101, 164, 1.0);
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+    -fx-font-family: 'iTryIcons';
+    -fx-font-weight: normal;
+    -fx-font-size: 36;
+}
+
+.itry-search-bar-button:armed, .itry-search-bar-button:hover, .itry-search-bar-button:pressed {
+    -fx-text-fill: #0096c9;
 }
 
 .search-field {

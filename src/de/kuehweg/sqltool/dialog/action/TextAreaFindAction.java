@@ -56,6 +56,7 @@ public class TextAreaFindAction extends FindAction {
 				selectOccurrenceInComponent(findFrom, preparedSearchString.length());
 			} else {
 				findFrom = 0;
+				deselectAllOccurrencesInComponent();
 			}
 		}
 	}

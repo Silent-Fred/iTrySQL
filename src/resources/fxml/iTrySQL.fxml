@@ -193,8 +193,8 @@
                                                 <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="itry-search-bar">
                                                   <items>
                                                       <TextField fx:id="findInput" promptText="%prompt_find" styleClass="search-field" />
-                                  					<Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#quickSearchFindNext" styleClass="itry-search-bar-button" text="Next" textAlignment="CENTER" textOverrun="CLIP" />
-                                  					<Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#quickSearchFindPrevious" styleClass="itry-search-bar-button" text="Previous" textAlignment="CENTER" textOverrun="CLIP" />
+                                  					<Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#quickSearchFindNext" styleClass="itry-search-bar-button" text="]" textAlignment="CENTER" textOverrun="CLIP" />
+                                  					<Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#quickSearchFindPrevious" styleClass="itry-search-bar-button" text="[" textAlignment="CENTER" textOverrun="CLIP" />
                                                   </items>
                                                 </ToolBar>
                                     <AnchorPane id="AnchorPane" fx:id="statementPane" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
