@@ -33,6 +33,17 @@
     -fx-text-fill: #0096c9;
 }
 
+.menu-item .graphic-container .label {
+    -fx-text-fill: black;
+    -fx-font-family: 'iTryIcons';
+    -fx-font-weight: normal;
+    -fx-font-size: 16;
+}
+
+.menu-item:focused .graphic-container .label {
+    -fx-text-fill: white;
+}
+
 .tooltip {
     -fx-font-family: 'System';
     -fx-font-size: 12;

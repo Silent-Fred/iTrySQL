@@ -189,6 +189,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private MenuItem menuItemRollback;
 	@FXML
+	private MenuItem menuItemTutorial;
+	@FXML
 	private MenuItem menuItemNewSession;
 	@FXML
 	private Button refreshTree;
@@ -302,6 +304,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		assert menuItemFileSaveScript != null : "fx:id=\"menuItemFileSaveScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert menuItemPaste != null : "fx:id=\"menuItemPaste\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert menuItemRollback != null : "fx:id=\"menuItemRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+		assert menuItemTutorial != null : "fx:id=\"menuItemTutorial\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert menuItemNewSession != null : "fx:id=\"menuItemNewSession\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert permanentMessage != null : "fx:id=\"permanentMessage\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert refreshTree != null : "fx:id=\"refreshTree\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -978,21 +981,30 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		Tooltip.install(permanentMessage, new Tooltip(DialogDictionary.TOOLTIP_IN_MEMORY_DATABASE.toString()));
 	}
 
-	/**
-	 * Baut die Tastaturkürzel für die Menüleiste auf und steuert die
-	 * Wählbarkeit des Menüeintrags zum Trennen der Datenbankverbindung.
-	 */
 	private void setupMenu() {
+		setupMenuGraphics();
+		setupAccelerators();
+	}
+
+	private void setupAccelerators() {
 		menuItemExecute.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
 		menuItemExecuteScript.setAccelerator(
 				new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+		menuItemTutorial.setAccelerator(
+				new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
 		menuItemFileOpenScript.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
 		menuItemFileSaveScript.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
 		menuItemNewSession.setAccelerator(
 				new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
 		menuItemConnect.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN));
-
 		menuItemDisconnect.disableProperty().bind(Bindings.not(connectionHolder.connectedProperty()));
+	}
+
+	private void setupMenuGraphics() {
+		menuItemCommit.setGraphic(new Label("C"));
+		menuItemExecute.setGraphic(new Label("E"));
+		menuItemRollback.setGraphic(new Label("R"));
+		menuItemTutorial.setGraphic(new Label("T"));
 	}
 
 	/**

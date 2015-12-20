@@ -368,6 +368,8 @@
             <MenuItem fx:id="menuItemCommit" mnemonicParsing="false" onAction="#commit" text="%menu_item_commit" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="menuItemRollback" mnemonicParsing="false" onAction="#rollback" text="%menu_item_rollback" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="menuItemTutorial" mnemonicParsing="false" onAction="#tutorialAction" text="%menu_item_tutorial" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu_window">
