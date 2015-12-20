@@ -26,6 +26,7 @@
 package de.kuehweg.sqltool.dialog;
 
 import de.kuehweg.sqltool.dialog.images.ImagePack;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  * Fehlermeldungen mit einem einzelnen Bestätigungsbutton.
@@ -43,9 +44,7 @@ public class ErrorMessage extends CommonDialog {
 	 *            Beschriftung des - bei ErrorMessage einzigen - Buttons
 	 */
 	public ErrorMessage(final String title, final String message, final String buttonText) {
-		super(message);
-		specializeDialogTitle(title);
-		specializeDialogIcon(ImagePack.MSG_ERROR);
-		addDialogButtons(buttonText);
+		super(title, message, buttonText);
+		specialize(AlertType.ERROR, ImagePack.MSG_ERROR);
 	}
 }

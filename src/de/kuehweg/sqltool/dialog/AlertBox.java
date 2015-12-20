@@ -26,9 +26,10 @@
 package de.kuehweg.sqltool.dialog;
 
 import de.kuehweg.sqltool.dialog.images.ImagePack;
+import javafx.scene.control.Alert.AlertType;
 
 /**
- * Spezialisierter Dialog für Warnmeldungen mit einem einzelnen Button.
+ * Warnmeldungen mit einem einzelnen Button.
  *
  * @author Michael Kühweg
  */
@@ -40,12 +41,11 @@ public class AlertBox extends CommonDialog {
 	 * @param message
 	 *            Nachricht für den Anwender
 	 * @param buttonText
-	 *            Beschriftung des - bei AlterBox einzigen - Buttons
+	 *            Beschriftung des - bei AlertBox einzigen - Buttons
 	 */
 	public AlertBox(final String title, final String message, final String buttonText) {
-		super(message);
-		specializeDialogTitle(title);
-		specializeDialogIcon(ImagePack.MSG_WARNING);
-		addDialogButtons(buttonText);
+		super(title, message, buttonText);
+		specialize(AlertType.WARNING, ImagePack.MSG_WARNING);
 	}
+
 }

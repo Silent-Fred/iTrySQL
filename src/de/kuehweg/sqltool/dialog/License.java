@@ -34,6 +34,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 /**
  * Dialog mit Angaben zum Programm, Lizenzen,...
@@ -44,8 +45,13 @@ public class License extends Stage {
 
 	/**
 	 * Dialog zur Lizenzanzeige aufbauen.
+	 *
+	 * @param owner
+	 *            Übergeordnetes Fenster, an das der Lizenzdialog angeheftet
+	 *            wird. Wenn null, wird der Lizenzdialog selbst ein Top Level
+	 *            Fenster.
 	 */
-	public License() {
+	public License(final Window owner) {
 		super();
 		Scene scene;
 		try {
@@ -58,8 +64,9 @@ public class License extends Stage {
 			scene = FallbackSceneFactory.createNewInstance();
 		}
 		setScene(scene);
-		initStyle(StageStyle.UTILITY);
-		initModality(Modality.APPLICATION_MODAL);
+		initStyle(StageStyle.DECORATED);
+		initModality(Modality.WINDOW_MODAL);
+		initOwner(owner);
 
 		centerOnScreen();
 		setResizable(false);

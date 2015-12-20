@@ -267,6 +267,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 
 	private final Collection<FindAction> findActionsForQuickSearch = new ArrayList<>();
 
+	private Window applicationWindow;
+
 	@Override
 	public final void initialize(final URL fxmlFileLocation, final ResourceBundle resources) {
 		assert accordionPreferences != null : "fx:id=\"accordionPreferences\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -341,6 +343,21 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	}
 
 	/**
+	 * @return the applicationWindow
+	 */
+	public Window getApplicationWindow() {
+		return applicationWindow;
+	}
+
+	/**
+	 * @param applicationWindow
+	 *            the applicationWindow to set
+	 */
+	public void setApplicationWindow(final Window applicationWindow) {
+		this.applicationWindow = applicationWindow;
+	}
+
+	/**
 	 * Komponenten aufbauen, die mehr Daten enthalten, als in der
 	 * Dialogkomponente enthalten ist.
 	 */
@@ -377,7 +394,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		// FIXME
 		WebViewWithHSQLDBBugfix.fix();
 		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.READ_ABOUT.asAchievementEvent(), 1);
-		final License aboutBox = new License();
+		final License aboutBox = new License(getApplicationWindow());
 		aboutBox.showAndWait();
 	}
 
@@ -441,7 +458,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 *            Ausgelöstes ActionEvent
 	 */
 	public void connect(final ActionEvent event) {
-		final ConnectionDialog connectionDialog = new ConnectionDialog();
+		// final ConnectionDialog connectionDialog = new
+		// ConnectionDialog(getApplicationWindow());
+		final ConnectionDialog connectionDialog = new ConnectionDialog(statementInput.getScene().getWindow());
+
 		connectionDialog.showAndWait();
 		final ConnectionSetting connectionSetting = connectionDialog.getConnectionSetting();
 		if (connectionSetting != null) {

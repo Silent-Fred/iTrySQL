@@ -25,105 +25,39 @@
  */
 package de.kuehweg.sqltool.dialog;
 
-import java.util.ResourceBundle;
+import java.util.Optional;
 
 import de.kuehweg.sqltool.dialog.images.ImagePack;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
- * Allgemeine Dialogboxen mit Standardaufbau.
+ * Allgemeine Dialogboxen für Hinweismeldungen.
  *
  * @author Michael Kühweg
  */
-public abstract class CommonDialog extends Stage {
+public abstract class CommonDialog {
 
-	private String activatedButton;
+	private final Alert alert;
 
-	/**
-	 * Der Dialog enthält grundsätzlich einen Meldungstext.
-	 *
-	 * @param message
-	 *            Nachricht für den Anwender
-	 */
-	public CommonDialog(final String message) {
+	public CommonDialog(final String title, final String message, final String... buttonTexts) {
 		super();
-		Scene scene;
-		try {
-			final Parent root = FXMLLoader.load(getClass().getResource("/resources/fxml/CommonDialog.fxml"),
-					ResourceBundle.getBundle("dictionary"));
-			root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
-			scene = new Scene(root);
-		} catch (final Exception ex) {
-			scene = FallbackSceneFactory.createNewInstance();
-		}
-		final Label messageLabel = (Label) scene.lookup("#message");
-		if (messageLabel != null) {
-			messageLabel.setText(message);
-		}
-		setScene(scene);
-		initStyle(StageStyle.UTILITY);
-		initModality(Modality.APPLICATION_MODAL);
-
-		centerOnScreen();
-		setResizable(false);
+		alert = new Alert(AlertType.NONE);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.getButtonTypes().clear();
+		appendFirstButtonAsDefault(buttonTexts);
+		appendButtonsBetweenFirstAndLast(buttonTexts);
+		appendLastButtonAsCancelIfPresent(buttonTexts);
 	}
 
-	/**
-	 * Dialogtitel setzen.
-	 *
-	 * @param titleText
-	 *            Dialogtitel
-	 */
-	public void specializeDialogTitle(final String titleText) {
-		setTitle(titleText);
-	}
-
-	/**
-	 * Dialogicon setzen.
-	 *
-	 * @param image
-	 *            Bild aus dem vordefinierten Satz an Icons - zur schnellen
-	 *            visuellen Unterscheidung zwischen verschiedenen Typen von
-	 *            Rückfragedialogen.
-	 */
-	public void specializeDialogIcon(final ImagePack image) {
-		final ImageView icon = (ImageView) getScene().lookup("#icon");
-		if (icon != null) {
-			icon.setImage(image.getAsImage());
-		}
-	}
-
-	/**
-	 * Buttons hinzufügen.
-	 * 
-	 * @param buttons
-	 *            Beschriftung der Buttons, in Reihenfolge von rechts nach
-	 *            links. Erster Eintrag wird als Default-Button markiert.
-	 */
-	public void addDialogButtons(final String... buttons) {
-		final HBox buttonBox = (HBox) getScene().lookup("#buttonBox");
-		if (buttonBox != null) {
-			boolean first = true;
-			for (final String button : buttons) {
-				final Button buttonNode = new Button(button);
-				buttonNode.setDefaultButton(first);
-				first = false;
-				buttonNode.setOnAction(event -> {
-					activatedButton = button;
-					close();
-				});
-				buttonBox.getChildren().add(0, buttonNode);
-			}
-		}
+	public void specialize(final AlertType alertType, final ImagePack icon) {
+		alert.setAlertType(alertType);
+		alert.setGraphic(new ImageView(icon.getAsImage()));
 	}
 
 	/**
@@ -133,7 +67,50 @@ public abstract class CommonDialog extends Stage {
 	 *         addDialogButtons() angegeben wurde
 	 */
 	public String askUserFeedback() {
-		showAndWait();
-		return activatedButton;
+		return findUserFeedback(alert.showAndWait());
 	}
+
+	private void appendFirstButtonAsDefault(final String... buttonTexts) {
+		alert.getButtonTypes().add(new ButtonType(buttonTexts[0], ButtonData.OK_DONE));
+	}
+
+	private void appendLastButtonAsCancelIfPresent(final String... buttonTexts) {
+		if (buttonTexts.length > 1) {
+			alert.getButtonTypes().add(new ButtonType(buttonTexts[buttonTexts.length - 1], ButtonData.CANCEL_CLOSE));
+		}
+	}
+
+	private void appendButtonsBetweenFirstAndLast(final String... buttonTexts) {
+		boolean dropFirst = true;
+		String delayedToDropLast = null;
+		for (final String buttonText : buttonTexts) {
+			if (!dropFirst) {
+				if (delayedToDropLast != null) {
+					alert.getButtonTypes().add(new ButtonType(delayedToDropLast));
+				}
+				delayedToDropLast = buttonText;
+			}
+			dropFirst = false;
+		}
+	}
+
+	/**
+	 * Wandelt den ausgewählten Button von seiner ButtonType Darstellung zurück
+	 * in den Text.
+	 *
+	 * @param selectedButtonType
+	 *            Ausgewählter Button
+	 * @return Buttontext, der vom Aufrufer mitgegeben wurde.
+	 */
+	private String findUserFeedback(final Optional<ButtonType> selectedButtonType) {
+		if (selectedButtonType.isPresent()) {
+			for (final ButtonType buttonType : alert.getButtonTypes()) {
+				if (buttonType == selectedButtonType.get()) {
+					return buttonType.getText();
+				}
+			}
+		}
+		return null;
+	}
+
 }

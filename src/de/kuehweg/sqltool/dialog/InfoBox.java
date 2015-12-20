@@ -26,6 +26,7 @@
 package de.kuehweg.sqltool.dialog;
 
 import de.kuehweg.sqltool.dialog.images.ImagePack;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  * Spezialisierter Dialog für Hinweismeldungen mit einem einzelnen Button.
@@ -43,9 +44,7 @@ public class InfoBox extends CommonDialog {
 	 *            Beschriftung des - bei InfoBox einzigen - Buttons
 	 */
 	public InfoBox(final String title, final String message, final String buttonText) {
-		super(message);
-		specializeDialogTitle(title);
-		specializeDialogIcon(ImagePack.MSG_INFO);
-		addDialogButtons(buttonText);
+		super(title, message, buttonText);
+		specialize(AlertType.INFORMATION, ImagePack.MSG_INFO);
 	}
 }

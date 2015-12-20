@@ -26,6 +26,7 @@
 package de.kuehweg.sqltool.dialog;
 
 import de.kuehweg.sqltool.dialog.images.ImagePack;
+import javafx.scene.control.Alert.AlertType;
 
 /**
  * Spezialisierter Dialog für Rückfragen mit der Möglichkeit, mehrere Buttons
@@ -45,9 +46,8 @@ public class ConfirmDialog extends CommonDialog {
 	 *            (d.h. der erste angegebene Button) als Default vorbelegt ist
 	 */
 	public ConfirmDialog(final String title, final String message, final String... buttonTexts) {
-		super(message);
-		specializeDialogTitle(title);
-		specializeDialogIcon(ImagePack.MSG_QUESTION);
-		addDialogButtons(buttonTexts);
+		super(title, message, buttonTexts);
+		specialize(AlertType.CONFIRMATION, ImagePack.MSG_QUESTION);
 	}
+
 }
