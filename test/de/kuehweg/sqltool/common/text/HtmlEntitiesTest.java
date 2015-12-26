@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,29 +23,40 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog;
 
-import de.kuehweg.sqltool.dialog.images.ImagePack;
-import javafx.scene.control.Alert.AlertType;
+package de.kuehweg.sqltool.common.text;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
- * Warnmeldungen mit einem einzelnen Button.
- *
  * @author Michael Kühweg
  */
-public class AlertBox extends CommonDialog {
+public class HtmlEntitiesTest {
 
-	/**
-	 * @param title
-	 *            Inhalt für den Dialogtitel
-	 * @param message
-	 *            Nachricht für den Anwender
-	 * @param buttonText
-	 *            Beschriftung des - bei AlertBox einzigen - Buttons
-	 */
-	public AlertBox(final String title, final String message, final String buttonText) {
-		super(title, message, buttonText);
-		specialize(AlertType.WARNING, ImagePack.MSG_WARNING);
+	@Test
+	public void basicEncoding() {
+		final HtmlEntities entities = new HtmlEntities();
+		assertEquals("&quot;", entities.findEntityForCharacter('"'));
+		assertEquals("&amp;", entities.findEntityForCharacter('&'));
+		assertEquals("&lt;", entities.findEntityForCharacter('<'));
+		assertEquals("&gt;", entities.findEntityForCharacter('>'));
+	}
+
+	@Test
+	public void noEncodingDefinedFallbackToUnicode() {
+		final HtmlEntities entities = new HtmlEntities();
+		assertEquals("&x41;", entities.findEntityForCharacter('A'));
+		assertEquals("&x7A;", entities.findEntityForCharacter('z'));
+		assertEquals("&x30;", entities.findEntityForCharacter('0'));
+		assertEquals("&x39;", entities.findEntityForCharacter('9'));
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void nullHandling() {
+		final HtmlEntities entities = new HtmlEntities();
+		entities.findEntityForCharacter(null);
 	}
 
 }

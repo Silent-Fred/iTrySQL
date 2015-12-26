@@ -25,7 +25,8 @@
  */
 package de.kuehweg.sqltool.database.formatter;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,19 +49,19 @@ public class ResultTemplateTest {
 	@Test
 	public void emptyTemplate() {
 		final ResultTemplate emptyTemplate = new ResultTemplate();
-		Assert.assertEquals("", emptyTemplate.buildWithTemplate());
+		assertEquals("", emptyTemplate.buildWithTemplate());
 	}
 
 	@Test
 	public void nothingToFillIn() {
-		Assert.assertEquals("Test:    .", template.buildWithTemplate());
+		assertEquals("Test:    .", template.buildWithTemplate());
 	}
 
 	@Test
 	public void emptyResult() {
 		template.setExecutionInformation("happily executed");
 		template.setRowCount("happy rows counted");
-		Assert.assertEquals("Test: happily executed  happy rows counted .", template.buildWithTemplate());
+		assertEquals("Test: happily executed  happy rows counted .", template.buildWithTemplate());
 	}
 
 	@Test
@@ -68,7 +69,7 @@ public class ResultTemplateTest {
 		template.setExecutionInformation("happily executed");
 		template.setResultTable("happy results");
 		template.setRowCount("happy rows counted");
-		Assert.assertEquals("Test: happily executed happy results happy rows counted .", template.buildWithTemplate());
+		assertEquals("Test: happily executed happy results happy rows counted .", template.buildWithTemplate());
 	}
 
 	@Test
@@ -77,7 +78,7 @@ public class ResultTemplateTest {
 		template.setResultTable("{0}");
 		template.setRowCount("{2}");
 		template.setLimitedRows("{1}");
-		Assert.assertEquals("Test: {3} {0} {2} {1}.", template.buildWithTemplate());
+		assertEquals("Test: {3} {0} {2} {1}.", template.buildWithTemplate());
 	}
 
 	@Test
@@ -86,7 +87,7 @@ public class ResultTemplateTest {
 		template.setResultTable("happy results");
 		template.setRowCount("happy rows counted");
 		template.setLimitedRows("happy limitations");
-		Assert.assertEquals("Test: happily executed happy results happy rows counted happy limitations.",
+		assertEquals("Test: happily executed happy results happy rows counted happy limitations.",
 				template.buildWithTemplate());
 	}
 
@@ -100,6 +101,6 @@ public class ResultTemplateTest {
 		template.setRowCount("happy rows counted");
 		template.setLimitedRows("happy limitations");
 
-		Assert.assertEquals(template.buildWithFallbackTemplate(), template.buildWithTemplate());
+		assertEquals(template.buildWithFallbackTemplate(), template.buildWithTemplate());
 	}
 }

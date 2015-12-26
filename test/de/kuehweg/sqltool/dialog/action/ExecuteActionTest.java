@@ -25,11 +25,13 @@
  */
 package de.kuehweg.sqltool.dialog.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,18 +67,17 @@ public class ExecuteActionTest {
 
 	@Test
 	public void handlingProblemsInGeneral() throws SQLException {
-		Assert.assertNotNull(action.startExecution(null, null));
-		Assert.assertNotNull(action.startExecution("select * from wherever;", null));
+		assertNotNull(action.startExecution(null, null));
+		assertNotNull(action.startExecution("select * from wherever;", null));
 	}
 
 	@Test
 	public void specificMessages() throws SQLException {
-		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.startExecution(null, null));
-		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.startExecution("   \n   \t ", null));
-		Assert.assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
+		assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.startExecution(null, null));
+		assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE, action.startExecution("   \n   \t ", null));
+		assertEquals(DialogDictionary.MSG_NO_STATEMENT_TO_EXECUTE,
 				action.startExecution("   \n   \t ", new ConnectionStubWithBasicMetaData()));
-		Assert.assertEquals(DialogDictionary.MSG_NO_DB_CONNECTION,
-				action.startExecution("select * from wherever ", null));
+		assertEquals(DialogDictionary.MSG_NO_DB_CONNECTION, action.startExecution("select * from wherever ", null));
 	}
 
 	@Test(expected = SQLException.class)

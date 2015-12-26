@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.database.execution;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,44 +39,44 @@ import org.junit.Test;
  */
 public class ResultHeaderTest {
 
-    public ResultHeaderTest() {
-    }
+	public ResultHeaderTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void nullSupport() {
-        ResultHeader header = new ResultHeader(" a ", null, "b");
-        Assert.assertEquals(3, header.getColumnHeaders().length);
-        Assert.assertEquals(" a ", header.getColumnHeaders()[0]);
-        // keine spezielle Null-Aufbereitung in den Spaltentiteln
-        Assert.assertEquals(null, header.getColumnHeaders()[1]);
-        Assert.assertEquals("b", header.getColumnHeaders()[2]);
-    }
+	@Test
+	public void nullSupport() {
+		final ResultHeader header = new ResultHeader(" a ", null, "b");
+		assertEquals(3, header.getColumnHeaders().length);
+		assertEquals(" a ", header.getColumnHeaders()[0]);
+		// keine spezielle Null-Aufbereitung in den Spaltentiteln
+		assertEquals(null, header.getColumnHeaders()[1]);
+		assertEquals("b", header.getColumnHeaders()[2]);
+	}
 
-    @Test
-    public void empty() {
-        ResultHeader header = new ResultHeader();
-        Assert.assertEquals(0, header.getColumnHeaders().length);
-    }
+	@Test
+	public void empty() {
+		final ResultHeader header = new ResultHeader();
+		assertEquals(0, header.getColumnHeaders().length);
+	}
 
-    @Test
-    public void nullSupportForConstructor() {
-        ResultHeader header = new ResultHeader((String[])null);
-        Assert.assertEquals(1, header.getColumnHeaders().length);
-    }
+	@Test
+	public void nullSupportForConstructor() {
+		final ResultHeader header = new ResultHeader((String[]) null);
+		assertEquals(1, header.getColumnHeaders().length);
+	}
 }

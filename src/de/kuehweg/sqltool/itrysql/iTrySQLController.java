@@ -31,6 +31,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 
@@ -44,7 +46,6 @@ import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.common.achievement.AchievementManager;
 import de.kuehweg.sqltool.common.achievement.NamedAchievementEvent;
 import de.kuehweg.sqltool.common.exception.DatabaseConnectionException;
-import de.kuehweg.sqltool.common.sqlediting.SQLHistory;
 import de.kuehweg.sqltool.common.sqlediting.StatementExtractor;
 import de.kuehweg.sqltool.database.ConnectionHolder;
 import de.kuehweg.sqltool.database.ConnectionSetting;
@@ -57,9 +58,12 @@ import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.License;
 import de.kuehweg.sqltool.dialog.action.DatabaseOutputFontAction;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
+import de.kuehweg.sqltool.dialog.action.FindAction;
 import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.StatementInputFontAction;
+import de.kuehweg.sqltool.dialog.action.TextAreaFindAction;
+import de.kuehweg.sqltool.dialog.action.TextTreeViewFindAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
 import de.kuehweg.sqltool.dialog.component.AudioFeedback;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
@@ -75,6 +79,7 @@ import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeModificationDetector;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryButtonCell;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryComponent;
+import de.kuehweg.sqltool.dialog.component.sqlhistory.SqlHistoryEntry;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -184,6 +189,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private MenuItem menuItemRollback;
 	@FXML
+	private MenuItem menuItemTutorial;
+	@FXML
 	private MenuItem menuItemNewSession;
 	@FXML
 	private Button refreshTree;
@@ -192,13 +199,13 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private TreeView<String> schemaTreeView;
 	@FXML
-	private TableView<SQLHistory> sqlHistory;
+	private TableView<SqlHistoryEntry> sqlHistory;
 	@FXML
-	private TableColumn<SQLHistory, String> sqlHistoryColumnAction;
+	private TableColumn<SqlHistoryEntry, String> sqlHistoryColumnAction;
 	@FXML
-	private TableColumn<SQLHistory, String> sqlHistoryColumnStatement;
+	private TableColumn<SqlHistoryEntry, String> sqlHistoryColumnStatement;
 	@FXML
-	private TableColumn<SQLHistory, String> sqlHistoryColumnTimestamp;
+	private TableColumn<SqlHistoryEntry, String> sqlHistoryColumnTimestamp;
 	@FXML
 	private TextArea statementInput;
 	@FXML
@@ -249,6 +256,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	private Label permanentMessage;
 	@FXML
 	private WebView achievementsView;
+	@FXML
+	private TextField findInput;
 
 	// my own special creation
 	private QueryResultTableView queryResultTableView;
@@ -257,6 +266,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	private final ConnectionHolder connectionHolder = new ConnectionHolder();
 	private ConnectionComponentController connectionComponentController;
 	private static int countWindows = 1;
+
+	private final Collection<FindAction> findActionsForQuickSearch = new ArrayList<>();
+
+	private Window applicationWindow;
 
 	@Override
 	public final void initialize(final URL fxmlFileLocation, final ResourceBundle resources) {
@@ -291,6 +304,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		assert menuItemFileSaveScript != null : "fx:id=\"menuItemFileSaveScript\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert menuItemPaste != null : "fx:id=\"menuItemPaste\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert menuItemRollback != null : "fx:id=\"menuItemRollback\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+		assert menuItemTutorial != null : "fx:id=\"menuItemTutorial\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert menuItemNewSession != null : "fx:id=\"menuItemNewSession\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert permanentMessage != null : "fx:id=\"permanentMessage\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert refreshTree != null : "fx:id=\"refreshTree\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -322,12 +336,28 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		assert achievementsView != null : "fx:id=\"achievementsView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert exportConnections != null : "fx:id=\"exportConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert importConnections != null : "fx:id=\"importConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+		assert findInput != null : "fx:id=\"findInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 
 		fixWebViewWithHSQLDBBug();
 
 		initializeContinued();
 
 		buildComponents();
+	}
+
+	/**
+	 * @return the applicationWindow
+	 */
+	public Window getApplicationWindow() {
+		return applicationWindow;
+	}
+
+	/**
+	 * @param applicationWindow
+	 *            the applicationWindow to set
+	 */
+	public void setApplicationWindow(final Window applicationWindow) {
+		this.applicationWindow = applicationWindow;
 	}
 
 	/**
@@ -367,7 +397,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		// FIXME
 		WebViewWithHSQLDBBugfix.fix();
 		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.READ_ABOUT.asAchievementEvent(), 1);
-		final License aboutBox = new License();
+		final License aboutBox = new License(getApplicationWindow());
 		aboutBox.showAndWait();
 	}
 
@@ -431,7 +461,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 *            Ausgelöstes ActionEvent
 	 */
 	public void connect(final ActionEvent event) {
-		final ConnectionDialog connectionDialog = new ConnectionDialog();
+		// final ConnectionDialog connectionDialog = new
+		// ConnectionDialog(getApplicationWindow());
+		final ConnectionDialog connectionDialog = new ConnectionDialog(statementInput.getScene().getWindow());
+
 		connectionDialog.showAndWait();
 		final ConnectionSetting connectionSetting = connectionDialog.getConnectionSetting();
 		if (connectionSetting != null) {
@@ -837,6 +870,30 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	}
 
 	/**
+	 * Nächsten Suchtreffer in den Komponenten suchen und markieren, die in der
+	 * Schnellsuche angesprochen werden.
+	 *
+	 * @param event
+	 *            Ausgelöstes ActionEvent
+	 */
+	public void quickSearchFindNext(final ActionEvent event) {
+		final String searchString = findInput.textProperty().getValue();
+		findActionsForQuickSearch.forEach(findAction -> findAction.nextOccurrence(searchString));
+	}
+
+	/**
+	 * Vorhergehenden Suchtreffer in den Komponenten suchen und markieren, die
+	 * in der Schnellsuche angesprochen werden.
+	 *
+	 * @param event
+	 *            Ausgelöstes ActionEvent
+	 */
+	public void quickSearchFindPrevious(final ActionEvent event) {
+		final String searchString = findInput.textProperty().getValue();
+		findActionsForQuickSearch.forEach(findAction -> findAction.previousOccurrence(searchString));
+	}
+
+	/**
 	 * Fortführung der Initalisierung. TODO Kein sonderlich sinnvoller Name.
 	 */
 	private void initializeContinued() {
@@ -855,6 +912,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 
 		achievementViewComponent = new AchievementView(achievementsView, new AchievementHtmlFormatter());
 		achievementViewComponent.refresh();
+
+		initializeQuickSearch();
 	}
 
 	/**
@@ -922,21 +981,30 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		Tooltip.install(permanentMessage, new Tooltip(DialogDictionary.TOOLTIP_IN_MEMORY_DATABASE.toString()));
 	}
 
-	/**
-	 * Baut die Tastaturkürzel für die Menüleiste auf und steuert die
-	 * Wählbarkeit des Menüeintrags zum Trennen der Datenbankverbindung.
-	 */
 	private void setupMenu() {
+		setupMenuGraphics();
+		setupAccelerators();
+	}
+
+	private void setupAccelerators() {
 		menuItemExecute.setAccelerator(new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN));
 		menuItemExecuteScript.setAccelerator(
 				new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+		menuItemTutorial.setAccelerator(
+				new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
 		menuItemFileOpenScript.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
 		menuItemFileSaveScript.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
 		menuItemNewSession.setAccelerator(
 				new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
 		menuItemConnect.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN));
-
 		menuItemDisconnect.disableProperty().bind(Bindings.not(connectionHolder.connectedProperty()));
+	}
+
+	private void setupMenuGraphics() {
+		menuItemCommit.setGraphic(new Label("C"));
+		menuItemExecute.setGraphic(new Label("E"));
+		menuItemRollback.setGraphic(new Label("R"));
+		menuItemTutorial.setGraphic(new Label("T"));
 	}
 
 	/**
@@ -966,8 +1034,28 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		sqlHistoryColumnTimestamp.setCellValueFactory(new PropertyValueFactory<>("timestampFormatted"));
 		sqlHistoryColumnStatement.setCellValueFactory(new PropertyValueFactory<>("sqlForDisplay"));
 
-		sqlHistoryColumnAction
-				.setCellFactory((final TableColumn<SQLHistory, String> p) -> new SQLHistoryButtonCell(statementInput));
+		sqlHistoryColumnAction.setCellFactory(
+				(final TableColumn<SqlHistoryEntry, String> p) -> new SQLHistoryButtonCell(statementInput));
+	}
+
+	/**
+	 * Initialisiert die FindActions als ChangeListener am Suchfeld für alle
+	 * Komponenenten, die in der Schnellsuche angesprochen werden. Die
+	 * FindActions werden für die gemeinsame Behandlung im Eventhandling in der
+	 * dafür vorgesehenen Collection eingetragen.
+	 */
+	private void initializeQuickSearch() {
+		final FindAction findActionOnStatementInput = new TextAreaFindAction(statementInput);
+		findInput.textProperty().addListener(findActionOnStatementInput);
+		findActionsForQuickSearch.add(findActionOnStatementInput);
+
+		final FindAction findActionOnDbOutput = new TextAreaFindAction(dbOutput);
+		findInput.textProperty().addListener(findActionOnDbOutput);
+		findActionsForQuickSearch.add(findActionOnDbOutput);
+
+		final FindAction findActionOnSchemaTree = new TextTreeViewFindAction(schemaTreeView);
+		findInput.textProperty().addListener(findActionOnSchemaTree);
+		findActionsForQuickSearch.add(findActionOnSchemaTree);
 	}
 
 	/**

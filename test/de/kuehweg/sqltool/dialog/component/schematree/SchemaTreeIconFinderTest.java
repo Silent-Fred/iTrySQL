@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.dialog.component.schematree;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,7 +37,6 @@ import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode;
 import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType;
 
 /**
- *
  * @author Michael Kühweg
  */
 public class SchemaTreeIconFinderTest {
@@ -64,8 +64,7 @@ public class SchemaTreeIconFinderTest {
 	public void neverReturnsNull() {
 		final SchemaTreeIconFinder iconFinder = new SchemaTreeIconFinder();
 		for (final SchemaTreeNodeType type : SchemaTreeNodeType.values()) {
-			Assert.assertNotNull(iconFinder.iconCharacter(new SchemaTreeNode(
-					type, "whatever")));
+			assertNotNull(iconFinder.iconCharacter(new SchemaTreeNode(type, "whatever")));
 		}
 	}
 

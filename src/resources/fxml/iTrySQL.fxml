@@ -190,9 +190,16 @@
                               </ToolBar>
                                           <VBox layoutX="43.0" AnchorPane.bottomAnchor="-8.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
                                              <children>
+                                                <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="itry-search-bar">
+                                                  <items>
+                                                      <TextField fx:id="findInput" promptText="%prompt_find" styleClass="search-field" />
+                                  					<Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#quickSearchFindNext" styleClass="itry-search-bar-button" text="]" textAlignment="CENTER" textOverrun="CLIP" />
+                                  					<Button alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#quickSearchFindPrevious" styleClass="itry-search-bar-button" text="[" textAlignment="CENTER" textOverrun="CLIP" />
+                                                  </items>
+                                                </ToolBar>
                                     <AnchorPane id="AnchorPane" fx:id="statementPane" AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="43.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
                                       <children>
-                                        <TextArea fx:id="statementInput" prefHeight="333.0" prefWidth="844.0" promptText="%prompt_enterStatement" styleClass="itry-statement-edit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <TextArea fx:id="statementInput" prefHeight="308.0" prefWidth="834.0" promptText="%prompt_enterStatement" styleClass="itry-statement-edit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                           <stylesheets>
                                             <URL value="@../css/itrysql.css" />
                                           </stylesheets>
@@ -361,6 +368,8 @@
             <MenuItem fx:id="menuItemCommit" mnemonicParsing="false" onAction="#commit" text="%menu_item_commit" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="menuItemRollback" mnemonicParsing="false" onAction="#rollback" text="%menu_item_rollback" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="menuItemTutorial" mnemonicParsing="false" onAction="#tutorialAction" text="%menu_item_tutorial" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu_window">

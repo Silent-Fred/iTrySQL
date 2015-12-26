@@ -17,7 +17,6 @@ Abhängigkeiten
 --------------
 
 - HSQLB (http://www.hsqldb.org)
-- Apache commons-lang3 (http://commons.apache.org)
 
 Diese können mit dem Target `get-dependencies` im Buildfile heruntergeladen werden.
 Hierzu muss das in `ReferencedLibrariesPath` angegebene Verzeichnis bereits angelegt sein.
@@ -38,3 +37,8 @@ und andernfalls sowieso noch weitere Arbeiten erforderlich wären), oder am best
 installiert man die e(fx)clipse Erweiterung. Damit sind auch gleich noch ein paar
 für FX nützliche neue Funktionen in Eclipse vorhanden, z.B. zum Editieren der
 FX spezifischen CSS Dateien u.a.
+Mit dem Target `get-dependencies` im Buildfile können Abhängigkeiten heruntergeladen werden.
+Hierzu muss das in `ReferencedLibrariesPath` angegebene Verzeichnis bereits angelegt sein.
+(selbstverständlich können die Abhängigkeiten auch auf anderem Weg zur Verfügung gestellt
+werden, z.B. über Project Settings / Libraries in IntelliJ IDEA, direkte Downloads beim
+Anbieter der Bibliothek o.ä.) 

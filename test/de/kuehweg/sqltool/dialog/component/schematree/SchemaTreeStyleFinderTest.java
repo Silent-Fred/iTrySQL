@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.dialog.component.schematree;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,7 +37,6 @@ import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNode;
 import de.kuehweg.sqltool.dialog.component.schematree.node.SchemaTreeNodeType;
 
 /**
- *
  * @author Michael Kühweg
  */
 public class SchemaTreeStyleFinderTest {
@@ -64,8 +64,7 @@ public class SchemaTreeStyleFinderTest {
 	public void neverReturnsNull() {
 		final SchemaTreeStyleFinder styleFinder = new SchemaTreeStyleFinder();
 		for (final SchemaTreeNodeType type : SchemaTreeNodeType.values()) {
-			Assert.assertNotNull(styleFinder.styleClass(new SchemaTreeNode(
-					type, "whatever")));
+			assertNotNull(styleFinder.styleClass(new SchemaTreeNode(type, "whatever")));
 		}
 	}
 

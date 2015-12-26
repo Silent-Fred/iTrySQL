@@ -122,10 +122,7 @@ public class ITrySQL extends Application {
 		final Parent root = (Parent) fxmlLoader.load();
 		root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
 
-		controller = (iTrySQLController) fxmlLoader.getController();
-
 		final Scene scene = new Scene(root);
-
 		primaryStage.setScene(scene);
 		final Rectangle2D calculatedSize = StageSizerUtil.calculateSizeDependingOnScreenSize();
 		primaryStage.setX(calculatedSize.getMinX());
@@ -134,6 +131,10 @@ public class ITrySQL extends Application {
 		primaryStage.setHeight(calculatedSize.getHeight());
 		primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
 		primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
+
+		controller = (iTrySQLController) fxmlLoader.getController();
+		controller.setApplicationWindow(scene.getWindow());
+
 		primaryStage.setOnCloseRequest((final WindowEvent ev) -> {
 			if (!controller.quit()) {
 				ev.consume();

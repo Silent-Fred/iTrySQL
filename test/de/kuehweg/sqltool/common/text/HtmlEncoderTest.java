@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,47 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+package de.kuehweg.sqltool.common.text;
 
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
- * Controller für Dialogboxen.
- *
- * @author michael
+ * @author Michael Kühweg
  */
-public class CommonDialogController implements Initializable {
+public class HtmlEncoderTest {
 
-	@FXML
-	private HBox buttonBox;
-	@FXML
-	private ImageView icon;
-	@FXML
-	private Label message;
-	@FXML
-	private Label title;
+	@Test(expected = NullPointerException.class)
+	public void nullHandling() {
+		final HtmlEncoder encoder = new HtmlEncoder();
+		encoder.encodeHtml(null);
+	}
 
-	@Override
-	public void initialize(final URL fxmlFileLocation, final ResourceBundle resources) {
-		assert buttonBox != null : "fx:id=\"buttonBox\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-		assert icon != null : "fx:id=\"icon\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-		assert message != null : "fx:id=\"message\" was not injected: check your FXML file 'CommonDialog.fxml'.";
-		assert title != null : "fx:id=\"title\" was not injected: check your FXML file 'CommonDialog.fxml'.";
+	@Test
+	public void noEncoding() {
+		final HtmlEncoder encoder = new HtmlEncoder();
+		assertEquals("ABCabc1234567890", encoder.encodeHtml("ABCabc1234567890"));
+		assertEquals("!.+#", encoder.encodeHtml("!.+#"));
+	}
+
+	@Test
+	public void basicEncoding() {
+		final HtmlEncoder encoder = new HtmlEncoder();
+		assertEquals("&lt;!&quot;$%&amp;/()=?&gt;", encoder.encodeHtml("<!\"$%&/()=?>"));
+	}
+
+	@Test
+	public void extendedEncoding() {
+		final HtmlEncoder encoder = new HtmlEncoder();
+		assertEquals("&Auml;&Ouml;&Uuml;&auml;&ouml;&uuml;&szlig;",
+				encoder.encodeHtml("\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF"));
+	}
+
+	@Test
+	public void encodeTwice() {
+		final HtmlEncoder encoder = new HtmlEncoder();
+		assertEquals("&amp;amp;", encoder.encodeHtml("&amp;"));
 	}
 }

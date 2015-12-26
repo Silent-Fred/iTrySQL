@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.common;
 
+import static org.junit.Assert.assertNotSame;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class DialogDictionaryTest {
 	@Test
 	public void bundleComplete() {
 		for (final Enum<?> dictionaryEntry : DialogDictionary.values()) {
-			Assert.assertNotSame(dictionaryEntry.name(), dictionaryEntry.toString());
+			assertNotSame(dictionaryEntry.name(), dictionaryEntry.toString());
 		}
 	}
 }

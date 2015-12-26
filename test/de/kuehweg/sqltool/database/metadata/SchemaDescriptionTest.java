@@ -25,67 +25,68 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
-import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
-import de.kuehweg.sqltool.database.metadata.description.TableDescription;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
+import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
+import de.kuehweg.sqltool.database.metadata.description.TableDescription;
+
 /**
- *
  * @author Michael Kühweg
  */
 public class SchemaDescriptionTest {
 
-    public SchemaDescriptionTest() {
-    }
+	public SchemaDescriptionTest() {
+	}
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setUp() {
+	}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+	public void tearDown() {
+	}
 
-    @Test
-    public void tableTypes() {
-        DatabaseDescription db = new DatabaseDescription("db", "product", "version");
+	@Test
+	public void tableTypes() {
+		final DatabaseDescription db = new DatabaseDescription("db", "product", "version");
 
-        CatalogDescription catalog = new CatalogDescription("CATALOG");
-        db.adoptOrphan(catalog);
+		final CatalogDescription catalog = new CatalogDescription("CATALOG");
+		db.adoptOrphan(catalog);
 
-        SchemaDescription schema = new SchemaDescription("SCHEMA");
-        catalog.adoptOrphan(schema);
+		final SchemaDescription schema = new SchemaDescription("SCHEMA");
+		catalog.adoptOrphan(schema);
 
-        TableDescription table11 = new TableDescription("TABLE-1", "TYPE-1", "REMARKS");
-        TableDescription table21 = new TableDescription("TABLE-2", "TYPE-1", "REMARKS");
-        TableDescription table32 = new TableDescription("TABLE-3", "TYPE-2", "REMARKS");
+		final TableDescription table11 = new TableDescription("TABLE-1", "TYPE-1", "REMARKS");
+		final TableDescription table21 = new TableDescription("TABLE-2", "TYPE-1", "REMARKS");
+		final TableDescription table32 = new TableDescription("TABLE-3", "TYPE-2", "REMARKS");
 
-        schema.adoptOrphan(table11);
-        schema.adoptOrphan(table21);
-        schema.adoptOrphan(table32);
+		schema.adoptOrphan(table11);
+		schema.adoptOrphan(table21);
+		schema.adoptOrphan(table32);
 
-        Assert.assertEquals(2, schema.getTableTypes().size());
-        Assert.assertEquals(2, schema.getTablesByType("TYPE-1").size());
-        Assert.assertEquals(1, schema.getTablesByType("TYPE-2").size());
-    }
+		assertEquals(2, schema.getTableTypes().size());
+		assertEquals(2, schema.getTablesByType("TYPE-1").size());
+		assertEquals(1, schema.getTablesByType("TYPE-2").size());
+	}
 
-    @Test
-    public void nullSafe() {
-        Assert.assertEquals("", new SchemaDescription(null).getName());
-    }
+	@Test
+	public void nullSafe() {
+		assertEquals("", new SchemaDescription(null).getName());
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,29 +23,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog;
 
-import de.kuehweg.sqltool.dialog.images.ImagePack;
-import javafx.scene.control.Alert.AlertType;
+package de.kuehweg.sqltool.common.text;
 
 /**
- * Warnmeldungen mit einem einzelnen Button.
+ * Recht minimalistischer Ansatz zum HTML-Encoding von Texten.
  *
  * @author Michael Kühweg
  */
-public class AlertBox extends CommonDialog {
+public class HtmlEncoder {
 
-	/**
-	 * @param title
-	 *            Inhalt für den Dialogtitel
-	 * @param message
-	 *            Nachricht für den Anwender
-	 * @param buttonText
-	 *            Beschriftung des - bei AlertBox einzigen - Buttons
-	 */
-	public AlertBox(final String title, final String message, final String buttonText) {
-		super(title, message, buttonText);
-		specialize(AlertType.WARNING, ImagePack.MSG_WARNING);
+	private static final int SEVEN_BIT_ASCII_MAX = 128;
+	private final HtmlEntities entities;
+
+	public HtmlEncoder() {
+		super();
+		entities = new HtmlEntities();
 	}
 
+	public String encodeHtml(final String textToEncode) {
+		final StringBuilder builder = new StringBuilder();
+		for (final Character character : textToEncode.toCharArray()) {
+			if (requiresEncoding(character)) {
+				builder.append(entities.findEntityForCharacter(character));
+			} else {
+				builder.append(character);
+			}
+		}
+		return builder.toString();
+	}
+
+	private boolean isSimpleAscii(final Character character) {
+		return character <= SEVEN_BIT_ASCII_MAX;
+	}
+
+	private boolean requiresEncoding(final Character character) {
+		if (!isSimpleAscii(character)) {
+			return true;
+		}
+		return character == '"' || character == '&' || character == '<' || character == '>';
+	}
 }

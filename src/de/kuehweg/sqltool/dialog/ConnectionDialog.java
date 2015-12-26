@@ -35,6 +35,7 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 /**
  * Dialog zur Auswahl einer Datenbankverbindung.
@@ -47,8 +48,13 @@ public class ConnectionDialog extends Stage {
 
 	/**
 	 * Konstruktor für den Verbindungsdialog.
+	 *
+	 * @param owner
+	 *            Fenster von dem aus der Dialog geöffnet wurde. Wenn null, dann
+	 *            wird der Verbindungsdialog als Top Level Fenster geöffnet. Im
+	 *            Fullscreen Modus ist das nicht schön :-(
 	 */
-	public ConnectionDialog() {
+	public ConnectionDialog(final Window owner) {
 		super();
 		Scene scene;
 		try {
@@ -61,8 +67,9 @@ public class ConnectionDialog extends Stage {
 			scene = FallbackSceneFactory.createNewInstance();
 		}
 		setScene(scene);
-		initStyle(StageStyle.UTILITY);
-		initModality(Modality.APPLICATION_MODAL);
+		initStyle(StageStyle.DECORATED);
+		initModality(Modality.WINDOW_MODAL);
+		initOwner(owner);
 
 		centerOnScreen();
 		setResizable(false);

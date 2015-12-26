@@ -71,12 +71,7 @@ public class ITrySQLStage extends Stage {
 			final Parent root = (Parent) fxmlLoader.load();
 			root.getStylesheets().add(getClass().getResource("/resources/css/itrysql.css").toExternalForm());
 
-			final iTrySQLController controller = fxmlLoader.getController();
-			setOnHiding(controller);
-			setOnCloseRequest(controller);
-
 			final Scene scene = new Scene(root);
-
 			setScene(scene);
 			getIcons().add(ImagePack.APP_ICON.getAsImage());
 			setTitle(title);
@@ -92,6 +87,10 @@ public class ITrySQLStage extends Stage {
 				setWidth(calculatedSize.getWidth());
 				setHeight(calculatedSize.getHeight());
 			}
+			final iTrySQLController controller = fxmlLoader.getController();
+			setOnHiding(controller);
+			setOnCloseRequest(controller);
+			controller.setApplicationWindow(scene.getWindow());
 		} catch (final IOException ex) {
 			Logger.getLogger(ITrySQLStage.class.getName()).log(Level.SEVERE, null, ex);
 		}

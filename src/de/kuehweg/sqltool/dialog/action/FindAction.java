@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,29 +23,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog;
 
-import de.kuehweg.sqltool.dialog.images.ImagePack;
-import javafx.scene.control.Alert.AlertType;
+package de.kuehweg.sqltool.dialog.action;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
- * Warnmeldungen mit einem einzelnen Button.
- *
  * @author Michael Kühweg
  */
-public class AlertBox extends CommonDialog {
+public abstract class FindAction implements ChangeListener<String> {
 
-	/**
-	 * @param title
-	 *            Inhalt für den Dialogtitel
-	 * @param message
-	 *            Nachricht für den Anwender
-	 * @param buttonText
-	 *            Beschriftung des - bei AlertBox einzigen - Buttons
-	 */
-	public AlertBox(final String title, final String message, final String buttonText) {
-		super(title, message, buttonText);
-		specialize(AlertType.WARNING, ImagePack.MSG_WARNING);
+	@Override
+	public void changed(final ObservableValue<? extends String> observable, final String oldValue,
+			final String newValue) {
+		find(observable.getValue());
 	}
+
+	public abstract void find(final String searchString);
+
+	public abstract void nextOccurrence(final String searchString);
+
+	public abstract void previousOccurrence(final String searchString);
 
 }
