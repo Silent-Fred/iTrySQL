@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.database.metadata.description;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -33,7 +34,9 @@ import java.util.Comparator;
  *
  * @author Michael Kühweg
  */
-public class IndexColumnByOrdinalPosition implements Comparator<IndexColumnDescription> {
+public class IndexColumnByOrdinalPosition implements Comparator<IndexColumnDescription>, Serializable {
+
+	private static final long serialVersionUID = 6217420907361607867L;
 
 	@Override
 	public int compare(final IndexColumnDescription o1, final IndexColumnDescription o2) {

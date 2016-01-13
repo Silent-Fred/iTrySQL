@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,7 @@
 package de.kuehweg.gamification;
 
 import static org.junit.Assert.assertEquals;
-
-import java.lang.reflect.Constructor;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 
@@ -38,12 +37,12 @@ public class AchievementCounterTest {
 
 	@Test(expected = NoSuchMethodException.class)
 	public void noDefaultConstructor() throws NoSuchMethodException {
-		final Constructor<AchievementCounter> constructor = AchievementCounter.class.getConstructor();
+		AchievementCounter.class.getConstructor();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void noNegativeValuesAllowed() {
-		final AchievementCounter counter = new AchievementCounter(new AchievementEvent("A"), -1);
+		new AchievementCounter(new AchievementEvent("A"), -1);
 	}
 
 	@Test
@@ -51,6 +50,7 @@ public class AchievementCounterTest {
 		Integer count = 5;
 		final AchievementCounter counter = new AchievementCounter(new AchievementEvent("A"), count);
 		count = count - 1;
+		assertNotEquals(count.longValue(), counter.getCounter());
 		assertEquals(5, counter.getCounter());
 	}
 }
