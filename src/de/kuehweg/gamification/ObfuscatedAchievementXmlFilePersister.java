@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,10 @@ public class ObfuscatedAchievementXmlFilePersister extends AchievementXmlFilePer
 	/**
 	 * @param filename
 	 *            Name der Datei, in der der Fortschritt gespeichert wird.
+	 * @param owner
+	 *            Benutzername, Benutzerkennung o.ä. Die Inhalte werden an
+	 *            diesen Wert gebunden (der Schlüssel zur Verschlüsselung leitet
+	 *            sich aus diesem Wert ab)
 	 */
 	public ObfuscatedAchievementXmlFilePersister(final String filename, final String owner) {
 		super(filename);
@@ -84,7 +88,7 @@ public class ObfuscatedAchievementXmlFilePersister extends AchievementXmlFilePer
 	 * weitergegeben werden können, werden sie mit dem Benutzernamen
 	 * verschlüsselt.
 	 *
-	 * @return
+	 * @return Schlüssel in Byte-Array-Repräsentation
 	 */
 	private byte[] generateKeyForMystificationAndDemystification() {
 		return owner.getBytes(Charset.forName("UTF-8"));
