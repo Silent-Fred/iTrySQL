@@ -3,6 +3,7 @@
 
 	<property name="ProjectBase" value="." />
 	<property name="BuildPath" value="./build" />
+	<property name="BundleOutputPath" value="${BuildPath}/deploy" />
 	<property name="ReferencedLibrariesPath" value="${user.home}/JavaProjects" />
 
 	<target name="get-dependencies">
@@ -114,7 +115,7 @@
 			<fx:fileset dir="${BuildPath}/dist" includes="resources/**" />
 		</fx:resources>
 
-		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="3.0" />
+		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="3.1" />
 
 		<mkdir dir="${BuildPath}/build/classes/META-INF" />
 
@@ -127,13 +128,13 @@
 			<manifest>
 				<attribute name="Implementation-Vendor" value="kuehweg.de" />
 				<attribute name="Implementation-Title" value="iTrySQL" />
-				<attribute name="Implementation-Version" value="3.0" />
+				<attribute name="Implementation-Version" value="3.1" />
 				<attribute name="JavaFX-Feature-Proxy" value="None" />
 			</manifest>
 		</fx:jar>
 
-		<mkdir dir="${BuildPath}/deploy" />
-		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BuildPath}/deploy" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
+		<mkdir dir="${BundleOutputPath}" />
+		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BundleOutputPath}" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
 
 			<fx:platform basedir="${java.home}" />
 			<fx:info title="iTrySQL" vendor="kuehweg.de" />

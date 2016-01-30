@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,24 +23,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.database.metadata.description;
 
-import java.io.Serializable;
-import java.util.Comparator;
+package de.kuehweg.sqltool.dialog.util;
 
 /**
- * Comparator mit dem ForeignKeyColumnDescriptions nach dem Namen der fkColumn
- * sortiert werden können.
+ * In JavaFX Versionen zwischen 1.8.0_40 und 1.8.0_72 (je ausschließlich)
+ * funktionieren im fertigen Application Bundle in WebViews keine Ressourcen,
+ * die im Bundle mit ausgeliefert werden.
  *
  * @author Michael Kühweg
  */
-public class ForeignKeyColumnByColumnName implements Comparator<ForeignKeyColumnDescription>, Serializable {
+public class WebViewBundledResourceErrorDetection {
 
-	private static final long serialVersionUID = -9146703909298969600L;
+	private static int getMajorVersion() {
+		try {
+			final String version = System.getProperty("java.version");
+			int pos = version.indexOf('.');
+			pos = version.indexOf('.', pos + 1);
+			final String major = version.substring(0, pos).replace(".", "");
+			return Integer.parseInt(major);
+		} catch (final Exception wtfWentWrong) {
+			return 10;
+		}
+	}
 
-	@Override
-	public int compare(final ForeignKeyColumnDescription o1, final ForeignKeyColumnDescription o2) {
-		return o1.getInsideColumnName().compareTo(o2.getInsideColumnName());
+	private static int getUpdateVersion() {
+		final String version = System.getProperty("java.version");
+		final int pos = version.lastIndexOf('_');
+		if (pos < 0) {
+			return 0;
+		}
+		final String update = version.substring(pos + 1, version.length());
+		try {
+			return Integer.parseInt(update);
+		} catch (final NumberFormatException wtfWentWrong) {
+			return 0;
+		}
+	}
+
+	public static boolean runningOnJavaVersionWithRenderingDeficiencies() {
+		final int majorVersion = getMajorVersion();
+		final int update = getUpdateVersion();
+		return majorVersion == 18 && update > 40 && update < 72;
 	}
 
 }

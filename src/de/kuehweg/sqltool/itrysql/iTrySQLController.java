@@ -80,6 +80,7 @@ import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeModificationDete
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryButtonCell;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryComponent;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SqlHistoryEntry;
+import de.kuehweg.sqltool.dialog.util.WebViewBundledResourceErrorDetection;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -219,6 +220,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private Tab tabResult;
 	@FXML
+	private Tab tabSyntax;
+	@FXML
 	private ToolBar toolBar;
 	@FXML
 	private Button toolbarCommit;
@@ -254,6 +257,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	private Button importConnections;
 	@FXML
 	private Label permanentMessage;
+	@FXML
+	private WebView syntaxView;
 	@FXML
 	private WebView achievementsView;
 	@FXML
@@ -379,6 +384,12 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * werden können.
 	 */
 	private void fixWebViewWithHSQLDBBug() {
+		syntaxView.setOnMouseEntered((final MouseEvent t) -> {
+			WebViewWithHSQLDBBugfix.fix();
+		});
+		syntaxView.setOnMouseExited((final MouseEvent t) -> {
+			WebViewWithHSQLDBBugfix.fix();
+		});
 		achievementsView.setOnMouseEntered((final MouseEvent t) -> {
 			WebViewWithHSQLDBBugfix.fix();
 		});
@@ -899,6 +910,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	private void initializeContinued() {
 		initializeConnectionComponentController();
 		prepareHistory();
+		initialzeSyntaxHelp();
 		initializeUserPreferences();
 
 		setupTooltips();
@@ -914,6 +926,27 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		achievementViewComponent.refresh();
 
 		initializeQuickSearch();
+	}
+
+	/**
+	 * Aufbau der Syntaxhilfe.
+	 */
+	private void initialzeSyntaxHelp() {
+		final boolean webViewError = WebViewBundledResourceErrorDetection
+				.runningOnJavaVersionWithRenderingDeficiencies();
+		tabSyntax.disableProperty().set(webViewError);
+		if (webViewError) {
+			tabSyntax.setTooltip(new Tooltip(DialogDictionary.TOOLTIP_WEBVIEW_RENDERING_ERROR.toString()));
+			// TODO auch eine Variante: Text einblenden mit Erläuterung zur
+			// Fehlerkonstellation
+			// syntaxView.getEngine()
+			// .load(this.getClass().getResource("/resources/syntax/inconvenience.html").toExternalForm());
+		} else {
+			syntaxView.getEngine().load(this.getClass().getResource("/resources/syntax/index.html").toExternalForm());
+		}
+		// FIXME Stand Java 1.8.0_72 funktionieren zwar Ressourcen im Bundle
+		// wieder, jedoch keine SVG Bilder. Wenn das behoben ist, kann home.png
+		// wieder durch home.svg ersetzt werden.
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,60 +26,53 @@
 
 package de.kuehweg.sqltool.dialog.action;
 
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextArea;
 
 /**
  * @author Michael Kühweg
  */
-public class TextAreaFindAction extends FindAction {
+public class TextAreaFindAction extends TextBasedFindAction {
 
 	private final TextArea textArea;
-
-	private int findFrom;
 
 	public TextAreaFindAction(final TextArea textArea) {
 		super();
 		this.textArea = textArea;
-		findFrom = 0;
 	}
 
 	@Override
 	public void find(final String searchString) {
+		resetSearchPosition();
+		deselectAllOccurrencesInComponent();
+		refreshTextContent(getValueSafe());
 		final String preparedSearchString = preparedSearchString(searchString);
-		findFrom = 0;
-		if (preparedSearchString.isEmpty()) {
-			deselectAllOccurrencesInComponent();
+		super.find(preparedSearchString);
+		if (getPositionOfLastRememberedFinding() >= 0) {
+			selectOccurrenceInComponent(getPositionOfLastRememberedFinding(), preparedSearchString.length());
 		} else {
-			findFrom = find(preparedSearchString, findFrom);
-			if (findFrom >= 0) {
-				selectOccurrenceInComponent(findFrom, preparedSearchString.length());
-			} else {
-				findFrom = 0;
-				deselectAllOccurrencesInComponent();
-			}
+			resetSearchPosition();
 		}
 	}
 
 	@Override
 	public void nextOccurrence(final String searchString) {
-		if (findFrom >= 0) {
-			final int current = findFrom;
-			findFrom = find(searchString, findFrom + 1);
-			selectOccurrenceInComponent(findFrom, searchString.length());
-			if (findFrom < 0) {
-				findFrom = current;
-			}
+		deselectAllOccurrencesInComponent();
+		refreshTextContent(getValueSafe());
+		final String preparedSearchString = preparedSearchString(searchString);
+		super.nextOccurrence(preparedSearchString);
+		if (getPositionOfLastRememberedFinding() >= 0) {
+			selectOccurrenceInComponent(getPositionOfLastRememberedFinding(), preparedSearchString.length());
 		}
 	}
 
 	@Override
 	public void previousOccurrence(final String searchString) {
-		final int current = findFrom;
-		findFrom = findBackwards(searchString, findFrom);
-		selectOccurrenceInComponent(findFrom, searchString.length());
-		if (findFrom < 0) {
-			findFrom = current;
+		deselectAllOccurrencesInComponent();
+		refreshTextContent(getValueSafe());
+		final String preparedSearchString = preparedSearchString(searchString);
+		super.previousOccurrence(preparedSearchString);
+		if (getPositionOfLastRememberedFinding() >= 0) {
+			selectOccurrenceInComponent(getPositionOfLastRememberedFinding(), preparedSearchString.length());
 		}
 	}
 
@@ -87,22 +80,11 @@ public class TextAreaFindAction extends FindAction {
 		return searchString != null ? searchString.toLowerCase() : "";
 	}
 
-	private int find(final String searchString, final int findFrom) {
-		return getValueSafeAndLowerCase(textArea).indexOf(searchString, findFrom);
-	}
-
-	private int findBackwards(final String searchString, final int findFrom) {
-		if (findFrom > 0) {
-			return getValueSafeAndLowerCase(textArea).substring(0, findFrom).lastIndexOf(searchString);
-		}
-		return -1;
-	}
-
 	private void selectOccurrenceInComponent(final int startAtPosition, final int lengthOfTextSelection) {
 		if (startAtPosition >= 0 && lengthOfTextSelection > 0) {
 			final int anchor = startAtPosition;
 			final int caretPosition = startAtPosition + lengthOfTextSelection;
-			if (getValueSafeAndLowerCase(textArea).length() >= caretPosition) {
+			if (getValueSafe().length() >= caretPosition) {
 				textArea.selectRange(anchor, caretPosition);
 			}
 		}
@@ -112,13 +94,7 @@ public class TextAreaFindAction extends FindAction {
 		textArea.deselect();
 	}
 
-	private String getValueSafeAndLowerCase(final TextArea textArea) {
-		return textArea.textProperty().getValueSafe().toLowerCase();
-	}
-
-	@Override
-	public void changed(final ObservableValue<? extends String> observable, final String oldValue,
-			final String newValue) {
-		find(observable.getValue());
+	private String getValueSafe() {
+		return textArea.textProperty().getValueSafe();
 	}
 }

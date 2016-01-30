@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,7 @@
 
 package de.kuehweg.sqltool.dialog.component.achievement;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import de.kuehweg.gamification.Achievement;
@@ -39,7 +40,9 @@ import de.kuehweg.sqltool.common.achievement.NamedAchievement;
  *
  * @author Michael Kühweg
  */
-public class AchievementDefaultSortOrder implements Comparator<Achievement> {
+public class AchievementDefaultSortOrder implements Comparator<Achievement>, Serializable {
+
+	private static final long serialVersionUID = 3387704642110107179L;
 
 	@Override
 	public int compare(final Achievement o1, final Achievement o2) {

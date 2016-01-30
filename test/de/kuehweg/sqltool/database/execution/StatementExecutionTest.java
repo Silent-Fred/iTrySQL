@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -148,7 +148,7 @@ public class StatementExecutionTest {
 		final String sql = "select * from wherever";
 		final StatementExecution execution = new StatementExecution(new StatementString(sql));
 		statement = new StatementStubWithFakeResultSet(connection, resultSet);
-		final StatementExecutionInformation info = execution.execute(statement);
+		execution.execute(statement);
 		assertTrue(statement.getResultSet().isClosed());
 	}
 
@@ -167,7 +167,7 @@ public class StatementExecutionTest {
 		final String sql = "select * from wherever";
 		final StatementExecution execution = new StatementExecution(new StatementString(sql));
 		statement = new FakeStatementThrowingExceptionOnExecute(connection, resultSet);
-		final StatementExecutionInformation info = execution.execute(statement);
+		execution.execute(statement);
 	}
 
 	@Test

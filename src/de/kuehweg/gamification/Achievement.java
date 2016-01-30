@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,6 @@ public class Achievement extends Observable {
 		if (countdown != null && countdown.getCounter() > 0) {
 			setChanged();
 			notifyObservers();
-			// TODO synchronized Verhalten testen (Debugger)
 			synchronized (countdown) {
 				countdown.setCounter(countdown.getCounter() > count ? countdown.getCounter() - count : 0);
 			}

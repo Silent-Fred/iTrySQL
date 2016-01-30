@@ -94,6 +94,7 @@ public enum DialogDictionary {
     TOOLTIP_CLEAR_OUTPUT("tooltip_clearOutput"),
     TOOLTIP_EXPORT_RESULT("tooltip_exportResult"),
     TOOLTIP_IN_MEMORY_DATABASE("tooltip_inMemoryDatabase"),
+    TOOLTIP_WEBVIEW_RENDERING_ERROR("tooltip_webViewRenderingError"),
     PATTERN_EXECUTION_TIME("pattern_executionTime"),
     PATTERN_EXECUTION_TIMESTAMP("pattern_executionTimestamp"),
     PATTERN_EXECUTION_TIMESTAMP_WITH_USER("pattern_executionTimestampWithUser"),
