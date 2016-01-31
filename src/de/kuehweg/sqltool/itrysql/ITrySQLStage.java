@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,9 @@ public class ITrySQLStage extends Stage {
 
 			final Scene scene = new Scene(root);
 			setScene(scene);
-			getIcons().add(ImagePack.APP_ICON.getAsImage());
+			getIcons().addAll(ImagePack.APP_ICON.getAsImage(), ImagePack.APP_ICON_256x256.getAsImage(),
+					ImagePack.APP_ICON_128x128.getAsImage(), ImagePack.APP_ICON_64x64.getAsImage(),
+					ImagePack.APP_ICON_32x32.getAsImage(), ImagePack.APP_ICON_16x16.getAsImage());
 			setTitle(title);
 			if (callerStage != null) {
 				setX(callerStage.getX() + X_OFFSET);

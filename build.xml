@@ -34,11 +34,6 @@
 				<filename name="hsqldb-2.3.3.jar" />
 			</fileset>
 		</copy>
-		<copy todir="${BuildPath}/externalLibs">
-			<fileset dir="${ReferencedLibrariesPath}">
-				<filename name="commons-lang3-3.4.jar" />
-			</fileset>
-		</copy>
 
 		<mkdir dir="${BuildPath}/project" />
 		<copy todir="${BuildPath}/project">
