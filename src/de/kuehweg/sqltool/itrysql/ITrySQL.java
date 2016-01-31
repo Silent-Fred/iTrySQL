@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -129,7 +129,10 @@ public class ITrySQL extends Application {
 		primaryStage.setY(calculatedSize.getMinY());
 		primaryStage.setWidth(calculatedSize.getWidth());
 		primaryStage.setHeight(calculatedSize.getHeight());
-		primaryStage.getIcons().add(ImagePack.APP_ICON.getAsImage());
+		primaryStage.getIcons().addAll(ImagePack.APP_ICON.getAsImage(), ImagePack.APP_ICON_256x256.getAsImage(),
+				ImagePack.APP_ICON_128x128.getAsImage(), ImagePack.APP_ICON_64x64.getAsImage(),
+				ImagePack.APP_ICON_32x32.getAsImage(), ImagePack.APP_ICON_16x16.getAsImage());
+
 		primaryStage.setTitle(DialogDictionary.APPLICATION.toString());
 
 		controller = (iTrySQLController) fxmlLoader.getController();
