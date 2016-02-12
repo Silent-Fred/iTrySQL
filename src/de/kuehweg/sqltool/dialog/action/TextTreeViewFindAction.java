@@ -123,11 +123,18 @@ public class TextTreeViewFindAction extends FindAction {
 		tree.scrollTo(tree.getSelectionModel().getSelectedIndex());
 	}
 
-	private String preparedSearchString(final String searchString) {
-		return searchString != null ? searchString.toLowerCase() : "";
-	}
-
 	private String getValueSafeAndLowerCase(final TreeItem<String> treeItem) {
 		return treeItem.getValue() == null ? "" : treeItem.getValue().toLowerCase();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.kuehweg.sqltool.dialog.action.FindAction#resetSearchPosition()
+	 */
+	@Override
+	public void resetSearchPosition() {
+		findFrom = null;
+	}
+
 }

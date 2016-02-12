@@ -62,6 +62,7 @@ import de.kuehweg.sqltool.dialog.action.FindAction;
 import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
 import de.kuehweg.sqltool.dialog.action.StatementInputFontAction;
+import de.kuehweg.sqltool.dialog.action.TableViewFindAction;
 import de.kuehweg.sqltool.dialog.action.TextAreaFindAction;
 import de.kuehweg.sqltool.dialog.action.TextTreeViewFindAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
@@ -85,6 +86,7 @@ import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -197,6 +199,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	private Button refreshTree;
 	@FXML
 	private HBox resultTableContainer;
+	@FXML
+	private TableView<ObservableList<String>> resultTableView;
 	@FXML
 	private TreeView<String> schemaTreeView;
 	@FXML
@@ -315,6 +319,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		assert refreshTree != null : "fx:id=\"refreshTree\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert removeConnection != null : "fx:id=\"removeConnection\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert resultTableContainer != null : "fx:id=\"resultTableContainer\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+		assert resultTableView != null : "fx:id=\"resultTableView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert schemaTreeView != null : "fx:id=\"schemaTreeView\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert sqlHistory != null : "fx:id=\"sqlHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert sqlHistoryColumnAction != null : "fx:id=\"sqlHistoryColumnAction\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -348,6 +353,9 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		initializeContinued();
 
 		buildComponents();
+
+		initializeQuickSearch();
+
 	}
 
 	/**
@@ -374,7 +382,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		// Komponenten, die mehr Informationen enthalten, als sie anzeigen (z.B.
 		// HTML-Export aus Tabellensicht)
 		// werden dagegen einmal pro Fenster angelegt.
-		queryResultTableView = new QueryResultTableView(resultTableContainer);
+		queryResultTableView = new QueryResultTableView(resultTableView);
 	}
 
 	/**
@@ -924,8 +932,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 
 		achievementViewComponent = new AchievementView(achievementsView, new AchievementHtmlFormatter());
 		achievementViewComponent.refresh();
-
-		initializeQuickSearch();
 	}
 
 	/**
@@ -1089,6 +1095,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		final FindAction findActionOnSchemaTree = new TextTreeViewFindAction(schemaTreeView);
 		findInput.textProperty().addListener(findActionOnSchemaTree);
 		findActionsForQuickSearch.add(findActionOnSchemaTree);
+
+		final FindAction findActionOnResultTableView = new TableViewFindAction(resultTableView);
+		findInput.textProperty().addListener(findActionOnResultTableView);
+		findActionsForQuickSearch.add(findActionOnResultTableView);
 	}
 
 	/**
