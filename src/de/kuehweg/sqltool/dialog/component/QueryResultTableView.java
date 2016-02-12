@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 
 /**
  * Baustein für Ergebnistabelle.
@@ -61,6 +63,10 @@ public class QueryResultTableView implements ExecutionTracker {
 
 	private static final int MIN_COLUMN_WIDTH_SINGLE_COLUMN = 256;
 
+	private static final int MAX_ROWS_IN_VIEW = 5000;
+
+	private final Tooltip maxRowsTooltip;
+
 	private final TableView<ObservableList<String>> tableView;
 	private StatementExecutionInformation infoToView;
 	private String errorMessage;
@@ -68,6 +74,8 @@ public class QueryResultTableView implements ExecutionTracker {
 	public QueryResultTableView(final TableView<ObservableList<String>> tableView) {
 		super();
 		this.tableView = tableView;
+		maxRowsTooltip = new Tooltip(
+				MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS_IN_TABLE_VIEW.toString(), MAX_ROWS_IN_VIEW));
 	}
 
 	public String toHtml() {
@@ -106,7 +114,11 @@ public class QueryResultTableView implements ExecutionTracker {
 	private ObservableList<ObservableList<String>> buildContentWithResultSet(final StatementExecutionInformation info) {
 		final ObservableList<ObservableList<String>> content = FXCollections.observableArrayList();
 		if (info != null && info.getStatementResult() != null) {
-			for (final ResultRow resultRow : info.getStatementResult().getRows()) {
+			final int upperBound = Math.min(info.getStatementResult().getRows().size(), MAX_ROWS_IN_VIEW);
+			if (upperBound == MAX_ROWS_IN_VIEW) {
+				Tooltip.install(tableView, maxRowsTooltip);
+			}
+			for (final ResultRow resultRow : info.getStatementResult().getRows().subList(0, upperBound)) {
 				final ObservableList<String> row = FXCollections.observableArrayList();
 				for (final String column : resultRow.columnsAsString()) {
 					row.add(column);
@@ -129,6 +141,7 @@ public class QueryResultTableView implements ExecutionTracker {
 		tableView.getColumns().clear();
 		tableView.getItems().clear();
 		tableView.setTableMenuButtonVisible(false);
+		Tooltip.uninstall(tableView, maxRowsTooltip);
 	}
 
 	private void buildView(final StatementExecutionInformation info) {
