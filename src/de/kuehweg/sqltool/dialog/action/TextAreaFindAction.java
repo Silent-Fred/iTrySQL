@@ -26,6 +26,8 @@
 
 package de.kuehweg.sqltool.dialog.action;
 
+import java.util.function.Consumer;
+
 import javafx.scene.control.TextArea;
 
 /**
@@ -56,28 +58,22 @@ public class TextAreaFindAction extends TextBasedFindAction {
 
 	@Override
 	public void nextOccurrence(final String searchString) {
-		deselectAllOccurrencesInComponent();
-		refreshTextContent(getValueSafe());
-		final String preparedSearchString = preparedSearchString(searchString);
-		super.nextOccurrence(preparedSearchString);
-		if (getPositionOfLastRememberedFinding() >= 0) {
-			selectOccurrenceInComponent(getPositionOfLastRememberedFinding(), preparedSearchString.length());
-		}
+		findOccurrence(searchString, (what) -> super.nextOccurrence(what));
 	}
 
 	@Override
 	public void previousOccurrence(final String searchString) {
+		findOccurrence(searchString, (what) -> super.previousOccurrence(what));
+	}
+
+	private void findOccurrence(final String searchString, final Consumer<String> finder) {
 		deselectAllOccurrencesInComponent();
 		refreshTextContent(getValueSafe());
 		final String preparedSearchString = preparedSearchString(searchString);
-		super.previousOccurrence(preparedSearchString);
+		finder.accept(preparedSearchString);
 		if (getPositionOfLastRememberedFinding() >= 0) {
 			selectOccurrenceInComponent(getPositionOfLastRememberedFinding(), preparedSearchString.length());
 		}
-	}
-
-	private String preparedSearchString(final String searchString) {
-		return searchString != null ? searchString.toLowerCase() : "";
 	}
 
 	private void selectOccurrenceInComponent(final int startAtPosition, final int lengthOfTextSelection) {

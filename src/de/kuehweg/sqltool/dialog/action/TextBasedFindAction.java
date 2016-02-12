@@ -26,12 +26,14 @@
 
 package de.kuehweg.sqltool.dialog.action;
 
+import java.util.function.BiFunction;
+
 /**
  * @author Michael Kühweg
  */
 public class TextBasedFindAction extends FindAction {
 
-	private String textContent;
+	private String textContentNullSafeAndLowerCase;
 
 	private int lastKnownFinding;
 
@@ -42,41 +44,32 @@ public class TextBasedFindAction extends FindAction {
 	}
 
 	public void refreshTextContent(final String newTextContent) {
-		textContent = newTextContent == null ? "" : newTextContent.toLowerCase();
+		textContentNullSafeAndLowerCase = newTextContent == null ? "" : newTextContent.toLowerCase();
 	}
 
 	@Override
 	public void find(final String searchString) {
-		final String preparedSearchString = preparedSearchString(searchString);
 		resetSearchPosition();
-		if (!preparedSearchString.isEmpty()) {
-			final int foundAtPosition = find(preparedSearchString, getPositionOfLastRememberedFinding());
-			if (foundAtPosition >= 0) {
-				rememberPositionAsLastFinding(foundAtPosition);
-			} else {
-				resetSearchPosition();
-			}
-		}
+		nextOccurrence(searchString);
 	}
 
 	@Override
 	public void nextOccurrence(final String searchString) {
-		resetSearchIfLastRememberedPositionIsNowInvalid();
-		final String preparedSearchString = preparedSearchString(searchString);
-		if (!preparedSearchString.isEmpty()) {
-			final int foundAtPosition = find(preparedSearchString, getPositionOfLastRememberedFinding() + 1);
-			if (foundAtPosition >= 0) {
-				rememberPositionAsLastFinding(foundAtPosition);
-			}
-		}
+		findOccurrence(searchString, getPositionOfLastRememberedFinding() + 1,
+				(what, where) -> findForward(what, where));
 	}
 
 	@Override
 	public void previousOccurrence(final String searchString) {
+		findOccurrence(searchString, getPositionOfLastRememberedFinding(), (what, where) -> findBackwards(what, where));
+	}
+
+	private void findOccurrence(final String searchString, final int positionToStartFrom,
+			final BiFunction<String, Integer, Integer> finder) {
 		resetSearchIfLastRememberedPositionIsNowInvalid();
 		final String preparedSearchString = preparedSearchString(searchString);
 		if (!preparedSearchString.isEmpty()) {
-			final int foundAtPosition = findBackwards(preparedSearchString, getPositionOfLastRememberedFinding());
+			final int foundAtPosition = finder.apply(preparedSearchString, positionToStartFrom);
 			if (foundAtPosition >= 0) {
 				rememberPositionAsLastFinding(foundAtPosition);
 			}
@@ -87,12 +80,13 @@ public class TextBasedFindAction extends FindAction {
 		return lastKnownFinding;
 	}
 
+	@Override
 	public void resetSearchPosition() {
 		lastKnownFinding = -1;
 	}
 
 	private void resetSearchIfLastRememberedPositionIsNowInvalid() {
-		if (getPositionOfLastRememberedFinding() >= textContent.length()) {
+		if (getPositionOfLastRememberedFinding() >= textContentNullSafeAndLowerCase.length()) {
 			resetSearchPosition();
 		}
 	}
@@ -101,24 +95,19 @@ public class TextBasedFindAction extends FindAction {
 		lastKnownFinding = positionOfCurrentFinding;
 	}
 
-	private int find(final String searchString, final int startingPosition) {
-		return textContent.indexOf(searchString, startingPosition);
+	private int findForward(final String searchString, final int startingPosition) {
+		return textContentNullSafeAndLowerCase.indexOf(searchString, startingPosition);
 	}
 
 	private int findBackwards(final String searchString, final int startingPosition) {
-		final String safeAndLowerCase = textContent;
 		if (startingPosition >= 0) {
-			final int cutOffEverythingFrom = startingPosition < safeAndLowerCase.length() ? startingPosition
-					: safeAndLowerCase.length();
+			final int cutOffEverythingFrom = startingPosition < textContentNullSafeAndLowerCase.length()
+					? startingPosition : textContentNullSafeAndLowerCase.length();
 			if (cutOffEverythingFrom > 0) {
-				return safeAndLowerCase.substring(0, cutOffEverythingFrom).lastIndexOf(searchString);
+				return textContentNullSafeAndLowerCase.substring(0, cutOffEverythingFrom).lastIndexOf(searchString);
 			}
 		}
 		return -1;
-	}
-
-	private String preparedSearchString(final String searchString) {
-		return searchString != null ? searchString.toLowerCase() : "";
 	}
 
 }

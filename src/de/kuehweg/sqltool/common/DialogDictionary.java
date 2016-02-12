@@ -102,6 +102,7 @@ public enum DialogDictionary {
     PATTERN_UPDATECOUNT("pattern_updatecount"),
     PATTERN_EXECUTED_STATEMENT("pattern_executedStatement"),
     PATTERN_MAX_ROWS("pattern_maxRows"),
+    PATTERN_MAX_ROWS_IN_TABLE_VIEW("pattern_maxRowsInTableView"),
     PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),
     PATTERN_NEW_CONNECTION_FOLDER("pattern_newConnectionFolder"),
     PATTERN_NEW_CONNECTION_FILE("pattern_newConnectionFile"),

@@ -254,7 +254,7 @@
                                           </ToolBar>
                                           <HBox fx:id="resultTableContainer" prefHeight="318.0" prefWidth="845.0" spacing="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                              <TableView id="" HBox.hgrow="ALWAYS">
+                                              <TableView id="" fx:id="resultTableView" HBox.hgrow="ALWAYS">
                                                 <columns>
                                                   <TableColumn prefWidth="75.0" text="%label_empty" />
                                                 </columns>
