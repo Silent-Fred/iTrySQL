@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,13 @@ import javafx.stage.Screen;
  */
 public final class StageSizerUtil {
 
-	private static final int TOP_FRACTION = 4;
+	public static final int TOP_FRACTION = 4;
+
+	public static final int MIN_HORIZONTAL_MARGIN_ABSOLUTE = 16;
+	public static final int MIN_VERTICAL_MARGIN_ABSOLUTE = 16;
+
+	public static final double MIN_HORIZONTAL_MARGIN_RELATIVE = 0.025;
+	public static final double MIN_VERTICAL_MARGIN_RELATIVE = 0.025;
 
 	private StageSizerUtil() {
 		// util - no instances
@@ -48,13 +54,34 @@ public final class StageSizerUtil {
 	 * @return Rechteck mit den berechneten Abmessungen
 	 */
 	public static Rectangle2D calculateSizeDependingOnScreenSize() {
-		final Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+		return calculateSizeDependingOnScreenSize(Screen.getPrimary().getVisualBounds());
+	}
 
-		final double horizontalMargin = Math.max(16, primaryScreenBounds.getWidth() * 0.1);
-		final double verticalMargin = Math.max(16, primaryScreenBounds.getWidth() * 0.1);
+	public static Rectangle2D calculateSizeDependingOnScreenSize(final Rectangle2D bounds) {
 
-		return new Rectangle2D(primaryScreenBounds.getMinX() + horizontalMargin / 2,
-				primaryScreenBounds.getMinY() + verticalMargin / TOP_FRACTION,
-				primaryScreenBounds.getWidth() - horizontalMargin, primaryScreenBounds.getHeight() - verticalMargin);
+		final double horizontalMargin = calculateHorizontalMargin(bounds);
+		final double verticalMargin = calculateVerticalMargin(bounds);
+
+		return new Rectangle2D(bounds.getMinX() + horizontalMargin / 2,
+				bounds.getMinY() + verticalMargin / TOP_FRACTION, bounds.getWidth() - horizontalMargin,
+				bounds.getHeight() - verticalMargin);
+	}
+
+	private static double calculateHorizontalMargin(final Rectangle2D bounds) {
+		final double preferredMargin = Math.max(MIN_HORIZONTAL_MARGIN_ABSOLUTE,
+				bounds.getWidth() * MIN_HORIZONTAL_MARGIN_RELATIVE);
+		if (preferredMargin * 2 >= bounds.getWidth()) {
+			return Math.min(MIN_HORIZONTAL_MARGIN_ABSOLUTE, bounds.getWidth() * MIN_HORIZONTAL_MARGIN_RELATIVE);
+		}
+		return preferredMargin;
+	}
+
+	private static double calculateVerticalMargin(final Rectangle2D bounds) {
+		final double preferredMargin = Math.max(MIN_VERTICAL_MARGIN_ABSOLUTE,
+				bounds.getHeight() * MIN_VERTICAL_MARGIN_RELATIVE);
+		if (preferredMargin * 2 >= bounds.getWidth()) {
+			return Math.min(MIN_VERTICAL_MARGIN_ABSOLUTE, bounds.getHeight() * MIN_VERTICAL_MARGIN_RELATIVE);
+		}
+		return preferredMargin;
 	}
 }

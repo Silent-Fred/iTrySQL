@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,51 +28,55 @@ package de.kuehweg.sqltool.database;
 import de.kuehweg.sqltool.common.DialogDictionary;
 
 /**
- * Liefert Standard-Verbindungsdaten, mit denen ohne explizite Verbindungsanlage durch den
- * Anwender gearbeitet werden kann.
+ * Liefert Standard-Verbindungsdaten, mit denen ohne explizite Verbindungsanlage
+ * durch den Anwender gearbeitet werden kann.
  *
  * @author Michael Kühweg
  */
 public class DefaultConnectionSettingsProvider {
 
-    private DefaultConnectionSettingsProvider() {
-    }
+	private DefaultConnectionSettingsProvider() {
+	}
 
-    /**
-     * Eine In-Memory Verbinung wird grundsätzlich immer angeboten.
-     *
-     * @return
-     */
-    public static ConnectionSetting getDefaultInMemoryConnection() {
-        return new ConnectionSetting(
-                DialogDictionary.LABEL_DEFAULT_CONNECTION_IN_MEMORY.toString(),
-                JDBCType.HSQL_IN_MEMORY, null, "rastelli", null, null);
-    }
+	/**
+	 * Eine In-Memory Verbinung wird grundsätzlich immer angeboten.
+	 *
+	 * @return
+	 */
+	public static ConnectionSetting getDefaultInMemoryConnection() {
+		return new ConnectionSetting(DialogDictionary.LABEL_DEFAULT_CONNECTION_IN_MEMORY.toString(),
+				JDBCType.HSQL_IN_MEMORY, null, "rastelli", null, null);
+	}
 
-    /**
-     * Eine dateibasierte Version im Benutzerverzeichnis.
-     *
-     * @return
-     */
-    public static ConnectionSetting getDefaultStandaloneUserHomeConnection() {
-        return new ConnectionSetting(
-                DialogDictionary.LABEL_DEFAULT_CONNECTION_STANDALONE_USER_HOME.toString(),
-                JDBCType.HSQL_STANDALONE, System.getProperty("user.home") + "/itrysql",
-                "standard_db", null, null);
-    }
+	/**
+	 * Eine dateibasierte Version im Benutzerverzeichnis.
+	 *
+	 * @return
+	 */
+	public static ConnectionSetting getDefaultStandaloneUserHomeConnection() {
+		return getStandaloneConnectionInDefaultDirectory(
+				DialogDictionary.LABEL_DEFAULT_CONNECTION_STANDALONE_USER_HOME.toString(), "itrysql", "standard_db");
+	}
 
-    /**
-     * Eine dateibasierte Version im Benutzerverzeichnis als Vorlage für neue
-     * Verbindungen.
-     *
-     * @return
-     */
-    public static ConnectionSetting getDefaultTemplateStandaloneUserHomeConnection() {
-        return new ConnectionSetting(
-                DialogDictionary.PATTERN_NEW_CONNECTION_NAME.toString(),
-                JDBCType.HSQL_STANDALONE, System.getProperty("user.home") + "/"
-                + DialogDictionary.PATTERN_NEW_CONNECTION_FOLDER.toString(),
-                DialogDictionary.PATTERN_NEW_CONNECTION_FILE.toString(), null, null);
-    }
+	/**
+	 * Eine dateibasierte Version im Benutzerverzeichnis als Vorlage für neue
+	 * Verbindungen.
+	 *
+	 * @return
+	 */
+	public static ConnectionSetting getDefaultTemplateStandaloneUserHomeConnection() {
+		return getStandaloneConnectionInDefaultDirectory(DialogDictionary.PATTERN_NEW_CONNECTION_NAME.toString(),
+				DialogDictionary.PATTERN_NEW_CONNECTION_FOLDER.toString(),
+				DialogDictionary.PATTERN_NEW_CONNECTION_FILE.toString());
+	}
 
+	private static ConnectionSetting getStandaloneConnectionInDefaultDirectory(final String name,
+			final String dbFolderInDefaultDirectory, final String dbName) {
+		return new ConnectionSetting(name, JDBCType.HSQL_STANDALONE, defaultDirectory() + dbFolderInDefaultDirectory,
+				dbName, null, null);
+	}
+
+	private static String defaultDirectory() {
+		return System.getProperty("user.home") + "/";
+	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,51 +23,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.common;
 
-import javafx.scene.media.AudioClip;
+package de.kuehweg.sqltool.dialog.util;
+
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import javafx.geometry.Rectangle2D;
 
 /**
- * AudioClips, die die Anwendung selbst mitbringt.
- *
  * @author Michael Kühweg
  */
-public enum ProvidedAudioClip {
+public class StageSizerUtilTest {
 
-	ACOUSTIC("Acoustic", "acoustic.mp3"),
-	BEEP("Beep", "beep.mp3"),
-	BELL("Bell", "bell.mp3"),
-	BONGO("Bongo", "bongo.mp3"),
-	ELECTRIC("Electric", "electric.mp3"),
-	PLING("Pling", "pling.mp3"),
-	PLONG("Plong", "plong.mp3"),
-	PLOP("Plop", "plop.mp3"),
-	SHIMMER("Shimmer", "shimmer.mp3"),
-	STEELSTRING("Steel Strings", "steelstring.mp3"),
-	WHIRLY("Whirly", "whirly.mp3");
+	@Test
+	public void testMinimumMargins() {
+		final Rectangle2D bigEnough = new Rectangle2D(0, 0, StageSizerUtil.MIN_HORIZONTAL_MARGIN_ABSOLUTE * 2 + 3,
+				StageSizerUtil.MIN_VERTICAL_MARGIN_ABSOLUTE * 2 + 3);
 
-	private static final String PATH_TO_AUDIO_RESOURCES = "/resources/audio/";
-	private final String uiName;
-	private final String resource;
+		Rectangle2D calculatedRectangle = StageSizerUtil.calculateSizeDependingOnScreenSize(bigEnough);
+		assertTrue(calculatedRectangle.getWidth() > StageSizerUtil.MIN_HORIZONTAL_MARGIN_ABSOLUTE);
+		assertTrue(calculatedRectangle.getHeight() > StageSizerUtil.MIN_VERTICAL_MARGIN_ABSOLUTE);
 
-	private ProvidedAudioClip(final String uiName, final String resource) {
-		this.uiName = uiName;
-		this.resource = resource;
+		final Rectangle2D tooSmall = new Rectangle2D(0, 0, StageSizerUtil.MIN_HORIZONTAL_MARGIN_ABSOLUTE - 1,
+				StageSizerUtil.MIN_VERTICAL_MARGIN_ABSOLUTE - 1);
+		calculatedRectangle = StageSizerUtil.calculateSizeDependingOnScreenSize(tooSmall);
+		assertTrue(calculatedRectangle.getWidth() < StageSizerUtil.MIN_HORIZONTAL_MARGIN_ABSOLUTE);
+		assertTrue(calculatedRectangle.getHeight() < StageSizerUtil.MIN_VERTICAL_MARGIN_ABSOLUTE);
 	}
 
-	public void play() {
-		new AudioClip(this.getClass().getResource(PATH_TO_AUDIO_RESOURCES + resource).toExternalForm()).play();
-	}
-
-	public void play(final double volume) {
-		if (volume > 0.0) {
-			new AudioClip(this.getClass().getResource(PATH_TO_AUDIO_RESOURCES + resource).toExternalForm())
-					.play(volume);
-		}
-	}
-
-	@Override
-	public String toString() {
-		return uiName;
-	}
 }
