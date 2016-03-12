@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,10 @@
 package de.kuehweg.sqltool.dialog.component.sqlhistory;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
+import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TextArea;
 
 /**
  * Button in TableView des SQL-Verlaufs.
@@ -42,7 +42,7 @@ public class SQLHistoryButtonCell extends TableCell<SqlHistoryEntry, String> {
 
 	private SqlHistoryEntry historyItem;
 
-	public SQLHistoryButtonCell(final TextArea appendTo) {
+	public SQLHistoryButtonCell(final StatementEditor appendTo) {
 		super();
 		button = new Button(DialogDictionary.LABEL_APPEND_HISTORY_ITEM_TO_EDITOR.toString());
 		button.setOnAction((final ActionEvent event) -> {

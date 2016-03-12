@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,37 +23,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 package de.kuehweg.sqltool.dialog.base;
 
 import javafx.scene.control.TextArea;
 
 /**
- * Klasse zum Setzen der Schriftgröße einer Textarea.
- *
  * @author Michael Kühweg
  */
-public class TextAreaFontResizer implements FontResizer {
+public class TextAreaZoomable implements FontSizeZoomable {
+
+	public static final int MIN_FONT_SIZE = 9;
+	public static final int MAX_FONT_SIZE = 32;
 
 	private static final int DEFAULT_FONT_SIZE = 12;
 
 	private final TextArea textArea;
 
-	/**
-	 * @param textArea
-	 *            Der Resizer bezieht sich immer auf eine definierte TextArea im
-	 *            Dialog
-	 */
-	public TextAreaFontResizer(final TextArea textArea) {
+	public TextAreaZoomable(final TextArea textArea) {
 		this.textArea = textArea;
 	}
 
-	@Override
 	public int getFontSize() {
 		return textArea != null ? (int) Math.round(textArea.getFont().getSize()) : DEFAULT_FONT_SIZE;
 	}
 
-	@Override
 	public void setFontSize(final int size) {
 		textArea.setStyle("-fx-font-size: " + size + ";");
 	}
+
+	private int zoom(final int diff) {
+		int targetSize = getFontSize() + diff;
+		targetSize = targetSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : targetSize;
+		targetSize = targetSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : targetSize;
+		return targetSize;
+	}
+
+	@Override
+	public void zoomIn() {
+		setFontSize(zoom(1));
+	}
+
+	@Override
+	public void zoomOut() {
+		setFontSize(zoom(-1));
+	}
+
 }

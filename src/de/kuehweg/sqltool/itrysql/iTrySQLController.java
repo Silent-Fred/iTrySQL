@@ -56,16 +56,15 @@ import de.kuehweg.sqltool.dialog.ConfirmDialog;
 import de.kuehweg.sqltool.dialog.ConnectionDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.License;
-import de.kuehweg.sqltool.dialog.action.DatabaseOutputFontAction;
 import de.kuehweg.sqltool.dialog.action.ExecuteAction;
 import de.kuehweg.sqltool.dialog.action.FindAction;
-import de.kuehweg.sqltool.dialog.action.FontAction;
 import de.kuehweg.sqltool.dialog.action.ScriptAction;
-import de.kuehweg.sqltool.dialog.action.StatementInputFontAction;
 import de.kuehweg.sqltool.dialog.action.TableViewFindAction;
 import de.kuehweg.sqltool.dialog.action.TextAreaFindAction;
 import de.kuehweg.sqltool.dialog.action.TextTreeViewFindAction;
 import de.kuehweg.sqltool.dialog.action.TutorialAction;
+import de.kuehweg.sqltool.dialog.base.FontSizeZoomable;
+import de.kuehweg.sqltool.dialog.base.TextAreaZoomable;
 import de.kuehweg.sqltool.dialog.component.AudioFeedback;
 import de.kuehweg.sqltool.dialog.component.ConnectionComponentController;
 import de.kuehweg.sqltool.dialog.component.ErrorOnExecutionMessage;
@@ -74,8 +73,12 @@ import de.kuehweg.sqltool.dialog.component.ExecutionProgressComponent;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
+import de.kuehweg.sqltool.dialog.component.StatementEditorHolder;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementHtmlFormatter;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementView;
+import de.kuehweg.sqltool.dialog.component.editor.CodeMirrorBasedEditor;
+import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
+import de.kuehweg.sqltool.dialog.component.editor.TextAreaBasedEditor;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeModificationDetector;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryButtonCell;
@@ -86,10 +89,11 @@ import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -120,6 +124,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -131,7 +136,9 @@ import javafx.stage.WindowEvent;
  *
  * @author Michael Kühweg
  */
-public class iTrySQLController implements Initializable, EventHandler<WindowEvent> {
+public class iTrySQLController implements Initializable, EventHandler<WindowEvent>, StatementEditorHolder {
+
+	private static int countWindows = 1;
 
 	@FXML
 	private TitledPane accordionPreferences;
@@ -212,8 +219,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private TableColumn<SqlHistoryEntry, String> sqlHistoryColumnTimestamp;
 	@FXML
-	private TextArea statementInput;
-	@FXML
 	private AnchorPane statementPane;
 	@FXML
 	private Tab tabDbOutput;
@@ -267,6 +272,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	private WebView achievementsView;
 	@FXML
 	private TextField findInput;
+	@FXML
+	private Button toggleSyntaxColoring;
 
 	// my own special creation
 	private QueryResultTableView queryResultTableView;
@@ -274,9 +281,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 
 	private final ConnectionHolder connectionHolder = new ConnectionHolder();
 	private ConnectionComponentController connectionComponentController;
-	private static int countWindows = 1;
 
 	private final Collection<FindAction> findActionsForQuickSearch = new ArrayList<>();
+
+	private StatementEditor statementEditor;
 
 	private Window applicationWindow;
 
@@ -325,7 +333,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		assert sqlHistoryColumnAction != null : "fx:id=\"sqlHistoryColumnAction\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert sqlHistoryColumnStatement != null : "fx:id=\"sqlHistoryColumnStatement\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert sqlHistoryColumnTimestamp != null : "fx:id=\"sqlHistoryColumnTimestamp\" was not injected: check your FXML file 'iTrySQL.fxml'.";
-		assert statementInput != null : "fx:id=\"statementInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert statementPane != null : "fx:id=\"statementPane\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert tabDbOutput != null : "fx:id=\"tabDbOutput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert tabHistory != null : "fx:id=\"tabHistory\" was not injected: check your FXML file 'iTrySQL.fxml'.";
@@ -347,6 +354,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		assert exportConnections != null : "fx:id=\"exportConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert importConnections != null : "fx:id=\"importConnections\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 		assert findInput != null : "fx:id=\"findInput\" was not injected: check your FXML file 'iTrySQL.fxml'.";
+		assert toggleSyntaxColoring != null : "fx:id=\"toggleSyntaxColoring\" was not injected: check your FXML file 'iTrySQL.fxml'.";
 
 		fixWebViewWithHSQLDBBug();
 
@@ -404,6 +412,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		achievementsView.setOnMouseExited((final MouseEvent t) -> {
 			WebViewWithHSQLDBBugfix.fix();
 		});
+		// FIXME falls der Editor zur Eingabe der Anweisungen auch in einer
+		// WebView läuft, dann muss diese auch hinzugefügt werden
 	}
 
 	/**
@@ -412,6 +422,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void about(final ActionEvent event) {
 		// FIXME
 		WebViewWithHSQLDBBugfix.fix();
@@ -427,6 +438,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void autoCommit(final ActionEvent event) {
 		// Auto-Commit ist keine echte Benutzereinstellung sondern wird pro
 		// Verbindung gesteuert, z.T. auch durch JDBC-Vorgaben
@@ -453,6 +465,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void newSession(final ActionEvent event) {
 		final String title = DialogDictionary.APPLICATION.toString() + "("
 				+ new RomanNumber(countWindows++).toString().toLowerCase() + ")";
@@ -479,10 +492,11 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void connect(final ActionEvent event) {
 		// final ConnectionDialog connectionDialog = new
 		// ConnectionDialog(getApplicationWindow());
-		final ConnectionDialog connectionDialog = new ConnectionDialog(statementInput.getScene().getWindow());
+		final ConnectionDialog connectionDialog = new ConnectionDialog(statementPane.getScene().getWindow());
 
 		connectionDialog.showAndWait();
 		final ConnectionSetting connectionSetting = connectionDialog.getConnectionSetting();
@@ -519,6 +533,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void disconnect(final ActionEvent event) {
 		connectionHolder.disconnect();
 		refreshTree(null, schemaTreeView);
@@ -531,13 +546,14 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void execute(final ActionEvent event) {
 		// Markierter Text?
-		String sql = statementInput.getSelectedText();
+		String sql = statementEditor.getSelectedText();
 		// sonst die Anweisung, in der sich die Eingabemarkierung befindet
 		if (sql.trim().length() == 0) {
-			sql = new StatementExtractor().extractStatementAtCaretPosition(statementInput.getText(),
-					statementInput.getCaretPosition());
+			sql = new StatementExtractor().extractStatementAtCaretPosition(statementEditor.getText(),
+					statementEditor.getCaretPositionAsIndex());
 		}
 		focusResult();
 		createExecuteAction().handleExecuteAction(sql, getConnection());
@@ -549,9 +565,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void executeScript(final ActionEvent event) {
 		focusResult();
-		createExecuteAction().handleExecuteAction(statementInput.getText(), getConnection());
+		createExecuteAction().handleExecuteAction(statementEditor.getText(), getConnection());
 		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.SCRIPT_EXECUTED.asAchievementEvent(), 1);
 	}
 
@@ -561,6 +578,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void commit(final ActionEvent event) {
 		createExecuteAction().handleExecuteAction("COMMIT", getConnection());
 	}
@@ -571,6 +589,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void rollback(final ActionEvent event) {
 		createExecuteAction().handleExecuteAction("ROLLBACK", getConnection());
 	}
@@ -582,38 +601,36 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 *            Ausgelöstes ActionEvent - ermöglicht die Zuordnung, für
 	 *            welchen Textbereich die Schriftgröße geändert werden soll
 	 */
+	@FXML
 	public void fontAction(final ActionEvent event) {
-		final FontAction fontAction = getFontAction(event);
-		if (fontAction != null) {
-			fontAction.setUserPreferences(UserPreferencesManager.getSharedInstance());
-			fontAction.handleFontAction();
-		}
-		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.FONT_SIZE_CHANGED.asAchievementEvent(), 1);
-	}
-
-	/**
-	 * @param event
-	 *            Auslösendes Event
-	 * @return Passende FontAction, die in der relevanten Komponente die
-	 *         Schriftgröße ändert und den neuen Wert in den Einstellungen
-	 *         speichert.
-	 */
-	private FontAction getFontAction(final Event event) {
 		if (event != null && event.getSource() != null) {
+			FontSizeZoomable zoom;
 			switch (((Node) event.getSource()).getId()) {
 			case "toolbarZoomIn":
-				return new StatementInputFontAction(statementInput, 1);
+				zoom = statementEditor;
+				zoom.zoomIn();
+				UserPreferencesManager.getSharedInstance().setFontSizeStatementInput(zoom.getFontSize());
+				break;
 			case "toolbarZoomOut":
-				return new StatementInputFontAction(statementInput, -1);
+				zoom = statementEditor;
+				zoom.zoomOut();
+				UserPreferencesManager.getSharedInstance().setFontSizeStatementInput(zoom.getFontSize());
+				break;
 			case "toolbarTabDbOutputZoomIn":
-				return new DatabaseOutputFontAction(dbOutput, 1);
+				zoom = new TextAreaZoomable(dbOutput);
+				zoom.zoomIn();
+				UserPreferencesManager.getSharedInstance().setFontSizeDbOutput(zoom.getFontSize());
+				break;
 			case "toolbarTabDbOutputZoomOut":
-				return new DatabaseOutputFontAction(dbOutput, -1);
+				zoom = new TextAreaZoomable(dbOutput);
+				zoom.zoomOut();
+				UserPreferencesManager.getSharedInstance().setFontSizeDbOutput(zoom.getFontSize());
+				break;
 			default:
-				return null;
+				break;
 			}
 		}
-		return null;
+		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.FONT_SIZE_CHANGED.asAchievementEvent(), 1);
 	}
 
 	/**
@@ -623,6 +640,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void tutorialAction(final ActionEvent event) {
 		new TutorialAction().createTutorial(createSilentExecuteAction(), getConnection());
 	}
@@ -633,8 +651,9 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void fileOpenScriptAction(final ActionEvent event) {
-		new ScriptAction(statementInput).loadScript();
+		new ScriptAction(this).attachFileChooserToWindow(applicationWindow).loadScript();
 	}
 
 	/**
@@ -643,8 +662,9 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void fileSaveScriptAction(final ActionEvent event) {
-		new ScriptAction(statementInput).saveScript();
+		new ScriptAction(this).attachFileChooserToWindow(applicationWindow).saveScript();
 		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.SCRIPT_SAVED.asAchievementEvent(), 1);
 	}
 
@@ -655,6 +675,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void limitMaxRows(final ActionEvent event) {
 		UserPreferencesManager.getSharedInstance().setLimitMaxRows(limitMaxRows.isSelected());
 	}
@@ -690,6 +711,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void toolbarTabDbOutputClearAction(final ActionEvent event) {
 		dbOutput.clear();
 	}
@@ -730,6 +752,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void toolbarTabDbOutputExportAction(final ActionEvent event) {
 		export(DialogDictionary.LABEL_SAVE_OUTPUT, ((Node) event.getSource()).getScene().getWindow(), "txt",
 				dbOutput.getText());
@@ -741,6 +764,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void toolbarTabTableViewExportAction(final ActionEvent event) {
 		export(DialogDictionary.LABEL_SAVE_OUTPUT_HTML, ((Node) event.getSource()).getScene().getWindow(), "html",
 				queryResultTableView.toHtml());
@@ -753,6 +777,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void refreshTree(final ActionEvent event) {
 		refreshTree(getConnection(), schemaTreeView);
 	}
@@ -779,6 +804,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void cancelConnectionSettings(final ActionEvent event) {
 		connectionComponentController.cancelEdit();
 	}
@@ -789,6 +815,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void changeConnection(final ActionEvent event) {
 		connectionComponentController.changeConnection();
 	}
@@ -799,6 +826,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void changeConnectionType(final ActionEvent event) {
 		connectionComponentController.changeConnectionType();
 	}
@@ -810,6 +838,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void chooseDbDirectory(final ActionEvent event) {
 		connectionComponentController.chooseDbDirectory();
 	}
@@ -820,6 +849,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void createConnection(final ActionEvent event) {
 		connectionComponentController.createConnection();
 	}
@@ -830,6 +860,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void removeConnection(final ActionEvent event) {
 		connectionComponentController.removeConnection();
 	}
@@ -840,6 +871,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void saveConnectionSettings(final ActionEvent event) {
 		connectionComponentController.saveConnectionSettings();
 	}
@@ -850,6 +882,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void exportConnections(final ActionEvent event) {
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(DialogDictionary.LABEL_EXPORT_CONNECTIONS.toString());
@@ -872,6 +905,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void importConnections(final ActionEvent event) {
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(DialogDictionary.LABEL_IMPORT_CONNECTIONS.toString());
@@ -895,6 +929,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void quickSearchFindNext(final ActionEvent event) {
 		final String searchString = findInput.textProperty().getValue();
 		findActionsForQuickSearch.forEach(findAction -> findAction.nextOccurrence(searchString));
@@ -907,9 +942,25 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * @param event
 	 *            Ausgelöstes ActionEvent
 	 */
+	@FXML
 	public void quickSearchFindPrevious(final ActionEvent event) {
 		final String searchString = findInput.textProperty().getValue();
 		findActionsForQuickSearch.forEach(findAction -> findAction.previousOccurrence(searchString));
+	}
+
+	/**
+	 * Syntaxhervorhebung ein- und ausschalten.
+	 *
+	 * @param event
+	 *            Ausgelöstes ActionEvent
+	 */
+	@FXML
+	public void toggleSyntaxColoring(final ActionEvent event) {
+		if (statementEditor instanceof TextAreaBasedEditor) {
+			installEditorCodeMirror();
+		} else {
+			installEditorTextArea();
+		}
 	}
 
 	/**
@@ -924,14 +975,80 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		setupTooltips();
 		setupMenu();
 
+		// Standardeinstellung beim Start ist die TextArea (sollte auf jeden
+		// Fall funktionieren)
+		installEditorTextArea();
+
 		controlAutoCommitVisuals();
 
 		permanentMessage.visibleProperty().set(false);
 		refreshTree(null, schemaTreeView);
-		SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(statementPane, statementInput);
+		SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(statementPane, this);
 
 		achievementViewComponent = new AchievementView(achievementsView, new AchievementHtmlFormatter());
 		achievementViewComponent.refresh();
+	}
+
+	/**
+	 * Installiert CodeMirror als Editor für die Eingabe der SQL-Anweisungen.
+	 */
+	private void installEditorCodeMirror() {
+		final String content = statementEditor != null ? statementEditor.getText() : "";
+		final WebView codeMirror = new WebView();
+		statementPane.getChildren().clear();
+		statementPane.getChildren().add(codeMirror);
+		fixAnchor(codeMirror);
+		statementEditor = new CodeMirrorBasedEditor(codeMirror);
+		final WebEngine engine = codeMirror.getEngine();
+		engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+			@Override
+			public void changed(final ObservableValue<? extends State> observable, final State oldState,
+					final State newState) {
+				if (newState == State.SUCCEEDED) {
+					engine.getLoadWorker().stateProperty().removeListener(this);
+					statementEditor.setText(content);
+				}
+			}
+		});
+		codeMirror.getEngine().load(this.getClass().getResource(CodeMirrorBasedEditor.RESOURCE).toExternalForm());
+		// FIXME der übliche Workaround
+		codeMirror.setOnMouseEntered((final MouseEvent t) -> {
+			WebViewWithHSQLDBBugfix.fix();
+		});
+		codeMirror.setOnMouseExited((final MouseEvent t) -> {
+			WebViewWithHSQLDBBugfix.fix();
+		});
+	}
+
+	/**
+	 * Installiert eine einfache TextArea als Editor für die Eingabe der
+	 * SQL-Anweisungen.
+	 */
+	private void installEditorTextArea() {
+		final String content = statementEditor != null ? statementEditor.getText() : "";
+		final TextArea textArea = new TextArea();
+		textArea.setPromptText(DialogDictionary.PROMPT_ENTER_STATEMENT.toString());
+		textArea.getStyleClass().add("itry-statement-edit");
+		textArea.setStyle(
+				"-fx-font-size: " + UserPreferencesManager.getSharedInstance().getFontSizeStatementInput() + ";");
+		statementPane.getChildren().clear();
+		statementPane.getChildren().add(textArea);
+		fixAnchor(textArea);
+		statementEditor = new TextAreaBasedEditor(textArea);
+		statementEditor.setText(content);
+	}
+
+	/**
+	 * @param node
+	 *            Fixiert alle Ecken des übergebenen Knotens an der
+	 *            übergeordneten AnchorPane, d.h. der Node ändert seine Größe
+	 *            jeweils mit der AnchorPane.
+	 */
+	private void fixAnchor(final Node node) {
+		AnchorPane.setTopAnchor(node, 0.0);
+		AnchorPane.setRightAnchor(node, 0.0);
+		AnchorPane.setBottomAnchor(node, 0.0);
+		AnchorPane.setLeftAnchor(node, 0.0);
 	}
 
 	/**
@@ -960,8 +1077,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * betroffene Komponenten an.
 	 */
 	private void initializeUserPreferences() {
-		statementInput.setStyle(
-				"-fx-font-size: " + UserPreferencesManager.getSharedInstance().getFontSizeStatementInput() + ";");
+
 		dbOutput.setStyle("-fx-font-size: " + UserPreferencesManager.getSharedInstance().getFontSizeDbOutput() + ";");
 
 		limitMaxRows.setSelected(UserPreferencesManager.getSharedInstance().isLimitMaxRows());
@@ -1016,6 +1132,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		Tooltip.install(toolbarTabDbOutputClear, new Tooltip(DialogDictionary.TOOLTIP_CLEAR_OUTPUT.toString()));
 		Tooltip.install(toolbarTabDbOutputZoomOut, new Tooltip(DialogDictionary.TOOLTIP_DECREASE_FONTSIZE.toString()));
 		Tooltip.install(toolbarTabDbOutputZoomIn, new Tooltip(DialogDictionary.TOOLTIP_INCREASE_FONTSIZE.toString()));
+
+		Tooltip.install(toggleSyntaxColoring, new Tooltip(DialogDictionary.TOOLTIP_SYNTAX_HIGHLIGHTING.toString()));
 
 		Tooltip.install(permanentMessage, new Tooltip(DialogDictionary.TOOLTIP_IN_MEMORY_DATABASE.toString()));
 	}
@@ -1073,8 +1191,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		sqlHistoryColumnTimestamp.setCellValueFactory(new PropertyValueFactory<>("timestampFormatted"));
 		sqlHistoryColumnStatement.setCellValueFactory(new PropertyValueFactory<>("sqlForDisplay"));
 
+		// FIXME das muss wahrscheinlich noch geändert werden, damit die
+		// History-Einträge immer an den aktuellen Editor angehängt werden
 		sqlHistoryColumnAction.setCellFactory(
-				(final TableColumn<SqlHistoryEntry, String> p) -> new SQLHistoryButtonCell(statementInput));
+				(final TableColumn<SqlHistoryEntry, String> p) -> new SQLHistoryButtonCell(statementEditor));
 	}
 
 	/**
@@ -1084,9 +1204,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * dafür vorgesehenen Collection eingetragen.
 	 */
 	private void initializeQuickSearch() {
-		final FindAction findActionOnStatementInput = new TextAreaFindAction(statementInput);
-		findInput.textProperty().addListener(findActionOnStatementInput);
-		findActionsForQuickSearch.add(findActionOnStatementInput);
+		// TODO FindAction für den StatementEditor
 
 		final FindAction findActionOnDbOutput = new TextAreaFindAction(dbOutput);
 		findInput.textProperty().addListener(findActionOnDbOutput);
@@ -1176,6 +1294,11 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		}
 	}
 
+	@Override
+	public StatementEditor getActiveStatementEditor() {
+		return statementEditor;
+	}
+
 	/**
 	 * Abschließende Aktionen, bevor die Anwendung beendet wird.
 	 */
@@ -1183,4 +1306,5 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		connectionHolder.disconnect();
 		AchievementManager.getInstance().flush();
 	}
+
 }

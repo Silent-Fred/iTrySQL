@@ -1,0 +1,59 @@
+<!doctype html>
+
+<html>
+
+<head>
+<title>CodeMirror</title>
+<meta charset="utf-8" />
+
+<link rel="stylesheet" href="./lib/codemirror.css">
+<link rel="stylesheet" href="./theme/itrysql.css">
+<link rel="stylesheet" href="./theme/itrysql_medium.css">
+<link rel="stylesheet" href="./theme/itrysql_big.css">
+<script src="./lib/codemirror.js"></script>
+<script src="./mode/sql/itrysql_sql.js"></script>
+<script src="./addon/selection/active-line.js"></script>
+<script src="./addon/edit/matchbrackets.js"></script>
+<link rel="stylesheet" href="./addon/display/fullscreen.css">
+<script src="./addon/display/fullscreen.js"></script>
+
+<script>
+	var editor;
+	function startMeUp() {
+		editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+			lineNumbers : true,
+			scrollbarStyle : null,
+			styleActiveLine : true,
+			matchBrackets : true,
+			dragDrop : false,
+			fullScreen : true,
+			theme : "itrysql",
+			mode : "text/x-hsql"
+		});
+	}
+	function zoomNormal() {
+		editor.setOption("theme", "itrysql");
+	}
+	function zoomMedium() {
+		editor.setOption("theme", "itrysql-medium");
+	}
+	function zoomBig() {
+		editor.setOption("theme", "itrysql-big");
+	}
+</script>
+
+</head>
+
+<body>
+	<article>
+		<form>
+			<textarea id="code" name="code"></textarea>
+		</form>
+		<script>
+			startMeUp();
+		</script>
+	</article>
+</body>
+
+</html>
+

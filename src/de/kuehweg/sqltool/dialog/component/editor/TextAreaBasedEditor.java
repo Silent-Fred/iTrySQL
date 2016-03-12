@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,57 +23,75 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.dialog.base.FontResizer;
-import de.kuehweg.sqltool.dialog.base.TextAreaFontResizer;
+package de.kuehweg.sqltool.dialog.component.editor;
+
+import de.kuehweg.sqltool.dialog.base.FontSizeZoomable;
+import de.kuehweg.sqltool.dialog.base.TextAreaZoomable;
 import javafx.scene.control.TextArea;
 
 /**
- * Action zum Ändern der Schriftgröße in der Datenbankausgabe.
+ * Einfache Standardimplementierung für einen Code-Editor auf Basis einer
+ * {@link TextArea}.
  *
  * @author Michael Kühweg
  */
-public class DatabaseOutputFontAction extends FontAction {
+public class TextAreaBasedEditor implements StatementEditor {
 
 	private final TextArea textArea;
 
-	/**
-	 * FontAction, die die eingestellte Schriftgröße in den Preferences als
-	 * Schriftgröße für den DB-Output speichert.
-	 *
-	 * @param textArea
-	 *            TextArea, auf die die Schriftgröße angewendet wird.
-	 */
-	public DatabaseOutputFontAction(final TextArea textArea) {
-		this(textArea, 0);
-	}
+	private final FontSizeZoomable zoomable;
 
-	/**
-	 * FontAction, die die eingestellte Schriftgröße in den Preferences als
-	 * Schriftgröße für den DB-Output speichert.
-	 *
-	 * @param textArea
-	 *            TextArea, auf die die Schriftgröße angewendet wird.
-	 * @param diff
-	 *            Größenveränderung - kann setDiff() später überschrieben
-	 *            werden.
-	 */
-	public DatabaseOutputFontAction(final TextArea textArea, final int diff) {
+	public TextAreaBasedEditor(final TextArea textArea) {
 		super();
 		this.textArea = textArea;
-		setDiff(diff);
+		zoomable = new TextAreaZoomable(textArea);
 	}
 
 	@Override
-	public void storeToPreferences(final int size) {
-		if (getUserPreferences() != null) {
-			getUserPreferences().setFontSizeDbOutput(size);
-		}
+	public String getText() {
+		return textArea.getText();
 	}
 
 	@Override
-	public FontResizer getDefaultFontResizer() {
-		return new TextAreaFontResizer(textArea);
+	public String getSelectedText() {
+		return textArea.getSelectedText();
 	}
+
+	@Override
+	public CaretPosition getCaretPosition() {
+		// FIXME not yet implemented
+		return null;
+	}
+
+	@Override
+	public int getCaretPositionAsIndex() {
+		return textArea.getCaretPosition();
+	}
+
+	@Override
+	public void setText(final String text) {
+		textArea.setText(text);
+	}
+
+	@Override
+	public void zoomIn() {
+		zoomable.zoomIn();
+	}
+
+	@Override
+	public void zoomOut() {
+		zoomable.zoomOut();
+	}
+
+	@Override
+	public int getFontSize() {
+		return zoomable.getFontSize();
+	}
+
+	@Override
+	public void setFontSize(final int size) {
+		zoomable.setFontSize(size);
+	}
+
 }

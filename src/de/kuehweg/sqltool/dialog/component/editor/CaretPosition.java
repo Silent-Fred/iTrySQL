@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,27 +23,72 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.dialog.base.FontResizer;
+package de.kuehweg.sqltool.dialog.component.editor;
 
 /**
- * Stub für Schriftgößenänderungen in JUnit-Test.
- *
  * @author Michael Kühweg
  */
-public class FontResizerStub implements FontResizer {
+public class CaretPosition {
 
-	private int fontSize;
+	private int line;
 
-	@Override
-	public int getFontSize() {
-		return fontSize;
+	private int character;
+
+	public CaretPosition() {
+		this(0, 0);
 	}
 
-	@Override
-	public void setFontSize(final int size) {
-		fontSize = size;
+	public CaretPosition(final int line, final int column) {
+		super();
+		this.line = line;
+		character = column;
 	}
 
+	public int getLine() {
+		return line;
+	}
+
+	public void setLine(final int line) {
+		this.line = line;
+	}
+
+	public int getCharacter() {
+		return character;
+	}
+
+	public void setCharacter(final int character) {
+		this.character = character;
+	}
+
+	public int appliedOnString(final String text) {
+		int position = 0;
+		int countdownLines = line;
+		int countdownCharacter = character;
+		for (final char ch : text.toCharArray()) {
+			if (countdownLines > 0) {
+				if ('\n' == ch) {
+					countdownLines--;
+				}
+			} else {
+				if (countdownCharacter > 0) {
+					countdownCharacter--;
+				} else {
+					return position;
+				}
+			}
+			position++;
+		}
+		return position;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "[line: " + line + ", ch: " + character + "]";
+	}
 }

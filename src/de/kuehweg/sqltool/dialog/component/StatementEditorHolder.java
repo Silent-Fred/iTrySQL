@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,17 +23,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.base;
+
+package de.kuehweg.sqltool.dialog.component;
+
+import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
 
 /**
- * Interface zum Setzen der Schriftgröße.
- *
  * @author Michael Kühweg
  */
-public interface FontResizer {
+public interface StatementEditorHolder {
 
-	int getFontSize();
-
-	void setFontSize(final int size);
-
+	StatementEditor getActiveStatementEditor();
 }

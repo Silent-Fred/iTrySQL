@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@ import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import javafx.scene.Node;
-import javafx.scene.control.TextArea;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -59,46 +58,58 @@ public class SourceFileDropTargetUtil {
 		});
 	}
 
-	private static void setOnDragEntered(final Pane containerPane, final TextArea statementInput) {
+	private static void setDragEffect(final Node node) {
+		node.setOpacity(0.5);
+		// Blur-Effekt kann im Moment noch nicht in FX-CSS angegeben
+		// werden
+		final BoxBlur bb = new BoxBlur();
+		bb.setWidth(5);
+		bb.setHeight(5);
+		bb.setIterations(3);
+		node.setEffect(bb);
+	}
+
+	private static void resetDragEffect(final Node node) {
+		node.setOpacity(1.0);
+		node.setEffect(null);
+	}
+
+	private static void setOnDragEntered(final Pane containerPane) {
 		containerPane.setOnDragEntered(event -> {
 			final Dragboard dragboard = event.getDragboard();
 			if (event.getGestureSource() != containerPane && dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
+				for (final Node node : containerPane.getChildren()) {
+					SourceFileDropTargetUtil.setDragEffect(node);
+				}
 				final Pane dropTargetSymbol = new DropTargetSymbol(containerPane);
 				dropTargetSymbol.setId(DROP_TARGET_SYMBOL_ID);
 				containerPane.getChildren().add(dropTargetSymbol);
-				statementInput.setOpacity(0.5);
-				// Blur-Effekt kann im Moment noch nicht in FX-CSS angegeben
-				// werden
-				final BoxBlur bb = new BoxBlur();
-				bb.setWidth(5);
-				bb.setHeight(5);
-				bb.setIterations(3);
-				statementInput.setEffect(bb);
 			}
 			event.consume();
 		});
 	}
 
-	private static void setOnDragExited(final Pane containerPane, final TextArea statementInput) {
+	private static void setOnDragExited(final Pane containerPane) {
 		containerPane.setOnDragExited(event -> {
+			for (final Node node : containerPane.getChildren()) {
+				SourceFileDropTargetUtil.resetDragEffect(node);
+			}
 			final Node child = containerPane.lookup("#" + DROP_TARGET_SYMBOL_ID);
 			if (child != null) {
 				containerPane.getChildren().remove(child);
 			}
-			statementInput.setOpacity(1.0);
-			statementInput.setEffect(null);
 			event.consume();
 		});
 	}
 
-	private static void setOnDragDropped(final Pane containerPane, final TextArea statementInput) {
+	private static void setOnDragDropped(final Pane containerPane, final StatementEditorHolder statementEditorHolder) {
 		containerPane.setOnDragDropped(event -> {
 			final Dragboard dragboard = event.getDragboard();
 			boolean success = false;
 			if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
 				try {
 					final String script = FileUtil.readFile(FileUtil.convertToURI(dragboard.getFiles().get(0)).toURL());
-					statementInput.setText(script);
+					statementEditorHolder.getActiveStatementEditor().setText(script);
 					success = true;
 				} catch (final Exception ex) {
 					// egal welche Exception passiert, der Drop muss
@@ -120,18 +131,19 @@ public class SourceFileDropTargetUtil {
 	 *
 	 * @param containerPane
 	 *            DropTarget
-	 * @param statementInput
-	 *            Ziel für Skript
+	 * @param statementEditorHolder
+	 *            Hier kann das Ziel für das Skript abgefragt werden
 	 */
-	public static void transformIntoSourceFileDropTarget(final Pane containerPane, final TextArea statementInput) {
+	public static void transformIntoSourceFileDropTarget(final Pane containerPane,
+			final StatementEditorHolder statementEditorHolder) {
 
 		setOnDragOver(containerPane);
 
-		setOnDragEntered(containerPane, statementInput);
+		setOnDragEntered(containerPane);
 
-		setOnDragExited(containerPane, statementInput);
+		setOnDragExited(containerPane);
 
-		setOnDragDropped(containerPane, statementInput);
+		setOnDragDropped(containerPane, statementEditorHolder);
 
 	}
 }
