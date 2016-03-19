@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,90 +35,91 @@ import java.util.ResourceBundle;
  */
 public enum DialogDictionary {
 
-    APPLICATION("application"),
-    ERR_LOAD_FXML("err_loadFxml"),
-    ERR_UNKNOWN_COMMAND("err_unknownCommand"),
-    ERR_CONNECTION_FAILURE("err_connectionFailure"),
-    ERR_AUTO_COMMIT_FAILURE("err_autoCommitFailure"),
-    ERR_TUTORIAL_CREATION_FAILED("err_tutorialCreationFailed"),
-    ERR_FILE_OPEN_FAILED("err_fileOpenFailed"),
-    ERR_FILE_SAVE_FAILED("err_fileSaveFailed"),
-    ERR_CONNECTION_SETTING_SAVE_FAILED("err_connectionSettingSaveFailed"),
-    ERR_UNKNOWN_ERROR("err_unknownError"),
-    MSG_NO_DB_CONNECTION("msg_noDbConnection"),
-    MSG_NO_STATEMENT_TO_EXECUTE("msg_noStatementToExecute"),
-    MSG_REALLY_REMOVE_CONNECTION("msg_reallyRemoveConnection"),
-    MSG_REALLY_CREATE_TUTORIAL_DATA("msg_reallyCreateTutorialData"),
-    MSG_SELECT_CONNECTION("msg_selectConnection"),
-    MSG_REALLY_QUIT("msg_reallyQuit"),
-    MSG_NO_DB_CONNECTION_FOR_SCHEMA_TREE_VIEW("msg_noDbConnectionForSchemaTreeView"),
-    MESSAGEBOX_INFO("label_info"),
-    MESSAGEBOX_WARNING("label_warning"),
-    MESSAGEBOX_CONFIRM("label_confirm"),
-    MESSAGEBOX_ERROR("label_error"),
-    COMMON_BUTTON_OK("label_commonButtonOK"),
-    COMMON_BUTTON_CANCEL("label_commonButtonCancel"),
-    LABEL_EXECUTING("label_executing"),
-    LABEL_EMPTY("label_empty"),
-    LABEL_EXECUTION_ERROR("label_executionError"),
-    LABEL_RESULT_ERROR("label_resultError"),
-    LABEL_RESULT_EXECUTED("label_resultExecuted"),
-    LABEL_DEFAULT_CONNECTION_IN_MEMORY("label_defaultConnectionInMemory"),
-    LABEL_DEFAULT_CONNECTION_STANDALONE_USER_HOME(
-            "label_defaultConnectionStandaloneUserHome"),
-    LABEL_OPEN_SCRIPT("label_openScript"),
-    LABEL_SAVE_SCRIPT("label_saveScript"),
-    LABEL_SAVE_OUTPUT("label_saveOutput"),
-    LABEL_SAVE_OUTPUT_HTML("label_saveOutputHtml"),
-    LABEL_TITLE_CONNECT("label_connectToDatabase"),
-    LABEL_CONNECT("label_connect"),
-    LABEL_REMOVE_CONNECTION("label_removeConnection"),
-    LABEL_DB_DIRECTORY_CHOOSER("label_dbDirectoryChooser"),
-    LABEL_CREATE_TUTORIAL_DATA("label_createTutorialData"),
-    LABEL_EXPORT_CONNECTIONS("label_exportConnections"),
-    LABEL_IMPORT_CONNECTIONS("label_importConnections"),
-    LABEL_TREE_INDICES("label_treeIndices"),
-    LABEL_TREE_REFERENCES("label_treeReferences"),
-    LABEL_TREE_REFERENCED_BY("label_treeReferencedBy"),
-    LABEL_UNKNOWN_USER("label_unknownUser"),
-    LABEL_REALLY_QUIT("label_reallyQuit"),
-    LABEL_NOT_REALLY_QUIT("label_notReallyQuit"),
-    LABEL_APPEND_HISTORY_ITEM_TO_EDITOR("label_appendHistoryItemToEditor"),
-    TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
-    TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
-    TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),
-    TOOLTIP_COMMIT("tooltip_commit"),
-    TOOLTIP_ROLLBACK("tooltip_rollback"),
-    TOOLTIP_EXECUTE("tooltip_execute"),
-    TOOLTIP_EXPORT_OUTPUT("tooltip_exportOutput"),
-    TOOLTIP_CLEAR_OUTPUT("tooltip_clearOutput"),
-    TOOLTIP_EXPORT_RESULT("tooltip_exportResult"),
-    TOOLTIP_IN_MEMORY_DATABASE("tooltip_inMemoryDatabase"),
-    TOOLTIP_WEBVIEW_RENDERING_ERROR("tooltip_webViewRenderingError"),
-    PATTERN_EXECUTION_TIME("pattern_executionTime"),
-    PATTERN_EXECUTION_TIMESTAMP("pattern_executionTimestamp"),
-    PATTERN_EXECUTION_TIMESTAMP_WITH_USER("pattern_executionTimestampWithUser"),
-    PATTERN_ROWCOUNT("pattern_rowcount"),
-    PATTERN_UPDATECOUNT("pattern_updatecount"),
-    PATTERN_EXECUTED_STATEMENT("pattern_executedStatement"),
-    PATTERN_MAX_ROWS("pattern_maxRows"),
-    PATTERN_MAX_ROWS_IN_TABLE_VIEW("pattern_maxRowsInTableView"),
-    PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),
-    PATTERN_NEW_CONNECTION_FOLDER("pattern_newConnectionFolder"),
-    PATTERN_NEW_CONNECTION_FILE("pattern_newConnectionFile"),
-    PATTERN_MESSAGE_IN_MEMORY_DATABASE("pattern_messageInMemoryDatabase");
-    private final String key;
+	APPLICATION("application"),
+	ERR_LOAD_FXML("err_loadFxml"),
+	ERR_UNKNOWN_COMMAND("err_unknownCommand"),
+	ERR_CONNECTION_FAILURE("err_connectionFailure"),
+	ERR_AUTO_COMMIT_FAILURE("err_autoCommitFailure"),
+	ERR_TUTORIAL_CREATION_FAILED("err_tutorialCreationFailed"),
+	ERR_FILE_OPEN_FAILED("err_fileOpenFailed"),
+	ERR_FILE_SAVE_FAILED("err_fileSaveFailed"),
+	ERR_CONNECTION_SETTING_SAVE_FAILED("err_connectionSettingSaveFailed"),
+	ERR_UNKNOWN_ERROR("err_unknownError"),
+	MSG_NO_DB_CONNECTION("msg_noDbConnection"),
+	MSG_NO_STATEMENT_TO_EXECUTE("msg_noStatementToExecute"),
+	MSG_REALLY_REMOVE_CONNECTION("msg_reallyRemoveConnection"),
+	MSG_REALLY_CREATE_TUTORIAL_DATA("msg_reallyCreateTutorialData"),
+	MSG_SELECT_CONNECTION("msg_selectConnection"),
+	MSG_REALLY_QUIT("msg_reallyQuit"),
+	MSG_NO_DB_CONNECTION_FOR_SCHEMA_TREE_VIEW("msg_noDbConnectionForSchemaTreeView"),
+	MESSAGEBOX_INFO("label_info"),
+	MESSAGEBOX_WARNING("label_warning"),
+	MESSAGEBOX_CONFIRM("label_confirm"),
+	MESSAGEBOX_ERROR("label_error"),
+	COMMON_BUTTON_OK("label_commonButtonOK"),
+	COMMON_BUTTON_CANCEL("label_commonButtonCancel"),
+	LABEL_EXECUTING("label_executing"),
+	LABEL_EMPTY("label_empty"),
+	LABEL_EXECUTION_ERROR("label_executionError"),
+	LABEL_RESULT_ERROR("label_resultError"),
+	LABEL_RESULT_EXECUTED("label_resultExecuted"),
+	LABEL_DEFAULT_CONNECTION_IN_MEMORY("label_defaultConnectionInMemory"),
+	LABEL_DEFAULT_CONNECTION_STANDALONE_USER_HOME("label_defaultConnectionStandaloneUserHome"),
+	LABEL_OPEN_SCRIPT("label_openScript"),
+	LABEL_SAVE_SCRIPT("label_saveScript"),
+	LABEL_SAVE_OUTPUT("label_saveOutput"),
+	LABEL_SAVE_OUTPUT_HTML("label_saveOutputHtml"),
+	LABEL_TITLE_CONNECT("label_connectToDatabase"),
+	LABEL_CONNECT("label_connect"),
+	LABEL_REMOVE_CONNECTION("label_removeConnection"),
+	LABEL_DB_DIRECTORY_CHOOSER("label_dbDirectoryChooser"),
+	LABEL_CREATE_TUTORIAL_DATA("label_createTutorialData"),
+	LABEL_EXPORT_CONNECTIONS("label_exportConnections"),
+	LABEL_IMPORT_CONNECTIONS("label_importConnections"),
+	LABEL_TREE_INDICES("label_treeIndices"),
+	LABEL_TREE_REFERENCES("label_treeReferences"),
+	LABEL_TREE_REFERENCED_BY("label_treeReferencedBy"),
+	LABEL_UNKNOWN_USER("label_unknownUser"),
+	LABEL_REALLY_QUIT("label_reallyQuit"),
+	LABEL_NOT_REALLY_QUIT("label_notReallyQuit"),
+	LABEL_APPEND_HISTORY_ITEM_TO_EDITOR("label_appendHistoryItemToEditor"),
+	TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
+	TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
+	TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),
+	TOOLTIP_COMMIT("tooltip_commit"),
+	TOOLTIP_ROLLBACK("tooltip_rollback"),
+	TOOLTIP_EXECUTE("tooltip_execute"),
+	TOOLTIP_EXPORT_OUTPUT("tooltip_exportOutput"),
+	TOOLTIP_CLEAR_OUTPUT("tooltip_clearOutput"),
+	TOOLTIP_EXPORT_RESULT("tooltip_exportResult"),
+	TOOLTIP_IN_MEMORY_DATABASE("tooltip_inMemoryDatabase"),
+	TOOLTIP_WEBVIEW_RENDERING_ERROR("tooltip_webViewRenderingError"),
+	TOOLTIP_SYNTAX_HIGHLIGHTING("tooltip_syntaxHighlighting"),
+	PATTERN_EXECUTION_TIME("pattern_executionTime"),
+	PATTERN_EXECUTION_TIMESTAMP("pattern_executionTimestamp"),
+	PATTERN_EXECUTION_TIMESTAMP_WITH_USER("pattern_executionTimestampWithUser"),
+	PATTERN_ROWCOUNT("pattern_rowcount"),
+	PATTERN_UPDATECOUNT("pattern_updatecount"),
+	PATTERN_EXECUTED_STATEMENT("pattern_executedStatement"),
+	PATTERN_MAX_ROWS("pattern_maxRows"),
+	PATTERN_MAX_ROWS_IN_TABLE_VIEW("pattern_maxRowsInTableView"),
+	PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),
+	PATTERN_NEW_CONNECTION_FOLDER("pattern_newConnectionFolder"),
+	PATTERN_NEW_CONNECTION_FILE("pattern_newConnectionFile"),
+	PATTERN_MESSAGE_IN_MEMORY_DATABASE("pattern_messageInMemoryDatabase"),
+	PROMPT_ENTER_STATEMENT("prompt_enterStatement");
+	private final String key;
 
-    private DialogDictionary(final String key) {
-        this.key = key;
-    }
+	private DialogDictionary(final String key) {
+		this.key = key;
+	}
 
-    @Override
-    public String toString() {
-        try {
-            return ResourceBundle.getBundle("dictionary").getString(key);
-        } catch (final MissingResourceException mre) {
-            return name();
-        }
-    }
+	@Override
+	public String toString() {
+		try {
+			return ResourceBundle.getBundle("dictionary").getString(key);
+		} catch (final MissingResourceException mre) {
+			return name();
+		}
+	}
 }

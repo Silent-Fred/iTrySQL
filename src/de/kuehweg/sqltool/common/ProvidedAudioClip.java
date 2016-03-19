@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Michael Kühweg
+ * Copyright (c) 2014-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@ import javafx.scene.media.AudioClip;
 
 /**
  * AudioClips, die die Anwendung selbst mitbringt.
- * 
+ *
  * @author Michael Kühweg
  */
 public enum ProvidedAudioClip {
@@ -45,6 +45,8 @@ public enum ProvidedAudioClip {
 	SHIMMER("Shimmer", "shimmer.mp3"),
 	STEELSTRING("Steel Strings", "steelstring.mp3"),
 	WHIRLY("Whirly", "whirly.mp3");
+
+	private static final String PATH_TO_AUDIO_RESOURCES = "/resources/audio/";
 	private final String uiName;
 	private final String resource;
 
@@ -54,16 +56,13 @@ public enum ProvidedAudioClip {
 	}
 
 	public void play() {
-		new AudioClip(this.getClass()
-				.getResource("/resources/audio/" + resource).toExternalForm())
-				.play();
+		new AudioClip(this.getClass().getResource(PATH_TO_AUDIO_RESOURCES + resource).toExternalForm()).play();
 	}
 
 	public void play(final double volume) {
 		if (volume > 0.0) {
-			new AudioClip(this.getClass()
-					.getResource("/resources/audio/" + resource)
-					.toExternalForm()).play(volume);
+			new AudioClip(this.getClass().getResource(PATH_TO_AUDIO_RESOURCES + resource).toExternalForm())
+					.play(volume);
 		}
 	}
 

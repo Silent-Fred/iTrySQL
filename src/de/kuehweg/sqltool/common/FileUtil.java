@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,12 @@ import java.nio.file.StandardOpenOption;
  */
 public final class FileUtil {
 
+	/**
+	 *
+	 */
+	private static final String FILENAME_EXTENSION_SEPARATOR = ".";
+	private static final String CHARSET_UTF_8 = "UTF-8";
+
 	private FileUtil() {
 		// no instances
 	}
@@ -66,7 +72,7 @@ public final class FileUtil {
 	public static String readFile(final URL url) throws URISyntaxException, IOException {
 		try (final InputStream inputStream = url.openStream()) {
 			final StringBuffer b;
-			final InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+			final InputStreamReader reader = new InputStreamReader(inputStream, CHARSET_UTF_8);
 			try (BufferedReader bufferedReader = new BufferedReader(reader)) {
 				b = new StringBuffer();
 				String s;
@@ -87,6 +93,11 @@ public final class FileUtil {
 	 * @param text
 	 *            Textinhalt der ausgegeben werden soll
 	 * @throws IOException
+	 *             In manchen Java-Versionen in Kombinationen mit manchen
+	 *             Begriebssystemen gab es in der Vergangenheit die
+	 *             unterschiedlichsten Probleme :-( Falls das je nach
+	 *             Konstellation wieder auftaucht, wird die dann auftretende
+	 *             Exception als "normales" IO-Problem verpackt.
 	 */
 	public static void writeFile(final URL file, final String text) throws IOException {
 		Path path = null;
@@ -110,11 +121,12 @@ public final class FileUtil {
 	 *            Name der Datei innerhalb des Pakets (Pfadangabe erforderlich)
 	 * @return Inhalt der Datei als String
 	 * @throws IOException
+	 *             Falls die Ressourcendatei nicht gelesen werden kann.
 	 */
 	public static String readResourceFile(final String resourceName) throws IOException {
 		final InputStream tutorialStream = FileUtil.class.getResourceAsStream(resourceName);
 		final StringBuffer b;
-		final InputStreamReader reader = new InputStreamReader(tutorialStream, "UTF-8");
+		final InputStreamReader reader = new InputStreamReader(tutorialStream, CHARSET_UTF_8);
 		final BufferedReader bufferedReader = new BufferedReader(reader);
 		b = new StringBuffer();
 		String s = null;
@@ -141,11 +153,12 @@ public final class FileUtil {
 			return filename;
 		}
 		final String trimmedExt = ext.trim();
-		if (filename.getFile().toLowerCase().endsWith("." + trimmedExt.toLowerCase())) {
+		if (filename.getFile().toLowerCase().endsWith(FILENAME_EXTENSION_SEPARATOR + trimmedExt.toLowerCase())) {
 			return filename;
 		}
 		try {
-			return new URL(filename.toExternalForm() + (trimmedExt.startsWith(".") ? "" : ".") + ext);
+			return new URL(filename.toExternalForm()
+					+ (trimmedExt.startsWith(FILENAME_EXTENSION_SEPARATOR) ? "" : FILENAME_EXTENSION_SEPARATOR) + ext);
 		} catch (final MalformedURLException ex) {
 			return filename;
 		}

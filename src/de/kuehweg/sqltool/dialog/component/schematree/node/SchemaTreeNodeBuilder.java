@@ -53,15 +53,14 @@ import de.kuehweg.sqltool.database.metadata.description.TableDescription;
  */
 public class SchemaTreeNodeBuilder {
 
-	private final DatabaseDescription db;
+	private final SchemaTreeNode root;
 
 	public SchemaTreeNodeBuilder(final DatabaseDescription db) {
-		this.db = db;
+		super();
+		root = buildDatabaseNode(db);
 	}
 
 	public SchemaTreeNode getRootOfPopulatedTree() {
-		final SchemaTreeNode root = buildDatabaseNode(db);
-
 		return root;
 	}
 
@@ -246,8 +245,8 @@ public class SchemaTreeNodeBuilder {
 		return filtered;
 	}
 
-	private List<ForeignKeyColumnDescription> extractAndSortByColumnName(
-			final List<ForeignKeyColumnDescription> fkColumns, final String fkName) {
+	private List<ForeignKeyColumnDescription>
+			extractAndSortByColumnName(final List<ForeignKeyColumnDescription> fkColumns, final String fkName) {
 		final List<ForeignKeyColumnDescription> sorted = new ArrayList<>(extractByName(fkColumns, fkName));
 		Collections.sort(sorted, new ForeignKeyColumnByColumnName());
 		return sorted;
