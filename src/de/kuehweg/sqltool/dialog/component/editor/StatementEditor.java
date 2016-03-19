@@ -46,6 +46,8 @@ public interface StatementEditor extends FontSizeZoomable {
 
 	void setText(final String text);
 
+	void focus();
+
 	default void appendText(final String text) {
 		setText(getText() + text);
 	}

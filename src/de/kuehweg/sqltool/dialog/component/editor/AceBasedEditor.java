@@ -30,42 +30,25 @@ import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 
 /**
- * Editorkomponente, die mit einem in einer WebView eingebetteten CodeMirror
- * Editor arbeitet.
+ * Editorkomponente, die mit einem in einer WebView eingebetteten ACE Editor
+ * arbeitet.
  *
  * @author Michael Kühweg
  */
-public class CodeMirrorBasedEditor implements StatementEditor {
+public class AceBasedEditor implements StatementEditor {
 
-	public static final String RESOURCE = "/resources/codemirror/sql_editor.html";
+	public static final String RESOURCE = "/resources/ace/sql_editor.html";
 
-	private enum FontSizeSteps {
-		NORMAL(12), MEDIUM(14), BIG(18);
-		private int equivalentFontSize;
+	public static final int MIN_FONT_SIZE = 9;
+	public static final int MAX_FONT_SIZE = 32;
 
-		FontSizeSteps(final int equivalentFontSize) {
-			this.equivalentFontSize = equivalentFontSize;
-		}
-
-		public int getEquivalentFontSize() {
-			return equivalentFontSize;
-		}
-
-		public static FontSizeSteps normalize(final int size) {
-			if (size <= NORMAL.equivalentFontSize) {
-				return NORMAL;
-			} else if (size >= BIG.equivalentFontSize) {
-				return BIG;
-			}
-			return MEDIUM;
-		}
-	}
+	private static final int DEFAULT_FONT_SIZE = 12;
 
 	private final WebView webView;
 
-	private FontSizeSteps fontSize = FontSizeSteps.NORMAL;
+	private int fontSize = DEFAULT_FONT_SIZE;
 
-	public CodeMirrorBasedEditor(final WebView webView) {
+	public AceBasedEditor(final WebView webView) {
 		this.webView = webView;
 	}
 
@@ -76,15 +59,15 @@ public class CodeMirrorBasedEditor implements StatementEditor {
 
 	@Override
 	public String getSelectedText() {
-		return (String) webView.getEngine().executeScript("editor.getSelection();");
+		return (String) webView.getEngine().executeScript("editor.session.getTextRange(editor.getSelectionRange());");
 	}
 
 	@Override
 	public CaretPosition getCaretPosition() {
 		try {
-			final JSObject cursorPosition = (JSObject) webView.getEngine().executeScript("editor.getCursor();");
-			return new CaretPosition((Integer) cursorPosition.getMember("line"),
-					(Integer) cursorPosition.getMember("ch"));
+			final JSObject cursorPosition = (JSObject) webView.getEngine().executeScript("editor.getCursorPosition();");
+			return new CaretPosition((Integer) cursorPosition.getMember("row"),
+					(Integer) cursorPosition.getMember("column"));
 		} catch (final Exception e) {
 			return new CaretPosition();
 		}
@@ -97,7 +80,7 @@ public class CodeMirrorBasedEditor implements StatementEditor {
 
 	@Override
 	public void setText(final String text) {
-		final String script = "editor.getDoc().setValue('" + prepareJavaStringForCodeMirror(text) + "')";
+		final String script = "editor.setValue('" + prepareJavaStringForCodeMirror(text) + "', -1)";
 		try {
 			webView.getEngine().executeScript(script);
 		} catch (final Exception e) {
@@ -123,59 +106,34 @@ public class CodeMirrorBasedEditor implements StatementEditor {
 
 	@Override
 	public int getFontSize() {
-		return fontSize.getEquivalentFontSize();
+		return fontSize;
 	}
 
 	@Override
 	public void setFontSize(final int size) {
-		fontSize = FontSizeSteps.normalize(size);
-		setFontSize(fontSize);
-	}
-
-	private void setFontSize(final FontSizeSteps step) {
+		fontSize = size;
+		final String script = "editor.setFontSize(" + getFontSize() + ")";
 		try {
-			switch (step) {
-			case BIG:
-				webView.getEngine().executeScript("zoomBig();");
-				break;
-			case MEDIUM:
-				webView.getEngine().executeScript("zoomMedium();");
-				break;
-			default:
-				webView.getEngine().executeScript("zoomNormal();");
-			}
+			webView.getEngine().executeScript(script);
 		} catch (final Exception e) {
 		}
 	}
 
+	private int zoom(final int diff) {
+		int targetSize = getFontSize() + diff;
+		targetSize = targetSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : targetSize;
+		targetSize = targetSize > MAX_FONT_SIZE ? MAX_FONT_SIZE : targetSize;
+		return targetSize;
+	}
+
 	@Override
 	public void zoomIn() {
-		switch (fontSize) {
-		case MEDIUM:
-			fontSize = FontSizeSteps.BIG;
-			break;
-		case NORMAL:
-			fontSize = FontSizeSteps.MEDIUM;
-			break;
-		default:
-			fontSize = FontSizeSteps.BIG;
-		}
-		setFontSize(fontSize);
+		setFontSize(zoom(1));
 	}
 
 	@Override
 	public void zoomOut() {
-		switch (fontSize) {
-		case BIG:
-			fontSize = FontSizeSteps.MEDIUM;
-			break;
-		case MEDIUM:
-			fontSize = FontSizeSteps.NORMAL;
-			break;
-		default:
-			fontSize = FontSizeSteps.NORMAL;
-		}
-		setFontSize(fontSize);
+		setFontSize(zoom(-1));
 	}
 
 }

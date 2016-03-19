@@ -75,6 +75,11 @@ public class TextAreaBasedEditor implements StatementEditor {
 	}
 
 	@Override
+	public void focus() {
+		textArea.requestFocus();
+	}
+
+	@Override
 	public void zoomIn() {
 		zoomable.zoomIn();
 	}

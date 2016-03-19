@@ -278,7 +278,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
   });
 
   var itrysql_builtin_types = "bigint binary blob boolean char character clob decimal double float int integer large nchar nclob numeric precision real smallint varbinary varchar ";
-  var itrysql_builtin_functions = "abs avg cast ceil ceiling char_length character_length coalesce collate exp floor lower max min mod power sqrt stddev_pop stddev_samp substring substring_regex sum trim truncate upper ";
+  var itrysql_builtin_functions = "abs avg cast ceil ceiling char_length character_length coalesce collate exp floor lower length max min mod power sqrt stddev_pop stddev_samp substring substring_regex sum trim trunc truncate upper ";
   var itrysql_builtin_values="current_catalog current_date current_role current_schema current_time current_timestamp current_user row_number system_user ";
 
   CodeMirror.defineMIME("text/x-hsql", {

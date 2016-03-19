@@ -16,19 +16,24 @@
 <script src="./addon/edit/matchbrackets.js"></script>
 <link rel="stylesheet" href="./addon/display/fullscreen.css">
 <script src="./addon/display/fullscreen.js"></script>
+<link rel="stylesheet" href="./addon/hint/show-hint.css">
+<script src="./addon/hint/show-hint.js"></script>
+<script src="./addon/hint/sql-hint.js"></script>
 
 <script>
 	var editor;
 	function startMeUp() {
 		editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-			lineNumbers : true,
-			scrollbarStyle : null,
+			autofocus       : true,
+			lineNumbers     : true,
+			scrollbarStyle  : null,
 			styleActiveLine : true,
-			matchBrackets : true,
-			dragDrop : false,
-			fullScreen : true,
-			theme : "itrysql",
-			mode : "text/x-hsql"
+			matchBrackets   : true,
+			dragDrop        : false,
+			fullScreen      : true,
+	        extraKeys       : {"Ctrl-Space": "autocomplete"},
+			theme           : "itrysql",
+			mode            : "text/x-hsql"
 		});
 	}
 	function zoomNormal() {

@@ -76,6 +76,7 @@ import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
 import de.kuehweg.sqltool.dialog.component.StatementEditorHolder;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementHtmlFormatter;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementView;
+import de.kuehweg.sqltool.dialog.component.editor.AceBasedEditor;
 import de.kuehweg.sqltool.dialog.component.editor.CodeMirrorBasedEditor;
 import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
 import de.kuehweg.sqltool.dialog.component.editor.TextAreaBasedEditor;
@@ -958,6 +959,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	public void toggleSyntaxColoring(final ActionEvent event) {
 		if (statementEditor instanceof TextAreaBasedEditor) {
 			installEditorCodeMirror();
+		} else if (statementEditor instanceof CodeMirrorBasedEditor) {
+			installEditorAce();
 		} else {
 			installEditorTextArea();
 		}
@@ -978,6 +981,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		// Standardeinstellung beim Start ist die TextArea (sollte auf jeden
 		// Fall funktionieren)
 		installEditorTextArea();
+		toggleSyntaxColoring.disableProperty()
+				.set(WebViewBundledResourceErrorDetection.runningOnJavaVersionWithRenderingDeficiencies());
 
 		controlAutoCommitVisuals();
 
@@ -990,16 +995,42 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	}
 
 	/**
-	 * Installiert CodeMirror als Editor für die Eingabe der SQL-Anweisungen.
+	 * @param resource
+	 *            HTML mit Editor zur Einbettung in die WebView
+	 * @return Die fertig aufgebaute und in die Anwendung eingebettete WebView,
+	 *         in der der Javascript Editor läuft.
 	 */
-	private void installEditorCodeMirror() {
+	private WebView installJavascriptEditor(final String resource) {
 		final String content = statementEditor != null ? statementEditor.getText() : "";
-		final WebView codeMirror = new WebView();
+		final WebView javascriptEditor = installWebViewForJavascriptEditor();
+		installJavascriptEditorWithInitialContent(javascriptEditor, resource, content);
+		webViewFixForJavascriptEditor(javascriptEditor);
+		return javascriptEditor;
+	}
+
+	/**
+	 * @return WebView zur Aufnahme des Editors. Die Fixierung am umgebenden
+	 *         Anchor-Node wird vorbelegt.
+	 */
+	private WebView installWebViewForJavascriptEditor() {
+		final WebView javascriptEditor = new WebView();
 		statementPane.getChildren().clear();
-		statementPane.getChildren().add(codeMirror);
-		fixAnchor(codeMirror);
-		statementEditor = new CodeMirrorBasedEditor(codeMirror);
-		final WebEngine engine = codeMirror.getEngine();
+		statementPane.getChildren().add(javascriptEditor);
+		fixAnchor(javascriptEditor);
+		return javascriptEditor;
+	}
+
+	/**
+	 * @param javascriptEditor
+	 *            WebView, in der der Javascript laufen soll.
+	 * @param resource
+	 *            HTML Ressource zur Einbettung des Editors.
+	 * @param content
+	 *            Initialer Inhalt des Editors.
+	 */
+	private void installJavascriptEditorWithInitialContent(final WebView javascriptEditor, final String resource,
+			final String content) {
+		final WebEngine engine = javascriptEditor.getEngine();
 		engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
 			@Override
 			public void changed(final ObservableValue<? extends State> observable, final State oldState,
@@ -1007,17 +1038,38 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 				if (newState == State.SUCCEEDED) {
 					engine.getLoadWorker().stateProperty().removeListener(this);
 					statementEditor.setText(content);
+					statementEditor.focus();
 				}
 			}
 		});
-		codeMirror.getEngine().load(this.getClass().getResource(CodeMirrorBasedEditor.RESOURCE).toExternalForm());
+		javascriptEditor.getEngine().load(this.getClass().getResource(resource).toExternalForm());
+	}
+
+	/**
+	 * @param javascriptEditor
+	 */
+	private void webViewFixForJavascriptEditor(final WebView javascriptEditor) {
 		// FIXME der übliche Workaround
-		codeMirror.setOnMouseEntered((final MouseEvent t) -> {
+		javascriptEditor.setOnMouseEntered((final MouseEvent t) -> {
 			WebViewWithHSQLDBBugfix.fix();
 		});
-		codeMirror.setOnMouseExited((final MouseEvent t) -> {
+		javascriptEditor.setOnMouseExited((final MouseEvent t) -> {
 			WebViewWithHSQLDBBugfix.fix();
 		});
+	}
+
+	/**
+	 * Installiert ACE als Editor für die Eingabe der SQL-Anweisungen.
+	 */
+	private void installEditorAce() {
+		statementEditor = new AceBasedEditor(installJavascriptEditor(AceBasedEditor.RESOURCE));
+	}
+
+	/**
+	 * Installiert CodeMirror als Editor für die Eingabe der SQL-Anweisungen.
+	 */
+	private void installEditorCodeMirror() {
+		statementEditor = new CodeMirrorBasedEditor(installJavascriptEditor(CodeMirrorBasedEditor.RESOURCE));
 	}
 
 	/**
@@ -1036,6 +1088,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		fixAnchor(textArea);
 		statementEditor = new TextAreaBasedEditor(textArea);
 		statementEditor.setText(content);
+		statementEditor.focus();
 	}
 
 	/**
