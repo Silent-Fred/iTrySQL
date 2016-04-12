@@ -98,10 +98,7 @@ public class CodeMirrorBasedEditor implements StatementEditor {
 	@Override
 	public void setText(final String text) {
 		final String script = "editor.getDoc().setValue('" + prepareJavaStringForCodeMirror(text) + "')";
-		try {
-			webView.getEngine().executeScript(script);
-		} catch (final Exception e) {
-		}
+		webView.getEngine().executeScript(script);
 	}
 
 	private String prepareJavaStringForCodeMirror(final String text) {

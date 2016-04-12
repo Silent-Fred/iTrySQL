@@ -12,7 +12,7 @@ ace
 									+ '.ace-itrysql .ace_cursor,'
 									+ '.ace-itrysql .ace_storage,'
 									+ '.ace-itrysql .ace_keyword,'
-									+ '.ace-itrysql .ace_variable {font-weight: bold;color: rgb(52, 101, 164);}'
+									+ '.ace-itrysql .ace_variable {color: rgb(52, 101, 164);}'
 									+ '.ace-itrysql .ace_constant.ace_buildin {color: rgb(88, 72, 246);}'
 									+ '.ace-itrysql .ace_constant.ace_library {color: rgb(6, 150, 14);}'
 									+ '.ace-itrysql .ace_function {color: rgb(60, 76, 114);}'

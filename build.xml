@@ -60,7 +60,6 @@
 		<!-- Copy project-libs references -->
 		<copy todir="${BuildPath}/build/libs">
 			<fileset dir="${BuildPath}/externalLibs">
-				<include name="commons-lang3-3.4.jar" />
 				<include name="hsqldb-2.3.3.jar" />
 			</fileset>
 		</copy>
@@ -71,6 +70,14 @@
 		<copy todir="${BuildPath}/build/src">
 			<fileset dir="${BuildPath}/project/src">
 				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<!-- Copy javascript editor sources -->
+		<copy todir="${BuildPath}/build/libs/resources">
+			<fileset dir="${BuildPath}/project/src/resources">
+				<include name="codemirror/**" />
+				<include name="ace/**" />
 			</fileset>
 		</copy>
 
@@ -98,16 +105,14 @@
 		<mkdir dir="${BuildPath}/dist/libs" />
 
 		<copy todir="${BuildPath}/dist/libs">
-			<fileset dir="${BuildPath}/externalLibs">
-				<include name="*" />
+			<fileset dir="${BuildPath}/build/libs">
+				<include name="*/**" />
 			</fileset>
 		</copy>
 
-
 		<fx:resources id="appRes">
 			<fx:fileset dir="${BuildPath}/dist" includes="iTrySQL.jar" />
-			<fx:fileset dir="${BuildPath}/dist" includes="libs/*" />
-			<fx:fileset dir="${BuildPath}/dist" includes="resources/**" />
+			<fx:fileset dir="${BuildPath}/dist" includes="libs/**" />
 		</fx:resources>
 
 		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="3.3" />
@@ -132,7 +137,7 @@
 		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BundleOutputPath}" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
 
 			<fx:platform basedir="${java.home}" />
-			<fx:info title="iTrySQL" vendor="kuehweg.de" />
+			<fx:info title="iTrySQL" vendor="kuehweg.de" copyright="(c) 2013-2016" description="SQL Tutorial Client" />
 
 			<fx:application refId="fxApplication" />
 			<fx:resources refid="appRes" />

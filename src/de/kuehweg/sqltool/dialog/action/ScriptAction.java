@@ -32,7 +32,7 @@ import java.net.URISyntaxException;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.component.StatementEditorHolder;
+import de.kuehweg.sqltool.dialog.component.StatementEditorComponentHolder;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
@@ -43,7 +43,7 @@ import javafx.stage.Window;
  */
 public class ScriptAction {
 
-	private final StatementEditorHolder statementEditorHolder;
+	private final StatementEditorComponentHolder statementEditorHolder;
 
 	private Window windowForFileChooser;
 
@@ -52,7 +52,7 @@ public class ScriptAction {
 	 *
 	 * @param statementEditorHolder
 	 */
-	public ScriptAction(final StatementEditorHolder statementEditorHolder) {
+	public ScriptAction(final StatementEditorComponentHolder statementEditorHolder) {
 		this.statementEditorHolder = statementEditorHolder;
 	}
 
@@ -71,7 +71,7 @@ public class ScriptAction {
 		if (file != null) {
 			try {
 				final String script = FileUtil.readFile(FileUtil.convertToURI(file).toURL());
-				statementEditorHolder.getActiveStatementEditor().setText(script);
+				statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().setText(script);
 			} catch (final IOException | URISyntaxException ex) {
 				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
@@ -90,7 +90,7 @@ public class ScriptAction {
 		if (file != null) {
 			try {
 				FileUtil.writeFile(FileUtil.enforceExtension(file.toURI().toURL(), "sql"),
-						statementEditorHolder.getActiveStatementEditor().getText());
+						statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().getText());
 			} catch (final IOException ex) {
 				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());

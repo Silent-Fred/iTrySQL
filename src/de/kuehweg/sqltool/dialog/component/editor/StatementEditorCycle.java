@@ -24,14 +24,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.kuehweg.sqltool.dialog.component;
+package de.kuehweg.sqltool.dialog.component.editor;
 
-import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
+import java.util.LinkedList;
 
 /**
  * @author Michael Kühweg
  */
-public interface StatementEditorHolder {
+public class StatementEditorCycle {
 
-	StatementEditor getActiveStatementEditor();
+	private final LinkedList<Class<? extends StatementEditor>> statementEditorClasses = new LinkedList<>();
+
+	private int cycle = 0;
+
+	public StatementEditorCycle() {
+		super();
+		statementEditorClasses.add(TextAreaBasedEditor.class);
+		statementEditorClasses.add(CodeMirrorBasedEditor.class);
+		statementEditorClasses.add(AceBasedEditor.class);
+	}
+
+	public void recycle() {
+		cycle = 0;
+	}
+
+	public Class<? extends StatementEditor> next() {
+		cycle = (cycle + 1) % statementEditorClasses.size();
+		return statementEditorClasses.get(cycle);
+	}
+
+	public void oopsNotSupportedInThisVersion(final Class<? extends StatementEditor> defectiveStatementEditor) {
+		statementEditorClasses.remove(defectiveStatementEditor);
+		if (statementEditorClasses.isEmpty()) {
+			statementEditorClasses.add(TextAreaBasedEditor.class);
+		}
+	}
+
+	public int numberOfOptions() {
+		return statementEditorClasses.size();
+	}
 }

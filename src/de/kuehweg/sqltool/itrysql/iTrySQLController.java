@@ -73,13 +73,11 @@ import de.kuehweg.sqltool.dialog.component.ExecutionProgressComponent;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
-import de.kuehweg.sqltool.dialog.component.StatementEditorHolder;
+import de.kuehweg.sqltool.dialog.component.StatementEditorComponentHolder;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementHtmlFormatter;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementView;
-import de.kuehweg.sqltool.dialog.component.editor.AceBasedEditor;
-import de.kuehweg.sqltool.dialog.component.editor.CodeMirrorBasedEditor;
 import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
-import de.kuehweg.sqltool.dialog.component.editor.TextAreaBasedEditor;
+import de.kuehweg.sqltool.dialog.component.editor.StatementEditorComponent;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeBuilderTask;
 import de.kuehweg.sqltool.dialog.component.schematree.SchemaTreeModificationDetector;
 import de.kuehweg.sqltool.dialog.component.sqlhistory.SQLHistoryButtonCell;
@@ -90,10 +88,8 @@ import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -125,7 +121,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -137,7 +132,7 @@ import javafx.stage.WindowEvent;
  *
  * @author Michael Kühweg
  */
-public class iTrySQLController implements Initializable, EventHandler<WindowEvent>, StatementEditorHolder {
+public class iTrySQLController implements Initializable, EventHandler<WindowEvent>, StatementEditorComponentHolder {
 
 	private static int countWindows = 1;
 
@@ -285,7 +280,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 
 	private final Collection<FindAction> findActionsForQuickSearch = new ArrayList<>();
 
-	private StatementEditor statementEditor;
+	private final StatementEditorComponent statementEditorComponent = new StatementEditorComponent();
 
 	private Window applicationWindow;
 
@@ -364,7 +359,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		buildComponents();
 
 		initializeQuickSearch();
-
 	}
 
 	/**
@@ -413,8 +407,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		achievementsView.setOnMouseExited((final MouseEvent t) -> {
 			WebViewWithHSQLDBBugfix.fix();
 		});
-		// FIXME falls der Editor zur Eingabe der Anweisungen auch in einer
-		// WebView läuft, dann muss diese auch hinzugefügt werden
 	}
 
 	/**
@@ -549,6 +541,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 */
 	@FXML
 	public void execute(final ActionEvent event) {
+		final StatementEditor statementEditor = getStatementEditorComponent().getActiveStatementEditor();
 		// Markierter Text?
 		String sql = statementEditor.getSelectedText();
 		// sonst die Anweisung, in der sich die Eingabemarkierung befindet
@@ -569,7 +562,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	public void executeScript(final ActionEvent event) {
 		focusResult();
-		createExecuteAction().handleExecuteAction(statementEditor.getText(), getConnection());
+		createExecuteAction().handleExecuteAction(getStatementEditorComponent().getActiveStatementEditor().getText(),
+				getConnection());
 		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.SCRIPT_EXECUTED.asAchievementEvent(), 1);
 	}
 
@@ -606,6 +600,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	public void fontAction(final ActionEvent event) {
 		if (event != null && event.getSource() != null) {
 			FontSizeZoomable zoom;
+			final StatementEditor statementEditor = getStatementEditorComponent().getActiveStatementEditor();
 			switch (((Node) event.getSource()).getId()) {
 			case "toolbarZoomIn":
 				zoom = statementEditor;
@@ -957,13 +952,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 */
 	@FXML
 	public void toggleSyntaxColoring(final ActionEvent event) {
-		if (statementEditor instanceof TextAreaBasedEditor) {
-			installEditorCodeMirror();
-		} else if (statementEditor instanceof CodeMirrorBasedEditor) {
-			installEditorAce();
-		} else {
-			installEditorTextArea();
-		}
+		getStatementEditorComponent().toggleStatementEditor();
 	}
 
 	/**
@@ -978,11 +967,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		setupTooltips();
 		setupMenu();
 
-		// Standardeinstellung beim Start ist die TextArea (sollte auf jeden
-		// Fall funktionieren)
-		installEditorTextArea();
-		toggleSyntaxColoring.disableProperty()
-				.set(WebViewBundledResourceErrorDetection.runningOnJavaVersionWithRenderingDeficiencies());
+		initializeStatementEditorCycle();
 
 		controlAutoCommitVisuals();
 
@@ -994,114 +979,10 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		achievementViewComponent.refresh();
 	}
 
-	/**
-	 * @param resource
-	 *            HTML mit Editor zur Einbettung in die WebView
-	 * @return Die fertig aufgebaute und in die Anwendung eingebettete WebView,
-	 *         in der der Javascript Editor läuft.
-	 */
-	private WebView installJavascriptEditor(final String resource) {
-		final String content = statementEditor != null ? statementEditor.getText() : "";
-		final WebView javascriptEditor = installWebViewForJavascriptEditor();
-		installJavascriptEditorWithInitialContent(javascriptEditor, resource, content);
-		webViewFixForJavascriptEditor(javascriptEditor);
-		return javascriptEditor;
-	}
-
-	/**
-	 * @return WebView zur Aufnahme des Editors. Die Fixierung am umgebenden
-	 *         Anchor-Node wird vorbelegt.
-	 */
-	private WebView installWebViewForJavascriptEditor() {
-		final WebView javascriptEditor = new WebView();
-		statementPane.getChildren().clear();
-		statementPane.getChildren().add(javascriptEditor);
-		fixAnchor(javascriptEditor);
-		return javascriptEditor;
-	}
-
-	/**
-	 * @param javascriptEditor
-	 *            WebView, in der der Javascript laufen soll.
-	 * @param resource
-	 *            HTML Ressource zur Einbettung des Editors.
-	 * @param content
-	 *            Initialer Inhalt des Editors.
-	 */
-	private void installJavascriptEditorWithInitialContent(final WebView javascriptEditor, final String resource,
-			final String content) {
-		final WebEngine engine = javascriptEditor.getEngine();
-		engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
-			@Override
-			public void changed(final ObservableValue<? extends State> observable, final State oldState,
-					final State newState) {
-				if (newState == State.SUCCEEDED) {
-					engine.getLoadWorker().stateProperty().removeListener(this);
-					statementEditor.setText(content);
-					statementEditor.focus();
-				}
-			}
-		});
-		javascriptEditor.getEngine().load(this.getClass().getResource(resource).toExternalForm());
-	}
-
-	/**
-	 * @param javascriptEditor
-	 */
-	private void webViewFixForJavascriptEditor(final WebView javascriptEditor) {
-		// FIXME der übliche Workaround
-		javascriptEditor.setOnMouseEntered((final MouseEvent t) -> {
-			WebViewWithHSQLDBBugfix.fix();
-		});
-		javascriptEditor.setOnMouseExited((final MouseEvent t) -> {
-			WebViewWithHSQLDBBugfix.fix();
-		});
-	}
-
-	/**
-	 * Installiert ACE als Editor für die Eingabe der SQL-Anweisungen.
-	 */
-	private void installEditorAce() {
-		statementEditor = new AceBasedEditor(installJavascriptEditor(AceBasedEditor.RESOURCE));
-	}
-
-	/**
-	 * Installiert CodeMirror als Editor für die Eingabe der SQL-Anweisungen.
-	 */
-	private void installEditorCodeMirror() {
-		statementEditor = new CodeMirrorBasedEditor(installJavascriptEditor(CodeMirrorBasedEditor.RESOURCE));
-	}
-
-	/**
-	 * Installiert eine einfache TextArea als Editor für die Eingabe der
-	 * SQL-Anweisungen.
-	 */
-	private void installEditorTextArea() {
-		final String content = statementEditor != null ? statementEditor.getText() : "";
-		final TextArea textArea = new TextArea();
-		textArea.setPromptText(DialogDictionary.PROMPT_ENTER_STATEMENT.toString());
-		textArea.getStyleClass().add("itry-statement-edit");
-		textArea.setStyle(
-				"-fx-font-size: " + UserPreferencesManager.getSharedInstance().getFontSizeStatementInput() + ";");
-		statementPane.getChildren().clear();
-		statementPane.getChildren().add(textArea);
-		fixAnchor(textArea);
-		statementEditor = new TextAreaBasedEditor(textArea);
-		statementEditor.setText(content);
-		statementEditor.focus();
-	}
-
-	/**
-	 * @param node
-	 *            Fixiert alle Ecken des übergebenen Knotens an der
-	 *            übergeordneten AnchorPane, d.h. der Node ändert seine Größe
-	 *            jeweils mit der AnchorPane.
-	 */
-	private void fixAnchor(final Node node) {
-		AnchorPane.setTopAnchor(node, 0.0);
-		AnchorPane.setRightAnchor(node, 0.0);
-		AnchorPane.setBottomAnchor(node, 0.0);
-		AnchorPane.setLeftAnchor(node, 0.0);
+	private void initializeStatementEditorCycle() {
+		getStatementEditorComponent().setAnchor(statementPane);
+		toggleSyntaxColoring.disableProperty()
+				.set(getStatementEditorComponent().getStatementEditorCycle().numberOfOptions() == 1);
 	}
 
 	/**
@@ -1243,11 +1124,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	private void prepareHistory() {
 		sqlHistoryColumnTimestamp.setCellValueFactory(new PropertyValueFactory<>("timestampFormatted"));
 		sqlHistoryColumnStatement.setCellValueFactory(new PropertyValueFactory<>("sqlForDisplay"));
-
-		// FIXME das muss wahrscheinlich noch geändert werden, damit die
-		// History-Einträge immer an den aktuellen Editor angehängt werden
 		sqlHistoryColumnAction.setCellFactory(
-				(final TableColumn<SqlHistoryEntry, String> p) -> new SQLHistoryButtonCell(statementEditor));
+				(final TableColumn<SqlHistoryEntry, String> p) -> new SQLHistoryButtonCell(statementEditorComponent));
 	}
 
 	/**
@@ -1348,8 +1226,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	}
 
 	@Override
-	public StatementEditor getActiveStatementEditor() {
-		return statementEditor;
+	public StatementEditorComponent getStatementEditorComponent() {
+		return statementEditorComponent;
 	}
 
 	/**

@@ -81,10 +81,7 @@ public class AceBasedEditor implements StatementEditor {
 	@Override
 	public void setText(final String text) {
 		final String script = "editor.setValue('" + prepareJavaStringForCodeMirror(text) + "', -1)";
-		try {
-			webView.getEngine().executeScript(script);
-		} catch (final Exception e) {
-		}
+		webView.getEngine().executeScript(script);
 	}
 
 	private String prepareJavaStringForCodeMirror(final String text) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,44 +23,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.sqltool.dialog.component.sqlhistory;
 
-import de.kuehweg.sqltool.common.DialogDictionary;
-import de.kuehweg.sqltool.dialog.component.editor.StatementEditorComponent;
-import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
+package de.kuehweg.sqltool.itrysql;
+
+import java.nio.file.Paths;
 
 /**
- * Button in TableView des SQL-Verlaufs.
- *
  * @author Michael Kühweg
  */
-public class SQLHistoryButtonCell extends TableCell<SqlHistoryEntry, String> {
+public class ResourceLocator {
 
-	private final Button button;
-
-	private SqlHistoryEntry historyItem;
-
-	public SQLHistoryButtonCell(final StatementEditorComponent appendTo) {
-		super();
-		button = new Button(DialogDictionary.LABEL_APPEND_HISTORY_ITEM_TO_EDITOR.toString());
-		button.setOnAction((final ActionEvent event) -> {
-			if (appendTo != null && appendTo.getActiveStatementEditor() != null && historyItem != null) {
-				appendTo.getActiveStatementEditor().appendText("\n" + historyItem.getOriginalSQL());
-			}
-		});
-	}
-
-	@Override
-	protected void updateItem(final String text, final boolean empty) {
-		if (!empty) {
-			setGraphic(button);
-			historyItem = (SqlHistoryEntry) tableRowProperty().getValue().getItem();
-		} else {
-			setGraphic(null);
-			historyItem = null;
+	public String getExternalFormForExplodedResourceInBundle(final String name) {
+		if (looksLikeBundledApplication()) {
+			return Paths.get(whoAmI()).getParent() + "/libs" + name;
 		}
+		return name;
 	}
 
+	public boolean looksLikeBundledApplication() {
+		return whoAmI().toLowerCase().endsWith(".jar");
+	}
+
+	private String whoAmI() {
+		return getClass().getProtectionDomain().getCodeSource().getLocation().toExternalForm();
+	}
 }

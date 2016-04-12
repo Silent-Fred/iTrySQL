@@ -43,6 +43,13 @@ public class SourceFileDropTargetUtil {
 
 	private static final String DROP_TARGET_SYMBOL_ID = "removeMeOnDragExited";
 
+	private static final double DRAG_EFFECT_OPACITY_NORMAL = 1.0;
+	private static final double DRAG_EFFECT_OPACITY_DURING_DRAG = 0.5;
+
+	private static final double DRAG_EFFECT_WIDTH = 5;
+	private static final double DRAG_EFFECT_HEIGHT = 5;
+	private static final int DRAG_EFFECT_ITERATIONS = 3;
+
 	private SourceFileDropTargetUtil() {
 		// Util
 	}
@@ -59,18 +66,17 @@ public class SourceFileDropTargetUtil {
 	}
 
 	private static void setDragEffect(final Node node) {
-		node.setOpacity(0.5);
-		// Blur-Effekt kann im Moment noch nicht in FX-CSS angegeben
-		// werden
+		node.setOpacity(DRAG_EFFECT_OPACITY_DURING_DRAG);
+		// Blur-Effekt kann im Moment noch nicht in FX-CSS angegeben werden
 		final BoxBlur bb = new BoxBlur();
-		bb.setWidth(5);
-		bb.setHeight(5);
-		bb.setIterations(3);
+		bb.setWidth(DRAG_EFFECT_WIDTH);
+		bb.setHeight(DRAG_EFFECT_HEIGHT);
+		bb.setIterations(DRAG_EFFECT_ITERATIONS);
 		node.setEffect(bb);
 	}
 
 	private static void resetDragEffect(final Node node) {
-		node.setOpacity(1.0);
+		node.setOpacity(DRAG_EFFECT_OPACITY_NORMAL);
 		node.setEffect(null);
 	}
 
@@ -102,14 +108,15 @@ public class SourceFileDropTargetUtil {
 		});
 	}
 
-	private static void setOnDragDropped(final Pane containerPane, final StatementEditorHolder statementEditorHolder) {
+	private static void setOnDragDropped(final Pane containerPane,
+			final StatementEditorComponentHolder statementEditorHolder) {
 		containerPane.setOnDragDropped(event -> {
 			final Dragboard dragboard = event.getDragboard();
 			boolean success = false;
 			if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
 				try {
 					final String script = FileUtil.readFile(FileUtil.convertToURI(dragboard.getFiles().get(0)).toURL());
-					statementEditorHolder.getActiveStatementEditor().setText(script);
+					statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().setText(script);
 					success = true;
 				} catch (final Exception ex) {
 					// egal welche Exception passiert, der Drop muss
@@ -135,7 +142,7 @@ public class SourceFileDropTargetUtil {
 	 *            Hier kann das Ziel für das Skript abgefragt werden
 	 */
 	public static void transformIntoSourceFileDropTarget(final Pane containerPane,
-			final StatementEditorHolder statementEditorHolder) {
+			final StatementEditorComponentHolder statementEditorHolder) {
 
 		setOnDragOver(containerPane);
 
