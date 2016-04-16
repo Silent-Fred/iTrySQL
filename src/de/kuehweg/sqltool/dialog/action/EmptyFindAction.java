@@ -24,83 +24,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.kuehweg.sqltool.dialog.component.editor;
-
-import de.kuehweg.sqltool.dialog.base.FontSizeZoomable;
-import de.kuehweg.sqltool.dialog.base.TextAreaZoomable;
-import javafx.scene.control.TextArea;
+package de.kuehweg.sqltool.dialog.action;
 
 /**
- * Einfache Standardimplementierung für einen Code-Editor auf Basis einer
- * {@link TextArea}.
- *
  * @author Michael Kühweg
  */
-public class TextAreaBasedEditor implements StatementEditor {
+public class EmptyFindAction extends FindAction {
 
-	private final TextArea textArea;
-
-	private final FontSizeZoomable zoomable;
-
-	public TextAreaBasedEditor(final TextArea textArea) {
-		super();
-		this.textArea = textArea;
-		zoomable = new TextAreaZoomable(textArea);
-	}
-
-	public TextArea getUnderlyingTextArea() {
-		return textArea;
+	@Override
+	public void find(final String searchString) {
 	}
 
 	@Override
-	public String getText() {
-		return textArea.getText();
+	public void nextOccurrence(final String searchString) {
 	}
 
 	@Override
-	public String getSelectedText() {
-		return textArea.getSelectedText();
+	public void previousOccurrence(final String searchString) {
 	}
 
 	@Override
-	public CaretPosition getCaretPosition() {
-		// FIXME not yet implemented
-		return null;
-	}
-
-	@Override
-	public int getCaretPositionAsIndex() {
-		return textArea.getCaretPosition();
-	}
-
-	@Override
-	public void setText(final String text) {
-		textArea.setText(text);
-	}
-
-	@Override
-	public void focus() {
-		textArea.requestFocus();
-	}
-
-	@Override
-	public void zoomIn() {
-		zoomable.zoomIn();
-	}
-
-	@Override
-	public void zoomOut() {
-		zoomable.zoomOut();
-	}
-
-	@Override
-	public int getFontSize() {
-		return zoomable.getFontSize();
-	}
-
-	@Override
-	public void setFontSize(final int size) {
-		zoomable.setFontSize(size);
+	public void resetSearchPosition() {
 	}
 
 }

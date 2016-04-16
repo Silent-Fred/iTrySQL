@@ -73,7 +73,7 @@ import de.kuehweg.sqltool.dialog.component.ExecutionProgressComponent;
 import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
-import de.kuehweg.sqltool.dialog.component.StatementEditorComponentHolder;
+import de.kuehweg.sqltool.dialog.component.StatementEditorComponentAccessor;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementHtmlFormatter;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementView;
 import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
@@ -132,7 +132,7 @@ import javafx.stage.WindowEvent;
  *
  * @author Michael Kühweg
  */
-public class iTrySQLController implements Initializable, EventHandler<WindowEvent>, StatementEditorComponentHolder {
+public class iTrySQLController implements Initializable, EventHandler<WindowEvent>, StatementEditorComponentAccessor {
 
 	private static int countWindows = 1;
 
@@ -1135,7 +1135,9 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * dafür vorgesehenen Collection eingetragen.
 	 */
 	private void initializeQuickSearch() {
-		// TODO FindAction für den StatementEditor
+		final FindAction findActionOnStatementEditor = statementEditorComponent.getFindAction();
+		findInput.textProperty().addListener(findActionOnStatementEditor);
+		findActionsForQuickSearch.add(findActionOnStatementEditor);
 
 		final FindAction findActionOnDbOutput = new TextAreaFindAction(dbOutput);
 		findInput.textProperty().addListener(findActionOnDbOutput);

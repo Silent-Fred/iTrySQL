@@ -109,7 +109,7 @@ public class SourceFileDropTargetUtil {
 	}
 
 	private static void setOnDragDropped(final Pane containerPane,
-			final StatementEditorComponentHolder statementEditorHolder) {
+			final StatementEditorComponentAccessor statementEditorHolder) {
 		containerPane.setOnDragDropped(event -> {
 			final Dragboard dragboard = event.getDragboard();
 			boolean success = false;
@@ -142,7 +142,7 @@ public class SourceFileDropTargetUtil {
 	 *            Hier kann das Ziel für das Skript abgefragt werden
 	 */
 	public static void transformIntoSourceFileDropTarget(final Pane containerPane,
-			final StatementEditorComponentHolder statementEditorHolder) {
+			final StatementEditorComponentAccessor statementEditorHolder) {
 
 		setOnDragOver(containerPane);
 

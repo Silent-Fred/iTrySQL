@@ -24,14 +24,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package de.kuehweg.sqltool.dialog.component;
+package de.kuehweg.sqltool.dialog.action;
 
-import de.kuehweg.sqltool.dialog.component.editor.StatementEditorComponent;
+import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
+import de.kuehweg.sqltool.dialog.component.editor.TextAreaBasedEditor;
 
 /**
  * @author Michael Kühweg
  */
-public interface StatementEditorComponentHolder {
+public class StatementEditorFindAction extends FindAction {
 
-	StatementEditorComponent getStatementEditorComponent();
+	private FindAction findAction;
+
+	public StatementEditorFindAction() {
+		super();
+		findAction = new EmptyFindAction();
+	}
+
+	public void attachToCurrentStatementEditor(final StatementEditor statementEditor) {
+		if (statementEditor instanceof TextAreaBasedEditor) {
+			findAction = new TextAreaFindAction(((TextAreaBasedEditor) statementEditor).getUnderlyingTextArea());
+		} else {
+			findAction = new EmptyFindAction();
+		}
+	}
+
+	@Override
+	public void find(final String searchString) {
+		findAction.find(searchString);
+	}
+
+	@Override
+	public void nextOccurrence(final String searchString) {
+		findAction.nextOccurrence(searchString);
+	}
+
+	@Override
+	public void previousOccurrence(final String searchString) {
+		findAction.previousOccurrence(searchString);
+	}
+
+	@Override
+	public void resetSearchPosition() {
+		findAction.resetSearchPosition();
+	}
+
 }

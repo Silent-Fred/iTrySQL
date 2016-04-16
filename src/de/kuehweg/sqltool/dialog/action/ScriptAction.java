@@ -32,7 +32,7 @@ import java.net.URISyntaxException;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.FileUtil;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
-import de.kuehweg.sqltool.dialog.component.StatementEditorComponentHolder;
+import de.kuehweg.sqltool.dialog.component.StatementEditorComponentAccessor;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
@@ -43,7 +43,7 @@ import javafx.stage.Window;
  */
 public class ScriptAction {
 
-	private final StatementEditorComponentHolder statementEditorHolder;
+	private final StatementEditorComponentAccessor statementEditorHolder;
 
 	private Window windowForFileChooser;
 
@@ -52,7 +52,7 @@ public class ScriptAction {
 	 *
 	 * @param statementEditorHolder
 	 */
-	public ScriptAction(final StatementEditorComponentHolder statementEditorHolder) {
+	public ScriptAction(final StatementEditorComponentAccessor statementEditorHolder) {
 		this.statementEditorHolder = statementEditorHolder;
 	}
 

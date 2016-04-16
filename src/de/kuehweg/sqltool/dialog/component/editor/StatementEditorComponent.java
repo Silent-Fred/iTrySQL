@@ -30,6 +30,7 @@ import java.io.Serializable;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
+import de.kuehweg.sqltool.dialog.action.StatementEditorFindAction;
 import de.kuehweg.sqltool.dialog.util.WebViewBundledResourceErrorDetection;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import de.kuehweg.sqltool.itrysql.ResourceLocator;
@@ -56,10 +57,13 @@ public class StatementEditorComponent implements Serializable {
 
 	private final StatementEditorCycle statementEditorCycle = new StatementEditorCycle();
 
+	private final StatementEditorFindAction findAction = new StatementEditorFindAction();
+
 	public void setAnchor(final AnchorPane anchor) {
 		this.anchor = anchor;
 		statementEditorCycle.recycle();
 		installEditorTextArea();
+		findAction.attachToCurrentStatementEditor(statementEditor);
 	}
 
 	public StatementEditor getActiveStatementEditor() {
@@ -75,10 +79,15 @@ public class StatementEditorComponent implements Serializable {
 		} else {
 			installEditorTextArea();
 		}
+		findAction.attachToCurrentStatementEditor(statementEditor);
 	}
 
 	public StatementEditorCycle getStatementEditorCycle() {
 		return statementEditorCycle;
+	}
+
+	public StatementEditorFindAction getFindAction() {
+		return findAction;
 	}
 
 	/**
