@@ -367,6 +367,7 @@
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="menuItemFileOpenScript" mnemonicParsing="false" onAction="#fileOpenScriptAction" text="%menu_item_openScript" />
             <MenuItem fx:id="menuItemFileSaveScript" mnemonicParsing="false" onAction="#fileSaveScriptAction" text="%menu_item_saveScript" />
+                  <MenuItem fx:id="menuItemFileSaveScriptAs" mnemonicParsing="false" onAction="#fileSaveScriptAsAction" text="%menu_item_saveScriptAs" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="menuItemClose" mnemonicParsing="false" onAction="#quit" text="%menu_item_quit" />
           </items>

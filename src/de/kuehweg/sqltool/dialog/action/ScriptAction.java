@@ -47,6 +47,8 @@ public class ScriptAction {
 
 	private Window windowForFileChooser;
 
+	private File selectedFile;
+
 	/**
 	 * Quelle und Ziel ist jeweils der aktuelle StatementEditor.
 	 *
@@ -67,10 +69,17 @@ public class ScriptAction {
 	public void loadScript() {
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(DialogDictionary.LABEL_OPEN_SCRIPT.toString());
-		final File file = fileChooser.showOpenDialog(windowForFileChooser);
-		if (file != null) {
+		selectedFile = fileChooser.showOpenDialog(windowForFileChooser);
+		load();
+	}
+
+	/**
+	 * Dateinhalt lesen.
+	 */
+	private void load() {
+		if (selectedFile != null) {
 			try {
-				final String script = FileUtil.readFile(FileUtil.convertToURI(file).toURL());
+				final String script = FileUtil.readFile(FileUtil.convertToURI(selectedFile).toURL());
 				statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().setText(script);
 			} catch (final IOException | URISyntaxException ex) {
 				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
@@ -81,15 +90,34 @@ public class ScriptAction {
 	}
 
 	/**
-	 * Inhalt der TextArea als Datei speichern (mit Dateiauswahl).
+	 * Inhalt der TextArea als Datei speichern (ohne Dateiauswahl, wenn das
+	 * Skript über die gleiche SaveAction bereits gespeichert wurde).
 	 */
 	public void saveScript() {
+		if (selectedFile == null) {
+			saveScriptAs();
+		} else {
+			save();
+		}
+	}
+
+	/**
+	 * Inhalt der TextArea als Datei speichern (mit Dateiauswahl).
+	 */
+	public void saveScriptAs() {
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle(DialogDictionary.LABEL_SAVE_SCRIPT.toString());
-		final File file = fileChooser.showSaveDialog(windowForFileChooser);
-		if (file != null) {
+		selectedFile = fileChooser.showSaveDialog(windowForFileChooser);
+		save();
+	}
+
+	/**
+	 * Speichert den übergebenen Text in der aktuell ausgewählten Datei.
+	 */
+	private void save() {
+		if (selectedFile != null) {
 			try {
-				FileUtil.writeFile(FileUtil.enforceExtension(file.toURI().toURL(), "sql"),
+				FileUtil.writeFile(FileUtil.enforceExtension(selectedFile.toURI().toURL(), "sql"),
 						statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().getText());
 			} catch (final IOException ex) {
 				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
