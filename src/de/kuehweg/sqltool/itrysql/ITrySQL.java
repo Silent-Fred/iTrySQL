@@ -38,6 +38,7 @@ import de.kuehweg.sqltool.common.achievement.AchievementManager;
 import de.kuehweg.sqltool.common.achievement.DefaultRankingPoints;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
+import de.kuehweg.sqltool.dialog.util.WindowIconRepaintIssueOnResizeFix;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -143,6 +144,10 @@ public class ITrySQL extends Application {
 				ev.consume();
 			}
 		});
+
+		// FIXME
+		WindowIconRepaintIssueOnResizeFix.fix(primaryStage);
+
 		primaryStage.show();
 	}
 

@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.dialog.images.ImagePack;
 import de.kuehweg.sqltool.dialog.util.StageSizerUtil;
+import de.kuehweg.sqltool.dialog.util.WindowIconRepaintIssueOnResizeFix;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -93,6 +94,10 @@ public class ITrySQLStage extends Stage {
 			setOnHiding(controller);
 			setOnCloseRequest(controller);
 			controller.setApplicationWindow(scene.getWindow());
+
+			// FIXME
+			WindowIconRepaintIssueOnResizeFix.fix(callerStage);
+
 		} catch (final IOException ex) {
 			Logger.getLogger(ITrySQLStage.class.getName()).log(Level.SEVERE, null, ex);
 		}
