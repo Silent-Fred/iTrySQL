@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,8 +49,6 @@ import de.kuehweg.sqltool.database.metadata.description.TableDescription;
  * @author Michael Kühweg
  */
 public class SchemaTreeNodeBuilderTest {
-
-	DatabaseDescription db;
 
 	public SchemaTreeNodeBuilderTest() {
 	}

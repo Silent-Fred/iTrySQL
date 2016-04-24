@@ -149,19 +149,24 @@ public final class FileUtil {
 	 * @return Dateiname mit Erweiterung
 	 */
 	public static URL enforceExtension(final URL filename, final String ext) {
-		if (ext == null) {
-			return filename;
+		URL filenameWithExtension = null;
+		final String safeAndTrimmedExt = ext != null ? ext.trim() : "";
+		if (nothingToDoToEnforceExtension(filename, safeAndTrimmedExt)) {
+			filenameWithExtension = filename;
+		} else {
+			try {
+				filenameWithExtension = new URL(
+						filename.toExternalForm() + (safeAndTrimmedExt.startsWith(FILENAME_EXTENSION_SEPARATOR) ? ""
+								: FILENAME_EXTENSION_SEPARATOR) + safeAndTrimmedExt);
+			} catch (final MalformedURLException ex) {
+				filenameWithExtension = filename;
+			}
 		}
-		final String trimmedExt = ext.trim();
-		if (filename.getFile().toLowerCase().endsWith(FILENAME_EXTENSION_SEPARATOR + trimmedExt.toLowerCase())) {
-			return filename;
-		}
-		try {
-			return new URL(filename.toExternalForm()
-					+ (trimmedExt.startsWith(FILENAME_EXTENSION_SEPARATOR) ? "" : FILENAME_EXTENSION_SEPARATOR) + ext);
-		} catch (final MalformedURLException ex) {
-			return filename;
-		}
+		return filenameWithExtension;
+	}
+
+	private static boolean nothingToDoToEnforceExtension(final URL filename, final String ext) {
+		return filename.getFile().toLowerCase().endsWith(FILENAME_EXTENSION_SEPARATOR + ext.trim().toLowerCase());
 	}
 
 	/**
