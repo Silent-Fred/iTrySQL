@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,8 +47,8 @@ import de.kuehweg.sqltool.database.execution.fake.StatementStubWithFakeResultSet
  */
 public class ExecutionTaskTest {
 
-	private static final String url = "db://localhost";
-	private static final String userName = "john_doe";
+	private static final String URL = "db://localhost";
+	private static final String USER_NAME = "john_doe";
 
 	private Object[] columnLabels;
 	private Object[] columnContent;
@@ -74,8 +74,8 @@ public class ExecutionTaskTest {
 		columnLabels = new String[] { "does", "not", "compute" };
 		columnContent = new Object[] { " col1 ", null, 42 };
 		metaData = new DatabaseMetaDataStubWithUrlAndUser();
-		metaData.setURL(url);
-		metaData.setUserName(userName);
+		metaData.setURL(URL);
+		metaData.setUserName(USER_NAME);
 		connection = new ConnectionStubWithBasicMetaData();
 		connection.setMetaData(metaData);
 		resultSet = new ResultSetStubFromObjectArray(new Object[][] { columnLabels, columnContent });
@@ -88,7 +88,7 @@ public class ExecutionTaskTest {
 	@Test
 	public void noFrillsExecution() throws Exception {
 		statement = new StatementStubWithFakeResultSet(connection, resultSet);
-		final ExecutionTask execution = new ExecutionTask(statement, "select * from wherever;");
+		final ExecutionTask execution = new ExecutionTask("select * from wherever;", statement);
 		final ExecutionTrackerStub tracker = new ExecutionTrackerStub();
 		execution.attach(tracker);
 		execution.call();
@@ -102,7 +102,7 @@ public class ExecutionTaskTest {
 	@Test
 	public void errorOnExecution() throws Exception {
 		statement = new FakeStatementThrowingExceptionOnExecute(connection, resultSet);
-		final ExecutionTask execution = new ExecutionTask(statement, "select * from wherever;");
+		final ExecutionTask execution = new ExecutionTask("select * from wherever;", statement);
 		final ExecutionTrackerStub tracker = new ExecutionTrackerStub();
 		execution.attach(tracker);
 		execution.call();
@@ -116,7 +116,7 @@ public class ExecutionTaskTest {
 	@Test
 	public void noTrackerExecution() throws Exception {
 		statement = new StatementStubWithFakeResultSet(connection, resultSet);
-		final ExecutionTask execution = new ExecutionTask(statement, "select * from wherever;");
+		final ExecutionTask execution = new ExecutionTask("select * from wherever;", statement);
 		execution.call();
 		// no exception
 	}

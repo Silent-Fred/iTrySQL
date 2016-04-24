@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,33 +42,26 @@ public class StatementString {
 
 	public static final String[] TCL_COMMANDS = new String[] { "COMMIT", "ROLLBACK", "SAVEPOINT" };
 
-	private final String sql;
+	private final String originalStatement;
 
 	public StatementString(final String sql) {
 		super();
-		this.sql = sql;
+		originalStatement = sql;
 	}
 
 	/**
-	 * Unveränderter Text der Anweisung.
-	 *
-	 * @return
+	 * @return Liefert den unveränderten Text der Anweisung.
 	 */
 	public String originalStatement() {
-		return sql;
+		return originalStatement;
 	}
 
 	/**
-	 * Liefert die Anweisung ohne Kommentare zurück. Kommentare werden jeweils
-	 * durch ein Leerzeichen ersetzt.
-	 *
-	 * @return
+	 * @return Anweisung ohne Kommentare. Kommentare werden jeweils durch ein
+	 *         Leerzeichen ersetzt.
 	 */
 	public String uncommentedStatement() {
-		if (sql == null || sql.trim().length() == 0) {
-			return "";
-		}
-		String trimmedStatement = sql.trim();
+		String trimmedStatement = originalStatement != null ? originalStatement.trim() : "";
 		int oldLength;
 		do {
 			oldLength = trimmedStatement.length();
@@ -141,6 +134,12 @@ public class StatementString {
 		return uncommentedAndUpperCase;
 	}
 
+	/**
+	 * @param commands
+	 *            Liste von Schlüsselwörtern
+	 * @return true wenn das Statement mit einem Schlüsselwort aus der
+	 *         übergebenen Liste beginnt.
+	 */
 	private boolean isInCommandList(final String[] commands) {
 		final String firstKeyword = firstKeyword();
 		if (!firstKeyword.isEmpty()) {
@@ -153,65 +152,118 @@ public class StatementString {
 		return false;
 	}
 
+	/**
+	 * @return Liefert true, wenn die Anweisung leer ist, bzw. nur aus
+	 *         Kommentaren besteht.
+	 */
 	public boolean isEmpty() {
-		return sql == null || sql.trim().isEmpty() || trimAndRemoveTrailingSemicolons(uncommentedStatement()).isEmpty();
+		return originalStatement == null || originalStatement.trim().isEmpty()
+				|| trimAndRemoveTrailingSemicolons(uncommentedStatement()).isEmpty();
 	}
 
+	/**
+	 * @param statement
+	 *            Text der SQL-Anweisung
+	 * @return Startposition des ersten Kommentars in der Anweisung. Wenn kein
+	 *         Kommentar enthalten ist, dann -1
+	 */
 	private int findFirstCommentStartIndex(final String statement) {
-		if (statement == null || statement.trim().length() == 0) {
-			return -1;
-		}
+		int startIndexOfFirstComment = -1; // kein Kommentar
 		final ScannerI scanner = new DefaultScanner(statement);
 		scanner.startToken();
-		StatementExtractionStates state = StatementExtractionStates.START;
-		while (scanner.hasMoreElements()) {
-			state = state.evaluate(scanner);
-			switch (state) {
-			case INSIDE_BLOCK_COMMENT:
-			case INSIDE_LINE_COMMENT:
-				scanner.pushback(2);
-				final char[] token = scanner.currentToken();
-				return token == null ? 0 : token.length - 1;
-			default:
-				break;
-			}
+		final StatementExtractionStates state = scanForwardUntilInsideFirstComment(scanner);
+		if (insideCommentState(state)) {
+			scanner.pushback(2);
+			final char[] token = scanner.currentToken();
+			// entweder ganz am Anfang oder abhängig von der Länge des
+			// vorangegangenen Abschnitts
+			startIndexOfFirstComment = token == null ? 0 : token.length;
 		}
-		return -1;
+		return startIndexOfFirstComment;
 	}
 
+	/**
+	 * @param statement
+	 *            Text der SQL-Anweisung
+	 * @return Endposition des ersten Kommentars in der Anweisung. Wenn kein
+	 *         Kommentar enthalten ist, dann -1. Die Endposition ist inklusive
+	 *         zu betrachten, gehört also noch zum Kommentar.
+	 */
 	private int findFirstCommentEndIndex(final String statement) {
-		if (statement == null || statement.trim().length() == 0) {
-			return -1;
-		}
+		int endIndexOfFirstComment = -1; // kein Kommentar
 		final ScannerI scanner = new DefaultScanner(statement);
 		scanner.startToken();
-		StatementExtractionStates state = StatementExtractionStates.START;
-		boolean inside = false;
-		while (scanner.hasMoreElements()) {
-			state = state.evaluate(scanner);
-			switch (state) {
-			case INSIDE_BLOCK_COMMENT:
-			case INSIDE_LINE_COMMENT:
-				inside = true;
-				break;
-			case START:
-				if (inside) {
-					scanner.pushback();
-					final char[] token = scanner.currentToken();
-					return token == null ? 0 : token.length;
-				}
-				break;
-			default:
-				break;
+		StatementExtractionStates state = scanForwardUntilInsideFirstComment(scanner);
+		if (insideCommentState(state)) {
+			state = scanForwardToNextStartStateOrEndOfInput(scanner, state);
+			if (state != StatementExtractionStates.START) {
+				endIndexOfFirstComment = statement.length() - 1;
+			} else {
+				scanner.pushback();
+				final char[] token = scanner.currentToken();
+				endIndexOfFirstComment = token == null ? 0 : token.length;
 			}
 		}
-		return inside ? statement.length() - 1 : -1;
+		return endIndexOfFirstComment;
 	}
 
-	private String removeFirstComment(final String statement) {
-		if (statement == null || statement.trim().length() == 0) {
-			return "";
+	/**
+	 * Setzt den übergebenen Scanner weiter, bis die lexikalische Analyse
+	 * erkennt, dass sie sich innerhalb eines Kommentars befindet oder bis keine
+	 * weiteren Zeichen mehr vom Scanner verarbeitet werden können.
+	 *
+	 * @param scanner
+	 *            Vorbereiteter Scanner, der auf Anfangsposition für das neu zu
+	 *            lesende Token steht.
+	 * @return Gefundener Zustand, der zum Ende des Scanvorgangs geführt hat.
+	 */
+	private StatementExtractionStates scanForwardUntilInsideFirstComment(final ScannerI scanner) {
+		StatementExtractionStates state = StatementExtractionStates.START;
+		while (scanner.hasMoreElements() && !insideCommentState(state)) {
+			state = state.evaluate(scanner);
 		}
+		return state;
+	}
+
+	/**
+	 * Setzt den übergebenen Scanner weiter, bis die lexikalische Analyse
+	 * erkennt, dass sie einen neuen START-Zustand erreicht hat oder bis keine
+	 * weiteren Zeichen mehr vom Scanner verarbeitet werden können.
+	 *
+	 * @param scanner
+	 *            Vorbereiteter Scanner, der an der Position steht, an der ein
+	 *            Kommentar erkannt wurde.
+	 * @param startState
+	 *            Zustand, der beim Erreichen des Kommentars eingenommen wurde.
+	 *            (zur Unterscheidung, um welche Art von Kommentar es sich
+	 *            handelt)
+	 * @return Gefundener Zustand, der zum Ende des Scanvorgangs geführt hat.
+	 */
+	private StatementExtractionStates scanForwardToNextStartStateOrEndOfInput(final ScannerI scanner,
+			final StatementExtractionStates startState) {
+		StatementExtractionStates state = startState;
+		while (scanner.hasMoreElements() && state != StatementExtractionStates.START) {
+			state = state.evaluate(scanner);
+		}
+		return state;
+	}
+
+	private boolean insideCommentState(final StatementExtractionStates state) {
+		return state == StatementExtractionStates.INSIDE_BLOCK_COMMENT
+				|| state == StatementExtractionStates.INSIDE_LINE_COMMENT;
+	}
+
+	/**
+	 * Entfernt den ersten Kommentar aus der übergebenen Anweisung. Kommentare
+	 * am Anfang oder Ende der Anweisung werden komplett entfernt, Kommentare
+	 * innerhalb der Anweisung werden durch ein Leerzeichen ersetzt. (da sie
+	 * syntaktisch als Trennelement fungieren)
+	 *
+	 * @param statement
+	 *            Text der SQL-Anweisung.
+	 * @return Anweisung ohne den ersten Kommentar.
+	 */
+	private String removeFirstComment(final String statement) {
 		final StringBuilder builder = new StringBuilder();
 		final int firstCommentStartIndex = findFirstCommentStartIndex(statement);
 		if (firstCommentStartIndex < 0) {

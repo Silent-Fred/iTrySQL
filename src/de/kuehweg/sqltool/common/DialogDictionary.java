@@ -83,6 +83,7 @@ public enum DialogDictionary {
 	LABEL_REALLY_QUIT("label_reallyQuit"),
 	LABEL_NOT_REALLY_QUIT("label_notReallyQuit"),
 	LABEL_APPEND_HISTORY_ITEM_TO_EDITOR("label_appendHistoryItemToEditor"),
+	LABEL_IN_MEMORY_DATABASE("label_inMemoryDatabase"),
 	TOOLTIP_TUTORIAL_DATA("tooltip_tutorialData"),
 	TOOLTIP_INCREASE_FONTSIZE("tooltip_increaseFontsize"),
 	TOOLTIP_DECREASE_FONTSIZE("tooltip_decreaseFontsize"),
@@ -106,11 +107,10 @@ public enum DialogDictionary {
 	PATTERN_NEW_CONNECTION_NAME("pattern_newConnectionName"),
 	PATTERN_NEW_CONNECTION_FOLDER("pattern_newConnectionFolder"),
 	PATTERN_NEW_CONNECTION_FILE("pattern_newConnectionFile"),
-	PATTERN_MESSAGE_IN_MEMORY_DATABASE("pattern_messageInMemoryDatabase"),
 	PROMPT_ENTER_STATEMENT("prompt_enterStatement");
 	private final String key;
 
-	private DialogDictionary(final String key) {
+	DialogDictionary(final String key) {
 		this.key = key;
 	}
 

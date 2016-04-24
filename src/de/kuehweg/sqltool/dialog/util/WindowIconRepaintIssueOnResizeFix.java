@@ -34,10 +34,26 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
+ * Unter MacOS tritt in manchen Versionen (JavaFX und/oder MacOS) das Problem
+ * auf, dass bei Größenänderungen des Fensters das Icon nicht mehr richtig
+ * angezeigt wird. Diese Utility-Klasse kann dazu benutzt werden, einen
+ * Workaround an eine Stage zu binden.
+ *
  * @author Michael Kühweg
  */
-public class WindowIconRepaintIssueOnResizeFix {
+public final class WindowIconRepaintIssueOnResizeFix {
 
+	/**
+	 * Utility-Klasse ohne Instances.
+	 */
+	private WindowIconRepaintIssueOnResizeFix() {
+	}
+
+	/**
+	 * @param stage
+	 *            Der übergebenen Stage werden ChangeListener hinzugefügt, die
+	 *            bei Größenänderungen des Fensters das Window-Icon neu setzen.
+	 */
 	public static void fix(final Stage stage) {
 		stage.widthProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
 			final Collection<Image> images = new ArrayList<>(stage.getIcons());

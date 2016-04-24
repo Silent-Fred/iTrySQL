@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@ package de.kuehweg.sqltool.dialog.component;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.execution.StatementExecutionInformation;
-import de.kuehweg.sqltool.dialog.CommonDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecyclePhase;
 import de.kuehweg.sqltool.dialog.updater.ExecutionLifecycleRefresh;
@@ -72,9 +71,8 @@ public class ErrorOnExecutionMessage implements ExecutionTracker {
 
 	@Override
 	public void show() {
-		final CommonDialog error = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(), message,
-				DialogDictionary.COMMON_BUTTON_OK.toString());
-		error.askUserFeedback();
+		new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(), message,
+				DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 	}
 
 }

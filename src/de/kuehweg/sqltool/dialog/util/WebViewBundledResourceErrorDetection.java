@@ -35,20 +35,34 @@ package de.kuehweg.sqltool.dialog.util;
  */
 public class WebViewBundledResourceErrorDetection {
 
-	private static int getMajorVersion() {
+	private static final String VERSION_PROPERTY = "java.version";
+
+	private static final int JAVA_1_0 = 10;
+	private static final int JAVA_8 = 18;
+
+	private final int majorVersion;
+	private final int updateVersion;
+
+	public WebViewBundledResourceErrorDetection() {
+		super();
+		majorVersion = readMajorVersion();
+		updateVersion = readUpdateVersion();
+	}
+
+	private int readMajorVersion() {
 		try {
-			final String version = System.getProperty("java.version");
+			final String version = System.getProperty(VERSION_PROPERTY);
 			int pos = version.indexOf('.');
 			pos = version.indexOf('.', pos + 1);
 			final String major = version.substring(0, pos).replace(".", "");
 			return Integer.parseInt(major);
 		} catch (final Exception wtfWentWrong) {
-			return 10;
+			return JAVA_1_0;
 		}
 	}
 
-	private static int getUpdateVersion() {
-		final String version = System.getProperty("java.version");
+	private int readUpdateVersion() {
+		final String version = System.getProperty(VERSION_PROPERTY);
 		final int pos = version.lastIndexOf('_');
 		if (pos < 0) {
 			return 0;
@@ -61,13 +75,11 @@ public class WebViewBundledResourceErrorDetection {
 		}
 	}
 
-	public static boolean runningOnJavaVersionWithRenderingDeficiencies() {
-		final int majorVersion = getMajorVersion();
-		final int update = getUpdateVersion();
-		return majorVersion == 18 && update > 40 && update < 72;
+	public boolean runningOnJavaVersionWithRenderingDeficiencies() {
+		return majorVersion == JAVA_8 && updateVersion > 40 && updateVersion < 72;
 	}
 
-	public static boolean runningOnJavaVersionWithBundledJavascriptDeficiencies() {
+	public boolean runningOnJavaVersionWithBundledJavascriptDeficiencies() {
 		// FIXME Wird laut Bugtracking erst in Java 9 behoben sein - da bislang
 		// aber ungetestet, wird hier davon ausgegangen, dass es halt überhaupt
 		// nicht funktioniert.

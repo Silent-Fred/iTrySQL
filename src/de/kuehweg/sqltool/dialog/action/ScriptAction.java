@@ -43,7 +43,7 @@ import javafx.stage.Window;
  */
 public class ScriptAction {
 
-	private final StatementEditorComponentAccessor statementEditorHolder;
+	private final StatementEditorComponentAccessor statementEditorAccessor;
 
 	private Window windowForFileChooser;
 
@@ -55,7 +55,7 @@ public class ScriptAction {
 	 * @param statementEditorHolder
 	 */
 	public ScriptAction(final StatementEditorComponentAccessor statementEditorHolder) {
-		this.statementEditorHolder = statementEditorHolder;
+		statementEditorAccessor = statementEditorHolder;
 	}
 
 	public ScriptAction attachFileChooserToWindow(final Window window) {
@@ -80,11 +80,11 @@ public class ScriptAction {
 		if (selectedFile != null) {
 			try {
 				final String script = FileUtil.readFile(FileUtil.convertToURI(selectedFile).toURL());
-				statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().setText(script);
+				statementEditorAccessor.getStatementEditorComponent().getActiveStatementEditor().setText(script);
 			} catch (final IOException | URISyntaxException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString())
+								.askUserFeedback();
 			}
 		}
 	}
@@ -118,12 +118,11 @@ public class ScriptAction {
 		if (selectedFile != null) {
 			try {
 				FileUtil.writeFile(FileUtil.enforceExtension(selectedFile.toURI().toURL(), "sql"),
-						statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().getText());
+						statementEditorAccessor.getStatementEditorComponent().getActiveStatementEditor().getText());
 			} catch (final IOException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
-
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString())
+								.askUserFeedback();
 			}
 		}
 	}

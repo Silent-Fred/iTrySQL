@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,13 @@ package de.kuehweg.sqltool.dialog.action;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.database.DatabaseConstants;
 import de.kuehweg.sqltool.dialog.AlertBox;
-import de.kuehweg.sqltool.dialog.CommonDialog;
 import de.kuehweg.sqltool.dialog.ErrorMessage;
 import de.kuehweg.sqltool.dialog.updater.ExecutionTracker;
 
@@ -49,19 +49,11 @@ public class ExecuteAction {
 	private boolean limitMaxRows;
 
 	public void attach(final ExecutionTracker... trackers) {
-		if (trackers != null) {
-			for (final ExecutionTracker tracker : trackers) {
-				this.trackers.add(tracker);
-			}
-		}
+		this.trackers.addAll(Arrays.asList(trackers));
 	}
 
 	public void detach(final ExecutionTracker... trackers) {
-		if (trackers != null) {
-			for (final ExecutionTracker tracker : trackers) {
-				this.trackers.remove(tracker);
-			}
-		}
+		this.trackers.remove(Arrays.asList(trackers));
 	}
 
 	public void setLimitMaxRows(final boolean limitMaxRows) {
@@ -78,15 +70,13 @@ public class ExecuteAction {
 		try {
 			final DialogDictionary feedback = startExecution(sql, connection);
 			if (feedback != null) {
-				final CommonDialog alert = new AlertBox(DialogDictionary.MESSAGEBOX_WARNING.toString(),
-						feedback.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-				alert.askUserFeedback();
+				new AlertBox(DialogDictionary.MESSAGEBOX_WARNING.toString(), feedback.toString(),
+						DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 			}
 		} catch (final SQLException ex) {
-			final CommonDialog error = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+			new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 					ex.getLocalizedMessage() + " (" + ex.getSQLState() + ")",
-					DialogDictionary.COMMON_BUTTON_OK.toString());
-			error.askUserFeedback();
+					DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 		}
 	}
 
@@ -99,7 +89,8 @@ public class ExecuteAction {
 	 *
 	 * @param sql
 	 * @param connection
-	 * @return
+	 * @return Eintrag im DialogDictionary mit passender Fehlermeldung, falls
+	 *         ein Fehler aufgetreten ist, sonst null.
 	 * @throws java.sql.SQLException
 	 *             Im Ausnahmefall (z.B. kein Statement erzeugbar auf der
 	 *             Connection). SQLExceptions während der Ausführung werden über
@@ -116,7 +107,17 @@ public class ExecuteAction {
 		// und bekommt alle Informationen mit auf den Weg, um
 		// während und zum Abschluss der Ausführung die Oberfläche
 		// aktualisieren zu können.
-		final ExecutionTask executionTask = new ExecutionTask(connection.createStatement(), sql);
+		startExecutionAsBackgroundTask(sql, connection);
+		return null;
+	}
+
+	/**
+	 * @param sql
+	 * @param connection
+	 * @throws SQLException
+	 */
+	private void startExecutionAsBackgroundTask(final String sql, final Connection connection) throws SQLException {
+		final ExecutionTask executionTask = new ExecutionTask(sql, connection.createStatement());
 		executionTask.attach(trackers);
 		if (limitMaxRows) {
 			executionTask.setMaxRows(DatabaseConstants.MAX_ROWS);
@@ -124,6 +125,5 @@ public class ExecuteAction {
 		final Thread th = new Thread(executionTask);
 		th.setDaemon(true);
 		th.start();
-		return null;
 	}
 }

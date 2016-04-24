@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,6 +82,9 @@ public class StatementStringTest {
 	public void uncomment() {
 		assertEquals("select * from table;",
 				new StatementString("/* Test */ select * --\nfrom table;").uncommentedStatement());
+		assertEquals("select", new StatementString("/* Test */select/* Test */").uncommentedStatement());
+		assertEquals("", new StatementString(null).uncommentedStatement());
+		assertEquals("", new StatementString("").uncommentedStatement());
 	}
 
 	@Test

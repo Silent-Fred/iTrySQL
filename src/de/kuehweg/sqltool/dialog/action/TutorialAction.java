@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,24 +48,39 @@ import de.kuehweg.sqltool.dialog.ErrorMessage;
 public class TutorialAction {
 
 	public void createTutorial(final ExecuteAction executeAction, final Connection connection) {
+		if (confirmedByUser()) {
+			createTutorialDataInDatabase(executeAction, connection);
+		}
+	}
+
+	/**
+	 * Rückfragedialog anzeigen und auswerten.
+	 *
+	 * @return true wenn der Anwender bestätigt, dass die Tutorialdaten
+	 *         anegelegt werden sollen.
+	 */
+	private boolean confirmedByUser() {
 		final ConfirmDialog confirm = new ConfirmDialog(DialogDictionary.MESSAGEBOX_CONFIRM.toString(),
 				DialogDictionary.MSG_REALLY_CREATE_TUTORIAL_DATA.toString(),
 				DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString(),
 				DialogDictionary.COMMON_BUTTON_CANCEL.toString());
-		if (DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString().equals(confirm.askUserFeedback())) {
-			final StringBuilder completeSql = new StringBuilder();
-			try {
-				completeSql.append(buildStaticPortionOfScript());
-				completeSql.append(buildDynamicPortionOfScript(connection));
-				executeAction.handleExecuteAction(completeSql.toString(), connection);
-				AchievementManager.getInstance().fireEvent(NamedAchievementEvent.TUTORIAL_BUILT.asAchievementEvent(),
-						1);
-			} catch (final IOException | SQLException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_TUTORIAL_CREATION_FAILED + " (" + ex.getLocalizedMessage() + ")",
-						DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
-			}
+		return DialogDictionary.LABEL_CREATE_TUTORIAL_DATA.toString().equals(confirm.askUserFeedback());
+	}
+
+	/**
+	 * @param executeAction
+	 * @param connection
+	 */
+	private void createTutorialDataInDatabase(final ExecuteAction executeAction, final Connection connection) {
+		try {
+			final String completeSql = new StringBuilder().append(buildStaticPortionOfScript())
+					.append(buildDynamicPortionOfScript(connection)).toString();
+			executeAction.handleExecuteAction(completeSql, connection);
+			AchievementManager.getInstance().fireEvent(NamedAchievementEvent.TUTORIAL_BUILT.asAchievementEvent(), 1);
+		} catch (final IOException | SQLException ex) {
+			new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+					DialogDictionary.ERR_TUTORIAL_CREATION_FAILED + " (" + ex.getLocalizedMessage() + ")",
+					DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 		}
 	}
 

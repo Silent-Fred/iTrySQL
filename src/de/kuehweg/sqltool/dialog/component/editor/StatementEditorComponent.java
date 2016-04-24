@@ -152,7 +152,7 @@ public class StatementEditorComponent implements Serializable {
 			}
 		});
 
-		if (WebViewBundledResourceErrorDetection.runningOnJavaVersionWithBundledJavascriptDeficiencies()
+		if (new WebViewBundledResourceErrorDetection().runningOnJavaVersionWithBundledJavascriptDeficiencies()
 				&& new ResourceLocator().looksLikeBundledApplication()) {
 			javascriptEditor.getEngine()
 					.load(new ResourceLocator().getExternalFormForExplodedResourceInBundle(resource));

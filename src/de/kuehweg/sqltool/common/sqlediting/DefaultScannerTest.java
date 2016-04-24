@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Michael Kühweg
+ * Copyright (c) 2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,43 +23,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package de.kuehweg.gamification;
 
-import static org.junit.Assert.assertEquals;
+package de.kuehweg.sqltool.common.sqlediting;
+
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-
-import java.util.HashSet;
-import java.util.Set;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 /**
  * @author Michael Kühweg
  */
-public class AchievementEventTest {
+public class DefaultScannerTest {
 
 	@Test
-	public void equalsAndHashCode() {
-		final String a1 = "A";
-		final String a2 = "AB".substring(0, 1);
-		final String b = "B";
-
-		// Setup des Tests nicht ungewollt verändern...
-		assertEquals(a1, a2);
-		assertFalse(a1 == a2);
-
-		final AchievementEvent event1 = new AchievementEvent(a1);
-		final AchievementEvent event2 = new AchievementEvent(a2);
-		final AchievementEvent event3 = new AchievementEvent(b);
-
-		assertEquals(event1, event2);
-		assertNotEquals(event1, event3);
-
-		final Set<AchievementEvent> set = new HashSet<>();
-		set.add(event1);
-		set.add(event2);
-		set.add(event3);
-		assertEquals(2, set.size());
+	public void testNullScanner() {
+		final ScannerI scanner = new DefaultScanner(null);
+		assertNotNull(scanner);
+		assertFalse(scanner.hasMoreElements());
 	}
+
+	@Test
+	public void testEmptyScanner() {
+		final ScannerI scanner = new DefaultScanner("");
+		assertNotNull(scanner);
+		assertFalse(scanner.hasMoreElements());
+	}
+
+	@Test
+	public void testWhitespaceScanner() {
+		final ScannerI scanner = new DefaultScanner(" ");
+		assertNotNull(scanner);
+		assertTrue(scanner.hasMoreElements());
+	}
+
 }

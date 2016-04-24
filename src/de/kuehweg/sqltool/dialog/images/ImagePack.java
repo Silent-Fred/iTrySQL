@@ -34,15 +34,21 @@ import javafx.scene.image.Image;
  */
 public enum ImagePack {
 
-	APP_ICON("AppIcon.png"), APP_ICON_256x256("AppIcon256.png"), APP_ICON_128x128("AppIcon128.png"), APP_ICON_64x64(
-			"AppIcon64.png"), APP_ICON_32x32("AppIcon32.png"), APP_ICON_16x16("AppIcon16.png"), MSG_ERROR(
-					"msg_error.png"), MSG_INFO("msg_info.png"), MSG_QUESTION("msg_question.png"), MSG_WARNING(
-							"msg_warning.png");
+	APP_ICON("AppIcon.png"),
+	APP_ICON_256x256("AppIcon256.png"),
+	APP_ICON_128x128("AppIcon128.png"),
+	APP_ICON_64x64("AppIcon64.png"),
+	APP_ICON_32x32("AppIcon32.png"),
+	APP_ICON_16x16("AppIcon16.png"),
+	MSG_ERROR("msg_error.png"),
+	MSG_INFO("msg_info.png"),
+	MSG_QUESTION("msg_question.png"),
+	MSG_WARNING("msg_warning.png");
 
 	private static final String RESOURCE_PATH = "/resources/images/";
 	private final String imageName;
 
-	private ImagePack(final String imageName) {
+	ImagePack(final String imageName) {
 		this.imageName = imageName;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,19 @@ package de.kuehweg.sqltool.database;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-
 /**
  * Verbindungsdaten um sich mit einer Datenbank (unterschiedlicher Typen)
  * verbinden zu können.
- * 
+ *
  * @author Michael Kühweg
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class ConnectionSetting implements Serializable,
-		Comparable<ConnectionSetting> {
+public class ConnectionSetting implements Serializable, Comparable<ConnectionSetting> {
 
 	private static final long serialVersionUID = -3540291839181124105L;
 	private String name;
@@ -54,9 +53,8 @@ public class ConnectionSetting implements Serializable,
 	protected ConnectionSetting() {
 	}
 
-	public ConnectionSetting(final String name, final JDBCType type,
-			final String dbPath, final String dbName, final String user,
-			final String password) {
+	public ConnectionSetting(final String name, final JDBCType type, final String dbPath, final String dbName,
+			final String user, final String password) {
 
 		this.name = name;
 		this.type = type;
@@ -120,10 +118,7 @@ public class ConnectionSetting implements Serializable,
 	}
 
 	public String getUrl() {
-		String url = type.getUrlPrefix() + type.getDbType() + dbPath;
-		if (!url.endsWith("/")) {
-			url += "/";
-		}
+		final String url = terminatedBySlash(type.getUrlPrefix() + type.getDbType() + dbPath);
 		try {
 			return url + URLEncoder.encode(dbName, "UTF-8");
 		} catch (final UnsupportedEncodingException ex) {
@@ -132,15 +127,19 @@ public class ConnectionSetting implements Serializable,
 	}
 
 	public String getUrlWithoutTypePrefix() {
-		String url = type.getDbType() + dbPath;
-		if (!url.endsWith("/")) {
-			url += "/";
-		}
+		final String url = terminatedBySlash(type.getDbType() + dbPath);
 		try {
 			return url + URLEncoder.encode(dbName, "UTF-8");
 		} catch (final UnsupportedEncodingException ex) {
 			return url + "johndoe";
 		}
+	}
+
+	private String terminatedBySlash(final String url) {
+		if (!url.endsWith("/")) {
+			return url + "/";
+		}
+		return url;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,9 +92,8 @@ public class ConnectionDialogController implements Initializable {
 	public void connect(final ActionEvent event) {
 		final ConnectionSetting selectedSetting = connectionSettings.getValue();
 		if (selectedSetting == null) {
-			final InfoBox info = new InfoBox(DialogDictionary.LABEL_CONNECT.toString(),
-					DialogDictionary.MSG_SELECT_CONNECTION.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-			info.askUserFeedback();
+			new InfoBox(DialogDictionary.LABEL_CONNECT.toString(), DialogDictionary.MSG_SELECT_CONNECTION.toString(),
+					DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 		} else {
 			final ConnectionSetting connectionSetting = new ConnectionSetting(selectedSetting.getName(),
 					selectedSetting.getType(), selectedSetting.getDbPath(), selectedSetting.getDbName(), user.getText(),

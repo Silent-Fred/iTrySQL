@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ import javafx.stage.DirectoryChooser;
  *
  * @author Michael Kühweg
  */
-public class ConnectionComponentController {
+public final class ConnectionComponentController {
 
 	/**
 	 * Builder-Pattern.
@@ -199,10 +199,9 @@ public class ConnectionComponentController {
 			connectionSelection.setValue(setting);
 			putSelectedConnectionSettingInDialog();
 		} catch (final BackingStoreException ex) {
-			final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+			new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 					DialogDictionary.ERR_CONNECTION_SETTING_SAVE_FAILED.toString(),
-					DialogDictionary.COMMON_BUTTON_OK.toString());
-			msg.askUserFeedback();
+					DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 		}
 	}
 
@@ -215,10 +214,9 @@ public class ConnectionComponentController {
 			try {
 				removeConnectionSettingFromPreferences(connectionSelection.getValue());
 			} catch (final BackingStoreException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 						DialogDictionary.ERR_CONNECTION_SETTING_SAVE_FAILED.toString(),
-						DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
+						DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 			}
 			prepareConnectionSettings();
 			// nach dem Löschen immer den Editiermodus beenden

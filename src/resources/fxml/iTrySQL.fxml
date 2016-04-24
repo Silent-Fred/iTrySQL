@@ -235,7 +235,7 @@
                                           </VBox>
                                        </children>
                                     </HBox>
-                        <Label fx:id="permanentMessage" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Label" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Label fx:id="labelDatabaseIsTemporary" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Label" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <stylesheets>
                             <URL value="@../css/itrysql.css" />
                           </stylesheets>

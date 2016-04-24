@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,8 @@ public class DefaultScanner implements ScannerI {
 	 * @param input
 	 */
 	public DefaultScanner(final String input) {
-		content = input.toCharArray();
+		super();
+		content = input != null ? input.toCharArray() : new char[0];
 		position = 0;
 		maxPosition = content.length - 1;
 		startToken = 0;

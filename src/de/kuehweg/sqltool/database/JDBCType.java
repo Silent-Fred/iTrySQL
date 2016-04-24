@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,12 @@ package de.kuehweg.sqltool.database;
  */
 public enum JDBCType {
 
-	HSQL_IN_MEMORY("HSQL Database Engine In-Memory", "org.hsqldb.jdbcDriver", "jdbc:hsqldb:", "mem:"),
+	HSQL_IN_MEMORY("HSQL Database Engine In-Memory", "org.hsqldb.jdbcDriver", "jdbc:hsqldb:", "mem:") {
+		@Override
+		public boolean isPermanent() {
+			return false;
+		}
+	},
 
 	HSQL_STANDALONE("HSQL Database Engine Standalone", "org.hsqldb.jdbcDriver", "jdbc:hsqldb:", "file:"),
 
@@ -43,7 +48,7 @@ public enum JDBCType {
 	private final String urlPrefix;
 	private final String dbType;
 
-	private JDBCType(final String name, final String driverClass, final String urlPrefix, final String dbType) {
+	JDBCType(final String name, final String driverClass, final String urlPrefix, final String dbType) {
 		this.name = name;
 		this.driverClass = driverClass;
 		this.urlPrefix = urlPrefix;
@@ -64,6 +69,10 @@ public enum JDBCType {
 
 	public String getDbType() {
 		return dbType;
+	}
+
+	public boolean isPermanent() {
+		return true;
 	}
 
 	@Override

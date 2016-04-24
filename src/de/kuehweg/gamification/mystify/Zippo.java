@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,13 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author Michael Kühweg
  */
-public class Zippo {
+public final class Zippo {
+
+	/**
+	 * Utility-Klasse ohne Instances.
+	 */
+	private Zippo() {
+	}
 
 	public static byte[] zip(final byte[] data) throws IOException {
 		try (final ByteArrayOutputStream output = new ByteArrayOutputStream();

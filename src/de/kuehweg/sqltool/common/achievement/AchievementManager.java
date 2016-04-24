@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,12 +47,12 @@ import de.kuehweg.gamification.DelayedAutoPersistentAchievementsSet;
  *
  * @author Michael Kühweg
  */
-public class AchievementManager {
+public final class AchievementManager {
 
-	private static final AchievementManager instance;
+	private static final AchievementManager INSTANCE;
 
 	static {
-		instance = new AchievementManager();
+		INSTANCE = new AchievementManager();
 	}
 
 	private final Achievement[] achievements = new Achievement[NamedAchievement.values().length];
@@ -63,13 +63,20 @@ public class AchievementManager {
 
 	private RankingPoints pointsSystem;
 
+	/**
+	 * Singleton, wird nicht von außerhalb instanziiert.
+	 */
 	private AchievementManager() {
+		super();
 		resetAllAchievements();
 		pointsSystem = new DefaultRankingPoints();
 	}
 
+	/**
+	 * @return Die für die gesamte Applikation gültige Instanz der Achievements.
+	 */
 	public static AchievementManager getInstance() {
-		return instance;
+		return INSTANCE;
 	}
 
 	/**
@@ -110,12 +117,19 @@ public class AchievementManager {
 	 * Setzt einen AchievementPersister und bestimmt damit die Art der
 	 * Speicherung des Fortschritts (z.B. als XML Datei, verschlüsselte XML
 	 * Datei, evtl. über Preferences,...).
+	 *
+	 * @param persister
+	 *            Der zu verwendende {@link AchievementPersister}
 	 */
 	public void setPersister(final AchievementPersister persister) {
 		this.persister = persister;
 		registerForAutoPersist();
 	}
 
+	/**
+	 * Meldet den AchievementManager zur automatischen Speicherung mittels des
+	 * eingetragenen {@link AchievementPersister} an.
+	 */
 	private void registerForAutoPersist() {
 		autoPersistence = new DelayedAutoPersistentAchievementsSet(persister);
 		for (final Achievement achievement : achievements) {

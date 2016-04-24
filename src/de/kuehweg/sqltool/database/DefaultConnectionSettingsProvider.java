@@ -33,15 +33,19 @@ import de.kuehweg.sqltool.common.DialogDictionary;
  *
  * @author Michael Kühweg
  */
-public class DefaultConnectionSettingsProvider {
+public final class DefaultConnectionSettingsProvider {
 
+	/**
+	 * Utility-Klasse ohne Instances.
+	 */
 	private DefaultConnectionSettingsProvider() {
 	}
 
 	/**
 	 * Eine In-Memory Verbinung wird grundsätzlich immer angeboten.
 	 *
-	 * @return
+	 * @return Verbindungsdaten für eine HSQLDB In-Memory Datenbank mit
+	 *         Standardeinstellungen.
 	 */
 	public static ConnectionSetting getDefaultInMemoryConnection() {
 		return new ConnectionSetting(DialogDictionary.LABEL_DEFAULT_CONNECTION_IN_MEMORY.toString(),
@@ -51,7 +55,9 @@ public class DefaultConnectionSettingsProvider {
 	/**
 	 * Eine dateibasierte Version im Benutzerverzeichnis.
 	 *
-	 * @return
+	 * @return Verbindungsdaten für eine HSQLDB Standalone Datenbank mit
+	 *         Standardeinstellungen. (im Benutzerverzeichnis des angemeldeten
+	 *         Benutzers)
 	 */
 	public static ConnectionSetting getDefaultStandaloneUserHomeConnection() {
 		return getStandaloneConnectionInDefaultDirectory(
@@ -62,7 +68,7 @@ public class DefaultConnectionSettingsProvider {
 	 * Eine dateibasierte Version im Benutzerverzeichnis als Vorlage für neue
 	 * Verbindungen.
 	 *
-	 * @return
+	 * @return Vorlage für Verbindungsdaten für eine HSQLDB Standalone Datenbank
 	 */
 	public static ConnectionSetting getDefaultTemplateStandaloneUserHomeConnection() {
 		return getStandaloneConnectionInDefaultDirectory(DialogDictionary.PATTERN_NEW_CONNECTION_NAME.toString(),
@@ -70,12 +76,31 @@ public class DefaultConnectionSettingsProvider {
 				DialogDictionary.PATTERN_NEW_CONNECTION_FILE.toString());
 	}
 
+	/**
+	 * Baut die Verbindungsdaten für eine HSQLDB Standalone Datenbank aus den
+	 * übergebenen Parametern auf. Ausgangspunkt ist dabei immer das
+	 * Benutzerverzeichnis des angemeldeten Benutzers.
+	 *
+	 * @param name
+	 *            Name der Verbindung (zur Anzeige in der Dialogauswahl)
+	 * @param dbFolderInDefaultDirectory
+	 *            Unterverzeichnis, das im Benutzerverzeichnis angelegt wird.
+	 * @param dbName
+	 *            Name der Datenbank
+	 * @return Verbindungsdaten
+	 */
 	private static ConnectionSetting getStandaloneConnectionInDefaultDirectory(final String name,
 			final String dbFolderInDefaultDirectory, final String dbName) {
 		return new ConnectionSetting(name, JDBCType.HSQL_STANDALONE, defaultDirectory() + dbFolderInDefaultDirectory,
 				dbName, null, null);
 	}
 
+	/**
+	 * Standardverzeichnis zur Anlage von HSQLDB Standalone Datenbanken.
+	 *
+	 * @return Standardverzeichnis (derzeit das Benutzerverzeichnis des
+	 *         angemeldeten Benutzers)
+	 */
 	private static String defaultDirectory() {
 		return System.getProperty("user.home") + "/";
 	}

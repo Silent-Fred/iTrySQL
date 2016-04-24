@@ -57,8 +57,8 @@ import de.kuehweg.sqltool.database.execution.fake.StatementStubWithFakeResultSet
  */
 public class StatementExecutionTest {
 
-	private static final String url = "db://localhost";
-	private static final String userName = "john_doe";
+	private static final String URL = "db://localhost";
+	private static final String USER_NAME = "john_doe";
 
 	private Object[] columnLabels;
 	private Object[] columnContent;
@@ -84,8 +84,8 @@ public class StatementExecutionTest {
 		columnLabels = new String[] { "does", "not", "compute" };
 		columnContent = new Object[] { " col1 ", null, 42 };
 		metaData = new DatabaseMetaDataStubWithUrlAndUser();
-		metaData.setURL(url);
-		metaData.setUserName(userName);
+		metaData.setURL(URL);
+		metaData.setUserName(USER_NAME);
 		connection = new ConnectionStubWithBasicMetaData();
 		connection.setMetaData(metaData);
 		resultSet = new ResultSetStubFromObjectArray(new Object[][] { columnLabels, columnContent });
@@ -112,8 +112,8 @@ public class StatementExecutionTest {
 		final StatementExecutionInformation info = execution.execute(statement);
 		assertNotNull(info.getStatementResult());
 		assertNotSame(DialogDictionary.LABEL_RESULT_ERROR.toString(), info.getSummary());
-		assertEquals(url, info.getConnectionDescription());
-		assertEquals(userName, info.getExecutedBy());
+		assertEquals(URL, info.getConnectionDescription());
+		assertEquals(USER_NAME, info.getExecutedBy());
 		assertNotNull(info.getStartOfExecution());
 		assertNotNull(info.getEndOfExecution());
 		assertEquals(sql, info.getSql().originalStatement());

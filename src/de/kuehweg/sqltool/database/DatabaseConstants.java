@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@ package de.kuehweg.sqltool.database;
  *
  * @author Michael Kühweg
  */
-public class DatabaseConstants {
+public final class DatabaseConstants {
 
 	public static final String HSQLDB_PROPERTY_TX_CONTROL = "hsqldb.tx";
 	public static final String HSQLDB_PROPERTY_LOG_SIZE_MB = "hsqldb.log_size";
@@ -41,6 +41,9 @@ public class DatabaseConstants {
 	public static final String DEFAULT_LOG_SIZE_MB = "20";
 	public static final String DEFAULT_SHUTDOWN_STANDALONE_DB = "true";
 
+	/**
+	 * Konstantensammlung, keine Instanzen.
+	 */
 	private DatabaseConstants() {
 		// no instances
 	}

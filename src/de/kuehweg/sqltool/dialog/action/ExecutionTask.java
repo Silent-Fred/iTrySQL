@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,7 @@ package de.kuehweg.sqltool.dialog.action;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -59,9 +60,10 @@ public class ExecutionTask extends Task<Void> {
 	private final Collection<ExecutionTracker> trackers;
 	private int maxRows;
 
-	public ExecutionTask(final Statement statement, final String sql) {
-		this.statement = statement;
+	public ExecutionTask(final String sql, final Statement statement) {
+		super();
 		this.sql = sql;
+		this.statement = statement;
 		trackers = new HashSet<>();
 	}
 
@@ -70,17 +72,11 @@ public class ExecutionTask extends Task<Void> {
 	}
 
 	public void attach(final ExecutionTracker... trackers) {
-		if (trackers != null) {
-			for (final ExecutionTracker tracker : trackers) {
-				this.trackers.add(tracker);
-			}
-		}
+		this.trackers.addAll(Arrays.asList(trackers));
 	}
 
 	public void attach(final Collection<ExecutionTracker> trackers) {
-		if (trackers != null) {
-			this.trackers.addAll(trackers);
-		}
+		this.trackers.addAll(trackers);
 	}
 
 	private void beforeExecution() {
@@ -112,32 +108,14 @@ public class ExecutionTask extends Task<Void> {
 		final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh = new ExecutionLifecycleGuiRefreshProvider(
 				trackers);
 		try {
-			final List<StatementString> statements = new StatementExtractor().getStatementsFromScript(sql);
 			statement.setMaxRows(maxRows);
-
 			// before execution
 			beforeExecution();
 			refreshBeforePhase(lifecycleRefresh);
-
 			// during execution
-			long lastDelayedRefresh = System.currentTimeMillis();
-			final Iterator<StatementString> queryIterator = statements.iterator();
-			while (queryIterator.hasNext() && !isCancelled()) {
-				final StatementString singleQuery = queryIterator.next();
-				if (!singleQuery.isEmpty()) {
-					intermediateUpdate(new StatementExecution(singleQuery).execute(statement));
-					// UI immediate
-					refresh(lifecycleRefresh.intermediateExecutionGuiRefresh());
-					// UI delayed
-					if (System.currentTimeMillis() - lastDelayedRefresh > REFRESH_DELAY) {
-						lastDelayedRefresh = System.currentTimeMillis();
-						refresh(lifecycleRefresh.delayedExecutionGuiRefresh());
-					}
-				}
-			}
+			queryIterationWithIntermediateGuiUpdates(lifecycleRefresh);
 			// eventuell noch pending refreshes
 			refresh(lifecycleRefresh.delayedExecutionGuiRefresh());
-
 			// dann abschließen
 			afterExecution();
 			refreshAfterPhase(lifecycleRefresh);
@@ -153,6 +131,30 @@ public class ExecutionTask extends Task<Void> {
 			statement.close();
 		}
 		return null;
+	}
+
+	private void queryIterationWithIntermediateGuiUpdates(final ExecutionLifecycleGuiRefreshProvider lifecycleRefresh)
+			throws SQLException {
+		final List<StatementString> statements = new StatementExtractor().getStatementsFromScript(sql);
+		long nextDelayedRefresh = timeForNextDelayedRefresh();
+		final Iterator<StatementString> queryIterator = statements.iterator();
+		while (queryIterator.hasNext() && !isCancelled()) {
+			final StatementString singleQuery = queryIterator.next();
+			if (!singleQuery.isEmpty()) {
+				intermediateUpdate(new StatementExecution(singleQuery).execute(statement));
+				// UI immediate
+				refresh(lifecycleRefresh.intermediateExecutionGuiRefresh());
+				// UI delayed
+				if (System.currentTimeMillis() > nextDelayedRefresh) {
+					refresh(lifecycleRefresh.delayedExecutionGuiRefresh());
+					nextDelayedRefresh = timeForNextDelayedRefresh();
+				}
+			}
+		}
+	}
+
+	private long timeForNextDelayedRefresh() {
+		return System.currentTimeMillis() + REFRESH_DELAY;
 	}
 
 	private void refresh(final Collection<ExecutionTracker> trackersForRefresh) {

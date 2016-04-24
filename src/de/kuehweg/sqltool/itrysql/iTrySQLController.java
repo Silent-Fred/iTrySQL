@@ -31,7 +31,6 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ResourceBundle;
@@ -264,7 +263,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private Button importConnections;
 	@FXML
-	private Label permanentMessage;
+	private Label labelDatabaseIsTemporary;
 	@FXML
 	private WebView syntaxView;
 	@FXML
@@ -308,6 +307,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 				try {
 					assert annotatedField.get(this) != null : "Not injected: " + annotatedField.getName();
 				} catch (IllegalArgumentException | IllegalAccessException e) {
+					throw new AssertionError("Injected field not properly accessible: " + annotatedField.getName());
 				}
 			}
 		}
@@ -388,17 +388,16 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		// Auto-Commit ist keine echte Benutzereinstellung sondern wird pro
 		// Verbindung gesteuert, z.T. auch durch JDBC-Vorgaben
 		if (getConnection() == null) {
-			final AlertBox msg = new AlertBox(DialogDictionary.MESSAGEBOX_WARNING.toString(),
-					DialogDictionary.MSG_NO_DB_CONNECTION.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-			msg.askUserFeedback();
+			new AlertBox(DialogDictionary.MESSAGEBOX_WARNING.toString(),
+					DialogDictionary.MSG_NO_DB_CONNECTION.toString(), DialogDictionary.COMMON_BUTTON_OK.toString())
+							.askUserFeedback();
 		} else {
 			try {
 				getConnection().setAutoCommit(autoCommit.isSelected());
 			} catch (final SQLException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 						DialogDictionary.ERR_AUTO_COMMIT_FAILURE.toString(),
-						DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
+						DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 			}
 		}
 	}
@@ -450,25 +449,25 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 				connectionHolder.connect(connectionSetting);
 				controlAutoCommitVisuals();
 				refreshTree(event);
-				if (connectionSetting.getType() == JDBCType.HSQL_IN_MEMORY) {
-					permanentMessage.setText(
-							MessageFormat.format(DialogDictionary.PATTERN_MESSAGE_IN_MEMORY_DATABASE.toString(),
-									connectionSetting.getName()));
-					permanentMessage.visibleProperty().set(true);
-				} else {
-					permanentMessage.visibleProperty().set(false);
-				}
+				displayMessageForTemporaryDatabase(connectionSetting);
 				// FIXME
 				WebViewWithHSQLDBBugfix.fix();
 				AchievementManager.getInstance()
 						.fireEvent(NamedAchievementEvent.CONNECTION_ESTABLISHED.asAchievementEvent(), 1);
 			} catch (final DatabaseConnectionException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 						DialogDictionary.ERR_CONNECTION_FAILURE.toString(),
-						DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
+						DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 			}
 		}
+	}
+
+	/**
+	 * @param connectionSetting
+	 */
+	private void displayMessageForTemporaryDatabase(final ConnectionSetting connectionSetting) {
+		labelDatabaseIsTemporary.setText(DialogDictionary.LABEL_IN_MEMORY_DATABASE.toString());
+		labelDatabaseIsTemporary.visibleProperty().set(!connectionSetting.getType().isPermanent());
 	}
 
 	/**
@@ -482,7 +481,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	public void disconnect(final ActionEvent event) {
 		connectionHolder.disconnect();
 		refreshTree(null, schemaTreeView);
-		permanentMessage.visibleProperty().set(false);
+		labelDatabaseIsTemporary.visibleProperty().set(false);
 	}
 
 	/**
@@ -527,6 +526,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 */
 	@FXML
 	public void commit(final ActionEvent event) {
+		focusResult();
 		createExecuteAction().handleExecuteAction("COMMIT", getConnection());
 	}
 
@@ -538,6 +538,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 */
 	@FXML
 	public void rollback(final ActionEvent event) {
+		focusResult();
 		createExecuteAction().handleExecuteAction("ROLLBACK", getConnection());
 	}
 
@@ -551,34 +552,30 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	public void fontAction(final ActionEvent event) {
 		if (event != null && event.getSource() != null) {
-			FontSizeZoomable zoom;
-			final StatementEditor statementEditor = getStatementEditorComponent().getActiveStatementEditor();
-			switch (((Node) event.getSource()).getId()) {
-			case "toolbarZoomIn":
-				zoom = statementEditor;
-				zoom.zoomIn();
-				UserPreferencesManager.getSharedInstance().setFontSizeStatementInput(zoom.getFontSize());
-				break;
-			case "toolbarZoomOut":
-				zoom = statementEditor;
-				zoom.zoomOut();
-				UserPreferencesManager.getSharedInstance().setFontSizeStatementInput(zoom.getFontSize());
-				break;
-			case "toolbarTabDbOutputZoomIn":
-				zoom = new TextAreaZoomable(dbOutput);
-				zoom.zoomIn();
-				UserPreferencesManager.getSharedInstance().setFontSizeDbOutput(zoom.getFontSize());
-				break;
-			case "toolbarTabDbOutputZoomOut":
-				zoom = new TextAreaZoomable(dbOutput);
-				zoom.zoomOut();
-				UserPreferencesManager.getSharedInstance().setFontSizeDbOutput(zoom.getFontSize());
-				break;
-			default:
-				break;
-			}
+			zoomStatementEditorIfRequested(((Node) event.getSource()).getId());
+			zoomDatabaseOutputIfRequested(((Node) event.getSource()).getId());
+			AchievementManager.getInstance().fireEvent(NamedAchievementEvent.FONT_SIZE_CHANGED.asAchievementEvent(), 1);
 		}
-		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.FONT_SIZE_CHANGED.asAchievementEvent(), 1);
+	}
+
+	private void zoomStatementEditorIfRequested(final String eventSourceId) {
+		final FontSizeZoomable zoomable = getStatementEditorComponent().getActiveStatementEditor();
+		if ("toolbarZoomIn".equals(eventSourceId)) {
+			zoomable.zoomIn();
+		} else if ("toolbarZoomOut".equals(eventSourceId)) {
+			zoomable.zoomOut();
+		}
+		UserPreferencesManager.getSharedInstance().setFontSizeStatementInput(zoomable.getFontSize());
+	}
+
+	private void zoomDatabaseOutputIfRequested(final String eventSourceId) {
+		final FontSizeZoomable zoomable = new TextAreaZoomable(dbOutput);
+		if ("toolbarTabDbOutputZoomIn".equals(eventSourceId)) {
+			zoomable.zoomIn();
+		} else if ("toolbarTabDbOutputZoomOut".equals(eventSourceId)) {
+			zoomable.zoomOut();
+		}
+		UserPreferencesManager.getSharedInstance().setFontSizeDbOutput(zoomable.getFontSize());
 	}
 
 	/**
@@ -700,9 +697,9 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 				AchievementManager.getInstance().fireEvent(NamedAchievementEvent.EXPORTED_RESULT.asAchievementEvent(),
 						1);
 			} catch (final IOException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString())
+								.askUserFeedback();
 			}
 		}
 	}
@@ -852,9 +849,9 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 			try {
 				new ManagedConnectionSettings().exportToFile(file);
 			} catch (final JAXBException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+						DialogDictionary.ERR_FILE_SAVE_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString())
+								.askUserFeedback();
 			}
 		}
 	}
@@ -876,9 +873,9 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 				new ManagedConnectionSettings().importFromFile(file);
 				connectionComponentController.saveConnectionSettings();
 			} catch (JAXBException | BackingStoreException ex) {
-				final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
-						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString());
-				msg.askUserFeedback();
+				new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+						DialogDictionary.ERR_FILE_OPEN_FAILED.toString(), DialogDictionary.COMMON_BUTTON_OK.toString())
+								.askUserFeedback();
 			}
 		}
 	}
@@ -936,7 +933,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 
 		controlAutoCommitVisuals();
 
-		permanentMessage.visibleProperty().set(false);
+		labelDatabaseIsTemporary.visibleProperty().set(false);
 		refreshTree(null, schemaTreeView);
 		SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(statementPane, this);
 
@@ -956,7 +953,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 * Aufbau der Syntaxhilfe.
 	 */
 	private void initialzeSyntaxHelp() {
-		final boolean webViewError = WebViewBundledResourceErrorDetection
+		final boolean webViewError = new WebViewBundledResourceErrorDetection()
 				.runningOnJavaVersionWithRenderingDeficiencies();
 		tabSyntax.disableProperty().set(webViewError);
 		if (webViewError) {
@@ -1036,7 +1033,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 
 		Tooltip.install(toggleSyntaxColoring, new Tooltip(DialogDictionary.TOOLTIP_SYNTAX_HIGHLIGHTING.toString()));
 
-		Tooltip.install(permanentMessage, new Tooltip(DialogDictionary.TOOLTIP_IN_MEMORY_DATABASE.toString()));
+		Tooltip.install(labelDatabaseIsTemporary, new Tooltip(DialogDictionary.TOOLTIP_IN_MEMORY_DATABASE.toString()));
 	}
 
 	private void setupMenu() {

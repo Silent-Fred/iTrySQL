@@ -50,7 +50,7 @@ public enum ProvidedAudioClip {
 	private final String uiName;
 	private final String resource;
 
-	private ProvidedAudioClip(final String uiName, final String resource) {
+	ProvidedAudioClip(final String uiName, final String resource) {
 		this.uiName = uiName;
 		this.resource = resource;
 	}

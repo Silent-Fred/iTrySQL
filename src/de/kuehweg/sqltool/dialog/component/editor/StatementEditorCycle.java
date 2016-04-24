@@ -53,8 +53,8 @@ public class StatementEditorCycle {
 		return statementEditorClasses.get(cycle);
 	}
 
-	public void oopsNotSupportedInThisVersion(final Class<? extends StatementEditor> defectiveStatementEditor) {
-		statementEditorClasses.remove(defectiveStatementEditor);
+	public void oopsNotSupportedInThisVersion(final Class<? extends StatementEditor> defectiveStatementEditorClass) {
+		statementEditorClasses.remove(defectiveStatementEditorClass);
 		if (statementEditorClasses.isEmpty()) {
 			statementEditorClasses.add(TextAreaBasedEditor.class);
 		}

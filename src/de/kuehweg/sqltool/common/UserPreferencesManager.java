@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,18 +30,25 @@ package de.kuehweg.sqltool.common;
  *
  * @author Michael Kühweg
  */
-public class UserPreferencesManager {
+public final class UserPreferencesManager {
 
-	private static final UserPreferencesI sharedInstance;
+	private static final UserPreferencesI SHARED_INSTANCE;
 
 	static {
-		sharedInstance = new UserPreferences();
+		SHARED_INSTANCE = new UserPreferences();
 	}
 
+	/**
+	 * Singleton, wird nicht von außerhalb instanziiert.
+	 */
 	private UserPreferencesManager() {
 	}
 
+	/**
+	 * @return Die für die gesamte Applikation gültige Instanz der
+	 *         Benutzereinstellungen.
+	 */
 	public static UserPreferencesI getSharedInstance() {
-		return sharedInstance;
+		return SHARED_INSTANCE;
 	}
 }

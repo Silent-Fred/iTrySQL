@@ -39,7 +39,7 @@ import javafx.scene.layout.Pane;
  *
  * @author Michael Kühweg
  */
-public class SourceFileDropTargetUtil {
+public final class SourceFileDropTargetUtil {
 
 	private static final String DROP_TARGET_SYMBOL_ID = "removeMeOnDragExited";
 
@@ -50,12 +50,20 @@ public class SourceFileDropTargetUtil {
 	private static final double DRAG_EFFECT_HEIGHT = 5;
 	private static final int DRAG_EFFECT_ITERATIONS = 3;
 
+	/**
+	 * Utility-Klasse ohne Instances.
+	 */
 	private SourceFileDropTargetUtil() {
 		// Util
 	}
 
+	/**
+	 * Eventverarbeitung, wenn ein Objekt über der angegebenen {@link Pane} ist.
+	 *
+	 * @param containerPane
+	 *            {@link Pane}, die als DropTarget verwendet wird.
+	 */
 	private static void setOnDragOver(final Pane containerPane) {
-
 		containerPane.setOnDragOver(event -> {
 			final Dragboard dragboard = event.getDragboard();
 			if (event.getGestureSource() != containerPane && dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
@@ -65,6 +73,13 @@ public class SourceFileDropTargetUtil {
 		});
 	}
 
+	/**
+	 * Setzt den Effekt, der zur Visualisierung eingesetzt wird, wenn ein Objekt
+	 * über dem DropTarget ist.
+	 *
+	 * @param node
+	 *            Knoten im Scene Graph, auf den der Effekt angewendet wird.
+	 */
 	private static void setDragEffect(final Node node) {
 		node.setOpacity(DRAG_EFFECT_OPACITY_DURING_DRAG);
 		// Blur-Effekt kann im Moment noch nicht in FX-CSS angegeben werden
@@ -75,11 +90,25 @@ public class SourceFileDropTargetUtil {
 		node.setEffect(bb);
 	}
 
+	/**
+	 * Zurücksetzen der Visualisierung des DropTargets, wenn das Objekt nicht
+	 * mehr über dem DropTarget ist.
+	 *
+	 * @param node
+	 *            Knoten im Scene Graph, auf dem der Effekt zurückgesetzt wird.
+	 */
 	private static void resetDragEffect(final Node node) {
 		node.setOpacity(DRAG_EFFECT_OPACITY_NORMAL);
 		node.setEffect(null);
 	}
 
+	/**
+	 * Eventverarbeitung, wenn ein Objekt in den Bereich der angegebenen
+	 * {@link Pane} eintritt.
+	 *
+	 * @param containerPane
+	 *            {@link Pane}, die als DropTarget verwendet wird.
+	 */
 	private static void setOnDragEntered(final Pane containerPane) {
 		containerPane.setOnDragEntered(event -> {
 			final Dragboard dragboard = event.getDragboard();
@@ -95,6 +124,13 @@ public class SourceFileDropTargetUtil {
 		});
 	}
 
+	/**
+	 * Eventverarbeitung, wenn ein Objekt aus dem Bereich der angegebenen
+	 * {@link Pane} austritt.
+	 *
+	 * @param containerPane
+	 *            {@link Pane}, die als DropTarget verwendet wird.
+	 */
 	private static void setOnDragExited(final Pane containerPane) {
 		containerPane.setOnDragExited(event -> {
 			for (final Node node : containerPane.getChildren()) {
@@ -108,25 +144,34 @@ public class SourceFileDropTargetUtil {
 		});
 	}
 
+	/**
+	 * Eventverarbeitung, wenn ein Objekt im Bereich der angegebenen
+	 * {@link Pane} abgelegt wird.
+	 *
+	 * @param containerPane
+	 *            {@link Pane}, die als DropTarget verwendet wird.
+	 * @param statementEditorAccessor
+	 *            Der zu verwendende {@link StatementEditorComponentAccessor},
+	 *            der den Inhalt des auf das DropTarget gezogenen Objekts in die
+	 *            Anzeige übernimmt.
+	 */
 	private static void setOnDragDropped(final Pane containerPane,
-			final StatementEditorComponentAccessor statementEditorHolder) {
+			final StatementEditorComponentAccessor statementEditorAccessor) {
 		containerPane.setOnDragDropped(event -> {
 			final Dragboard dragboard = event.getDragboard();
 			boolean success = false;
 			if (dragboard.hasFiles() && dragboard.getFiles().size() == 1) {
 				try {
 					final String script = FileUtil.readFile(FileUtil.convertToURI(dragboard.getFiles().get(0)).toURL());
-					statementEditorHolder.getStatementEditorComponent().getActiveStatementEditor().setText(script);
+					statementEditorAccessor.getStatementEditorComponent().getActiveStatementEditor().setText(script);
 					success = true;
 				} catch (final Exception ex) {
-					// egal welche Exception passiert, der Drop muss
-					// beendet werden, damit die Anzeige zurückgesetzt wird
-					final ErrorMessage msg = new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
+					new ErrorMessage(DialogDictionary.MESSAGEBOX_ERROR.toString(),
 							DialogDictionary.ERR_FILE_OPEN_FAILED.toString(),
-							DialogDictionary.COMMON_BUTTON_OK.toString());
-					msg.askUserFeedback();
+							DialogDictionary.COMMON_BUTTON_OK.toString()).askUserFeedback();
 				}
 			}
+			// Anzeige zurücksetzen
 			event.setDropCompleted(success);
 			event.consume();
 		});

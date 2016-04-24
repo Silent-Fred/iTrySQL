@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,7 @@ import java.util.Objects;
  *
  * @author Michael Kühweg
  */
-public abstract class DatabaseObjectDescription implements
-		Comparable<DatabaseObjectDescription> {
+public abstract class DatabaseObjectDescription implements Comparable<DatabaseObjectDescription> {
 
 	private final String name;
 
@@ -63,8 +62,7 @@ public abstract class DatabaseObjectDescription implements
 	 *            Klasse der gesuchten Hierarchieebene.
 	 * @return
 	 */
-	public DatabaseObjectDescription findHierarchyLevel(
-			final Class<? extends DatabaseObjectDescription> levelClass) {
+	public DatabaseObjectDescription findHierarchyLevel(final Class<? extends DatabaseObjectDescription> levelClass) {
 		DatabaseObjectDescription currentLevel = this;
 		while (!currentLevel.getClass().isAssignableFrom(levelClass)) {
 			currentLevel = currentLevel.getParent();
@@ -77,8 +75,7 @@ public abstract class DatabaseObjectDescription implements
 	}
 
 	public String getFullyQualifiedName() {
-		return isOrphan() ? getName() : parent.getFullyQualifiedName() + "."
-				+ getName();
+		return isOrphan() ? getName() : parent.getFullyQualifiedName() + "." + getName();
 	}
 
 	public boolean isOrphan() {
@@ -87,10 +84,8 @@ public abstract class DatabaseObjectDescription implements
 
 	public void adoptOrphan(final DatabaseObjectDescription child) {
 		if (!child.isOrphan()) {
-			throw new IllegalArgumentException(
-					"Attempt to adopt a child that is not orphaned (parent: "
-							+ getFullyQualifiedName() + " child: "
-							+ child.getFullyQualifiedName() + ")");
+			throw new IllegalArgumentException("Attempt to adopt a child that is not orphaned (parent: "
+					+ getFullyQualifiedName() + " child: " + child.getFullyQualifiedName() + ")");
 		}
 		child.setParent(this);
 		appendChild(child);
@@ -104,9 +99,8 @@ public abstract class DatabaseObjectDescription implements
 	 * @param child
 	 */
 	protected void appendChild(final DatabaseObjectDescription child) {
-		throw new IllegalArgumentException("Attempt to add a child of class "
-				+ child.getClass().getSimpleName() + " to "
-				+ this.getClass().getSimpleName() + ".");
+		throw new IllegalArgumentException("Attempt to add a child of class " + child.getClass().getSimpleName()
+				+ " to " + this.getClass().getSimpleName() + ".");
 	}
 
 	@Override

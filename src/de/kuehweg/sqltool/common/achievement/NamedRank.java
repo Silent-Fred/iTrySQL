@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ public enum NamedRank {
 	 * @param requiredPercentage
 	 *            Punktzahl die zum Erreichen des Rangs erforderlich ist
 	 */
-	private NamedRank(final int requiredPercentage) {
+	NamedRank(final int requiredPercentage) {
 		this.requiredPercentage = requiredPercentage;
 	}
 
