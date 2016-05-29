@@ -36,7 +36,6 @@ public class DefaultRankingPoints extends RankingPoints {
 	private static final int DEFAULT_POINTS_PER_ACHIEVEMENT = 5;
 
 	public DefaultRankingPoints() {
-		super();
 		for (final NamedAchievement namedAchievement : NamedAchievement.values()) {
 			register(namedAchievement.asAchievement(), DEFAULT_POINTS_PER_ACHIEVEMENT);
 		}

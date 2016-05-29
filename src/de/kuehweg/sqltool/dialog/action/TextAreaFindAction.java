@@ -38,7 +38,6 @@ public class TextAreaFindAction extends TextBasedFindAction {
 	private final TextArea textArea;
 
 	public TextAreaFindAction(final TextArea textArea) {
-		super();
 		this.textArea = textArea;
 	}
 

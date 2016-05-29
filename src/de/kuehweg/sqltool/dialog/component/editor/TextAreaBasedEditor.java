@@ -43,7 +43,6 @@ public class TextAreaBasedEditor implements StatementEditor {
 	private final FontSizeZoomable zoomable;
 
 	public TextAreaBasedEditor(final TextArea textArea) {
-		super();
 		this.textArea = textArea;
 		zoomable = new TextAreaZoomable(textArea);
 	}

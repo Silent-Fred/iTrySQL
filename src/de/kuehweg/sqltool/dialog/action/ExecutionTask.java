@@ -61,7 +61,6 @@ public class ExecutionTask extends Task<Void> {
 	private int maxRows;
 
 	public ExecutionTask(final String sql, final Statement statement) {
-		super();
 		this.sql = sql;
 		this.statement = statement;
 		trackers = new HashSet<>();

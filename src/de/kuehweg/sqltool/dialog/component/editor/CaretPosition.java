@@ -40,7 +40,6 @@ public class CaretPosition {
 	}
 
 	public CaretPosition(final int line, final int column) {
-		super();
 		this.line = line;
 		character = column;
 	}

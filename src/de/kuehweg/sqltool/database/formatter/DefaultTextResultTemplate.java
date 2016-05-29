@@ -35,7 +35,6 @@ public class DefaultTextResultTemplate extends ResultTemplate {
 	private static final long serialVersionUID = 5520107096506648750L;
 
 	public DefaultTextResultTemplate() {
-		super();
 		setTemplate("{0}\n\n{1}\n\n{2}\n{3}\n");
 	}
 }

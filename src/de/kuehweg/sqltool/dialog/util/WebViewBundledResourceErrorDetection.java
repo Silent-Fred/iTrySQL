@@ -44,7 +44,6 @@ public class WebViewBundledResourceErrorDetection {
 	private final int updateVersion;
 
 	public WebViewBundledResourceErrorDetection() {
-		super();
 		majorVersion = readMajorVersion();
 		updateVersion = readUpdateVersion();
 	}

@@ -44,7 +44,6 @@ public abstract class CommonDialog {
 	private final Alert alert;
 
 	public CommonDialog(final String title, final String message, final String... buttonTexts) {
-		super();
 		alert = new Alert(AlertType.NONE);
 		alert.setTitle(title);
 		alert.setHeaderText(null);

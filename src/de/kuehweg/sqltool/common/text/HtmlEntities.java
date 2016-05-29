@@ -292,7 +292,6 @@ public class HtmlEntities {
 	private final Map<String, String> entitiesMap;
 
 	public HtmlEntities() {
-		super();
 		entitiesMap = buildEntitiesMap();
 	}
 

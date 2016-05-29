@@ -78,18 +78,7 @@ public class ITrySQLStage extends Stage {
 					ImagePack.APP_ICON_128x128.getAsImage(), ImagePack.APP_ICON_64x64.getAsImage(),
 					ImagePack.APP_ICON_32x32.getAsImage(), ImagePack.APP_ICON_16x16.getAsImage());
 			setTitle(title);
-			if (callerStage != null) {
-				setX(callerStage.getX() + X_OFFSET);
-				setY(callerStage.getY() + Y_OFFSET);
-				setWidth(callerStage.getWidth());
-				setHeight(callerStage.getHeight());
-			} else {
-				final Rectangle2D calculatedSize = StageSizerUtil.calculateSizeDependingOnScreenSize();
-				setX(calculatedSize.getMinX());
-				setY(calculatedSize.getMinY());
-				setWidth(calculatedSize.getWidth());
-				setHeight(calculatedSize.getHeight());
-			}
+			adjustPositionAndSize(callerStage);
 			final iTrySQLController controller = fxmlLoader.getController();
 			setOnHiding(controller);
 			setOnCloseRequest(controller);
@@ -100,6 +89,24 @@ public class ITrySQLStage extends Stage {
 
 		} catch (final IOException ex) {
 			Logger.getLogger(ITrySQLStage.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	/**
+	 * @param callerStage
+	 */
+	private void adjustPositionAndSize(final Stage callerStage) {
+		if (callerStage != null) {
+			setX(callerStage.getX() + X_OFFSET);
+			setY(callerStage.getY() + Y_OFFSET);
+			setWidth(callerStage.getWidth());
+			setHeight(callerStage.getHeight());
+		} else {
+			final Rectangle2D calculatedSize = StageSizerUtil.calculateSizeDependingOnScreenSize();
+			setX(calculatedSize.getMinX());
+			setY(calculatedSize.getMinY());
+			setWidth(calculatedSize.getWidth());
+			setHeight(calculatedSize.getHeight());
 		}
 	}
 }

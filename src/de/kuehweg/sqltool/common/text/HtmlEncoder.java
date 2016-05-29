@@ -37,7 +37,6 @@ public class HtmlEncoder {
 	private final HtmlEntities entities;
 
 	public HtmlEncoder() {
-		super();
 		entities = new HtmlEntities();
 	}
 

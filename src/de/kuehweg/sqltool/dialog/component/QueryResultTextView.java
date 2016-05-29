@@ -55,7 +55,6 @@ public class QueryResultTextView implements ExecutionTracker {
 	private final TextArea outputTextArea;
 
 	public QueryResultTextView(final TextArea outputTextArea) {
-		super();
 		this.outputTextArea = outputTextArea;
 		dbOutput = outputTextArea.getText();
 		resultTemplate = new DefaultTextResultTemplate();

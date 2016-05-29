@@ -31,7 +31,7 @@ import java.sql.SQLException;
 /**
  * ResultSet Stub, dem das Test ResultSet als zweidimensionales Array übergeben
  * wird.
- * 
+ *
  * @author Michael Kühweg
  */
 public class ResultSetMetaDataStubFromObjectArray extends FakeResultSetMetaData {
@@ -39,7 +39,6 @@ public class ResultSetMetaDataStubFromObjectArray extends FakeResultSetMetaData 
 	private final Object[][] resultSet;
 
 	public ResultSetMetaDataStubFromObjectArray(final Object[][] fakeResultSetContent) {
-		super();
 		resultSet = fakeResultSetContent;
 	}
 

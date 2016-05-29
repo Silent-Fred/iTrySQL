@@ -56,7 +56,6 @@ public class SchemaTreeNodeBuilder {
 	private final SchemaTreeNode root;
 
 	public SchemaTreeNodeBuilder(final DatabaseDescription db) {
-		super();
 		root = buildDatabaseNode(db);
 	}
 

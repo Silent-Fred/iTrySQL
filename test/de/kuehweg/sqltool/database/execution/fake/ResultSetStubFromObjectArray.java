@@ -45,7 +45,6 @@ public class ResultSetStubFromObjectArray extends FakeResultSet {
 	private int currentColumn;
 
 	public ResultSetStubFromObjectArray(final Object[][] fakeResultSetContent) {
-		super();
 		resultSet = fakeResultSetContent;
 	}
 

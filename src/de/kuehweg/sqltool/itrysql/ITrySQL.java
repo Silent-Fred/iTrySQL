@@ -125,11 +125,7 @@ public class ITrySQL extends Application {
 
 		final Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
-		final Rectangle2D calculatedSize = StageSizerUtil.calculateSizeDependingOnScreenSize();
-		primaryStage.setX(calculatedSize.getMinX());
-		primaryStage.setY(calculatedSize.getMinY());
-		primaryStage.setWidth(calculatedSize.getWidth());
-		primaryStage.setHeight(calculatedSize.getHeight());
+		adjustPositionAndSize(primaryStage);
 		primaryStage.getIcons().addAll(ImagePack.APP_ICON.getAsImage(), ImagePack.APP_ICON_256x256.getAsImage(),
 				ImagePack.APP_ICON_128x128.getAsImage(), ImagePack.APP_ICON_64x64.getAsImage(),
 				ImagePack.APP_ICON_32x32.getAsImage(), ImagePack.APP_ICON_16x16.getAsImage());
@@ -149,6 +145,17 @@ public class ITrySQL extends Application {
 		WindowIconRepaintIssueOnResizeFix.fix(primaryStage);
 
 		primaryStage.show();
+	}
+
+	/**
+	 * @param primaryStage
+	 */
+	private void adjustPositionAndSize(final Stage primaryStage) {
+		final Rectangle2D calculatedSize = StageSizerUtil.calculateSizeDependingOnScreenSize();
+		primaryStage.setX(calculatedSize.getMinX());
+		primaryStage.setY(calculatedSize.getMinY());
+		primaryStage.setWidth(calculatedSize.getWidth());
+		primaryStage.setHeight(calculatedSize.getHeight());
 	}
 
 	@Override

@@ -52,7 +52,6 @@ public class SQLHistoryComponent implements ExecutionTracker {
 	private final List<StatementExecutionInformation> useForNextRefresh = new LinkedList<>();
 
 	public SQLHistoryComponent(final TableView<SqlHistoryEntry> sqlHistory) {
-		super();
 		this.sqlHistory = sqlHistory;
 	}
 

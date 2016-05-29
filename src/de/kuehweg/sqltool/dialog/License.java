@@ -52,7 +52,6 @@ public class License extends Stage {
 	 *            Fenster.
 	 */
 	public License(final Window owner) {
-		super();
 		Scene scene;
 		try {
 			final Parent root;

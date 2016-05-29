@@ -53,7 +53,6 @@ public class DelayedAutoPersistentAchievementsSet implements Observer, Runnable 
 	private int delayInSeconds;
 
 	public DelayedAutoPersistentAchievementsSet(final AchievementPersister persister) {
-		super();
 		this.persister = persister;
 		delayInSeconds = 1;
 	}

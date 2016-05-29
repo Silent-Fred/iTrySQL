@@ -47,7 +47,6 @@ public class DefaultScanner implements ScannerI {
 	 * @param input
 	 */
 	public DefaultScanner(final String input) {
-		super();
 		content = input != null ? input.toCharArray() : new char[0];
 		position = 0;
 		maxPosition = content.length - 1;
@@ -77,22 +76,19 @@ public class DefaultScanner implements ScannerI {
 	}
 
 	/**
-	 * @see de.kuehweg.sqltool.common.sqlediting.ScannerI#pushback()
-	 */
-	@Override
-	public void pushback() {
-		position--;
-		if (position < 0) {
-			position = 0;
-		}
-	}
-
-	/**
 	 * @see de.kuehweg.sqltool.common.sqlediting.ScannerI#hasMoreElements()
 	 */
 	@Override
 	public boolean hasMoreElements() {
 		return position <= maxPosition;
+	}
+
+	/**
+	 * @see de.kuehweg.sqltool.common.sqlediting.ScannerI#pushback()
+	 */
+	@Override
+	public void pushback() {
+		pushback(1);
 	}
 
 	/**

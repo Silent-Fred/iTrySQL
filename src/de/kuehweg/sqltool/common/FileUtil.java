@@ -106,7 +106,7 @@ public final class FileUtil {
 		} catch (final Exception ex) {
 			// wenn Java mal wieder nicht mit der konkreten Plattform klarkommt
 			// (derzeit keine Sonderbehandlung, wird als "normales" Problem
-			// verpackt
+			// verpackt)
 			throw new IOException(ex);
 		}
 		Files.write(path, text.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);

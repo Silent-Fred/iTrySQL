@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013-2016, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,11 +25,13 @@
  */
 package de.kuehweg.sqltool.dialog.component;
 
+import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 
 /**
  * Symbol für ein DropTarget.
@@ -38,63 +40,113 @@ import javafx.scene.shape.Line;
  */
 public class DropTargetSymbol extends Pane {
 
+	private static final float ARC_LENGTH = 340.0f;
+	private static final float START_ANGLE = 100.0f;
 	private static final String COLOR = "#067db7";
 	private static final double STROKE_WIDTH = 1.0;
 
 	public DropTargetSymbol(final Pane parentPane) {
-		super();
 		if (parentPane != null) {
 			final double baseSize = Math.min(Math.min(parentPane.getWidth(), parentPane.getHeight()), 160);
+			final double bottom = parentPane.getHeight() / 2 + baseSize / 2;
 
 			final double radius = baseSize / 3;
 			final double arrowBounds = radius / 2;
 
 			final double centerX = parentPane.getWidth() / 2 - radius;
-			final double bottom = parentPane.getHeight() / 2 + baseSize / 2;
+			final double centerY = bottom - radius;
 
-			final Arc arc = new Arc();
-			arc.setCenterX(centerX);
-			arc.setCenterY(bottom - radius);
-			arc.setRadiusX(radius);
-			arc.setRadiusY(radius);
-			arc.setStartAngle(100.0f);
-			arc.setLength(340.0f);
-			arc.setType(ArcType.OPEN);
-			arc.setStrokeWidth(STROKE_WIDTH);
-			arc.setStroke(Color.web(COLOR));
-			arc.setFill(Color.TRANSPARENT);
-
-			final Line lineVert = new Line();
-			lineVert.startXProperty().set(centerX);
-			lineVert.startYProperty().set(bottom - radius);
-			lineVert.endXProperty().set(centerX);
-			lineVert.endYProperty().set(bottom - radius * 3);
-			lineVert.setStrokeWidth(STROKE_WIDTH);
-			lineVert.setStroke(Color.web(COLOR));
-			lineVert.setFill(Color.web(COLOR));
-
-			final Line arrowLeft = new Line();
-			arrowLeft.startXProperty().set(centerX);
-			arrowLeft.startYProperty().set(bottom - radius);
-			arrowLeft.endXProperty().set(centerX - arrowBounds);
-			arrowLeft.endYProperty().set(bottom - radius - arrowBounds);
-			arrowLeft.setStrokeWidth(STROKE_WIDTH);
-			arrowLeft.setStroke(Color.web(COLOR));
-			arrowLeft.setFill(Color.web(COLOR));
-
-			final Line arrowRight = new Line();
-			arrowRight.startXProperty().set(centerX);
-			arrowRight.startYProperty().set(bottom - radius);
-			arrowRight.endXProperty().set(centerX + arrowBounds);
-			arrowRight.endYProperty().set(bottom - radius - arrowBounds);
-			arrowRight.setStrokeWidth(STROKE_WIDTH);
-			arrowRight.setStroke(Color.web(COLOR));
-			arrowRight.setFill(Color.web(COLOR));
+			final Arc arc = createArc(radius, centerX, centerY);
+			final Group arrow = createArrow(centerX, bottom, arrowBounds, radius);
 
 			getChildren().add(arc);
-			getChildren().add(lineVert);
-			getChildren().add(arrowLeft);
-			getChildren().add(arrowRight);
+			getChildren().add(arrow);
 		}
+	}
+
+	/**
+	 * Kreisausschnitt für Symbol.
+	 *
+	 * @param radius
+	 *            Radius des Kreisausschnitts.
+	 * @param centerX
+	 *            x-Koordinate des Kreismittelpunkts.
+	 * @param centerY
+	 *            y-Koordinate des Kreismittelpunkts.
+	 * @return Kreisausschnitt als 2D Objekt
+	 */
+	private Arc createArc(final double radius, final double centerX, final double centerY) {
+		final Arc arc = new Arc();
+		arc.setCenterX(centerX);
+		arc.setCenterY(centerY);
+		arc.setRadiusX(radius);
+		arc.setRadiusY(radius);
+		arc.setStartAngle(START_ANGLE);
+		arc.setLength(ARC_LENGTH);
+		arc.setType(ArcType.OPEN);
+		arc.setStrokeWidth(STROKE_WIDTH);
+		arc.setStroke(Color.web(COLOR));
+		arc.setFill(Color.TRANSPARENT);
+		return arc;
+	}
+
+	/**
+	 * Pfeil in den Kreisausschnitt des DropTarget Symbols.
+	 *
+	 * @param centerX
+	 *            x-Koordinate des Pfeils
+	 * @param bottom
+	 *            Unterer Rand, von dem ausgehend die y-Koordinaten berechnet
+	 *            werden
+	 * @param arrowBounds
+	 *            Ausdehnung der Pfeilspitze
+	 * @param radius
+	 *            Radius des Kreisausschnitts
+	 * @return Gruppe mit den 2D Objekten, aus denen sich der Pfeil
+	 *         zusammensetzt.
+	 */
+	private Group createArrow(final double centerX, final double bottom, final double arrowBounds,
+			final double radius) {
+		final Line lineVert = new Line();
+		lineVert.startXProperty().set(centerX);
+		lineVert.startYProperty().set(bottom - radius);
+		lineVert.endXProperty().set(centerX);
+		lineVert.endYProperty().set(bottom - radius * 3);
+		applyCommonStrokeAndFill(lineVert);
+
+		final Group arrow = new Group();
+		arrow.getChildren().add(lineVert);
+		arrow.getChildren().add(createArrowHead(centerX, bottom - radius, arrowBounds));
+
+		return arrow;
+	}
+
+	private Group createArrowHead(final double centerX, final double centerY, final double arrowBounds) {
+		final Group arrowHead = new Group();
+
+		final Line arrowLeft = new Line();
+		arrowLeft.startXProperty().set(centerX);
+		arrowLeft.startYProperty().set(centerY);
+		arrowLeft.endXProperty().set(centerX - arrowBounds);
+		arrowLeft.endYProperty().set(centerY - arrowBounds);
+		applyCommonStrokeAndFill(arrowLeft);
+
+		final Line arrowRight = new Line();
+		arrowRight.startXProperty().set(centerX);
+		arrowRight.startYProperty().set(centerY);
+		arrowRight.endXProperty().set(centerX + arrowBounds);
+		arrowRight.endYProperty().set(centerY - arrowBounds);
+		applyCommonStrokeAndFill(arrowRight);
+
+		arrowHead.getChildren().add(arrowLeft);
+		arrowHead.getChildren().add(arrowRight);
+
+		return arrowHead;
+	}
+
+	private void applyCommonStrokeAndFill(final Shape shape) {
+		shape.setStrokeWidth(STROKE_WIDTH);
+		shape.setStroke(Color.web(COLOR));
+		shape.setFill(Color.web(COLOR));
 	}
 }

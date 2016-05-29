@@ -47,7 +47,6 @@ public class TableViewFindAction extends FindAction {
 	 *            Tabellentyp.
 	 */
 	public TableViewFindAction(final TableView<ObservableList<String>> tableView) {
-		super();
 		this.tableView = tableView;
 	}
 

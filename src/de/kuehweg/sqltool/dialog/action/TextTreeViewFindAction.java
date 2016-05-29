@@ -43,7 +43,6 @@ public class TextTreeViewFindAction extends FindAction {
 	private TreeItem<String> findFrom;
 
 	public TextTreeViewFindAction(final TreeView<String> tree) {
-		super();
 		this.tree = tree;
 	}
 
@@ -129,7 +128,7 @@ public class TextTreeViewFindAction extends FindAction {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.kuehweg.sqltool.dialog.action.FindAction#resetSearchPosition()
 	 */
 	@Override

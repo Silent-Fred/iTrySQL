@@ -43,7 +43,6 @@ public class SQLHistoryButtonCell extends TableCell<SqlHistoryEntry, String> {
 	private SqlHistoryEntry historyItem;
 
 	public SQLHistoryButtonCell(final StatementEditorComponent appendTo) {
-		super();
 		button = new Button(DialogDictionary.LABEL_APPEND_HISTORY_ITEM_TO_EDITOR.toString());
 		button.setOnAction((final ActionEvent event) -> {
 			if (appendTo != null && appendTo.getActiveStatementEditor() != null && historyItem != null) {

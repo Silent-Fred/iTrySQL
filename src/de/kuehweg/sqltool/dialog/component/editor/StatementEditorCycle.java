@@ -38,7 +38,6 @@ public class StatementEditorCycle {
 	private int cycle = 0;
 
 	public StatementEditorCycle() {
-		super();
 		statementEditorClasses.add(TextAreaBasedEditor.class);
 		statementEditorClasses.add(CodeMirrorBasedEditor.class);
 		statementEditorClasses.add(AceBasedEditor.class);

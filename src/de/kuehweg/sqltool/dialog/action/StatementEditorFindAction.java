@@ -37,7 +37,6 @@ public class StatementEditorFindAction extends FindAction {
 	private FindAction findAction;
 
 	public StatementEditorFindAction() {
-		super();
 		findAction = new EmptyFindAction();
 	}
 

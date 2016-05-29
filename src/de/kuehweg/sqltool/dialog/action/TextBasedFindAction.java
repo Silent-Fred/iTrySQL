@@ -38,7 +38,6 @@ public class TextBasedFindAction extends FindAction {
 	private int lastKnownFinding;
 
 	public TextBasedFindAction() {
-		super();
 		resetSearchPosition();
 		refreshTextContent("");
 	}

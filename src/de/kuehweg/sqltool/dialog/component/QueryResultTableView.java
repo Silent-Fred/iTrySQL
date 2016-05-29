@@ -72,7 +72,6 @@ public class QueryResultTableView implements ExecutionTracker {
 	private String errorMessage;
 
 	public QueryResultTableView(final TableView<ObservableList<String>> tableView) {
-		super();
 		this.tableView = tableView;
 		maxRowsTooltip = new Tooltip(
 				MessageFormat.format(DialogDictionary.PATTERN_MAX_ROWS_IN_TABLE_VIEW.toString(), MAX_ROWS_IN_VIEW));
@@ -85,8 +84,8 @@ public class QueryResultTableView implements ExecutionTracker {
 		return new HtmlResultFormatter(infoToView).format(new DefaultHtmlResultTemplate());
 	}
 
-	private ObservableList<TableColumn<ObservableList<String>, String>> buildTableViewHeaderWithColumnNameList(
-			final List<String> columnHeaders) {
+	private ObservableList<TableColumn<ObservableList<String>, String>>
+			buildTableViewHeaderWithColumnNameList(final List<String> columnHeaders) {
 		final ObservableList<TableColumn<ObservableList<String>, String>> header = FXCollections.observableArrayList();
 		int i = 0;
 		for (final String head : columnHeaders) {
@@ -100,8 +99,8 @@ public class QueryResultTableView implements ExecutionTracker {
 		return header;
 	}
 
-	private ObservableList<ObservableList<String>> buildContentWithoutResultSet(
-			final StatementExecutionInformation info) {
+	private ObservableList<ObservableList<String>>
+			buildContentWithoutResultSet(final StatementExecutionInformation info) {
 		final ObservableList<ObservableList<String>> content = FXCollections.observableArrayList();
 		if (info != null && info.getStatementResult() == null) {
 			final ObservableList<String> row = FXCollections.observableArrayList();

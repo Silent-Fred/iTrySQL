@@ -67,7 +67,6 @@ public final class AchievementManager {
 	 * Singleton, wird nicht von außerhalb instanziiert.
 	 */
 	private AchievementManager() {
-		super();
 		resetAllAchievements();
 		pointsSystem = new DefaultRankingPoints();
 	}

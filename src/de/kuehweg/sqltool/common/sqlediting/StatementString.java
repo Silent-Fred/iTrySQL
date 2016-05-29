@@ -45,7 +45,6 @@ public class StatementString {
 	private final String originalStatement;
 
 	public StatementString(final String sql) {
-		super();
 		originalStatement = sql;
 	}
 

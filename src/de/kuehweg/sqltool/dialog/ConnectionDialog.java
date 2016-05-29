@@ -55,7 +55,6 @@ public class ConnectionDialog extends Stage {
 	 *            Fullscreen Modus ist das nicht schön :-(
 	 */
 	public ConnectionDialog(final Window owner) {
-		super();
 		Scene scene;
 		try {
 			final Parent root;
