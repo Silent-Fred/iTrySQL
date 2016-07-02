@@ -31,7 +31,6 @@ import java.io.Serializable;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.UserPreferencesManager;
 import de.kuehweg.sqltool.dialog.action.StatementEditorFindAction;
-import de.kuehweg.sqltool.dialog.util.WebViewBundledResourceErrorDetection;
 import de.kuehweg.sqltool.dialog.util.WebViewWithHSQLDBBugfix;
 import de.kuehweg.sqltool.itrysql.ResourceLocator;
 import javafx.beans.value.ChangeListener;
@@ -152,12 +151,12 @@ public class StatementEditorComponent implements Serializable {
 			}
 		});
 
-		if (new WebViewBundledResourceErrorDetection().runningOnJavaVersionWithBundledJavascriptDeficiencies()
-				&& new ResourceLocator().looksLikeBundledApplication()) {
+		final ResourceLocator locator = new ResourceLocator();
+		try {
 			javascriptEditor.getEngine()
-					.load(new ResourceLocator().getExternalFormForExplodedResourceInBundle(resource));
-		} else {
-			javascriptEditor.getEngine().load(getClass().getResource(resource).toExternalForm());
+					.load(locator.getExternalFormForExplodedResourceInBundle(resource).toExternalForm());
+		} catch (final Exception e) {
+			installEditorTextArea();
 		}
 	}
 

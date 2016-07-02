@@ -77,12 +77,4 @@ public class WebViewBundledResourceErrorDetection {
 	public boolean runningOnJavaVersionWithRenderingDeficiencies() {
 		return majorVersion == JAVA_8 && updateVersion > 40 && updateVersion < 72;
 	}
-
-	public boolean runningOnJavaVersionWithBundledJavascriptDeficiencies() {
-		// FIXME Wird laut Bugtracking erst in Java 9 behoben sein - da bislang
-		// aber ungetestet, wird hier davon ausgegangen, dass es halt überhaupt
-		// nicht funktioniert.
-		return true;
-	}
-
 }

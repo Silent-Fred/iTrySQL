@@ -89,7 +89,7 @@
 			</classpath>
 		</javac>
 
-		<!-- Copy over none Java-Files -->
+		<!-- Copy over non Java-Files -->
 		<copy todir="${BuildPath}/build/classes">
 			<fileset dir="${BuildPath}/project/src">
 				<exclude name="**/*.java" />

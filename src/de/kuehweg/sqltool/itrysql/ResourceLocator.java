@@ -26,25 +26,23 @@
 
 package de.kuehweg.sqltool.itrysql;
 
-import java.nio.file.Paths;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author Michael Kühweg
  */
 public class ResourceLocator {
 
-	public String getExternalFormForExplodedResourceInBundle(final String name) {
-		if (looksLikeBundledApplication()) {
-			return Paths.get(whoAmI()).getParent() + "/libs" + name;
-		}
-		return name;
+	public URL getExternalFormForExplodedResourceInBundle(final String name) throws MalformedURLException {
+		final URL me = whoAmI();
+		final File file = new File(me.getPath());
+		final String parentPath = file.getParent();
+		return new URL(me.getProtocol(), me.getHost(), me.getPort(), parentPath + "/libs" + name);
 	}
 
-	public boolean looksLikeBundledApplication() {
-		return whoAmI().toLowerCase().endsWith(".jar");
-	}
-
-	private String whoAmI() {
-		return getClass().getProtectionDomain().getCodeSource().getLocation().toExternalForm();
+	public URL whoAmI() {
+		return getClass().getProtectionDomain().getCodeSource().getLocation();
 	}
 }
