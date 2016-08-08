@@ -26,10 +26,12 @@
 
 package de.kuehweg.sqltool.dialog.base;
 
+import java.io.Serializable;
+
 /**
  * @author Michael Kühweg
  */
-public interface FontSizeZoomable {
+public interface FontSizeZoomable extends Serializable {
 
 	int getFontSize();
 

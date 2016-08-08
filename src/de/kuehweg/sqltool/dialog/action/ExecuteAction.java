@@ -53,7 +53,7 @@ public class ExecuteAction {
 	}
 
 	public void detach(final ExecutionTracker... trackers) {
-		this.trackers.remove(Arrays.asList(trackers));
+		this.trackers.removeAll(Arrays.asList(trackers));
 	}
 
 	public void setLimitMaxRows(final boolean limitMaxRows) {

@@ -38,6 +38,8 @@ import javafx.scene.control.TextArea;
  */
 public class TextAreaBasedEditor implements StatementEditor {
 
+	private static final long serialVersionUID = 2016577950574286339L;
+
 	private final TextArea textArea;
 
 	private final FontSizeZoomable zoomable;

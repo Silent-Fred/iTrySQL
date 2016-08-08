@@ -26,12 +26,15 @@
 
 package de.kuehweg.sqltool.dialog.component.editor;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
  * @author Michael Kühweg
  */
-public class StatementEditorCycle {
+public class StatementEditorCycle implements Serializable {
+
+	private static final long serialVersionUID = -8885095183930281907L;
 
 	private final LinkedList<Class<? extends StatementEditor>> statementEditorClasses = new LinkedList<>();
 
