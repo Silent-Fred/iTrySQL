@@ -86,7 +86,7 @@ public class NamedRankTest {
 
 	private void fireEventsForFirstNAchievements(final int n) {
 		for (int i = 0; i < n && i < achievements.length; i++) {
-			achievements[i].event(new AchievementEvent(String.valueOf(i)), 1);
+			achievements[i].fire(new AchievementEvent(String.valueOf(i)), 1);
 		}
 	}
 }

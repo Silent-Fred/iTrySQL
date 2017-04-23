@@ -130,14 +130,26 @@
                         </ScrollPane>
                       </content>
                     </TitledPane>
-                              <TitledPane animated="false" text="%label_achievements">
-                                <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                              <TitledPane id="rankAndAchievementsTitledPane" animated="false" text="%label_achievements">
+                                 <content>
+                                    <AnchorPane id="rankAndAchievementsAnchorPane" prefHeight="200.0" prefWidth="200.0">
                                        <children>
-                                          <WebView fx:id="achievementsView" prefHeight="595.0" prefWidth="288.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                <VBox id="rankAndAchievementsVBox" prefHeight="591.0" prefWidth="288.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <AnchorPane id="rankPane" fx:id="rankPane" prefHeight="82.0" prefWidth="86.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                      <ScrollPane id="achievementsScrollPane" prefHeight="591.0" prefWidth="288.0">
+                                                   <content>
+                                                          <AnchorPane id="achievementsPane" fx:id="achievementsPane" />
+                                                   </content>
+                                                      </ScrollPane>
+                                                   </children>
+                                                </VBox>
                                        </children>
+                                       <padding>
+                                          <Insets bottom="0.0" left="0.0" right="0.0" top="0.0" />
+                                       </padding>
                                     </AnchorPane>
-                                </content>
+                                 </content>
                               </TitledPane>
                   </panes>
                 </Accordion>

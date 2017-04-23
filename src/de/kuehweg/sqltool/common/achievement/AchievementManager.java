@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Michael Kühweg
+ * Copyright (c) 2015-2017, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,7 @@ public final class AchievementManager {
 	 */
 	public void fireEvent(final AchievementEvent event, final int count) {
 		for (final Achievement achievement : achievements) {
-			achievement.event(event, count);
+			achievement.fire(event, count);
 		}
 	}
 

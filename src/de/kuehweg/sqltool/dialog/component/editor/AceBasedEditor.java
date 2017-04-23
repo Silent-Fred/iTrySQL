@@ -37,6 +37,8 @@ import netscape.javascript.JSObject;
  */
 public class AceBasedEditor implements StatementEditor {
 
+	private static final long serialVersionUID = 2399100995033444144L;
+
 	public static final String RESOURCE = "/resources/ace/sql_editor.html";
 
 	public static final int MIN_FONT_SIZE = 9;

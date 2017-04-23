@@ -63,7 +63,7 @@ public class AchievementTest {
 		assertEquals(20, remains(achievement, eventB));
 		assertEquals(0, achieved(achievement, eventB));
 
-		achievement.event(eventA);
+		achievement.fire(eventA);
 		assertEquals(9, remains(achievement, eventA));
 		assertEquals(1, achieved(achievement, eventA));
 		assertEquals(20, remains(achievement, eventB));
@@ -82,7 +82,7 @@ public class AchievementTest {
 		assertEquals(20, remains(achievement, eventB));
 		assertEquals(0, achieved(achievement, eventB));
 
-		achievement.event(eventB, 5);
+		achievement.fire(eventB, 5);
 		assertEquals(10, remains(achievement, eventA));
 		assertEquals(0, achieved(achievement, eventA));
 		assertEquals(15, remains(achievement, eventB));
@@ -102,7 +102,7 @@ public class AchievementTest {
 		assertEquals(20, remains(achievement, eventB));
 		assertEquals(0, achieved(achievement, eventB));
 
-		achievement.event(eventC);
+		achievement.fire(eventC);
 		assertEquals(10, remains(achievement, eventA));
 		assertEquals(0, achieved(achievement, eventA));
 		assertEquals(20, remains(achievement, eventB));
@@ -119,21 +119,21 @@ public class AchievementTest {
 		final Achievement achievement = new Achievement("A", new AchievementCounter(eventA, 10),
 				new AchievementCounter(eventB, 20));
 
-		achievement.event(eventA, 5);
+		achievement.fire(eventA, 5);
 		assertEquals(5, remains(achievement, eventA));
 		assertEquals(5, achieved(achievement, eventA));
 
 		// Null wird direkt erreicht
-		achievement.event(eventA, 5);
+		achievement.fire(eventA, 5);
 		assertEquals(0, remains(achievement, eventA));
 		assertEquals(10, achieved(achievement, eventA));
 
-		achievement.event(eventA, 5);
+		achievement.fire(eventA, 5);
 		assertEquals(0, remains(achievement, eventA));
 		assertEquals(10, achieved(achievement, eventA));
 
 		// Null wird direkt übersprungen
-		achievement.event(eventB, 25);
+		achievement.fire(eventB, 25);
 		assertEquals(0, remains(achievement, eventB));
 		assertEquals(20, achieved(achievement, eventB));
 	}
@@ -146,16 +146,16 @@ public class AchievementTest {
 		final Achievement achievement = new Achievement("A", new AchievementCounter(eventA, 10),
 				new AchievementCounter(eventB, 20));
 
-		achievement.event(eventA, 5);
+		achievement.fire(eventA, 5);
 		assertFalse(achievement.isAchieved());
 
-		achievement.event(eventA, 5);
+		achievement.fire(eventA, 5);
 		assertFalse(achievement.isAchieved());
 
-		achievement.event(eventB, 19);
+		achievement.fire(eventB, 19);
 		assertFalse(achievement.isAchieved());
 
-		achievement.event(eventB, 1);
+		achievement.fire(eventB, 1);
 		assertTrue(achievement.isAchieved());
 	}
 
@@ -167,23 +167,23 @@ public class AchievementTest {
 		final Achievement achievement = new Achievement("A", new AchievementCounter(eventA, 20),
 				new AchievementCounter(eventB, 80));
 
-		achievement.event(eventA, 10);
+		achievement.fire(eventA, 10);
 		assertEquals(10, Math.round(achievement.calculateAchievedPercentage() * 100));
 
-		achievement.event(eventB, 10);
+		achievement.fire(eventB, 10);
 		assertEquals(20, Math.round(achievement.calculateAchievedPercentage() * 100));
 
-		achievement.event(eventA, 10);
+		achievement.fire(eventA, 10);
 		assertEquals(30, Math.round(achievement.calculateAchievedPercentage() * 100));
 
 		// A geht unter Null - d.h. bleibt bei Null
-		achievement.event(eventA, 10);
+		achievement.fire(eventA, 10);
 		assertEquals(30, Math.round(achievement.calculateAchievedPercentage() * 100));
 
-		achievement.event(eventB, 69);
+		achievement.fire(eventB, 69);
 		assertEquals(99, Math.round(achievement.calculateAchievedPercentage() * 100));
 
-		achievement.event(eventB, 10);
+		achievement.fire(eventB, 10);
 		assertEquals(100, Math.round(achievement.calculateAchievedPercentage() * 100));
 	}
 

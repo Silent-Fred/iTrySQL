@@ -37,10 +37,14 @@ import netscape.javascript.JSObject;
  */
 public class CodeMirrorBasedEditor implements StatementEditor {
 
+	private static final long serialVersionUID = -7122785829568042892L;
+
 	public static final String RESOURCE = "/resources/codemirror/sql_editor.html";
 
 	private enum FontSizeSteps {
-		NORMAL(12), MEDIUM(14), BIG(18);
+		NORMAL(12),
+		MEDIUM(14),
+		BIG(18);
 		private int equivalentFontSize;
 
 		FontSizeSteps(final int equivalentFontSize) {
