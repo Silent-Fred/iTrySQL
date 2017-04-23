@@ -159,3 +159,49 @@
 .search-field {
 	-fx-background-radius: 14;
 }
+
+#rankPane, 
+#achievementsPane, 
+#rankAndAchievementsTitledPane, 
+#rankAndAchievementsAnchorPane,
+#rankAndAchievementsVBox,
+#achievementsScrollPane {
+    -fx-background-color: white;
+}
+
+#achievementsScrollPane > .viewport {
+   -fx-background-color: white;
+}
+
+.itry-rank-label {
+    -fx-font-family: 'sans-serif';
+    -fx-font-weight: bold;
+    -fx-font-size: 18;
+}
+
+.itrysql-achievement-label-name {
+    -fx-font-family: 'sans-serif';
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+}
+
+.itrysql-achievement-label-description {
+    -fx-font-family: 'sans-serif';
+    -fx-font-style: italic;
+    -fx-font-size: 12;
+}
+
+.itrysql-achievement-label-hint {
+    -fx-font-family: 'sans-serif';
+    -fx-font-style: italic;
+    -fx-font-size: 14;
+}
+
+.itrysql-achievement-logo {
+	-fx-font-family: "Laurus Nobilis";
+    -fx-font-size: 48;
+    -fx-text-fill: rgba(78, 154,6, 1.0);
+}
+
+.itrysql-achievement-progress {
+}

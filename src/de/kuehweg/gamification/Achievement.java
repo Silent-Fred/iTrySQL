@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Michael Kühweg
+ * Copyright (c) 2015-2017, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,8 +79,8 @@ public class Achievement extends Observable {
 	 *            Ereignisse werden ignoriert. (somit kann ein Event problemlos
 	 *            an alle Achievements übergeben werden)
 	 */
-	public void event(final AchievementEvent event) {
-		event(event, 1);
+	public void fire(final AchievementEvent event) {
+		fire(event, 1);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class Achievement extends Observable {
 	 *            Berechnungen; dann kann z.B. eine Berechnung mit 25ms durch
 	 *            einen Aufruf mit count = 25 registriert werden
 	 */
-	public void event(final AchievementEvent event, final int count) {
+	public void fire(final AchievementEvent event, final int count) {
 		final AchievementCounter countdown = eventsWithCurrentCountdown.get(event);
 		if (countdown != null && countdown.getCounter() > 0) {
 			setChanged();

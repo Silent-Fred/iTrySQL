@@ -41,10 +41,10 @@ public class PointsByAchievementTest {
         PointsByAchievement points = new PointsByAchievement(achievement, 100);
         assertEquals(0, points.calculateCurrentlyAchievedPoints());
 
-        achievement.event(new AchievementEvent("A"), 5);
+        achievement.fire(new AchievementEvent("A"), 5);
         assertEquals(0, points.calculateCurrentlyAchievedPoints());
 
-        achievement.event(new AchievementEvent("A"), 5);
+        achievement.fire(new AchievementEvent("A"), 5);
         assertEquals(100, points.calculateCurrentlyAchievedPoints());
     }
 }

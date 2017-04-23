@@ -74,7 +74,6 @@ import de.kuehweg.sqltool.dialog.component.QueryResultTableView;
 import de.kuehweg.sqltool.dialog.component.QueryResultTextView;
 import de.kuehweg.sqltool.dialog.component.SourceFileDropTargetUtil;
 import de.kuehweg.sqltool.dialog.component.StatementEditorComponentAccessor;
-import de.kuehweg.sqltool.dialog.component.achievement.AchievementHtmlFormatter;
 import de.kuehweg.sqltool.dialog.component.achievement.AchievementView;
 import de.kuehweg.sqltool.dialog.component.editor.StatementEditor;
 import de.kuehweg.sqltool.dialog.component.editor.StatementEditorComponent;
@@ -120,6 +119,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -267,11 +267,13 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	@FXML
 	private WebView syntaxView;
 	@FXML
-	private WebView achievementsView;
-	@FXML
 	private TextField findInput;
 	@FXML
 	private Button toggleSyntaxColoring;
+	@FXML
+	private Pane rankPane;
+	@FXML
+	private AnchorPane achievementsPane;
 
 	// my own special creation
 	private QueryResultTableView queryResultTableView;
@@ -353,12 +355,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		syntaxView.setOnMouseExited((final MouseEvent t) -> {
 			WebViewWithHSQLDBBugfix.fix();
 		});
-		achievementsView.setOnMouseEntered((final MouseEvent t) -> {
-			WebViewWithHSQLDBBugfix.fix();
-		});
-		achievementsView.setOnMouseExited((final MouseEvent t) -> {
-			WebViewWithHSQLDBBugfix.fix();
-		});
 	}
 
 	/**
@@ -438,8 +434,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 */
 	@FXML
 	public void connect(final ActionEvent event) {
-		// final ConnectionDialog connectionDialog = new
-		// ConnectionDialog(getApplicationWindow());
 		final ConnectionDialog connectionDialog = new ConnectionDialog(statementPane.getScene().getWindow());
 
 		connectionDialog.showAndWait();
@@ -917,9 +911,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		getStatementEditorComponent().toggleStatementEditor();
 	}
 
-	/**
-	 * Fortführung der Initalisierung. TODO Kein sonderlich sinnvoller Name.
-	 */
 	private void initializeContinued() {
 		initializeConnectionComponentController();
 		prepareHistory();
@@ -937,7 +928,8 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		refreshTree(null, schemaTreeView);
 		SourceFileDropTargetUtil.transformIntoSourceFileDropTarget(statementPane, this);
 
-		achievementViewComponent = new AchievementView(achievementsView, new AchievementHtmlFormatter());
+		achievementViewComponent = new AchievementView(AchievementManager.getInstance().getPointsSystem(), rankPane,
+				achievementsPane);
 		achievementViewComponent.refresh();
 
 		scriptAction = new ScriptAction(this);
@@ -958,7 +950,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 		tabSyntax.disableProperty().set(webViewError);
 		if (webViewError) {
 			tabSyntax.setTooltip(new Tooltip(DialogDictionary.TOOLTIP_WEBVIEW_RENDERING_ERROR.toString()));
-			// TODO auch eine Variante: Text einblenden mit Erläuterung zur
+			// Auch eine Variante: Text einblenden mit Erläuterung zur
 			// Fehlerkonstellation
 			// syntaxView.getEngine()
 			// .load(this.getClass().getResource("/resources/syntax/inconvenience.html").toExternalForm());

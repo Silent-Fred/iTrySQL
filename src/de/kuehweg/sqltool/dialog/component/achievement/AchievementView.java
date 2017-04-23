@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Michael Kühweg
+ * Copyright (c) 2015-2017, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,11 @@ package de.kuehweg.sqltool.dialog.component.achievement;
 import java.util.Observable;
 import java.util.Observer;
 
-import de.kuehweg.gamification.Achievement;
+import de.kuehweg.sqltool.common.achievement.RankingPoints;
 import javafx.application.Platform;
-import javafx.scene.web.WebView;
+import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 /**
  * Komponente zur Anzeige des Lernfortschritts (Achievements).
@@ -40,50 +42,19 @@ import javafx.scene.web.WebView;
  */
 public class AchievementView implements Observer, Runnable {
 
-	private final WebView view;
+	private final RankingPoints ranking;
+	private final Pane rankPane;
+	private final Pane achievementsPane;
 
-	private final AchievementHtmlFormatter formatter;
-
-	/**
-	 * AchievementViews existieren immer nur mit zugeordneter WebView und
-	 * AchievementHtmlFormatter.
-	 *
-	 * @param view
-	 *            {@link WebView} als Ziel für die aufbereitete Darstellung.
-	 * @param formatter
-	 *            {@link AchievementHtmlFormatter} zur Aufbereitung der
-	 *            Lernfortschrittsanzeige.
-	 */
-	public AchievementView(final WebView view, final AchievementHtmlFormatter formatter) {
-		this.view = view;
-		this.formatter = formatter;
+	public AchievementView(final RankingPoints ranking, final Pane rankPane, final Pane achievementsPane) {
+		this.ranking = ranking;
+		this.rankPane = rankPane;
+		this.achievementsPane = achievementsPane;
 		addObserverToAchievements();
 	}
 
-	/**
-	 * Registriert diese Komponente als Observer an den Achievements, die mit
-	 * dem AchievementHtmlFormatter aufbereitet werden sollen.
-	 */
 	private void addObserverToAchievements() {
-		if (formatter != null) {
-			for (final Achievement achievement : formatter.getRankingPoints().getRegisteredAchievements()) {
-				achievement.addObserver(this);
-			}
-		}
-	}
-
-	/**
-	 * @return the view
-	 */
-	public WebView getView() {
-		return view;
-	}
-
-	/**
-	 * @return the formatter
-	 */
-	public AchievementHtmlFormatter getFormatter() {
-		return formatter;
+		ranking.getRegisteredAchievements().stream().forEach(a -> a.addObserver(this));
 	}
 
 	@Override
@@ -91,17 +62,24 @@ public class AchievementView implements Observer, Runnable {
 		refresh();
 	}
 
-	/**
-	 * Bereitet den Inhalt der WebView neu auf.
-	 */
 	public void refresh() {
 		Platform.runLater(this);
 	}
 
 	@Override
 	public void run() {
-		if (view != null && formatter != null) {
-			view.getEngine().loadContent(formatter.format());
-		}
+		rankPane.getChildren().clear();
+		final Node rank = new RankNodeBuilder(ranking).buildVisual();
+		AnchorPane.setTopAnchor(rank, 0.0);
+		AnchorPane.setLeftAnchor(rank, 0.0);
+		AnchorPane.setRightAnchor(rank, 0.0);
+		rankPane.getChildren().add(rank);
+
+		achievementsPane.getChildren().clear();
+		final Node achievements = new AchievementNodeBuilder(ranking).buildVisual();
+		AnchorPane.setTopAnchor(achievements, 0.0);
+		AnchorPane.setLeftAnchor(achievements, 0.0);
+		AnchorPane.setRightAnchor(achievements, 0.0);
+		achievementsPane.getChildren().add(achievements);
 	}
 }

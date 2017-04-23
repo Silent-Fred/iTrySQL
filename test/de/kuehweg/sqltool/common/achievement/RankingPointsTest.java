@@ -91,13 +91,13 @@ public class RankingPointsTest {
 		assertEquals(0, rankingPoints.pointsAchieved(achievement2));
 		assertEquals(0, rankingPoints.pointsAchieved(achievement3));
 
-		achievement1.event(new AchievementEvent("1"));
+		achievement1.fire(new AchievementEvent("1"));
 		assertEquals(1, rankingPoints.pointsAchieved(achievement1));
 
 		// derzeit keine prozentuale Punktevergabe
-		achievement2.event(new AchievementEvent("2"));
+		achievement2.fire(new AchievementEvent("2"));
 		assertEquals(0, rankingPoints.pointsAchieved(achievement2));
-		achievement2.event(new AchievementEvent("2"));
+		achievement2.fire(new AchievementEvent("2"));
 		assertEquals(2, rankingPoints.pointsAchieved(achievement2));
 	}
 
@@ -119,10 +119,10 @@ public class RankingPointsTest {
 	@Test
 	public void testPointsAchieved() {
 		assertEquals(0, rankingPoints.pointsAchieved());
-		achievement2.event(new AchievementEvent("2"));
+		achievement2.fire(new AchievementEvent("2"));
 		// derzeit keine prozentuale Punktevergabe
 		assertEquals(0, rankingPoints.pointsAchieved());
-		achievement2.event(new AchievementEvent("2"));
+		achievement2.fire(new AchievementEvent("2"));
 		assertEquals(2, rankingPoints.pointsAchieved());
 	}
 

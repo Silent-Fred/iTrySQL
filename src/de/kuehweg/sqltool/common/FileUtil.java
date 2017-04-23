@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2016, Michael Kühweg
+ * Copyright (c) 2013-2017, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -127,14 +127,14 @@ public final class FileUtil {
 		final InputStream tutorialStream = FileUtil.class.getResourceAsStream(resourceName);
 		final StringBuffer b;
 		final InputStreamReader reader = new InputStreamReader(tutorialStream, CHARSET_UTF_8);
-		final BufferedReader bufferedReader = new BufferedReader(reader);
-		b = new StringBuffer();
-		String s = null;
-		while ((s = bufferedReader.readLine()) != null) {
-			b.append(s);
-			b.append('\n');
+		try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+			b = new StringBuffer();
+			String s = null;
+			while ((s = bufferedReader.readLine()) != null) {
+				b.append(s);
+				b.append('\n');
+			}
 		}
-
 		return b.toString();
 	}
 

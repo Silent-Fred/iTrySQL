@@ -6,8 +6,9 @@
 	<property name="BundleOutputPath" value="${BuildPath}/deploy" />
 	<property name="ReferencedLibrariesPath" value="${user.home}/JavaProjects" />
 
+	<property name="HSQLDBVersion" value="2.4.0" />
 	<target name="get-dependencies">
-		<get src="http://central.maven.org/maven2/org/hsqldb/hsqldb/2.3.3/hsqldb-2.3.3.jar" dest="${ReferencedLibrariesPath}/hsqldb-2.3.3.jar" usetimestamp="false" ignoreerrors="true" />
+		<get src="http://central.maven.org/maven2/org/hsqldb/hsqldb/${HSQLDBVersion}/hsqldb-${HSQLDBVersion}.jar" dest="${ReferencedLibrariesPath}/hsqldb-${HSQLDBVersion}.jar" usetimestamp="false" ignoreerrors="true" />
 	</target>
 
 	<target name="init-fx-tasks">
@@ -31,7 +32,7 @@
 
 		<copy todir="${BuildPath}/externalLibs">
 			<fileset dir="${ReferencedLibrariesPath}">
-				<filename name="hsqldb-2.3.3.jar" />
+				<filename name="hsqldb-${HSQLDBVersion}.jar" />
 			</fileset>
 		</copy>
 
@@ -60,7 +61,7 @@
 		<!-- Copy project-libs references -->
 		<copy todir="${BuildPath}/build/libs">
 			<fileset dir="${BuildPath}/externalLibs">
-				<include name="hsqldb-2.3.3.jar" />
+				<include name="hsqldb-${HSQLDBVersion}.jar" />
 			</fileset>
 		</copy>
 
