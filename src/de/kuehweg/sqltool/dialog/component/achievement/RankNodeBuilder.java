@@ -105,9 +105,10 @@ public class RankNodeBuilder {
 		}
 		final ImageView imageView = new ImageView();
 		// setSmooth wird momentan anscheinend komplett ignoriert, sieht dann
-		// alles "verwaschen" aus. Daher der Umweg über ein "zu großes" Bild,
-		// das verkleinert angezeigt wird.
-		imageView.setSmooth(false);
+		// alles "verwaschen" aus, wenn das Logo eigentlich "pixel perfect" sein
+		// sollte. Daher der Umweg über ein "zu großes" Bild, das verkleinert
+		// angezeigt wird.
+		// imageView.setSmooth(false);
 		imageView.setFitHeight(LOGO_HEIGHT);
 		imageView.setFitWidth(LOGO_WIDTH);
 		imageView.setImage(new Image(this.getClass().getResourceAsStream(imagePath)));
