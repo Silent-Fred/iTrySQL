@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2016, Michael Kühweg
+ * Copyright (c) 2013, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,19 @@ public class RomanNumber {
 
 	private enum Digit {
 
-		M(1000), CM(900), D(500), CD(400), C(100), XC(90), L(50), XL(40), X(10), IX(9), V(5), IV(4), I(1);
+		M(1000),
+		CM(900),
+		D(500),
+		CD(400),
+		C(100),
+		XC(90),
+		L(50),
+		XL(40),
+		X(10),
+		IX(9),
+		V(5),
+		IV(4),
+		I(1);
 		private int value;
 
 		Digit(final int value) {
@@ -62,9 +74,8 @@ public class RomanNumber {
 		try {
 			final StringBuilder builder = new StringBuilder();
 			long remainder = value;
-			Digit romanDigit;
 			do {
-				romanDigit = Digit.fit(remainder);
+				final Digit romanDigit = Digit.fit(remainder);
 				builder.append(romanDigit.name());
 				remainder -= romanDigit.value;
 			} while (remainder > 0);

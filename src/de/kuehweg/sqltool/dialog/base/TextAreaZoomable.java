@@ -33,6 +33,8 @@ import javafx.scene.control.TextArea;
  */
 public class TextAreaZoomable implements FontSizeZoomable {
 
+	private static final long serialVersionUID = 569656942212180566L;
+
 	public static final int MIN_FONT_SIZE = 9;
 	public static final int MAX_FONT_SIZE = 32;
 
@@ -44,10 +46,12 @@ public class TextAreaZoomable implements FontSizeZoomable {
 		this.textArea = textArea;
 	}
 
+	@Override
 	public int getFontSize() {
 		return textArea != null ? (int) Math.round(textArea.getFont().getSize()) : DEFAULT_FONT_SIZE;
 	}
 
+	@Override
 	public void setFontSize(final int size) {
 		textArea.setStyle("-fx-font-size: " + size + ";");
 	}

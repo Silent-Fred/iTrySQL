@@ -1,4 +1,4 @@
-Copyright (c) 2013-2017, Michael Kühweg
+Copyright (c) 2017, Michael Kühweg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
