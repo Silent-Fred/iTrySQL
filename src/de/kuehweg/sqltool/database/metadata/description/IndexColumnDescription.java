@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,46 +34,46 @@ import java.util.Objects;
  */
 public class IndexColumnDescription extends DatabaseObjectDescription {
 
-    private final String columnName;
-    private final int ordinalPosition;
-    private final boolean nonUnique;
+	private final String columnName;
+	private final int ordinalPosition;
+	private final boolean nonUnique;
 
-    public IndexColumnDescription(final String indexName, final String columnName,
-            final int ordinalPosition, final boolean nonUnique) {
-        super(indexName);
-        this.columnName = columnName == null ? "" : columnName;
-        this.ordinalPosition = ordinalPosition;
-        this.nonUnique = nonUnique;
-    }
+	public IndexColumnDescription(final String indexName, final String columnName, final int ordinalPosition,
+			final boolean nonUnique) {
+		super(indexName);
+		this.columnName = columnName == null ? "" : columnName;
+		this.ordinalPosition = ordinalPosition;
+		this.nonUnique = nonUnique;
+	}
 
-    public String getColumnName() {
-        return columnName;
-    }
+	public String getColumnName() {
+		return columnName;
+	}
 
-    public int getOrdinalPosition() {
-        return ordinalPosition;
-    }
+	public int getOrdinalPosition() {
+		return ordinalPosition;
+	}
 
-    public boolean isNonUnique() {
-        return nonUnique;
-    }
+	public boolean isNonUnique() {
+		return nonUnique;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = super.hashCode();
-        hash = 79 * hash + Objects.hashCode(this.columnName);
-        hash = 79 * hash + this.ordinalPosition;
-        hash = 79 * hash + (this.nonUnique ? 1 : 0);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = super.hashCode();
+		hash = 79 * hash + Objects.hashCode(columnName);
+		hash = 79 * hash + ordinalPosition;
+		hash = 79 * hash + (nonUnique ? 1 : 0);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (super.equals(obj)) {
-            final IndexColumnDescription other = (IndexColumnDescription) obj;
-            return Objects.equals(columnName, other.columnName);
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (super.equals(obj)) {
+			final IndexColumnDescription other = (IndexColumnDescription) obj;
+			return Objects.equals(columnName, other.columnName);
+		}
+		return false;
+	}
 
 }

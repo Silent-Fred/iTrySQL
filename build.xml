@@ -138,7 +138,7 @@
 		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BundleOutputPath}" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
 
 			<fx:platform basedir="${java.home}" />
-			<fx:info title="iTrySQL" vendor="kuehweg.de" copyright="(c) 2013-2016" description="SQL Tutorial Client" />
+			<fx:info title="iTrySQL" vendor="kuehweg.de" copyright="(c) 2017" description="SQL Tutorial Client" />
 
 			<fx:application refId="fxApplication" />
 			<fx:resources refid="appRes" />

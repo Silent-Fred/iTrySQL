@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -140,7 +140,8 @@ public class HtmlResultFormatter extends ResultFormatter {
 
 	private Date startOfExecutionAsDate() {
 		return getStatementExecutionInformation() != null
-				? new Date(getStatementExecutionInformation().getStartOfExecution()) : new Date();
+				? new Date(getStatementExecutionInformation().getStartOfExecution())
+				: new Date();
 	}
 
 	private String executedByWithConnectionDescription() {

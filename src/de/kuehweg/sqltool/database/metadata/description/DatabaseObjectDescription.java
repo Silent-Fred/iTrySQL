@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Michael Kühweg
+ * Copyright (c) 2015, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,9 +92,8 @@ public abstract class DatabaseObjectDescription implements Comparable<DatabaseOb
 	}
 
 	/**
-	 * Fügt ein Kindelement hinzu. Abgeleitete Klassen müssen diese Methode
-	 * überschreiben, um zu den eigenen Collections mit Kindelementen einen
-	 * Eintrag hinzuzufügen.
+	 * Fügt ein Kindelement hinzu. Abgeleitete Klassen, die Kindelemente
+	 * verwalten, müssen diese Methode überschreiben.
 	 *
 	 * @param child
 	 */

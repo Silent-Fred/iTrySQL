@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,19 +45,16 @@ public class DatabaseDescription extends DatabaseObjectDescription {
 	private final Set<CatalogDescription> catalogs;
 
 	public DatabaseDescription() {
-		super(DialogDictionary.MSG_NO_DB_CONNECTION_FOR_SCHEMA_TREE_VIEW
-				.toString());
+		super(DialogDictionary.MSG_NO_DB_CONNECTION_FOR_SCHEMA_TREE_VIEW.toString());
 		dbProductName = "";
 		dbProductVersion = "";
 		catalogs = new HashSet<>();
 	}
 
-	public DatabaseDescription(final String name, final String dbProductName,
-			final String dbProductVersion) {
+	public DatabaseDescription(final String name, final String dbProductName, final String dbProductVersion) {
 		super(name);
 		this.dbProductName = dbProductName == null ? "" : dbProductName;
-		this.dbProductVersion = dbProductVersion == null ? ""
-				: dbProductVersion;
+		this.dbProductVersion = dbProductVersion == null ? "" : dbProductVersion;
 		catalogs = new HashSet<>();
 	}
 

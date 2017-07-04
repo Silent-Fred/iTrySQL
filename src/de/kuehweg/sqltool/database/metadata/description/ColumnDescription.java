@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2015, Michael Kühweg
+ * Copyright (c) 2013, Michael Kühweg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,47 +32,45 @@ package de.kuehweg.sqltool.database.metadata.description;
  */
 public class ColumnDescription extends DatabaseObjectDescription {
 
-    private final String type;
-    private final int size;
-    private final int decimalDigits;
-    private final Nullability nullable;
-    private final String defaultValue;
-    private final String remarks;
+	private final String type;
+	private final int size;
+	private final int decimalDigits;
+	private final Nullability nullable;
+	private final String defaultValue;
+	private final String remarks;
 
-    public ColumnDescription(final String columnName, final String type,
-            final int size, final int decimalDigits,
-            final Nullability nullable, final String defaultValue,
-            final String remarks) {
-        super(columnName);
-        this.type = type == null ? "" : type;
-        this.size = size;
-        this.decimalDigits = decimalDigits;
-        this.nullable = nullable;
-        this.defaultValue = defaultValue == null ? "" : defaultValue;
-        this.remarks = remarks == null ? "" : remarks;
-    }
+	public ColumnDescription(final String columnName, final String type, final int size, final int decimalDigits,
+			final Nullability nullable, final String defaultValue, final String remarks) {
+		super(columnName);
+		this.type = type == null ? "" : type;
+		this.size = size;
+		this.decimalDigits = decimalDigits;
+		this.nullable = nullable;
+		this.defaultValue = defaultValue == null ? "" : defaultValue;
+		this.remarks = remarks == null ? "" : remarks;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public int getSize() {
-        return size;
-    }
+	public int getSize() {
+		return size;
+	}
 
-    public int getDecimalDigits() {
-        return decimalDigits;
-    }
+	public int getDecimalDigits() {
+		return decimalDigits;
+	}
 
-    public Nullability getNullable() {
-        return nullable;
-    }
+	public Nullability getNullable() {
+		return nullable;
+	}
 
-    public String getDefaultValue() {
-        return defaultValue;
-    }
+	public String getDefaultValue() {
+		return defaultValue;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 }
