@@ -116,7 +116,7 @@
 			<fx:fileset dir="${BuildPath}/dist" includes="libs/**" />
 		</fx:resources>
 
-		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="3.3" />
+		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="3.4" />
 
 		<mkdir dir="${BuildPath}/build/classes/META-INF" />
 
@@ -129,7 +129,7 @@
 			<manifest>
 				<attribute name="Implementation-Vendor" value="kuehweg.de" />
 				<attribute name="Implementation-Title" value="iTrySQL" />
-				<attribute name="Implementation-Version" value="3.3" />
+				<attribute name="Implementation-Version" value="3.4" />
 				<attribute name="JavaFX-Feature-Proxy" value="None" />
 			</manifest>
 		</fx:jar>
