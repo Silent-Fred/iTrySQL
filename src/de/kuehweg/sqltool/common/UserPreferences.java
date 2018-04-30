@@ -46,6 +46,8 @@ public class UserPreferences implements UserPreferencesI {
 	private static final String BEEP_AUDIO_CLIP = "beepAudioClip";
 	private static final String BEEP_VOLUME = "beepVolume";
 	// Preferences mit Defaultwerten
+	private static final int DEFAULT_FONT_SIZE_STATEMENT_INPUT = 12;
+	private static final int DEFAULT_FONT_SIZE_DB_OUTPUT = 10;
 	private boolean limitMaxRows = isDefaultLimitMaxRows();
 	private int fontSizeStatementInput = getDefaultFontSizeStatementInput();
 	private int fontSizeDbOutput = getDefaultFontSizeDbOutput();
@@ -100,10 +102,8 @@ public class UserPreferences implements UserPreferencesI {
 	 */
 	@Override
 	public void setLimitMaxRows(final boolean limitMaxRows) {
-		if (this.limitMaxRows != limitMaxRows) {
-			this.limitMaxRows = limitMaxRows;
-			preferences.putBoolean(LIMIT_MAX_ROWS, limitMaxRows);
-		}
+		this.limitMaxRows = limitMaxRows;
+		preferences.putBoolean(LIMIT_MAX_ROWS, limitMaxRows);
 	}
 
 	/**
@@ -124,10 +124,8 @@ public class UserPreferences implements UserPreferencesI {
 	 */
 	@Override
 	public void setFontSizeStatementInput(final int fontSize) {
-		if (fontSizeStatementInput != fontSize) {
-			fontSizeStatementInput = fontSize;
-			preferences.putInt(FONT_SIZE_STATEMENT_INPUT, fontSize);
-		}
+		fontSizeStatementInput = fontSize;
+		preferences.putInt(FONT_SIZE_STATEMENT_INPUT, fontSize);
 	}
 
 	/**
@@ -147,10 +145,8 @@ public class UserPreferences implements UserPreferencesI {
 	 */
 	@Override
 	public void setFontSizeDbOutput(final int fontSize) {
-		if (fontSizeDbOutput != fontSize) {
-			fontSizeDbOutput = fontSize;
-			preferences.putInt(FONT_SIZE_DB_OUTPUT, fontSize);
-		}
+		fontSizeDbOutput = fontSize;
+		preferences.putInt(FONT_SIZE_DB_OUTPUT, fontSize);
 	}
 
 	/**
@@ -170,10 +166,8 @@ public class UserPreferences implements UserPreferencesI {
 	 */
 	@Override
 	public void setBeepVolume(final double beepVolume) {
-		if (this.beepVolume != beepVolume) {
-			this.beepVolume = beepVolume;
-			preferences.putDouble(BEEP_VOLUME, beepVolume);
-		}
+		this.beepVolume = beepVolume;
+		preferences.putDouble(BEEP_VOLUME, beepVolume);
 	}
 
 	/**
@@ -193,10 +187,8 @@ public class UserPreferences implements UserPreferencesI {
 	 */
 	@Override
 	public void setBeepAudioClip(final ProvidedAudioClip beepAudioClip) {
-		if (this.beepAudioClip != beepAudioClip) {
-			this.beepAudioClip = beepAudioClip;
-			preferences.put(BEEP_AUDIO_CLIP, beepAudioClip.name());
-		}
+		this.beepAudioClip = beepAudioClip;
+		preferences.put(BEEP_AUDIO_CLIP, beepAudioClip.name());
 	}
 
 	@Override
@@ -211,12 +203,12 @@ public class UserPreferences implements UserPreferencesI {
 
 	@Override
 	public int getDefaultFontSizeDbOutput() {
-		return 12;
+		return DEFAULT_FONT_SIZE_DB_OUTPUT;
 	}
 
 	@Override
 	public int getDefaultFontSizeStatementInput() {
-		return 12;
+		return DEFAULT_FONT_SIZE_STATEMENT_INPUT;
 	}
 
 	@Override

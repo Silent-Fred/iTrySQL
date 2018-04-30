@@ -37,10 +37,11 @@ public class TextAreaZoomable implements FontSizeZoomable {
 
 	public static final int MIN_FONT_SIZE = 9;
 	public static final int MAX_FONT_SIZE = 32;
-
 	private static final int DEFAULT_FONT_SIZE = 12;
 
 	private final TextArea textArea;
+
+	private int fontSize = DEFAULT_FONT_SIZE;
 
 	public TextAreaZoomable(final TextArea textArea) {
 		this.textArea = textArea;
@@ -48,12 +49,13 @@ public class TextAreaZoomable implements FontSizeZoomable {
 
 	@Override
 	public int getFontSize() {
-		return textArea != null ? (int) Math.round(textArea.getFont().getSize()) : DEFAULT_FONT_SIZE;
+		return fontSize;
 	}
 
 	@Override
 	public void setFontSize(final int size) {
-		textArea.setStyle("-fx-font-size: " + size + ";");
+		fontSize = size;
+		textArea.setStyle("-fx-font-size: " + fontSize + ";");
 	}
 
 	private int zoom(final int diff) {

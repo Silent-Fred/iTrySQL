@@ -195,13 +195,12 @@ public class StatementEditorComponent implements Serializable {
 		final TextArea textArea = new TextArea();
 		textArea.setPromptText(DialogDictionary.PROMPT_ENTER_STATEMENT.toString());
 		textArea.getStyleClass().add("itry-statement-edit");
-		textArea.setStyle(
-				"-fx-font-size: " + UserPreferencesManager.getSharedInstance().getFontSizeStatementInput() + ";");
 		anchor.getChildren().clear();
 		anchor.getChildren().add(textArea);
 		fixAnchor(textArea);
 		final String content = statementEditor != null ? statementEditor.getText() : "";
 		statementEditor = new TextAreaBasedEditor(textArea);
+		statementEditor.setFontSize(UserPreferencesManager.getSharedInstance().getFontSizeStatementInput());
 		statementEditor.setText(content);
 		statementEditor.focus();
 	}

@@ -109,7 +109,8 @@ public final class FileUtil {
 			// verpackt)
 			throw new IOException(ex);
 		}
-		Files.write(path, text.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		Files.write(path, text.getBytes(CHARSET_UTF_8), StandardOpenOption.CREATE,
+				StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
 	/**
