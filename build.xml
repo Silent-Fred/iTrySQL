@@ -6,6 +6,11 @@
 	<property name="BundleOutputPath" value="${BuildPath}/deploy" />
 	<property name="ReferencedLibrariesPath" value="${user.home}/JavaProjects" />
 
+	<property name="AppVersion" value="3.5" />
+	<tstamp>
+		<format property="TODAY_YYYY" pattern="yyyy"  locale="de,DE" />
+	</tstamp>
+	
 	<property name="HSQLDBVersion" value="2.4.0" />
 	<target name="get-dependencies">
 		<get src="http://central.maven.org/maven2/org/hsqldb/hsqldb/${HSQLDBVersion}/hsqldb-${HSQLDBVersion}.jar" dest="${ReferencedLibrariesPath}/hsqldb-${HSQLDBVersion}.jar" usetimestamp="false" ignoreerrors="true" />
@@ -116,7 +121,7 @@
 			<fx:fileset dir="${BuildPath}/dist" includes="libs/**" />
 		</fx:resources>
 
-		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="3.4" />
+		<fx:application id="fxApplication" name="iTrySQL" mainClass="de.kuehweg.sqltool.itrysql.ITrySQL" version="${AppVersion}" />
 
 		<mkdir dir="${BuildPath}/build/classes/META-INF" />
 
@@ -129,7 +134,7 @@
 			<manifest>
 				<attribute name="Implementation-Vendor" value="kuehweg.de" />
 				<attribute name="Implementation-Title" value="iTrySQL" />
-				<attribute name="Implementation-Version" value="3.4" />
+				<attribute name="Implementation-Version" value="${AppVersion}" />
 				<attribute name="JavaFX-Feature-Proxy" value="None" />
 			</manifest>
 		</fx:jar>
@@ -138,7 +143,7 @@
 		<fx:deploy embedJNLP="false" extension="false" includeDT="false" offlineAllowed="true" outdir="${BundleOutputPath}" outfile="iTrySQL" nativeBundles="dmg" updatemode="background">
 
 			<fx:platform basedir="${java.home}" />
-			<fx:info title="iTrySQL" vendor="kuehweg.de" copyright="(c) 2017" description="SQL Tutorial Client" />
+			<fx:info title="iTrySQL" vendor="kuehweg.de" copyright="(c) ${TODAY_YYYY}" description="SQL Tutorial Client" />
 
 			<fx:application refId="fxApplication" />
 			<fx:resources refid="appRes" />
