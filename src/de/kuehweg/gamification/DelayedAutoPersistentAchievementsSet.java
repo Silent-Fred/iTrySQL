@@ -54,7 +54,7 @@ public class DelayedAutoPersistentAchievementsSet implements Observer, Runnable 
 
 	public DelayedAutoPersistentAchievementsSet(final AchievementPersister persister) {
 		this.persister = persister;
-		delayInSeconds = 1;
+		delayInSeconds = MIN_DELAY_IN_SECONDS;
 	}
 
 	public synchronized void registerAchievement(final Achievement achievement) {
@@ -82,7 +82,7 @@ public class DelayedAutoPersistentAchievementsSet implements Observer, Runnable 
 		if (!changed) {
 			changed = true;
 			final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-			executorService.schedule(this, 1, TimeUnit.SECONDS);
+			executorService.schedule(this, delayInSeconds, TimeUnit.SECONDS);
 			executorService.shutdown();
 		}
 	}

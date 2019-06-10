@@ -6,7 +6,7 @@
 	<property name="BundleOutputPath" value="${BuildPath}/deploy" />
 	<property name="ReferencedLibrariesPath" value="${user.home}/JavaProjects" />
 
-	<property name="AppVersion" value="3.5" />
+	<property name="AppVersion" value="3.6" />
 	<tstamp>
 		<format property="TODAY_YYYY" pattern="yyyy"  locale="de,DE" />
 	</tstamp>

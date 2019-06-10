@@ -25,9 +25,10 @@
  */
 package de.kuehweg.sqltool.dialog.component.schematree;
 
-import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
-import de.kuehweg.sqltool.database.metadata.MetaDataReader;
 import java.sql.Connection;
+
+import de.kuehweg.sqltool.database.metadata.MetaDataReader;
+import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeView;

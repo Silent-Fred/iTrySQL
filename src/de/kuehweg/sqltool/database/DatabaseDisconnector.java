@@ -27,6 +27,7 @@ package de.kuehweg.sqltool.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import javafx.concurrent.Task;
 
 /**

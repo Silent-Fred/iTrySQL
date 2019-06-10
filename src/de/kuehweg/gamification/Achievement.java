@@ -50,7 +50,7 @@ public class Achievement extends Observable {
 	 *            Achievement also persistent sein (können), dann muss der Name
 	 *            eindeutig vergeben werden.
 	 * @param requirements
-	 *            Jedes Achievement muss mit den relevanten AchievmentEvents
+	 *            Jedes Achievement muss mit den relevanten AchievementEvents
 	 *            inklusive der erforderlichen Anzahl initialisiert werden.
 	 */
 	public Achievement(final String name, final AchievementCounter... requirements) {

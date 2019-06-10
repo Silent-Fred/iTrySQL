@@ -58,19 +58,17 @@ public interface UserPreferencesI {
 	boolean isLimitMaxRows();
 
 	/**
-	 *
-	 *
 	 * @param beepAudioClip
 	 *            Benachrichtgungston (nach Abschluss einer Aktion)
 	 */
-	void setBeepAudioClip(final ProvidedAudioClip beepAudioClip);
+	void setBeepAudioClip(ProvidedAudioClip beepAudioClip);
 
 	/**
 	 * @param beepVolume
 	 *            Lautstärke des Benachrichtgungstons. (aus: 0.0 - volle
 	 *            Lautstärke: 1.0)
 	 */
-	void setBeepVolume(final double beepVolume);
+	void setBeepVolume(double beepVolume);
 
 	/**
 	 * Schriftgröße für die DB-Ausgaben in den Voreinstellungen setzen.
@@ -78,7 +76,7 @@ public interface UserPreferencesI {
 	 * @param fontSize
 	 *            Schriftgröße
 	 */
-	void setFontSizeDbOutput(final int fontSize);
+	void setFontSizeDbOutput(int fontSize);
 
 	/**
 	 * Schriftgröße für die Eingabe der SQL-Anweisungen in den Voreinstellungen
@@ -87,7 +85,7 @@ public interface UserPreferencesI {
 	 * @param fontSize
 	 *            Schriftgröße
 	 */
-	void setFontSizeStatementInput(final int fontSize);
+	void setFontSizeStatementInput(int fontSize);
 
 	/**
 	 * Begrenzung der Ergebnismengen ein- oder ausschalten.
@@ -99,7 +97,7 @@ public interface UserPreferencesI {
 	 *            lediglich die vom Benutzer gewünschte Einstellung und muss
 	 *            entsprechend in der Verarbeitungslogik ausgewertet werden.
 	 */
-	void setLimitMaxRows(final boolean limitMaxRows);
+	void setLimitMaxRows(boolean limitMaxRows);
 
 	/**
 	 * @return Standard-Benachrichtigungston wenn Aktionen abgeschlossen sind.

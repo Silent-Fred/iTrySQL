@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 
 import de.kuehweg.gamification.AchievementCounter;
 import de.kuehweg.gamification.AchievementPersister;
-import de.kuehweg.gamification.ObfuscatedAchievementXmlFilePersister;
+import de.kuehweg.gamification.AchievementUserPreferencesPersister;
 import de.kuehweg.sqltool.common.DialogDictionary;
 import de.kuehweg.sqltool.common.achievement.AchievementManager;
 import de.kuehweg.sqltool.common.achievement.DefaultRankingPoints;
@@ -85,9 +85,7 @@ public class ITrySQL extends Application {
 	 * Achievements vorbereiten, bestehenden Fortschritt einlesen.
 	 */
 	private void initGamification() {
-		final String achievementsFilename = System.getProperty("user.home") + "/" + "SQLTutorialAchievements";
-		AchievementManager.getInstance().setPersister(
-				new ObfuscatedAchievementXmlFilePersister(achievementsFilename, System.getProperty("user.name")));
+		AchievementManager.getInstance().setPersister(new AchievementUserPreferencesPersister());
 		applyProgress();
 		AchievementManager.getInstance().setPointsSystem(new DefaultRankingPoints());
 	}

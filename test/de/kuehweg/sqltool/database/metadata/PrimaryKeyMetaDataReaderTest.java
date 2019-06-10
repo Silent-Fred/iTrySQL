@@ -25,19 +25,22 @@
  */
 package de.kuehweg.sqltool.database.metadata;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.sql.SQLException;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import de.kuehweg.sqltool.database.execution.fake.ResultSetStubForMetaDataReader;
 import de.kuehweg.sqltool.database.metadata.description.CatalogDescription;
 import de.kuehweg.sqltool.database.metadata.description.DatabaseDescription;
 import de.kuehweg.sqltool.database.metadata.description.SchemaDescription;
 import de.kuehweg.sqltool.database.metadata.description.TableDescription;
-import java.sql.SQLException;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
