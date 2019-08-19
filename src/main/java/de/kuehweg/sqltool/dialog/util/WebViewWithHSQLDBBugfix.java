@@ -25,9 +25,6 @@
  */
 package de.kuehweg.sqltool.dialog.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Bugfix für die in der Kombination von HSQLDB mit WebViews auftretenden
  * Probleme, dass wegen des von HSQLDB umgestellten Log-Levels die WebViews in

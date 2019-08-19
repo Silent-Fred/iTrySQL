@@ -25,6 +25,7 @@
  */
 package de.kuehweg.sqltool.database;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -70,7 +71,7 @@ public class ConnectionHolder {
 	 */
 	public void connect(final ConnectionSetting connectionSetting) throws DatabaseConnectionException {
 		try {
-			Class.forName(connectionSetting.getType().getDriverClass()).newInstance();
+			Class.forName(connectionSetting.getType().getDriverClass()).getDeclaredConstructor().newInstance();
 			final Properties properties = new Properties();
 			properties.setProperty("user", connectionSetting.getUser() != null ? connectionSetting.getUser() : "");
 			properties.setProperty("password",
@@ -100,7 +101,7 @@ public class ConnectionHolder {
 			connect(DriverManager.getConnection(connectionSetting.getUrl(), properties));
 			connectedProperty.set(true);
 		} catch (NullPointerException | ClassNotFoundException | InstantiationException | IllegalAccessException
-				| SQLException ex) {
+				| SQLException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
 			connectedProperty.set(false);
 			throw new DatabaseConnectionException(ex);
 		}

@@ -26,9 +26,7 @@
 
 package de.kuehweg.sqltool.itrysql;
 
-import java.io.File;
 import java.net.MalformedURLException;
-import java.net.ProtocolFamily;
 import java.net.URL;
 
 /**
