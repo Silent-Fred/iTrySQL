@@ -64,9 +64,6 @@ public class PointsByAchievement {
 
 	/**
 	 * Berechnet die derzeit gültige Anzahl Punkte für das Achievment.
-	 * <p>
-	 * TODO Sinn und Zweck einer prozentualen Punktvergabe für zukünftige
-	 * Versionen neu evaluieren
 	 *
 	 * @return Bei erfülltem Achievement volle Punktzahl wie im Konstruktor
 	 *         angegeben, sonst Null Punkte.

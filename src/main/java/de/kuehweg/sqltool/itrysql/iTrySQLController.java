@@ -335,7 +335,7 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	}
 
 	/**
-	 * FIXME Falls noch Fälle offen sein sollten, in denen der Log-Level
+	 * Falls noch Fälle offen sein sollten, in denen der Log-Level
 	 * umgestellt wird und damit die WebView in den Debugmodus verfällt, sollte
 	 * mit wenigen Handgriffen des Anwenders der Normalzustand wiederhergestellt
 	 * werden können.
@@ -357,7 +357,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 	 */
 	@FXML
 	public void about(final ActionEvent event) {
-		// FIXME
 		WebViewWithHSQLDBBugfix.fix();
 		AchievementManager.getInstance().fireEvent(NamedAchievementEvent.READ_ABOUT.asAchievementEvent(), 1);
 		final License aboutBox = new License(getApplicationWindow());
@@ -436,7 +435,6 @@ public class iTrySQLController implements Initializable, EventHandler<WindowEven
 				controlAutoCommitVisuals();
 				refreshTree(event);
 				displayMessageForTemporaryDatabase(connectionSetting);
-				// FIXME
 				WebViewWithHSQLDBBugfix.fix();
 				AchievementManager.getInstance()
 						.fireEvent(NamedAchievementEvent.CONNECTION_ESTABLISHED.asAchievementEvent(), 1);

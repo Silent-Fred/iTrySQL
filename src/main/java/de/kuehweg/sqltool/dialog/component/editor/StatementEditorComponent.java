@@ -164,7 +164,6 @@ public class StatementEditorComponent implements Serializable {
 	 * @param javascriptEditor
 	 */
 	private void webViewFixForJavascriptEditor(final WebView javascriptEditor) {
-		// FIXME der übliche Workaround
 		javascriptEditor.setOnMouseEntered((final MouseEvent t) -> {
 			WebViewWithHSQLDBBugfix.fix();
 		});

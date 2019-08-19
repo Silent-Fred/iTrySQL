@@ -55,7 +55,6 @@ public class SchemaTreeBuilder implements Runnable {
 	@Override
 	public void run() {
 		refreshSchemaTree(db, treeToUpdate);
-		// FIXME
 		WebViewWithHSQLDBBugfix.fix();
 	}
 

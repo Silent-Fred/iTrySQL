@@ -84,7 +84,6 @@ public class ITrySQLStage extends Stage {
 			setOnCloseRequest(controller);
 			controller.setApplicationWindow(scene.getWindow());
 
-			// FIXME
 			WindowIconRepaintIssueOnResizeFix.fix(callerStage);
 
 		} catch (final IOException ex) {

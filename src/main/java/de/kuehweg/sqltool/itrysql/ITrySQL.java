@@ -135,7 +135,6 @@ public class ITrySQL extends Application {
 			}
 		});
 
-		// FIXME
 		WindowIconRepaintIssueOnResizeFix.fix(primaryStage);
 
 		primaryStage.show();
