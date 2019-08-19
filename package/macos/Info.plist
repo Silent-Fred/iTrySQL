@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>de.kuehweg.itrysql</string>
+	<key>CFBundleExecutable</key>
+	<string>itrysql</string>
+	<key>CFBundleDisplayName</key>
+	<string>iTrySQL</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>(c) 2019 Michael Kühweg</string>
+	<key>CFBundleIconFile</key>
+	<string>itrysql.icns</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.education</string>
+</dict>
+</plist>

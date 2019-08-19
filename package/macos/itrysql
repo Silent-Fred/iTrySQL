@@ -1,0 +1,4 @@
+#!/bin/sh
+BASEDIR=`dirname "$0"`
+cd "$BASEDIR"
+"$BASEDIR"/bin/java -classpath "$BASEDIR"/non-modular/* -Ditrysql.external-resources="$BASEDIR"/external-resources -m itrysql/de.kuehweg.sqltool.itrysql.ITrySQL $@

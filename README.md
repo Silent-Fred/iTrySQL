@@ -1,30 +1,36 @@
 # iTrySQL
 
-Buildfile
----------
+What it does
+------------
 
-In der Datei _build.xml_ muss das Property `ReferencedLibrariesPath`
-auf den Pfad gesetzt werden, unter dem die erforderlichen externen JAR-Dateien abgelegt sind.
-(vgl. _Abhängigkeiten_)
+It is a training software. Designed to accompany a training on database and
+SQL fundamentals. It doesn't require a very specific infrastructure nor the
+installation of a database. Participants are ready to go with their database
+and example data in less than 30 seconds.
 
-Im Property `AppVersion` die passende (Marketing-)Versionsnummer eintragen.
+How to build it
+---------------
 
-Im Tag `fx:deploy` muss je nach Plattform das Attribut `nativeBundles` auf einen anderen Wert als `dmg`
-gesetzt werden (z.B. `all` - siehe dazu die entsprechende Dokumentation bei Oracle).
+Either add `jlink` to your path or set the appropriate executable in the `pom.xml`.
+See `jlinkExecutable` in the configuration of the JavaFX Maven plugin.
 
-Das Buildskript muss in einer eigenen Runtime gestartet werden.
-(Eclipse z.B.: _Run -> External Tools -> External Tools Configurations..._ Für `build.xml` unter _JRE_ _Separate JRE_ auswählen)
-Andernfalls ist der Ausgabepfad der durch `fx:deploy` erzeugten Bundles nicht wie erwartet. Alternativ kann das Ant Property
-`BundleOutputPath` auch auf einen absolut angegeben Pfad gesetzt werden.
+Then...
 
+`mvn clean javafx:jlink prepare-package package`
 
-Abhängigkeiten
---------------
+What will be built?
+-------------------
 
-- HSQLB (http://www.hsqldb.org)
+On macOS, an application bundle will be built in the build directory. (`target` folder)
 
-Diese können mit dem Target `get-dependencies` im Buildfile heruntergeladen werden.
-Hierzu muss das in `ReferencedLibrariesPath` angegebene Verzeichnis bereits angelegt sein.
-(selbstverständlich können die Abhängigkeiten auch auf anderem Weg zur Verfügung gestellt
-werden, z.B. über Project Settings / Libraries in IntelliJ IDEA, direkte Downloads beim
-Anbieter der Bibliothek o.ä.) 
+On Windows, the `jlink` result is being used without much further treatment.
+
+This is hopefully only a temporary solution until `jpackage` might be available (again) in
+future releases of the JDK.
+
+What to expect?
+---------------
+
+Okay, to be honest, the Windows bundle hasn't even been tested yet.
+It may require some modifications that I will add once I'll have a
+Windows computer at hand.

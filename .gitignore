@@ -6,3 +6,7 @@
 /.checkstyle
 mem.script
 mem.properties
+*.iml
+/target/
+/.idea/
+/.settings/

@@ -1,0 +1,35 @@
+<assembly
+        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+    <id>bundle.app</id>
+    <formats>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <includeSiteDirectory>false</includeSiteDirectory>
+    <files>
+        <file>
+            <source>${project.basedir}/package/macos/Info.plist</source>
+            <outputDirectory>Contents</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/package/macos/itrysql</source>
+            <outputDirectory>Contents/MacOS</outputDirectory>
+            <fileMode>0755</fileMode>
+        </file>
+        <file>
+            <source>${project.basedir}/package/macos/itrysql.icns</source>
+            <outputDirectory>Contents/Resources</outputDirectory>
+        </file>
+    </files>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}/${image.name}</directory>
+            <outputDirectory>Contents/MacOS</outputDirectory>
+            <includes>
+                <include>*/**</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
