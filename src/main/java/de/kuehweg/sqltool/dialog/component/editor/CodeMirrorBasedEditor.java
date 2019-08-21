@@ -42,9 +42,7 @@ public class CodeMirrorBasedEditor implements StatementEditor {
 	public static final String RESOURCE = "codemirror/sql_editor.html";
 
 	private enum FontSizeSteps {
-		NORMAL(12),
-		MEDIUM(14),
-		BIG(18);
+		NORMAL(12), MEDIUM(14), BIG(18);
 		private int equivalentFontSize;
 
 		FontSizeSteps(final int equivalentFontSize) {

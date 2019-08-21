@@ -35,7 +35,7 @@ import java.net.URL;
 public class ResourceLocator {
 
 	public URL getExternalFormForExplodedResourceInBundle(final String name) throws MalformedURLException {
-		String externalResourceBaseDirectory = System.getProperty("itrysql.external-resources");
+		final String externalResourceBaseDirectory = System.getProperty("itrysql.external-resources");
 		return new URL("file", "localhost", externalResourceBaseDirectory + "/" + name);
 	}
 }

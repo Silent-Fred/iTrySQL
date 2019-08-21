@@ -26,8 +26,11 @@
 
 package de.kuehweg.sqltool.dialog.component.editor;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.LinkedList;
+
+import de.kuehweg.sqltool.itrysql.ResourceLocator;
 
 /**
  * @author Michael Kühweg
@@ -41,9 +44,15 @@ public class StatementEditorCycle implements Serializable {
 	private int cycle = 0;
 
 	public StatementEditorCycle() {
-		statementEditorClasses.add(TextAreaBasedEditor.class);
-		statementEditorClasses.add(CodeMirrorBasedEditor.class);
-		statementEditorClasses.add(AceBasedEditor.class);
+		if (isPlainTextAvailable()) {
+			statementEditorClasses.add(TextAreaBasedEditor.class);
+		}
+		if (isCodemirrorAvailable()) {
+			statementEditorClasses.add(CodeMirrorBasedEditor.class);
+		}
+		if (isAceAvailable()) {
+			statementEditorClasses.add(AceBasedEditor.class);
+		}
 	}
 
 	public void recycle() {
@@ -59,4 +68,28 @@ public class StatementEditorCycle implements Serializable {
 		return statementEditorClasses.size();
 	}
 
+	private boolean isPlainTextAvailable() {
+		return true;
+	}
+
+	private boolean isCodemirrorAvailable() {
+		final ResourceLocator locator = new ResourceLocator();
+		try {
+			return new File(locator.getExternalFormForExplodedResourceInBundle(CodeMirrorBasedEditor.RESOURCE).toURI()
+					.getPath()).exists();
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+
+	private boolean isAceAvailable() {
+		final ResourceLocator locator = new ResourceLocator();
+		try {
+			return new File(
+					locator.getExternalFormForExplodedResourceInBundle(AceBasedEditor.RESOURCE).toURI().getPath())
+							.exists();
+		} catch (final Exception e) {
+			return false;
+		}
+	}
 }
