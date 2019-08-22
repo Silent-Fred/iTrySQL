@@ -81,20 +81,18 @@ public class ExecuteAction {
 	}
 
 	/**
-	 * Führt SQL auf einer Verbindung aus. Wenn keine Verbindung angegeben ist
-	 * oder keine Anweisung zur Ausführung o.a. Handlingfehler, wird ein
-	 * Dictionary-Eintrag zurückgegeben, der als Alert ausgegeben werden kann.
-	 * und erzeugt im Fehlerfall eine entsprechende Meldung, die ausgegeben
-	 * werden kann.
+	 * Führt SQL auf einer Verbindung aus. Wenn keine Verbindung angegeben ist oder
+	 * keine Anweisung zur Ausführung o.a. Handlingfehler, wird ein
+	 * Dictionary-Eintrag zurückgegeben, der als Alert ausgegeben werden kann. und
+	 * erzeugt im Fehlerfall eine entsprechende Meldung, die ausgegeben werden kann.
 	 *
 	 * @param sql
 	 * @param connection
-	 * @return Eintrag im DialogDictionary mit passender Fehlermeldung, falls
-	 *         ein Fehler aufgetreten ist, sonst null.
-	 * @throws java.sql.SQLException
-	 *             Im Ausnahmefall (z.B. kein Statement erzeugbar auf der
-	 *             Connection). SQLExceptions während der Ausführung werden über
-	 *             die mitgegebenen ExecutionTracker abgebildet.
+	 * @return Eintrag im DialogDictionary mit passender Fehlermeldung, falls ein
+	 *         Fehler aufgetreten ist, sonst null.
+	 * @throws SQLException Im Ausnahmefall (z.B. kein Statement erzeugbar auf der
+	 *                      Connection). SQLExceptions während der Ausführung werden
+	 *                      über die mitgegebenen ExecutionTracker abgebildet.
 	 */
 	protected DialogDictionary startExecution(final String sql, final Connection connection) throws SQLException {
 		if (sql == null || sql.trim().length() == 0) {

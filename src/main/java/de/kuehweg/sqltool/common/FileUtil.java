@@ -61,16 +61,14 @@ public final class FileUtil {
 	 * Voraussetzung sind daher Textdateien (wird jedoch nicht verifiziert).
 	 * Convenience für das Nachlesen von Vorlagedateien, Snippets,...
 	 *
-	 * @param url
-	 *            URL der zu ladenden Datei / Ressource
+	 * @param url URL der zu ladenden Datei / Ressource
 	 * @return Den Dateiinhalt / die Resource als String
-	 * @throws URISyntaxException
-	 *             Bei fehlerhafter Angabe der URL.
-	 * @throws IOException
-	 *             Wenn Fehler beim Zugriff auf die Datei/Ressource auftreten.
+	 * @throws URISyntaxException Bei fehlerhafter Angabe der URL.
+	 * @throws IOException        Wenn Fehler beim Zugriff auf die Datei/Ressource
+	 *                            auftreten.
 	 */
 	public static String readFile(final URL url) throws URISyntaxException, IOException {
-		try (final InputStream inputStream = url.openStream()) {
+		try (InputStream inputStream = url.openStream()) {
 			final StringBuffer b;
 			final InputStreamReader reader = new InputStreamReader(inputStream, CHARSET_UTF_8);
 			try (BufferedReader bufferedReader = new BufferedReader(reader)) {
@@ -88,16 +86,13 @@ public final class FileUtil {
 	/**
 	 * Text in die Datei mit dem angegebenen Dateinamen ausgeben.
 	 *
-	 * @param file
-	 *            Dateiname
-	 * @param text
-	 *            Textinhalt der ausgegeben werden soll
-	 * @throws IOException
-	 *             In manchen Java-Versionen in Kombinationen mit manchen
-	 *             Begriebssystemen gab es in der Vergangenheit die
-	 *             unterschiedlichsten Probleme :-( Falls das je nach
-	 *             Konstellation wieder auftaucht, wird die dann auftretende
-	 *             Exception als "normales" IO-Problem verpackt.
+	 * @param file Dateiname
+	 * @param text Textinhalt der ausgegeben werden soll
+	 * @throws IOException In manchen Java-Versionen in Kombinationen mit manchen
+	 *                     Begriebssystemen gab es in der Vergangenheit die
+	 *                     unterschiedlichsten Probleme :-( Falls das je nach
+	 *                     Konstellation wieder auftaucht, wird die dann auftretende
+	 *                     Exception als "normales" IO-Problem verpackt.
 	 */
 	public static void writeFile(final URL file, final String text) throws IOException {
 		Path path = null;
@@ -115,14 +110,13 @@ public final class FileUtil {
 
 	/**
 	 * Datei lesen, die als Ressource im Paket eingebettet ist (z.B. vorgegebene
-	 * Initialisierungsskripte für die Datenbankinhalte). Es wird erwartet, dass
-	 * die Datei Text enthält.
+	 * Initialisierungsskripte für die Datenbankinhalte). Es wird erwartet, dass die
+	 * Datei Text enthält.
 	 *
-	 * @param resourceName
-	 *            Name der Datei innerhalb des Pakets (Pfadangabe erforderlich)
+	 * @param resourceName Name der Datei innerhalb des Pakets (Pfadangabe
+	 *                     erforderlich)
 	 * @return Inhalt der Datei als String
-	 * @throws IOException
-	 *             Falls die Ressourcendatei nicht gelesen werden kann.
+	 * @throws IOException Falls die Ressourcendatei nicht gelesen werden kann.
 	 */
 	public static String readResourceFile(final String resourceName) throws IOException {
 		final InputStream tutorialStream = FileUtil.class.getResourceAsStream(resourceName);
@@ -143,10 +137,8 @@ public final class FileUtil {
 	 * Dateinamenserweiterung an einen Dateinamen anhängen, sofern nicht bereits
 	 * vorhanden.
 	 *
-	 * @param filename
-	 *            Bisheriger Dateiname
-	 * @param ext
-	 *            erforderliche Erweiterung (z.B. html, sql o.ä.)
+	 * @param filename Bisheriger Dateiname
+	 * @param ext      erforderliche Erweiterung (z.B. html, sql o.ä.)
 	 * @return Dateiname mit Erweiterung
 	 */
 	public static URL enforceExtension(final URL filename, final String ext) {
@@ -172,8 +164,7 @@ public final class FileUtil {
 
 	/**
 	 * Konvertierung in URI für ein File. Falls der Dateiname schon als URI
-	 * vorliegt, wird nicht doppelt gewandelt (würde bei file.toURI()
-	 * passieren).
+	 * vorliegt, wird nicht doppelt gewandelt (würde bei file.toURI() passieren).
 	 *
 	 * @param file
 	 * @return URI der Datei

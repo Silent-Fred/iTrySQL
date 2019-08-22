@@ -35,7 +35,7 @@ public interface FontSizeZoomable extends Serializable {
 
 	int getFontSize();
 
-	void setFontSize(final int size);
+	void setFontSize(int size);
 
 	void zoomIn();
 

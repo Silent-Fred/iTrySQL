@@ -44,7 +44,7 @@ public interface StatementEditor extends FontSizeZoomable {
 
 	int getCaretPositionAsIndex();
 
-	void setText(final String text);
+	void setText(String text);
 
 	void focus();
 

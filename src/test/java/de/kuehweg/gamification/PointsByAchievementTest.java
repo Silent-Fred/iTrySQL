@@ -34,17 +34,17 @@ import org.junit.Test;
  */
 public class PointsByAchievementTest {
 
-    @Test
-    public void testCalculateCurrentlyValidPoints() {
-        Achievement achievement = new Achievement("ACH", new AchievementCounter(new AchievementEvent("A"), 10));
+	@Test
+	public void testCalculateCurrentlyValidPoints() {
+		final Achievement achievement = new Achievement("ACH", new AchievementCounter(new AchievementEvent("A"), 10));
 
-        PointsByAchievement points = new PointsByAchievement(achievement, 100);
-        assertEquals(0, points.calculateCurrentlyAchievedPoints());
+		final PointsByAchievement points = new PointsByAchievement(achievement, 100);
+		assertEquals(0, points.calculateCurrentlyAchievedPoints());
 
-        achievement.fire(new AchievementEvent("A"), 5);
-        assertEquals(0, points.calculateCurrentlyAchievedPoints());
+		achievement.fire(new AchievementEvent("A"), 5);
+		assertEquals(0, points.calculateCurrentlyAchievedPoints());
 
-        achievement.fire(new AchievementEvent("A"), 5);
-        assertEquals(100, points.calculateCurrentlyAchievedPoints());
-    }
+		achievement.fire(new AchievementEvent("A"), 5);
+		assertEquals(100, points.calculateCurrentlyAchievedPoints());
+	}
 }

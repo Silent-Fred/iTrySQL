@@ -33,10 +33,11 @@ package de.kuehweg.sqltool.common.sqlediting;
  */
 public class StatementString {
 
-	public static final String[] DDL_COMMANDS = new String[] { "CREATE", "ALTER", "DROP", "TRUNCATE" };
+	public static final String[] DDL_COMMANDS = new String[] { "CREATE", "ALTER", "DROP",
+			"TRUNCATE" };
 
-	public static final String[] DML_COMMANDS = new String[] { "SELECT", "INSERT", "UPDATE", "DELETE", "MERGE", "CALL",
-			"EXPLAIN", "SCRIPT" };
+	public static final String[] DML_COMMANDS = new String[] { "SELECT", "INSERT", "UPDATE",
+			"DELETE", "MERGE", "CALL", "EXPLAIN", "SCRIPT" };
 
 	public static final String[] DCL_COMMANDS = new String[] { "GRANT", "REVOKE" };
 
@@ -70,9 +71,9 @@ public class StatementString {
 	}
 
 	/**
-	 * Abfrage auf DDL Statement. Die Anweisung wird dabei <em>nicht</em>
-	 * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-	 * einleitenden Schlüsselwort klassifiziert.
+	 * Abfrage auf DDL Statement. Die Anweisung wird dabei <em>nicht</em> komplett
+	 * auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+	 * Schlüsselwort klassifiziert.
 	 *
 	 * @return true wenn die Anweisung ein DDL Statement ist.
 	 */
@@ -81,9 +82,9 @@ public class StatementString {
 	}
 
 	/**
-	 * Abfrage auf DML Statement. Die Anweisung wird dabei <em>nicht</em>
-	 * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-	 * einleitenden Schlüsselwort klassifiziert.
+	 * Abfrage auf DML Statement. Die Anweisung wird dabei <em>nicht</em> komplett
+	 * auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+	 * Schlüsselwort klassifiziert.
 	 *
 	 * @return true wenn die Anweisung ein DML Statement ist.
 	 */
@@ -92,9 +93,9 @@ public class StatementString {
 	}
 
 	/**
-	 * Abfrage auf DCL Statement. Die Anweisung wird dabei <em>nicht</em>
-	 * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-	 * einleitenden Schlüsselwort klassifiziert.
+	 * Abfrage auf DCL Statement. Die Anweisung wird dabei <em>nicht</em> komplett
+	 * auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+	 * Schlüsselwort klassifiziert.
 	 *
 	 * @return true wenn die Anweisung ein DCL Statement ist.
 	 */
@@ -103,9 +104,9 @@ public class StatementString {
 	}
 
 	/**
-	 * Abfrage auf TCL Statement. Die Anweisung wird dabei <em>nicht</em>
-	 * komplett auf korrekte Syntax geprüft, sondern lediglich nach dem
-	 * einleitenden Schlüsselwort klassifiziert.
+	 * Abfrage auf TCL Statement. Die Anweisung wird dabei <em>nicht</em> komplett
+	 * auf korrekte Syntax geprüft, sondern lediglich nach dem einleitenden
+	 * Schlüsselwort klassifiziert.
 	 *
 	 * @return true wenn die Anweisung ein TCL Statement ist.
 	 */
@@ -134,10 +135,9 @@ public class StatementString {
 	}
 
 	/**
-	 * @param commands
-	 *            Liste von Schlüsselwörtern
-	 * @return true wenn das Statement mit einem Schlüsselwort aus der
-	 *         übergebenen Liste beginnt.
+	 * @param commands Liste von Schlüsselwörtern
+	 * @return true wenn das Statement mit einem Schlüsselwort aus der übergebenen
+	 *         Liste beginnt.
 	 */
 	private boolean isInCommandList(final String[] commands) {
 		final String firstKeyword = firstKeyword();
@@ -152,8 +152,8 @@ public class StatementString {
 	}
 
 	/**
-	 * @return Liefert true, wenn die Anweisung leer ist, bzw. nur aus
-	 *         Kommentaren besteht.
+	 * @return Liefert true, wenn die Anweisung leer ist, bzw. nur aus Kommentaren
+	 *         besteht.
 	 */
 	public boolean isEmpty() {
 		return originalStatement == null || originalStatement.trim().isEmpty()
@@ -161,8 +161,7 @@ public class StatementString {
 	}
 
 	/**
-	 * @param statement
-	 *            Text der SQL-Anweisung
+	 * @param statement Text der SQL-Anweisung
 	 * @return Startposition des ersten Kommentars in der Anweisung. Wenn kein
 	 *         Kommentar enthalten ist, dann -1
 	 */
@@ -182,11 +181,10 @@ public class StatementString {
 	}
 
 	/**
-	 * @param statement
-	 *            Text der SQL-Anweisung
+	 * @param statement Text der SQL-Anweisung
 	 * @return Endposition des ersten Kommentars in der Anweisung. Wenn kein
-	 *         Kommentar enthalten ist, dann -1. Die Endposition ist inklusive
-	 *         zu betrachten, gehört also noch zum Kommentar.
+	 *         Kommentar enthalten ist, dann -1. Die Endposition ist inklusive zu
+	 *         betrachten, gehört also noch zum Kommentar.
 	 */
 	private int findFirstCommentEndIndex(final String statement) {
 		int endIndexOfFirstComment = -1; // kein Kommentar
@@ -207,13 +205,12 @@ public class StatementString {
 	}
 
 	/**
-	 * Setzt den übergebenen Scanner weiter, bis die lexikalische Analyse
-	 * erkennt, dass sie sich innerhalb eines Kommentars befindet oder bis keine
-	 * weiteren Zeichen mehr vom Scanner verarbeitet werden können.
+	 * Setzt den übergebenen Scanner weiter, bis die lexikalische Analyse erkennt,
+	 * dass sie sich innerhalb eines Kommentars befindet oder bis keine weiteren
+	 * Zeichen mehr vom Scanner verarbeitet werden können.
 	 *
-	 * @param scanner
-	 *            Vorbereiteter Scanner, der auf Anfangsposition für das neu zu
-	 *            lesende Token steht.
+	 * @param scanner Vorbereiteter Scanner, der auf Anfangsposition für das neu zu
+	 *                lesende Token steht.
 	 * @return Gefundener Zustand, der zum Ende des Scanvorgangs geführt hat.
 	 */
 	private StatementExtractionStates scanForwardUntilInsideFirstComment(final ScannerI scanner) {
@@ -225,21 +222,19 @@ public class StatementString {
 	}
 
 	/**
-	 * Setzt den übergebenen Scanner weiter, bis die lexikalische Analyse
-	 * erkennt, dass sie einen neuen START-Zustand erreicht hat oder bis keine
-	 * weiteren Zeichen mehr vom Scanner verarbeitet werden können.
+	 * Setzt den übergebenen Scanner weiter, bis die lexikalische Analyse erkennt,
+	 * dass sie einen neuen START-Zustand erreicht hat oder bis keine weiteren
+	 * Zeichen mehr vom Scanner verarbeitet werden können.
 	 *
-	 * @param scanner
-	 *            Vorbereiteter Scanner, der an der Position steht, an der ein
-	 *            Kommentar erkannt wurde.
-	 * @param startState
-	 *            Zustand, der beim Erreichen des Kommentars eingenommen wurde.
-	 *            (zur Unterscheidung, um welche Art von Kommentar es sich
-	 *            handelt)
+	 * @param scanner    Vorbereiteter Scanner, der an der Position steht, an der
+	 *                   ein Kommentar erkannt wurde.
+	 * @param startState Zustand, der beim Erreichen des Kommentars eingenommen
+	 *                   wurde. (zur Unterscheidung, um welche Art von Kommentar es
+	 *                   sich handelt)
 	 * @return Gefundener Zustand, der zum Ende des Scanvorgangs geführt hat.
 	 */
-	private StatementExtractionStates scanForwardToNextStartStateOrEndOfInput(final ScannerI scanner,
-			final StatementExtractionStates startState) {
+	private StatementExtractionStates scanForwardToNextStartStateOrEndOfInput(
+			final ScannerI scanner, final StatementExtractionStates startState) {
 		StatementExtractionStates state = startState;
 		while (scanner.hasMoreElements() && state != StatementExtractionStates.START) {
 			state = state.evaluate(scanner);
@@ -253,13 +248,12 @@ public class StatementString {
 	}
 
 	/**
-	 * Entfernt den ersten Kommentar aus der übergebenen Anweisung. Kommentare
-	 * am Anfang oder Ende der Anweisung werden komplett entfernt, Kommentare
-	 * innerhalb der Anweisung werden durch ein Leerzeichen ersetzt. (da sie
-	 * syntaktisch als Trennelement fungieren)
+	 * Entfernt den ersten Kommentar aus der übergebenen Anweisung. Kommentare am
+	 * Anfang oder Ende der Anweisung werden komplett entfernt, Kommentare innerhalb
+	 * der Anweisung werden durch ein Leerzeichen ersetzt. (da sie syntaktisch als
+	 * Trennelement fungieren)
 	 *
-	 * @param statement
-	 *            Text der SQL-Anweisung.
+	 * @param statement Text der SQL-Anweisung.
 	 * @return Anweisung ohne den ersten Kommentar.
 	 */
 	private String removeFirstComment(final String statement) {

@@ -32,7 +32,7 @@ import java.util.Collection;
  */
 public interface AchievementPersister {
 
-	void persist(final Collection<Achievement> achievements);
+	void persist(Collection<Achievement> achievements);
 
 	Collection<AchievementCounter> read();
 }

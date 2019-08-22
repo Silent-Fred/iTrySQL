@@ -46,7 +46,8 @@ public class AchievementView implements PropertyChangeListener, Runnable {
 	private final Pane rankPane;
 	private final Pane achievementsPane;
 
-	public AchievementView(final RankingPoints ranking, final Pane rankPane, final Pane achievementsPane) {
+	public AchievementView(final RankingPoints ranking, final Pane rankPane,
+			final Pane achievementsPane) {
 		this.ranking = ranking;
 		this.rankPane = rankPane;
 		this.achievementsPane = achievementsPane;
@@ -54,11 +55,12 @@ public class AchievementView implements PropertyChangeListener, Runnable {
 	}
 
 	private void addObserverToAchievements() {
-		ranking.getRegisteredAchievements().stream().forEach(a -> a.addPropertyChangeListener(this));
+		ranking.getRegisteredAchievements().stream()
+				.forEach(a -> a.addPropertyChangeListener(this));
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(final PropertyChangeEvent evt) {
 		refresh();
 	}
 

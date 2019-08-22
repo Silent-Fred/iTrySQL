@@ -49,6 +49,6 @@ public abstract class ResultFormatter {
 		return statementExecutionInformation;
 	}
 
-	public abstract String format(final ResultTemplate template);
+	public abstract String format(ResultTemplate template);
 
 }

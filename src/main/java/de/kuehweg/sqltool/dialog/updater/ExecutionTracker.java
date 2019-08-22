@@ -45,10 +45,9 @@ public interface ExecutionTracker {
 	/**
 	 * Wird nach jeder einzelnen Anweisung aufgerufen.
 	 *
-	 * @param executionInfo
-	 *            Das Ergebnis der zuletzt ausgeführen SQL Anweisung
+	 * @param executionInfo Das Ergebnis der zuletzt ausgeführen SQL Anweisung
 	 */
-	void intermediateUpdate(final StatementExecutionInformation executionInfo);
+	void intermediateUpdate(StatementExecutionInformation executionInfo);
 
 	/**
 	 * Wird nach Abschluss aller SQL Anweisungen aufgerufen.
@@ -58,8 +57,7 @@ public interface ExecutionTracker {
 	/**
 	 * Wird aufgerufen, wenn ein Fehler bei der Ausführung aufgetreten ist.
 	 *
-	 * @param message
-	 *            Fehlermeldung, z.B. SQL-State
+	 * @param message Fehlermeldung, z.B. SQL-State
 	 */
 	void errorOnExecution(String message);
 

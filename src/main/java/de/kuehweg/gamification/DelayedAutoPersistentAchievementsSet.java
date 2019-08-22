@@ -70,18 +70,19 @@ public class DelayedAutoPersistentAchievementsSet implements PropertyChangeListe
 	}
 
 	/**
-	 * @param delayInSeconds
-	 *            the delayInSeconds to set
+	 * @param delayInSeconds the delayInSeconds to set
 	 */
 	public void setDelayInSeconds(final int delayInSeconds) {
-		this.delayInSeconds = delayInSeconds < MIN_DELAY_IN_SECONDS ? MIN_DELAY_IN_SECONDS : delayInSeconds;
+		this.delayInSeconds = delayInSeconds < MIN_DELAY_IN_SECONDS ? MIN_DELAY_IN_SECONDS
+				: delayInSeconds;
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(final PropertyChangeEvent evt) {
 		if (!changed) {
 			changed = true;
-			final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+			final ScheduledExecutorService executorService = Executors
+					.newSingleThreadScheduledExecutor();
 			executorService.schedule(this, delayInSeconds, TimeUnit.SECONDS);
 			executorService.shutdown();
 		}

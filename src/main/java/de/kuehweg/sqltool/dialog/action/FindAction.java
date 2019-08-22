@@ -40,11 +40,11 @@ public abstract class FindAction implements ChangeListener<String> {
 		find(observable.getValue());
 	}
 
-	public abstract void find(final String searchString);
+	public abstract void find(String searchString);
 
-	public abstract void nextOccurrence(final String searchString);
+	public abstract void nextOccurrence(String searchString);
 
-	public abstract void previousOccurrence(final String searchString);
+	public abstract void previousOccurrence(String searchString);
 
 	protected String preparedSearchString(final String searchString) {
 		return searchString != null ? searchString.toLowerCase() : "";

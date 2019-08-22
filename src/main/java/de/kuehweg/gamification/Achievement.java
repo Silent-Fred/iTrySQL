@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Achievement {
 
-	private PropertyChangeSupport support;
+	private final PropertyChangeSupport support;
 
 	private final String name;
 
@@ -47,14 +47,13 @@ public class Achievement {
 	private final Map<AchievementEvent, AchievementCounter> eventsWithCurrentCountdown;
 
 	/**
-	 * @param name
-	 *            Name des Achievements. Wird z.B. verwendet, um das Achievement
-	 *            benannt speichern und wieder laden zu können. Soll das
-	 *            Achievement also persistent sein (können), dann muss der Name
-	 *            eindeutig vergeben werden.
-	 * @param requirements
-	 *            Jedes Achievement muss mit den relevanten AchievementEvents
-	 *            inklusive der erforderlichen Anzahl initialisiert werden.
+	 * @param name         Name des Achievements. Wird z.B. verwendet, um das
+	 *                     Achievement benannt speichern und wieder laden zu können.
+	 *                     Soll das Achievement also persistent sein (können), dann
+	 *                     muss der Name eindeutig vergeben werden.
+	 * @param requirements Jedes Achievement muss mit den relevanten
+	 *                     AchievementEvents inklusive der erforderlichen Anzahl
+	 *                     initialisiert werden.
 	 */
 	public Achievement(final String name, final AchievementCounter... requirements) {
 		this.name = name;
@@ -78,10 +77,9 @@ public class Achievement {
 	/**
 	 * Registriert das Auftreten eines Ereignisses.
 	 *
-	 * @param event
-	 *            Art des Ereignisses. Für das Achievement irrelevante
-	 *            Ereignisse werden ignoriert. (somit kann ein Event problemlos
-	 *            an alle Achievements übergeben werden)
+	 * @param event Art des Ereignisses. Für das Achievement irrelevante Ereignisse
+	 *              werden ignoriert. (somit kann ein Event problemlos an alle
+	 *              Achievements übergeben werden)
 	 */
 	public void fire(final AchievementEvent event) {
 		fire(event, 1);
@@ -90,24 +88,23 @@ public class Achievement {
 	/**
 	 * Registriert das n-fache Auftreten eines Ereignisses.
 	 *
-	 * @param event
-	 *            Art des Ereignisses. Für das Achievement irrelevante
-	 *            Ereignisse werden ignoriert. (somit kann ein Event problemlos
-	 *            an alle Achievements übergeben werden)
-	 * @param count
-	 *            Anzahl des Auftretens des Events, dessen Umfang o.ä. Beispiel:
-	 *            Achievement zählt Anzahl Millisekunden durchgeführter
-	 *            Berechnungen; dann kann z.B. eine Berechnung mit 25ms durch
-	 *            einen Aufruf mit count = 25 registriert werden
+	 * @param event Art des Ereignisses. Für das Achievement irrelevante Ereignisse
+	 *              werden ignoriert. (somit kann ein Event problemlos an alle
+	 *              Achievements übergeben werden)
+	 * @param count Anzahl des Auftretens des Events, dessen Umfang o.ä. Beispiel:
+	 *              Achievement zählt Anzahl Millisekunden durchgeführter
+	 *              Berechnungen; dann kann z.B. eine Berechnung mit 25ms durch
+	 *              einen Aufruf mit count = 25 registriert werden
 	 */
 	public void fire(final AchievementEvent event, final int count) {
 		final AchievementCounter countdown = eventsWithCurrentCountdown.get(event);
 		if (countdown != null && countdown.getCounter() > 0) {
-			int before = countdown.getCounter();
+			final int before = countdown.getCounter();
 			synchronized (countdown) {
-				countdown.setCounter(countdown.getCounter() > count ? countdown.getCounter() - count : 0);
+				countdown.setCounter(
+						countdown.getCounter() > count ? countdown.getCounter() - count : 0);
 			}
-			int after = countdown.getCounter();
+			final int after = countdown.getCounter();
 			support.firePropertyChange("countdown", before, after);
 		}
 	}
@@ -133,10 +130,9 @@ public class Achievement {
 	/**
 	 * Zielerreichung abfragen.
 	 *
-	 * @return true wenn alle für das Achievement erforderlichen
-	 *         AchievementEvents bereits oft genug ausgelöst wurden, wenn also
-	 *         der Countdown bei allen zum Achievement gehörenden
-	 *         AchievementEvents auf 0 ist.
+	 * @return true wenn alle für das Achievement erforderlichen AchievementEvents
+	 *         bereits oft genug ausgelöst wurden, wenn also der Countdown bei allen
+	 *         zum Achievement gehörenden AchievementEvents auf 0 ist.
 	 */
 	public boolean isAchieved() {
 		for (final AchievementCounter countdown : eventsWithCurrentCountdown.values()) {
@@ -148,15 +144,16 @@ public class Achievement {
 	}
 
 	/**
-	 * Liefert die für das Achievment relevanten AchievementEvents zusammen mit
-	 * der bereits erreichten Anzahl Events.
+	 * Liefert die für das Achievment relevanten AchievementEvents zusammen mit der
+	 * bereits erreichten Anzahl Events.
 	 *
 	 * @return Liefert die aktuellen Zählerstände der bereits erreichten Events.
 	 */
 	public Set<AchievementCounter> achieved() {
 		final Set<AchievementCounter> achieved = new HashSet<>();
 		for (final AchievementCounter requirement : requirements) {
-			final AchievementCounter countdown = eventsWithCurrentCountdown.get(requirement.getEvent());
+			final AchievementCounter countdown = eventsWithCurrentCountdown
+					.get(requirement.getEvent());
 			// folgendes sollte eigentlich immer der Fall sein
 			if (countdown != null) {
 				achieved.add(new AchievementCounter(requirement.getEvent(),
@@ -167,16 +164,16 @@ public class Achievement {
 	}
 
 	/**
-	 * Liefert die für das Achievement relevanten AchievementEvents zusammen mit
-	 * der noch verbleibenden Anzahl erforderlicher Events bis zur
-	 * Zielerreichung.
+	 * Liefert die für das Achievement relevanten AchievementEvents zusammen mit der
+	 * noch verbleibenden Anzahl erforderlicher Events bis zur Zielerreichung.
 	 *
 	 * @return Liefert die aktuellen Zählerstände der noch fehlenden Events.
 	 */
 	public Set<AchievementCounter> remains() {
 		final Set<AchievementCounter> remains = new HashSet<>();
 		for (final AchievementCounter requirement : requirements) {
-			final AchievementCounter countdown = eventsWithCurrentCountdown.get(requirement.getEvent());
+			final AchievementCounter countdown = eventsWithCurrentCountdown
+					.get(requirement.getEvent());
 			// folgendes sollte eigentlich immer der Fall sein
 			if (countdown != null) {
 				remains.add(new AchievementCounter(requirement.getEvent(), countdown.getCounter()));
@@ -185,11 +182,11 @@ public class Achievement {
 		return remains;
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	public void addPropertyChangeListener(final PropertyChangeListener listener) {
 		support.addPropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
+	public void removePropertyChangeListener(final PropertyChangeListener listener) {
 		support.removePropertyChangeListener(listener);
 	}
 }

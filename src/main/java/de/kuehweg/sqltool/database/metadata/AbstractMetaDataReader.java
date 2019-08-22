@@ -126,6 +126,6 @@ public abstract class AbstractMetaDataReader {
 				+ (schema != null ? schema.getQualifiedName() : "NO SCHEMA") + "." + tableName);
 	}
 
-	protected abstract void readAndAddDescription(final ResultSet metadata) throws SQLException;
+	protected abstract void readAndAddDescription(ResultSet metadata) throws SQLException;
 
 }

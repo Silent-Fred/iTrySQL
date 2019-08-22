@@ -40,10 +40,8 @@ public class AchievementCounter {
 	 * Erzeugt einen neuen AchievementCounter für das angegebene Event mit dem
 	 * angegegeben Startwert.
 	 *
-	 * @param event
-	 *            Event das gezählt wird
-	 * @param counter
-	 *            Startwert für den Countdown - muss >= 0 sein!
+	 * @param event   Event das gezählt wird
+	 * @param counter Startwert für den Countdown - muss >= 0 sein!
 	 */
 	public AchievementCounter(final AchievementEvent event, final int counter) {
 		if (counter < 0) {

@@ -43,10 +43,8 @@ public class RankingPoints {
 	private final List<PointsByAchievement> pointsByAchievement = new ArrayList<>();
 
 	/**
-	 * @param achievement
-	 *            Achievement
-	 * @param points
-	 *            Punkte beim Erreichen des Achievements
+	 * @param achievement Achievement
+	 * @param points      Punkte beim Erreichen des Achievements
 	 */
 	public void register(final Achievement achievement, final int points) {
 		pointsByAchievement.add(new PointsByAchievement(achievement, points));
@@ -67,14 +65,11 @@ public class RankingPoints {
 	 * Liefert das registrierte Tupel aus Achievement und Punktzahl für ein
 	 * übergebenes Achievement.
 	 *
-	 * @param achievement
-	 *            Achievement
+	 * @param achievement Achievement
 	 * @return Tupel (Achievement, Punktzahl) als {@link PointsByAchievement}
-	 * @throws IllegalArgumentException
-	 *             Nicht registrierte Achivements werfen eine
-	 *             {@link IllegalArgumentException}
-	 * @throws NullPointerException
-	 *             Beim Aufruf mit null als Achievement
+	 * @throws IllegalArgumentException Nicht registrierte Achivements werfen eine
+	 *                                  {@link IllegalArgumentException}
+	 * @throws NullPointerException     Beim Aufruf mit null als Achievement
 	 */
 	private PointsByAchievement getRegisteredPointsByAchievement(final Achievement achievement)
 			throws IllegalArgumentException, NullPointerException {
@@ -90,14 +85,11 @@ public class RankingPoints {
 	 * Bisher erreichte Punktzahl für ein einzelnes Achievement im Punktesystem
 	 * berechnen.
 	 *
-	 * @param achievement
-	 *            Achievement
+	 * @param achievement Achievement
 	 * @return Aktuell erreichte Punktzahl für das Achievement
-	 * @throws IllegalArgumentException
-	 *             Nicht registrierte Achivements werfen eine
-	 *             {@link IllegalArgumentException}
-	 * @throws NullPointerException
-	 *             Beim Aufruf mit null als Achievement
+	 * @throws IllegalArgumentException Nicht registrierte Achivements werfen eine
+	 *                                  {@link IllegalArgumentException}
+	 * @throws NullPointerException     Beim Aufruf mit null als Achievement
 	 */
 	public int pointsAchieved(final Achievement achievement) throws IllegalArgumentException, NullPointerException {
 		int pointsAchieved = 0;
@@ -130,14 +122,11 @@ public class RankingPoints {
 	}
 
 	/**
-	 * @param achievement
-	 *            Achievement - muss registriert sein
+	 * @param achievement Achievement - muss registriert sein
 	 * @return Punkte, die es für das Erreichen des Achievements gibt
-	 * @throws IllegalArgumentException
-	 *             Nicht registrierte Achievements werfen eine
-	 *             {@link IllegalArgumentException}
-	 * @throws NullPointerException
-	 *             Beim Aufruf mit null als Achievement
+	 * @throws IllegalArgumentException Nicht registrierte Achievements werfen eine
+	 *                                  {@link IllegalArgumentException}
+	 * @throws NullPointerException     Beim Aufruf mit null als Achievement
 	 */
 	public int pointsAchievableForAchievement(final Achievement achievement)
 			throws IllegalArgumentException, NullPointerException {
