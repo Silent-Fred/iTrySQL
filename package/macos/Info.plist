@@ -6,15 +6,23 @@
 	<string>de.kuehweg.itrysql</string>
 	<key>CFBundleExecutable</key>
 	<string>itrysql</string>
-	<key>CFBundleDisplayName</key>
-	<string>iTrySQL</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>(c) 2019 Michael Kühweg</string>
+	<string>(c) 2019</string>
 	<key>CFBundleIconFile</key>
 	<string>itrysql.icns</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.education</string>
+	<key>CFBundleName</key>
+	<string>iTrySQL</string>
+	<key>CFBundleDisplayName</key>
+	<string>iTrySQL</string>
+	<key>CFBundleVersion</key>
+	<string>3.7</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.7</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
 </dict>
 </plist>
